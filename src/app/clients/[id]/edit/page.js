@@ -1,32 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar } from "@/components/ui/calendar";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Mail, Phone, MapPin, Landmark, Globe, BadgeCheck, IdCard, CalendarDays, Star, Ban, Calendar as CalendarIcon, ArrowRight, ArrowLeft } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import PersonalInfoTab from "./PersonalInfoTab";
 import AddressInfoTab from "./AddressInfoTab";
-import DocumentsTab from "./IdAndPassportTab";
 import MembershipTab from "./MembershipTab";
 import DriverLicenseTab from "./DriverLicenseTab";
 import IdAndPassportTab from "./IdAndPassportTab";
-const tabStyles = {
-  activeBg: "bg-white",
-  activeText: "text-blue-600",
-  activeShadow: "shadow-sm",
-  inactiveBg: "bg-transparent",
-  inactiveText: "text-gray-600",
-  hoverBg: "hover:bg-gray-50",
-  base: "flex items-center gap-2 rounded-md transition-all px-3 py-2"
-};
 
-export default function page() {
+
+export default function Page() {
   const [form, setForm] = useState({
     name_en: "",
     name_ar: "",
