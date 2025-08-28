@@ -7,7 +7,7 @@ import { useTranslations } from '@/hooks/useTranslations'
 import { useLanguage } from "@/contexts/LanguageContext"
 import Info from "./Info"
 
-function page() {
+function Page() {
   const t = useTranslations('contracts.tabs');
     const { isRTL } = useLanguage();
 
@@ -30,4 +30,4 @@ function page() {
   </div>
 }
 
-export default page
+export default Page

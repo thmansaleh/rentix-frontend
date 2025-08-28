@@ -559,7 +559,7 @@ function TermsTab() {
           <CardContent className="space-y-6">
             {termsData.sections.length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
-                لا توجد أقسام إضافية. انقر على "إضافة قسم" لإنشاء قسم جديد.
+                لا توجد أقسام إضافية. انقر على &quot;إضافة قسم&quot; لإنشاء قسم جديد.
               </div>
             ) : (
               termsData.sections.map((section, index) => (

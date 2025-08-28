@@ -93,7 +93,7 @@ const TableCell = ({ children }) => (
   </td>
 );
 
-const page = () => {
+const Page = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const router = useRouter(); // <-- Add this
@@ -406,4 +406,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

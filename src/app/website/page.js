@@ -10,7 +10,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from "@/contexts/LanguageContext";
 
 
-function page() {
+function Page() {
   const t = useTranslations();
   const { isRTL } = useLanguage();
   return <div >
@@ -29,4 +29,4 @@ function page() {
   </div>
 }
 
-export default page
+export default Page

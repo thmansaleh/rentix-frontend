@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 
-export default function page() {
+export default function Page() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',

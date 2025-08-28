@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext"
 import Info from "./Info"
 import SubmitBtn from "./SubmitBtn"
 
-function page() {
+function Page() {
   const t = useTranslations('contracts.tabs');
     const { isRTL } = useLanguage();
 
@@ -32,4 +32,4 @@ function page() {
   </div>
 }
 
-export default page
+export default Page
