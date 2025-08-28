@@ -1,5 +1,18 @@
+import { Baloo_Bhaijaan_2 } from "next/font/google";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import DynamicLayout from "@/components/DynamicLayout";
+import ResponsiveLayout from "@/components/ResponsiveLayout";
+import SWRProvider from "@/providers/SWRProvider";
+import ReduxProvider from "@/redux/ReduxProvider";
+
+const baloo = Baloo_Bhaijaan_2({
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,12 +30,27 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  
+  
   return (
-    <html lang="en">
+    <html lang="ar"  className={baloo.className}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <LanguageProvider>
+          <ThemeProvider>
+            <SWRProvider>
+              <ReduxProvider>
+                <DynamicLayout>
+                  <ResponsiveLayout>
+                    {children}
+                  </ResponsiveLayout>
+                </DynamicLayout>
+              </ReduxProvider>
+            </SWRProvider>
+          </ThemeProvider>
+        </LanguageProvider>
+   
       </body>
     </html>
   );

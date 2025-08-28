@@ -1,0 +1,122 @@
+[
+  {
+    "id": "toyota",
+    "name_ar": "تويوتا",
+    "name_en": "Toyota",
+    "logo": "/brands/toyota.png"
+  },
+  {
+    "id": "nissan",
+    "name_ar": "نيسان",
+    "name_en": "Nissan",
+    "logo": "/brands/nissan.png"
+  },
+  {
+    "id": "hyundai",
+    "name_ar": "هيونداي",
+    "name_en": "Hyundai",
+    "logo": "/brands/hyundai.png"
+  },
+  {
+    "id": "kia",
+    "name_ar": "كيا",
+    "name_en": "Kia",
+    "logo": "/brands/kia.png"
+  },
+  {
+    "id": "chevrolet",
+    "name_ar": "شيفروليه",
+    "name_en": "Chevrolet",
+    "logo": "/brands/chevrolet.png"
+  },
+  {
+    "id": "ford",
+    "name_ar": "فورد",
+    "name_en": "Ford",
+    "logo": "/brands/ford.png"
+  },
+  {
+    "id": "honda",
+    "name_ar": "هوندا",
+    "name_en": "Honda",
+    "logo": "/brands/honda.png"
+  },
+  {
+    "id": "mercedes",
+    "name_ar": "مرسيدس",
+    "name_en": "Mercedes-Benz",
+    "logo": "/brands/mercedes.png"
+  },
+  {
+    "id": "bmw",
+    "name_ar": "بي إم دبليو",
+    "name_en": "BMW",
+    "logo": "/brands/bmw.png"
+  },
+  {
+    "id": "lexus",
+    "name_ar": "لكزس",
+    "name_en": "Lexus",
+    "logo": "/brands/lexus.png"
+  },
+  {
+    "id": "gmc",
+    "name_ar": "جي إم سي",
+    "name_en": "GMC",
+    "logo": "/brands/gmc.png"
+  },
+  {
+    "id": "mazda",
+    "name_ar": "مازدا",
+    "name_en": "Mazda",
+    "logo": "/brands/mazda.png"
+  },
+  {
+    "id": "mitsubishi",
+    "name_ar": "ميتسوبيشي",
+    "name_en": "Mitsubishi",
+    "logo": "/brands/mitsubishi.png"
+  },
+  {
+    "id": "dodge",
+    "name_ar": "دودج",
+    "name_en": "Dodge",
+    "logo": "/brands/dodge.png"
+  },
+  {
+    "id": "jeep",
+    "name_ar": "جيب",
+    "name_en": "Jeep",
+    "logo": "/brands/jeep.png"
+  },
+  {
+    "id": "renault",
+    "name_ar": "رينو",
+    "name_en": "Renault",
+    "logo": "/brands/renault.png"
+  },
+  {
+    "id": "peugeot",
+    "name_ar": "بيجو",
+    "name_en": "Peugeot",
+    "logo": "/brands/peugeot.png"
+  },
+  {
+    "id": "suzuki",
+    "name_ar": "سوزوكي",
+    "name_en": "Suzuki",
+    "logo": "/brands/suzuki.png"
+  },
+  {
+    "id": "isuzu",
+    "name_ar": "ايسوزو",
+    "name_en": "Isuzu",
+    "logo": "/brands/isuzu.png"
+  },
+  {
+    "id": "tesla",
+    "name_ar": "تسلا",
+    "name_en": "Tesla",
+    "logo": "/brands/tesla.png"
+  }
+]

@@ -1,0 +1,7 @@
+:root {
+  --tab-active-bg: #c91212;
+  --tab-active-text: #293d67 !important;
+  --tab-inactive-bg: #f3f4f6;
+  --tab-inactive-text: #1770ed;
+  --tab-hover-bg: #087ef5;
+}

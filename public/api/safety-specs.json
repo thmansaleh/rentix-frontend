@@ -1,0 +1,20 @@
+{
+  "en": {
+    "defaultSpecs": [
+      "Anti-lock Braking System (ABS)",
+      "Front and Side Airbags",
+      "Tire Pressure Monitoring System",
+      "Electronic Stability Control",
+      "Backup Camera"
+    ]
+  },
+  "ar": {
+    "defaultSpecs": [
+      "نظام مانع انغلاق المكابح (ABS)",
+      "وسائد هوائية أمامية وجانبية",
+      "نظام مراقبة ضغط الإطارات",
+      "نظام الثبات الإلكتروني",
+      "كاميرا خلفية"
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+/* RTL Support for Breadcrumbs */
+.rtl .breadcrumb-list {
+  flex-direction: row-reverse;
+}
+
+.rtl .breadcrumb-separator {
+  transform: scaleX(-1);
+}
+
+/* General RTL styling for flex containers */
+.rtl .flex-row {
+  flex-direction: row-reverse;
+}
+
+.rtl .ml-auto {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.rtl .mr-auto {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* RTL padding and margin adjustments */
+.rtl .pl-2 {
+  padding-left: 0;
+  padding-right: 0.5rem;
+}
+
+.rtl .pr-2 {
+  padding-right: 0;
+  padding-left: 0.5rem;
+}
+
+.rtl .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+.rtl .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}

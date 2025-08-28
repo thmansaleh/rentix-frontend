@@ -1,0 +1,10 @@
+{
+  "aboutUs": "نحن شركة تأجير سيارات نقدم أفضل الأسعار والخدمات لعملائنا. يمكنك تعديل هذا النص وحفظه.",
+  "terms": "هذه هي الشروط والأحكام الخاصة بالشركة. يرجى مراجعتها بعناية. يمكنك تعديل هذا النص وحفظه.",
+  "contactText": "تواصل معنا لأي استفسارات أو ملاحظات. يمكنك تعديل هذا النص وحفظه.",
+  "socials": [
+    { "platform": "Facebook", "url": "https://facebook.com/yourpage" },
+    { "platform": "Instagram", "url": "https://instagram.com/yourpage" },
+    { "platform": "Twitter", "url": "https://twitter.com/yourpage" }
+  ]
+}

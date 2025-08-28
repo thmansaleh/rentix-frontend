@@ -1,0 +1,26 @@
+[
+  {
+    "id": "gasoline",
+    "name_ar": "بنزين",
+    "name_en": "Gasoline",
+    "code": "GAS"
+  },
+  {
+    "id": "diesel",
+    "name_ar": "ديزل",
+    "name_en": "Diesel",
+    "code": "DSL"
+  },
+  {
+    "id": "electric",
+    "name_ar": "كهرباء",
+    "name_en": "Electric",
+    "code": "ELC"
+  },
+  {
+    "id": "hybrid",
+    "name_ar": "هجين",
+    "name_en": "Hybrid",
+    "code": "HYB"
+  }
+]
