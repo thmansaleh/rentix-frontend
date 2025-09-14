@@ -7,6 +7,7 @@ const addCarSlice = createSlice({
     plate_source: "",
     plate_number: "",
     make: "",
+    brand_id: "",
     model: "",
     year: "",
     transmission_type: "",
@@ -31,6 +32,7 @@ const addCarSlice = createSlice({
     next_maintenance_date: null,
     insurance_number: "",
     insurance_company: "",
+    insurance_start_date: null,
     insurance_expiry: null,
     
     // Safety Specs
@@ -98,6 +100,9 @@ const addCarSlice = createSlice({
     setMake: (state, action) => {
       state.make = action.payload;
     },
+    setBrandId: (state, action) => {
+      state.brand_id = action.payload;
+    },
     setModel: (state, action) => {
       state.model = action.payload;
     },
@@ -157,6 +162,9 @@ const addCarSlice = createSlice({
     },
     setInsuranceCompany: (state, action) => {
       state.insurance_company = action.payload;
+    },
+    setInsuranceStartDate: (state, action) => {
+      state.insurance_start_date = action.payload;
     },
     setInsuranceExpiry: (state, action) => {
       state.insurance_expiry = action.payload;
@@ -281,7 +289,7 @@ const addCarSlice = createSlice({
     updateMaintenanceInsurance: (state, action) => {
       const maintenanceFields = [
         'last_maintenance_date', 'next_maintenance_date',
-        'insurance_number', 'insurance_company', 'insurance_expiry'
+        'insurance_number', 'insurance_company', 'insurance_start_date', 'insurance_expiry'
       ];
       
       maintenanceFields.forEach(field => {
@@ -316,6 +324,7 @@ export const {
   setPlateSource,
   setPlateNumber,
   setMake,
+  setBrandId,
   setModel,
   setYear,
   setTransmissionType,
@@ -340,6 +349,7 @@ export const {
   setNextMaintenanceDate,
   setInsuranceNumber,
   setInsuranceCompany,
+  setInsuranceStartDate,
   setInsuranceExpiry,
   
   // Safety Specs

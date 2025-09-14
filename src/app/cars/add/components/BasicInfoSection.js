@@ -4,7 +4,6 @@ import { Car, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useCarBrands } from "@/hooks/useCarBrands";
 import { useEmirates, useFuelTypes } from "@/hooks/useApiData";
@@ -13,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   setPlateSource,
   setPlateNumber,
-  setMake,
+  setBrandId,
   setModel,
   setYear,
   setTransmissionType,
@@ -24,6 +23,7 @@ import {
   setInteriorColor,
   setDoorsCount,
 } from '@/redux/slices/addCarSlice'
+import { is } from "date-fns/locale";
 
 export default function BasicInfoSection() {
   const t = useTranslations();
@@ -93,8 +93,8 @@ export default function BasicInfoSection() {
           </Label>
           <Select
             dir={isRTL ? "rtl" : "ltr"}
-            value={addCar.make || ''}
-            onValueChange={(v) => dispatch(setMake(v))}
+            value={addCar.brand_id || ''}
+            onValueChange={(id) => dispatch(setBrandId(id))}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder={
@@ -107,8 +107,10 @@ export default function BasicInfoSection() {
             </SelectTrigger>
             <SelectContent>
               {(carBrands || []).map(brand => (
-                // carBrands in add flow are simple strings
-                <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                // carBrands are objects with name_ar and name_en properties
+                <SelectItem key={brand.id} value={brand.id}>
+                  {language === 'ar' ? brand.name_ar : brand.name_en}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>

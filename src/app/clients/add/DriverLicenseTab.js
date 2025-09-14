@@ -18,10 +18,16 @@ import { useCountries } from "@/hooks/useApiData";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LicenseImages from "./LicenseImages";
 
-export default function DriverLicenseTab({ form, handleChange }) {
+export default function DriverLicenseTab({ form, handleChange, handleDateChange, formatDate }) {
   const t = useTranslations();
   const { countries, isLoading, isError } = useCountries();
   const { language, isRTL } = useLanguage();
+  
+  // Safety check to ensure form object exists and has required properties
+  if (!form) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className=" rounded-lg min-h-80 overflow-auto max-h-80  p-4">
       <h4 className="text-lg font-semibold mb-4  flex items-center gap-2">
@@ -40,7 +46,7 @@ export default function DriverLicenseTab({ form, handleChange }) {
               id="driver_license_number"
               name="driver_license_number"
               placeholder={t('clients.registrationForm.driverLicenseInfo.licenseNumberPlaceholder')}
-              value={form.driver_license_number}
+              value={form.driver_license_number || ""}
               onChange={handleChange}
               className="pl-10"
             />
@@ -54,7 +60,7 @@ export default function DriverLicenseTab({ form, handleChange }) {
           <div className="relative">
             {/* <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" /> */}
             <Select dir={isRTL ? "rtl" : "ltr"}
-              value={form.license_country}
+              value={form.license_country || ""}
               onValueChange={(value) =>
                 handleChange({ target: { name: "license_country", value } })
               }
@@ -91,7 +97,7 @@ export default function DriverLicenseTab({ form, handleChange }) {
               id="license_city"
               name="license_city"
               placeholder={t('clients.registrationForm.driverLicenseInfo.licenseCityPlaceholder')}
-              value={form.license_city}
+              value={form.license_city || ""}
               onChange={handleChange}
               className="pl-10"
             />
@@ -109,11 +115,15 @@ export default function DriverLicenseTab({ form, handleChange }) {
                 className="w-full justify-start text-left font-normal"
               >
                 <CalendarIcon className="ml-2 h-4 w-4" />
+                {formatDate(form.driver_license_issue)}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
+                selected={form.driver_license_issue}
+                onSelect={(date) => handleDateChange(date, "driver_license_issue")}
+                initialFocus
               />
             </PopoverContent>
           </Popover>
@@ -130,11 +140,15 @@ export default function DriverLicenseTab({ form, handleChange }) {
                 className="w-full justify-start text-left font-normal"
               >
                 <CalendarIcon className="ml-2 h-4 w-4" />
+                {formatDate(form.driver_license_expiry)}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
+                selected={form.driver_license_expiry}
+                onSelect={(date) => handleDateChange(date, "driver_license_expiry")}
+                initialFocus
               />
             </PopoverContent>
           </Popover>

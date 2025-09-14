@@ -45,6 +45,7 @@ const editCarSlice = createSlice({
     next_maintenance_date: null,
     insurance_number: "",
     insurance_company: "",
+    insurance_start_date: null,
     insurance_expiry: null,
     
     // Safety Specs
@@ -175,6 +176,9 @@ const editCarSlice = createSlice({
     setInsuranceCompany: (state, action) => {
       state.insurance_company = action.payload;
     },
+    setInsuranceStartDate: (state, action) => {
+      state.insurance_start_date = action.payload;
+    },
     setInsuranceExpiry: (state, action) => {
       state.insurance_expiry = action.payload;
     },
@@ -298,7 +302,7 @@ const editCarSlice = createSlice({
     updateMaintenanceInsurance: (state, action) => {
       const maintenanceFields = [
         'last_maintenance_date', 'next_maintenance_date',
-        'insurance_number', 'insurance_company', 'insurance_expiry'
+        'insurance_number', 'insurance_company', 'insurance_start_date', 'insurance_expiry'
       ];
       
       maintenanceFields.forEach(field => {
@@ -392,6 +396,7 @@ export const {
   setNextMaintenanceDate,
   setInsuranceNumber,
   setInsuranceCompany,
+  setInsuranceStartDate,
   setInsuranceExpiry,
   
   // Safety Specs

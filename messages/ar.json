@@ -615,6 +615,7 @@
         "nextMaintenanceDate": "تاريخ الصيانة القادمة",
         "insuranceNumber": "رقم التأمين",
         "insuranceCompany": "شركة التأمين",
+        "insuranceStartDate": "تاريخ بداء التامين",
         "insuranceExpiry": "انتهاء التأمين",
         "selectDate": "اختر التاريخ",
         "insuranceNumberPlaceholder": "رقم بوليصة التأمين",

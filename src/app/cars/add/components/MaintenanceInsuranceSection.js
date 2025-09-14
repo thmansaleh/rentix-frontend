@@ -13,6 +13,7 @@ import {
   setNextMaintenanceDate,
   setInsuranceNumber,
   setInsuranceCompany,
+  setInsuranceStartDate,
   setInsuranceExpiry
 } from '@/redux/slices/addCarSlice'
 
@@ -102,6 +103,26 @@ export default function MaintenanceInsuranceSection() {
             value={addCar.insurance_company || ''}
             onChange={(e) => dispatch(setInsuranceCompany(e.target.value))}
           />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="insurance_start_date" className="text-sm font-medium ">
+            {t('cars.carAddForm.maintenance.insuranceStartDate')}
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full justify-start text-left font-normal">
+                <CalendarIcon className="ml-2 h-4 w-4" />
+                <span className="ml-2">{formatDate(addCar.insurance_start_date) || t('cars.carAddForm.maintenance.selectDate')}</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={addCar.insurance_start_date ? new Date(addCar.insurance_start_date) : undefined}
+                onSelect={(date) => dispatch(setInsuranceStartDate(date ? date.toISOString() : null))}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="space-y-2">
           <Label htmlFor="insurance_expiry" className="text-sm font-medium ">

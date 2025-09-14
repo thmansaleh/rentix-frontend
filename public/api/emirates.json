@@ -1,42 +1,42 @@
 [
   {
-    "id": "dubai",
+    "id": 1,
     "name_ar": "دبي",
     "name_en": "Dubai",
     "code": "DXB"
   },
   {
-    "id": "abudhabi",
+    "id": 2,
     "name_ar": "أبوظبي",
     "name_en": "Abu Dhabi",
     "code": "AUH"
   },
   {
-    "id": "sharjah",
+    "id": 3,
     "name_ar": "الشارقة",
     "name_en": "Sharjah",
     "code": "SHJ"
   },
   {
-    "id": "ajman",
+    "id": 4,
     "name_ar": "عجمان",
     "name_en": "Ajman",
     "code": "AJM"
   },
   {
-    "id": "umm_al_quwain",
+    "id": 5,
     "name_ar": "أم القيوين",
     "name_en": "Umm Al Quwain",
     "code": "UAQ"
   },
   {
-    "id": "ras_al_khaimah",
+    "id": 6,
     "name_ar": "رأس الخيمة",
     "name_en": "Ras Al Khaimah",
     "code": "RAK"
   },
   {
-    "id": "fujairah",
+    "id": 7,
     "name_ar": "الفجيرة",
     "name_en": "Fujairah",
     "code": "FUJ"

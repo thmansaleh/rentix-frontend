@@ -93,8 +93,9 @@ const MenuItem = React.memo(({
           px-4 
           py-3 
           text-sidebar-foreground 
-          hover:text-sidebar-foreground 
+          hover:text-sidebdar-foreground 
           rounded-xl 
+          cursor-pointer
           transition-all 
           duration-300 
           focus:outline-none 
@@ -112,7 +113,7 @@ const MenuItem = React.memo(({
         <IconComponent className={`
           w-5 
           h-5 
-          transition-colors 
+          transition-colors  
           ${isRTL ? 'icon-spacing-rtl' : 'icon-spacing-ltr'} 
           ${isActive 
             ? 'text-sidebar-primary-foreground' 
@@ -139,6 +140,8 @@ const MenuItem = React.memo(({
           items-center 
           justify-between 
           w-full 
+                    cursor-pointer
+
           px-4 
           py-3 
           text-sidebar-foreground 
@@ -162,7 +165,7 @@ const MenuItem = React.memo(({
           <IconComponent className={`
             w-5 
             h-5 
-            transition-colors 
+            transition-colors  
             ${isRTL ? 'ml-3' : 'mr-3'} 
             ${isActive 
               ? 'text-sidebar-primary-foreground' 
@@ -175,7 +178,7 @@ const MenuItem = React.memo(({
           className={`
             w-4 
             h-4 
-            transition-all 
+            transition-all  
             duration-300 
             ${isOpen ? 'rotate-180' : ''} 
             ${isActive 
@@ -201,7 +204,8 @@ const MenuItem = React.memo(({
                   <button 
                     onClick={() => onNavClick(subItem.id)}
                     className={`
-                      flex 
+                      flex            cursor-pointer
+
                       items-center 
                       w-full 
                       px-4 
@@ -282,18 +286,18 @@ const AppSidebar = () => {
         { id: 'cars/fines', label: t('navigation.fines'), icon: FileSearch },
       ]
     },
-    {
-      id: 'inventory',
-      label: t('navigation.inventory') || 'المخزون',
-      icon: Warehouse,
-      type: 'dropdown',
-      submenu: [
-        { id: 'inventory', label: t('navigation.inventoryList') || 'قائمة المخزون', icon: Warehouse },
-        { id: 'inventory/cash', label: t('navigation.cashManagement') || 'إدارة النقد', icon: Package },
-        { id: 'inventory/expenses', label: t('navigation.expenses') || 'المصروفات', icon: Receipt },
-        { id: 'inventory/revenue', label: t('navigation.revenue') || 'الإيرادات', icon: TrendingUp },
-      ]
-    },
+    // {
+    //   id: 'inventory',
+    //   label: t('navigation.inventory') || 'المخزون',
+    //   icon: Warehouse,
+    //   type: 'dropdown',
+    //   submenu: [
+    //     { id: 'inventory', label: t('navigation.inventoryList') || 'قائمة المخزون', icon: Warehouse },
+    //     { id: 'inventory/cash', label: t('navigation.cashManagement') || 'إدارة النقد', icon: Package },
+    //     { id: 'inventory/expenses', label: t('navigation.expenses') || 'المصروفات', icon: Receipt },
+    //     { id: 'inventory/revenue', label: t('navigation.revenue') || 'الإيرادات', icon: TrendingUp },
+    //   ]
+    // },
     {
       id: 'clients',
       label: t('navigation.clientsManagement'),

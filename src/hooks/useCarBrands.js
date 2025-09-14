@@ -11,7 +11,7 @@ export const useCarBrands = () => {
   });
   
   return {
-    brands: data?.brands || [],
+    brands: data || [],
     isLoading,
     isError: error,
     refresh: mutate // Function to manually refresh the data

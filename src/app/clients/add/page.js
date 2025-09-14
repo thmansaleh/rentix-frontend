@@ -44,7 +44,7 @@ export default function CustomerRegistrationForm() {
     id_expiry: null,
     id_issue: null,
     id_issue_country: "",
-    driver_license_number: "",
+    driver_license_number: "123444",
     driver_license_expiry: null,
     driver_license_issue: null,
     license_country: "",
@@ -120,7 +120,12 @@ export default function CustomerRegistrationForm() {
       label: t('clients.registrationForm.tabs.driverLicense'),
       icon: <MapPin className="w-4 h-4" />,
       content: (
-        <DriverLicenseTab />
+        <DriverLicenseTab
+          form={form}
+          handleChange={handleChange}
+          handleDateChange={handleDateChange}
+          formatDate={formatDate}
+        />
       ),
     },
     {

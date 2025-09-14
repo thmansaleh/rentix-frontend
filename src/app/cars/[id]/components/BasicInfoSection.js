@@ -25,6 +25,7 @@ import {
   setDoorsCount,
 } from '@/redux/slices/editCarSlice'
 import ButtonInfoSend from "./send-buttons/ButtonInfoSend";
+import { is } from "date-fns/locale";
 
 export default function BasicInfoSection() {
   const t = useTranslations();
@@ -108,8 +109,8 @@ export default function BasicInfoSection() {
             </SelectTrigger>
             <SelectContent>
               {(carBrands || []).map(brand => (
-                // carBrands in add flow are simple strings
-                <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                // carBrands are objects with id, name_ar and name_en properties
+                <SelectItem key={brand.id} value={brand.id}>{isRTL ? brand.name_ar : brand.name_en}</SelectItem>
               ))}
             </SelectContent>
           </Select>

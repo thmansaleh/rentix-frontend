@@ -615,6 +615,7 @@
         "nextMaintenanceDate": "Next Maintenance Date",
         "insuranceNumber": "Insurance Number",
         "insuranceCompany": "Insurance Company",
+        "insuranceStartDate": "Insurance Start Date",
         "insuranceExpiry": "Insurance Expiry",
         "selectDate": "Select Date",
         "insuranceNumberPlaceholder": "Insurance policy number",
