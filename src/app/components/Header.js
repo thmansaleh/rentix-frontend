@@ -8,7 +8,7 @@ function Header() {
     const { isRTL } = useLanguage();
   
   return (
-    <div dir={isRTL ? "ltr" : "rtl"}  className="flex sticky top-0 z-100  dark:bg-black  light:bg-gray-50  items-center border-b mb-4 p-2 ">
+    <div dir={isRTL ? "ltr" : "rtl"}  className="flex sticky top-0 z-20  dark:bg-black  light:bg-gray-50  items-center border-b mb-4 p-2 ">
       <div  className="flex  items-center gap-4 ">
         <ThemeSwitcher />
         <LanguageSwitcher />

@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 
 function TermsTab() {
-  const t = useTranslations();
+  const { t } = useTranslations();
   const [termsData, setTermsData] = useState({
     introduction: '',
     generalTerms: '',

@@ -11,7 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 
 function Page() {
-  const t = useTranslations();
+  const { t } = useTranslations();
   const { isRTL } = useLanguage();
   return <div >
      <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="about" className="w-full">

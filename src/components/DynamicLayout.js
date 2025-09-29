@@ -1,13 +1,18 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DynamicLayout = ({ children }) => {
   const { language, isRTL, isLoading } = useLanguage();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    if (isLoading) return;
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoading || !isClient) return;
 
     const root = document.documentElement;
     const body = document.body;
@@ -24,9 +29,10 @@ const DynamicLayout = ({ children }) => {
     root.classList.remove("rtl", "ltr");
     root.classList.add(direction);
     
-  }, [language, isRTL, isLoading]);
+  }, [language, isRTL, isLoading, isClient]);
 
-  if (isLoading) {
+  // Show a consistent loading state during hydration
+  if (isLoading || !isClient) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>

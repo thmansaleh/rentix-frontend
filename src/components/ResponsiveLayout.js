@@ -4,10 +4,31 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import AppSidebar from "@/app/components/navigation/AppSidebar";
 import Header from "@/app/components/Header";
+import { useState, useEffect } from "react";
 
 const ResponsiveLayout = ({ children }) => {
   const { isRTL } = useLanguage();
   const isMobile = useIsMobile();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Prevent hydration mismatch by using consistent initial render
+  if (!isClient) {
+    return (
+      <div className="flex h-screen overflow-hidden">
+        <AppSidebar />
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <Header />
+          <div className="flex-1 overflow-auto px-4">
+            {children}
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className={`flex h-screen overflow-hidden`}>

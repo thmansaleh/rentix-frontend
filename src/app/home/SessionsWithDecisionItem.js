@@ -1,0 +1,252 @@
+import React from 'react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Hash, FileText, User, Clock, Calendar, AlertTriangle } from 'lucide-react'
+import Actions from './Actions'
+import { useTranslations } from '@/hooks/useTranslations'
+import { useLanguage } from '@/contexts/LanguageContext'
+
+function SessionsWithDecisionItem({ 
+  session,
+  title, 
+  date, 
+  caseNumber, 
+  clientName,
+  time
+}) {
+  // Translation hooks
+  const { t } = useTranslations()
+  const tCaseTypes = useTranslations('caseTypes')
+  const tSessions = useTranslations('sessions')
+  const { language } = useLanguage()
+  
+  // Handle both direct props (for backward compatibility) and session object
+  const sessionData = session || {
+    title,
+    date,
+    caseNumber,
+    clientName,
+    time
+  }
+
+  const getDegreeBadge = (degree) => {
+    if (!degree || degree === "0") {
+      return null
+    }
+    
+    const degreeConfig = {
+      appeal: { label: tCaseTypes('degrees.appeal'), color: 'bg-purple-100 text-purple-800 hover:bg-purple-200' },
+      first_instance: { label: tCaseTypes('degrees.first_instance'), color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' },
+      cassation: { label: tCaseTypes('degrees.cassation'), color: 'bg-red-100 text-red-800 hover:bg-red-200' }
+    }
+    
+    return degreeConfig[degree] || { label: degree, color: 'bg-gray-100 text-gray-800 hover:bg-gray-200' }
+  }
+
+  // Helper function to get translated case type
+  const getCaseTypeTranslation = (caseType) => {
+    if (!caseType) return t('common.notSpecified')
+    
+    // If we have both Arabic and English in the session object, use the appropriate one
+    if (language === 'ar' && session?.case_type_ar) {
+      return session.case_type_ar
+    } else if (language === 'en' && session?.case_type_en) {
+      return session.case_type_en
+    }
+    
+    // Fallback to translation keys for common case types
+    const caseTypeKey = caseType.toLowerCase().trim()
+    const translationKey = `types.${caseTypeKey}`
+    
+    // Try to get translation, fallback to original value
+    const translation = tCaseTypes(translationKey)
+    return translation !== translationKey ? translation : caseType
+  }
+
+  // Helper functions to format API data
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('ar-AE', {
+      year: 'numeric',
+      month: '2-digit', 
+      day: '2-digit'
+    })
+  }
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleTimeString('ar-AE', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
+  }
+
+  // Calculate deadline based on case type
+  const calculateDeadline = (sessionDate, caseType) => {
+    const sessionDateTime = new Date(sessionDate)
+    const deadlineDays = caseType?.toLowerCase().trim() === 'criminal' ? 15 : 30
+    const deadlineDate = new Date(sessionDateTime)
+    deadlineDate.setDate(deadlineDate.getDate() + deadlineDays)
+    
+    const now = new Date()
+    const daysRemaining = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24))
+    
+    return {
+      deadlineDate: formatDate(deadlineDate),
+      daysRemaining: daysRemaining,
+      isOverdue: daysRemaining < 0,
+      isUrgent: daysRemaining <= 7 && daysRemaining > 0
+    }
+  }
+
+  // Extract data from API response or use props
+  const displayDate = session ? formatDate(session.session_date) : sessionData.date
+  const displayTime = session ? formatTime(session.session_date) : sessionData.time
+  const displayCaseNumber = session ? session.case_number : sessionData.caseNumber
+  const displayClientParties = session ? (session.clientParties || []) : (sessionData.clientName ? [sessionData.clientName] : [])
+  const displayOpponentParties = session ? (session.opponentParties || []) : []
+  const displayDegree = session ? session.degree : sessionData.degree
+  const displayTopic = session ? session.topic : sessionData.topic
+  const displayCaseType = session ? session.case_type_en : sessionData.caseType
+  const displayCaseTypeTranslated = getCaseTypeTranslation(displayCaseType)
+
+  const degreeInfo = getDegreeBadge(displayDegree)
+  const deadlineInfo = session ? calculateDeadline(session.session_date, session.case_type_en) : null
+
+  // Create title with deadline information
+  const createDeadlineTitle = () => {
+    if (!deadlineInfo) return displayTopic || 'غير محدد'
+    
+    const { deadlineDate, daysRemaining, isOverdue, isUrgent } = deadlineInfo
+    const statusText = isOverdue 
+      ? `متأخر ${Math.abs(daysRemaining)} يوم` 
+      : `${daysRemaining} يوم متبقي`
+    
+    return `${displayTopic || 'غير محدد'} • آخر موعد: ${deadlineDate} (${statusText})`
+  }
+
+  return (
+    <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] ">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-center mb-4 p-3 bg-gradient-to-r from-red-50 to-red-100 ">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="p-2 bg-red-200 rounded-full relative z-10">
+                {deadlineInfo?.isOverdue ? (
+                  <AlertTriangle className="w-5 h-5 text-red-700" />
+                ) : deadlineInfo?.isUrgent ? (
+                  <Clock className="w-5 h-5 text-red-700" />
+                ) : (
+                  <Hash className="w-5 h-5 text-red-700" />
+                )}
+              </div>
+              {/* Expanding ring animations */}
+              <div className="absolute inset-0 rounded-full border-2 border-red-300 animate-ping opacity-75"></div>
+              <div className="absolute inset-0 rounded-full border border-red-200 animate-pulse opacity-50" style={{animationDelay: '0.5s'}}></div>
+              <div className="absolute inset-[-4px] rounded-full border border-red-100 animate-ping opacity-30" style={{animationDelay: '1s', animationDuration: '3s'}}></div>
+            </div>
+            <h3 className="text-lg font-bold text-red-900 text-center leading-tight">
+              {displayTopic}
+              {deadlineInfo && (
+                <div className="text-sm font-medium mt-1">
+                  آخر موعد {degreeInfo?.label}: {deadlineInfo.deadlineDate}
+                </div>
+              )}
+            </h3>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Clock className="w-4 h-4" />
+            <span>{tSessions('labels.sessionDate')} {displayDate}</span>
+            {displayTime && <span className="text-purple-600 font-medium">• {displayTime}</span>}
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <FileText className="w-4 h-4" />
+            <span>{tSessions('labels.caseNumber')} </span>
+            <span className="font-medium text-gray-900">{displayCaseNumber}</span>
+            {degreeInfo && (
+              <Badge className={`ml-2 ${degreeInfo.color}`}>
+                {degreeInfo.label}
+              </Badge>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <User className="w-4 h-4" />
+            <span>{tSessions('labels.client')} </span>
+            <span className="font-medium text-gray-900">
+              {displayClientParties.length > 0 ? displayClientParties.join('، ') : t('common.notSpecified')}
+            </span>
+          </div>
+
+          {displayOpponentParties.length > 0 && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <User className="w-4 h-4" />
+              <span>{tSessions('labels.opponent')} </span>
+              <span className="font-medium text-gray-900">
+                {displayOpponentParties.join('، ')}
+              </span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Calendar className="w-4 h-4" />
+            <span>{tSessions('labels.caseType')} </span>
+            <span className="font-medium text-gray-900">
+              {displayCaseTypeTranslated}          
+            </span>
+          </div>
+
+          {/* Decision Field */}
+          {session?.decision && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <FileText className="w-4 h-4 text-green-600" />
+              <span>{tSessions('labels.decision')} </span>
+              <span className="font-medium text-green-900">
+                {session.decision}
+              </span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <Calendar className="w-4 h-4 animate-pulse text-purple-600" />
+            <span>{tSessions('labels.deadline')} </span>
+            <span className="font-medium text-gray-900">
+              {deadlineInfo ? `${displayCaseType === 'Criminal' ? '15' : '30'} ${tSessions('labels.day')} (${deadlineInfo.deadlineDate})` : tSessions('labels.notCalculated')}
+            </span>
+          </div>
+          
+          {deadlineInfo && (
+            <div className={`flex items-center gap-2 text-sm font-medium ${
+              deadlineInfo.isOverdue 
+                ? 'text-red-600' 
+                : deadlineInfo.isUrgent 
+                  ? 'text-orange-600' 
+                  : 'text-green-600'
+            }`}>
+              {deadlineInfo.isOverdue ? (
+                <AlertTriangle className="w-4 h-4 animate-bounce" />
+              ) : (
+                <Clock className="w-4 h-4 animate-pulse" />
+              )}
+              <span>
+                {deadlineInfo.isOverdue 
+                  ? `⚠️ ${tSessions('labels.overdue')} ${Math.abs(deadlineInfo.daysRemaining)} ${Math.abs(deadlineInfo.daysRemaining) === 1 ? tSessions('labels.day') : tSessions('labels.days')}` 
+                  : `⏰ ${tSessions('labels.remaining')} ${deadlineInfo.daysRemaining} ${deadlineInfo.daysRemaining === 1 ? tSessions('labels.day') : tSessions('labels.days')}`
+                }
+              </span>
+            </div>
+          )}
+          <Actions theme="red" sessionId={session?.id} />   
+        
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+export default SessionsWithDecisionItem

@@ -5,7 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 
 const ExampleTranslatedComponent = () => {
-  const t = useTranslations();
+  const { t } = useTranslations();
   const tNav = useTranslations('navigation');
   const tButtons = useTranslations('buttons');
   const { isRTL } = useLanguage();
@@ -17,9 +17,6 @@ const ExampleTranslatedComponent = () => {
       </h2>
       
       <div className="space-y-2">
-        <p>{tNav('cars')}</p>
-        <p>{tNav('clients')}</p>
-        <p>{tNav('contracts')}</p>
         <p>{tNav('payments')}</p>
       </div>
 

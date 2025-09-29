@@ -4,8 +4,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const addContractSlice = createSlice({
 	name: "addContract",
 	initialState: {
-		clientId: null,
-		clientData: null, // Full client object
 		userId: null, // User ID who is creating the contract
         startDate: null,
         endDate: '',
@@ -29,13 +27,6 @@ const addContractSlice = createSlice({
         additionalFees: []
 	},
 	reducers: {
-		setClientId: (state, action) => {
-			state.clientId = action.payload;
-		},
-		setClientData: (state, action) => {
-			state.clientData = action.payload;
-			state.clientId = action.payload ? action.payload.id : null;
-		},
 		setUserId: (state, action) => {
 			state.userId = action.payload;
 		},
@@ -121,8 +112,6 @@ const addContractSlice = createSlice({
 			state.additionalFees = action.payload;
 		},
 		resetForm: (state) => {
-			state.clientId = null;
-			state.clientData = null;
 			state.userId = null;
 			state.userData = null;
 			state.startDate = null;
@@ -151,8 +140,6 @@ const addContractSlice = createSlice({
 
 
 export const {
-	setClientId,
-	setClientData,
 	setUserId,
 	setUserData,
 	setStartDate,

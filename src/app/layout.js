@@ -1,5 +1,4 @@
-import { Baloo_Bhaijaan_2 } from "next/font/google";
-import { Geist, Geist_Mono } from "next/font/google";
+
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -7,22 +6,25 @@ import DynamicLayout from "@/components/DynamicLayout";
 import ResponsiveLayout from "@/components/ResponsiveLayout";
 import SWRProvider from "@/providers/SWRProvider";
 import ReduxProvider from "@/redux/ReduxProvider";
+import AuthProvider from "@/providers/AuthProvider";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import { Inter } from 'next/font/google';
+// import { Noto_Sans_Arabic } from 'next/font/google';
 
-const baloo = Baloo_Bhaijaan_2({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
+// Configure fonts with better error handling
+// const inter = Inter({
+//   subsets: ['latin'],
+//   display: 'swap',
+//   variable: '--font-inter',
+// });
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const notoSansArabic = Noto_Sans_Arabic({
+//   subsets: ['arabic'],
+//   display: 'swap',
+//   variable: '--font-noto-arabic',
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata = {
   title: "Create Next App",
@@ -33,19 +35,35 @@ export default function RootLayout({ children }) {
   
   
   return (
-    <html lang="ar"  className={baloo.className}>
+    <html 
+    // className={`${inter.variable} ${notoSansArabic.variable}`}
+    >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="font-system-arabic antialiased"
       >
         <LanguageProvider>
           <ThemeProvider>
             <SWRProvider>
               <ReduxProvider>
-                <DynamicLayout>
-                  <ResponsiveLayout>
-                    {children}
-                  </ResponsiveLayout>
-                </DynamicLayout>
+                <AuthProvider>
+                  <DynamicLayout>
+                    <ResponsiveLayout>
+                      {children}
+                    </ResponsiveLayout>
+                  </DynamicLayout>
+                </AuthProvider>
+                <ToastContainer
+                  position="top-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={true}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme="colored"
+                />
               </ReduxProvider>
             </SWRProvider>
           </ThemeProvider>

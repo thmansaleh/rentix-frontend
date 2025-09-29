@@ -53,5 +53,5 @@ export const useTranslations = (namespace = null) => {
     return (key, params) => t(`${namespace}.${key}`, params);
   }
 
-  return t;
+  return { t };
 };

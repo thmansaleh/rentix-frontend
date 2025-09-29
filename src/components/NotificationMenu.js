@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Bell, Car, Users, BarChart3, Settings, FileText, Globe } from 'lucide-react';
+import { Bell, Scale, Users, BarChart3, Settings, FileText, Globe, Gavel, Calendar, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,16 +12,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from '@/hooks/useTranslations';
 
 function NotificationMenu() {
   const router = useRouter();
+  const { t } = useTranslations();
 
   const notificationItems = [
-    { label: 'New Rental Request', icon: Car, type: 'info', time: '2 hours ago' },
-    { label: 'Payment Received', icon: Users, type: 'success', time: '4 hours ago' },
-    { label: 'Contract Expiring', icon: FileText, type: 'warning', time: '1 day ago' },
-    { label: 'Vehicle Maintenance', icon: Settings, type: 'warning', time: '2 days ago' },
-    { label: 'New Client Registration', icon: Users, type: 'info', time: '3 days ago' }
+    { label: t('notifications.newTask'), icon: FileText, type: 'info', time: t('notifications.twoHoursAgo') },
+    { label: t('notifications.caseStatusChange'), icon: AlertTriangle, type: 'warning', time: t('notifications.fourHoursAgo') },
+    { label: t('notifications.newSession'), icon: Calendar, type: 'success', time: t('notifications.oneDayAgo') },
+    { label: t('notifications.newJudgment'), icon: Gavel, type: 'success', time: t('notifications.twoDaysAgo') },
+    { label: t('notifications.newClientRegistered'), icon: Users, type: 'info', time: t('notifications.threeDaysAgo') },
+    { label: t('notifications.upcomingCourtDate'), icon: Scale, type: 'warning', time: t('notifications.fiveHoursAgo') }
   ];
 
   const handleNavigation = (path) => {
@@ -52,7 +55,7 @@ function NotificationMenu() {
       </DropdownMenuTrigger>
       
       <DropdownMenuContent className="w-80" align="end">
-        <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('notifications.title')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         
         {notificationItems.map((item, index) => {

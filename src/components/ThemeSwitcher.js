@@ -15,7 +15,7 @@ import { Moon, Sun, Palette, Check, Gem } from "lucide-react";
 const ThemeSwitcher = () => {
   const { theme, setTheme, themes } = useTheme();
   const { isRTL } = useLanguage();
-  const t = useTranslations();
+  const { t } = useTranslations();
 
   const getThemeIcon = (currentTheme) => {
     switch (currentTheme) {

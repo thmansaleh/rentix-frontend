@@ -1,0 +1,89 @@
+import api from "./axiosInstance";
+
+export const login = async (username, password) => {
+  const response = await api.post("/auth/login", { username, password });
+  return response.data;
+};
+
+export const logout = async () => {
+  const response = await api.post("/auth/logout");
+  return response.data;
+};
+
+export const getProfile = async () => {
+  const response = await api.get("/auth/me");
+  return response.data;
+};
+
+// Thunk action for login with Redux integration
+export const loginWithRedux = (username, password) => async (dispatch) => {
+  try {
+    dispatch({ type: 'auth/loginStart' });
+    const data = await login(username, password);
+    
+    if (data.success) {
+      dispatch({
+        type: 'auth/loginSuccess',
+        payload: {
+          user: data.user,
+          permissions: data.permissions
+        }
+      });
+      
+      return { success: true, data };
+    } else {
+      dispatch({
+        type: 'auth/loginFailure',
+        payload: data.message || 'Login failed'
+      });
+      return { success: false, error: data.message };
+    }
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message || 'Login failed';
+    dispatch({
+      type: 'auth/loginFailure',
+      payload: errorMessage
+    });
+    return { success: false, error: errorMessage };
+  }
+};
+
+// Thunk action for logout with Redux integration
+export const logoutWithRedux = () => async (dispatch) => {
+  try {
+    await logout();
+    dispatch({ type: 'auth/logout' });
+    return { success: true };
+  } catch (error) {
+    // Even if logout API fails, clear local state
+    dispatch({ type: 'auth/logout' });
+    return { success: false, error: error.message };
+  }
+};
+
+// Thunk action to check authentication status using getProfile
+export const checkAuthStatus = () => async (dispatch) => {
+  try {
+    dispatch({ type: 'auth/loginStart' });
+    const data = await getProfile();
+    
+    if (data.success && data.user) {
+      dispatch({
+        type: 'auth/restoreAuth',
+        payload: {
+          user: data.user,
+          permissions: data.permissions || []
+        }
+      });
+      return { success: true };
+    } else {
+      dispatch({ type: 'auth/logout' });
+      return { success: false };
+    }
+  } catch (error) {
+    dispatch({ type: 'auth/logout' });
+    return { success: false, error: error.message };
+  }
+};
+
+

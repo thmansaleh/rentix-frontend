@@ -14,6 +14,14 @@ export const createEmployee = async (employeeData) => {
   const response = await api.post("/employees", employeeData);
   return response.data;
 };
+export const getEmployeePermissions = async (id) => {
+  const response = await api.get(`/permissions/employee/${id}`);
+  return response.data;
+}
+export const assignPermissionsToEmployee = async (id, permissions) => {
+  const response = await api.post(`/permissions/employee/${id}/permissions`, { permissions });
+  return response.data;
+}
 
 export const updateEmployee = async (id, employeeData) => {
   const response = await api.put(`/employees/${id}`, employeeData);

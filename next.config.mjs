@@ -5,6 +5,11 @@ const nextConfig = {
     // Enable server components
   },
   
+  // Add font optimization
+  images: {
+    domains: ['fonts.gstatic.com', 'fonts.googleapis.com'],
+  },
+  
   // Add headers for language detection
   async headers() {
     return [

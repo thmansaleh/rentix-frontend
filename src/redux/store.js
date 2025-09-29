@@ -1,27 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import vehiclesReducer from "./slices/vehiclesSlice";
-import addContractSliceReducer from "./slices/addContractSlice";
-import addCarSliceReducer from "./slices/addCarSlice";
-import editCarSliceReducer from "./slices/editCarSlice";
+import authReducer from './slices/authSlice';
+import addCaseReducer from './slices/addCaseSlice';
 
 const store = configureStore({
   reducer: {
-    vehicles: vehiclesReducer,
-    addContract: addContractSliceReducer,
-    addCar: addCarSliceReducer,
-    editCar: editCarSliceReducer,
+    auth: authReducer,
+    addCase: addCaseReducer,
+    // Add other slices as needed
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        // Ignore these action types
-        ignoredActions: ['addContract/setCarImages', 'addCar/setCarImages', 'addCar/addCarImage'],
-        // Ignore these field paths in all actions
-        ignoredActionsPaths: ['payload.file'],
-        // Ignore these paths in the state
-        ignoredPaths: ['addContract.carImages', 'addCar.carImages'],
-      },
-    }),
+    getDefaultMiddleware(),
 });
 
 export default store;

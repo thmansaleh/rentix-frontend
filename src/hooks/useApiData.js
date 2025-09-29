@@ -57,3 +57,14 @@ export function useCarDetails() {
     isError: error,
   };
 }
+
+// Hook to fetch courts data
+export function useCourts() {
+  const { data, error, isLoading } = useSWR('/api/courts.json', fetcher);
+
+  return {
+    courts: data || [],
+    isLoading,
+    isError: error,
+  };
+}

@@ -19,10 +19,7 @@ const LanguageSwitcher = () => {
 
   const handleLanguageChange = (newLanguage) => {
     setLanguage(newLanguage);
-    // Refresh the page to apply new language and direction
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    // Note: No page reload needed - LanguageContext handles all updates
   };
 
   return (

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ro } from "date-fns/locale";
 
 const LanguageContext = createContext();
 
@@ -64,7 +65,8 @@ export const LanguageProvider = ({ children }) => {
     setLanguage(newLanguage);
     
     // Refresh the page to apply new language
-    window.location.reload();
+    // window.location.reload();
+    // router.refresh();
   };
 
   const getLanguageLabel = (lang) => {

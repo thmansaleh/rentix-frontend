@@ -33,7 +33,11 @@ import {
   Receipt,
   Info,
   Menu,
-  X
+  X,
+  Scale,
+  Calendar,
+  Gavel,
+  FolderPlus
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
@@ -41,6 +45,9 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth, useUserRole } from '@/hooks/useAuth';
+import { useDispatch } from 'react-redux';
+import { logoutWithRedux } from '@/app/services/api/auth';
 
 // Custom hook for keyboard navigation
 const useKeyboardNavigation = (menuItems, activeItem, setActiveItem, handleNavClick) => {
@@ -52,14 +59,14 @@ const useKeyboardNavigation = (menuItems, activeItem, setActiveItem, handleNavCl
         const prevIndex = currentIndex > 0 ? currentIndex - 1 : menuItems.length - 1;
         const prevItem = menuItems[prevIndex];
         setActiveItem(prevItem.id);
-        handleNavClick(prevItem.id);
+        handleNavClick(prevItem.id, prevItem.type);
       } else if (e.altKey && e.key === 'ArrowDown') {
         e.preventDefault();
         const currentIndex = menuItems.findIndex(item => item.id === activeItem);
         const nextIndex = currentIndex < menuItems.length - 1 ? currentIndex + 1 : 0;
         const nextItem = menuItems[nextIndex];
         setActiveItem(nextItem.id);
-        handleNavClick(nextItem.id);
+        handleNavClick(nextItem.id, nextItem.type);
       }
     };
 
@@ -84,7 +91,7 @@ const MenuItem = React.memo(({
   if (item.type === 'link') {
     return (
       <button 
-        onClick={() => onNavClick(item.id)}
+        onClick={() => onNavClick(item.id, item.type)}
         className={`
           group 
           flex 
@@ -133,15 +140,14 @@ const MenuItem = React.memo(({
   return (
     <>
       <button 
-        onClick={() => onToggleSubmenu(item.id)}
+        onClick={() => item.type === 'category' ? onNavClick(item.id, item.type) : onToggleSubmenu(item.id)}
         className={`
           group 
           flex 
           items-center 
           justify-between 
           w-full 
-                    cursor-pointer
-
+          cursor-pointer
           px-4 
           py-3 
           text-sidebar-foreground 
@@ -153,9 +159,11 @@ const MenuItem = React.memo(({
           focus:ring-sidebar-ring 
           focus:ring-offset-2 
           focus:ring-offset-sidebar
-          ${isActive 
-            ? 'bg-sidebar-primary text-sidebar-primary-foreground' 
-            : 'hover:bg-sidebar-accent'
+          ${item.type === 'category' 
+            ? 'hover:bg-sidebar-accent/50' 
+            : isActive 
+              ? 'bg-sidebar-primary text-sidebar-primary-foreground' 
+              : 'hover:bg-sidebar-accent'
           }
         `}
         aria-expanded={isOpen}
@@ -167,12 +175,16 @@ const MenuItem = React.memo(({
             h-5 
             transition-colors  
             ${isRTL ? 'ml-3' : 'mr-3'} 
-            ${isActive 
-              ? 'text-sidebar-primary-foreground' 
-              : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'
+            ${item.type === 'category' 
+              ? 'text-sidebar-foreground/80' 
+              : isActive 
+                ? 'text-sidebar-primary-foreground' 
+                : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'
             }
           `} />
-          <span className="font-medium transition-colors">{item.label}</span>
+          <span className={`font-medium transition-colors ${
+            item.type === 'category' ? 'text-sidebar-foreground/90' : ''
+          }`}>{item.label}</span>
         </div>
         <ChevronDown 
           className={`
@@ -181,9 +193,11 @@ const MenuItem = React.memo(({
             transition-all  
             duration-300 
             ${isOpen ? 'rotate-180' : ''} 
-            ${isActive 
-              ? 'text-sidebar-primary-foreground' 
-              : 'text-sidebar-foreground/50'
+            ${item.type === 'category' 
+              ? 'text-sidebar-foreground/60' 
+              : isActive 
+                ? 'text-sidebar-primary-foreground' 
+                : 'text-sidebar-foreground/50'
             }
           `}
         />
@@ -202,7 +216,7 @@ const MenuItem = React.memo(({
               return (
                 <li key={subItem.id}>
                   <button 
-                    onClick={() => onNavClick(subItem.id)}
+                    onClick={() => onNavClick(subItem.id, 'link')}
                     className={`
                       flex            cursor-pointer
 
@@ -256,10 +270,13 @@ const AppSidebar = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const router = useRouter();
   const sidebarRef = useRef(null);
+  const dispatch = useDispatch();
   const isMobile = useIsMobile();
   const { theme } = useTheme();
   const { isRTL } = useLanguage();
-  const t = useTranslations();
+  const { t } = useTranslations();
+  const { user } = useAuth();
+  const userRole = useUserRole(isRTL ? 'ar' : 'en');
 
   // Memoized menu items configuration
   const menuItems = useMemo(() => [
@@ -269,80 +286,54 @@ const AppSidebar = () => {
       icon: LayoutDashboard,
       type: 'link'
     },
-    {
-      id: 'admins',
-      label: t('navigation.users'),
-      icon: Users,
-      type: 'link'
-    },
-    {
-      id: 'cars',
-      label: t('navigation.vehicles'),
-      icon: Car,
-      type: 'dropdown',
+       {
+      id: 'casesManagement',
+      label: t('navigation.casesManagement'),
+      icon: Scale,
+      type: 'category',
       submenu: [
-        { id: 'cars', label: t('navigation.cars'), icon: Car },
-        { id: 'cars/add', label: t('navigation.addCar'), icon: Plus },
-        { id: 'cars/fines', label: t('navigation.fines'), icon: FileSearch },
+        { id: 'cases', label: t('navigation.cases'), icon: Scale },
+        { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus },
+        { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
+        // { id: 'judgments', label: t('navigation.issuedJudgments'), icon: Gavel },
       ]
     },
+    {
+      id: 'humanResources',
+      label: t('navigation.humanResources'),
+      icon: Users,
+      type: 'category',
+      submenu: [
+        { id: 'employees', label: t('navigation.employees'), icon: Users },
+        { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
+      ]
+    },
+ 
     // {
-    //   id: 'inventory',
-    //   label: t('navigation.inventory') || 'المخزون',
-    //   icon: Warehouse,
-    //   type: 'dropdown',
-    //   submenu: [
-    //     { id: 'inventory', label: t('navigation.inventoryList') || 'قائمة المخزون', icon: Warehouse },
-    //     { id: 'inventory/cash', label: t('navigation.cashManagement') || 'إدارة النقد', icon: Package },
-    //     { id: 'inventory/expenses', label: t('navigation.expenses') || 'المصروفات', icon: Receipt },
-    //     { id: 'inventory/revenue', label: t('navigation.revenue') || 'الإيرادات', icon: TrendingUp },
-    //   ]
+    //   id: 'reports',
+    //   label: t('navigation.reports'),
+    //   icon: FileText,
+    //   type: 'link'
     // },
-    {
-      id: 'clients',
-      label: t('navigation.clientsManagement'),
-      icon: Users,
-      type: 'dropdown',
-      submenu: [
-        { id: 'clients', label: t('navigation.clients'), icon: Users },
-        { id: 'clients/add', label: t('navigation.addClient'), icon: UserRoundPlus },
-      ]
-    },
-    {
-      id: 'contracts',
-      label: t('navigation.contracts'),
-      icon: ScrollText,
-      type: 'dropdown',
-      submenu: [
-        { id: 'contracts', label: t('navigation.contractsList'), icon: ScrollText },
-        { id: 'contracts/add', label: t('navigation.newContract'), icon: FilePlus2 },
-      ]
-    },
-    {
-      id: 'reports',
-      label: t('navigation.reports'),
-      icon: FileText,
-      type: 'link'
-    },
-    {
-      id: 'charts',
-      label: t('navigation.charts'),
-      icon: BarChart3,
-      type: 'link'
-    },
-    {
-      id: 'website',
-      label: t('navigation.website'),
-      icon: Globe,
-      type: 'link',
-      badge: '5',
-      badgeColor: 'bg-green-500'
-    },
+    // {
+    //   id: 'charts',
+    //   label: t('navigation.charts'),
+    //   icon: BarChart3,
+    //   type: 'link'
+    // },
+    // {
+    //   id: 'website',
+    //   label: t('navigation.website'),
+    //   icon: Globe,
+    //   type: 'link',
+    //   badge: '5',
+    //   badgeColor: 'bg-green-500'
+    // },
     {
       id: 'settings',
       label: t('navigation.settings'),
       icon: Settings2,
-      type: 'dropdown',
+      type: 'category',
       submenu: [
         { id: 'settings/general', label: t('navigation.general'), icon: Info },
         { id: 'settings/profile', label: t('navigation.profile'), icon: User },
@@ -360,19 +351,30 @@ const AppSidebar = () => {
     }));
   }, []);
 
-  const handleNavClick = useCallback((itemId) => {
+  const handleNavClick = useCallback((itemId, itemType) => {
+    // If it's a category item, just toggle the submenu instead of navigating
+    if (itemType === 'category') {
+      toggleSubmenu(itemId);
+      return;
+    }
+    
+    // For link items, navigate normally
     setActiveItem(itemId);
     router.push(`/${itemId === '/' ? '' : itemId}`);
     // Close mobile sidebar when navigating
     if (isMobile) {
       setIsMobileSidebarOpen(false);
     }
-  }, [router, isMobile]);
+  }, [router, isMobile, toggleSubmenu]);
 
-  const handleLogout = useCallback(() => {
-    // Add logout logic here
-    console.log('Logging out...');
-  }, []);
+  const handleLogout = useCallback(async () => {
+    try {
+      await dispatch(logoutWithRedux());
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  }, [dispatch, router]);
 
   const toggleMobileSidebar = useCallback(() => {
     setIsMobileSidebarOpen(prev => !prev);
@@ -488,18 +490,15 @@ const AppSidebar = () => {
               <footer className="p-4 bg-sidebar border-t border-sidebar-border">
                 <div className="bg-sidebar-accent rounded-xl p-3 border border-sidebar-border/50 backdrop-blur-sm">
                   <div className="flex items-center gap-3">
-                    <img 
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format" 
-                      alt={isRTL ? "عثمان صالح - مدير النظام" : "Othman Saleh - System Admin"} 
-                      className="w-10 h-10 rounded-full transition-all duration-300 hover:scale-110 ring-2 ring-sidebar-border hover:ring-sidebar-primary"
-                      loading="lazy"
-                    />
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                      {user?.name ? user.name.charAt(0) : 'U'}
+                    </div>
                     <div className="flex-1">
                       <p className="text-sidebar-foreground font-medium text-sm">
-                        {isRTL ? 'عثمان صالح' : 'Othman Saleh'}
+                        {user?.name || (isRTL ? 'مستخدم' : 'User')}
                       </p>
                       <p className="text-sidebar-foreground/70 text-xs">
-                        {isRTL ? 'مدير النظام' : 'System Admin'}
+                        {userRole || (isRTL ? 'مستخدم' : 'User')}
                       </p>
                     </div>
                     <button 
@@ -585,18 +584,15 @@ const AppSidebar = () => {
         <footer className="p-4 bg-sidebar border-t border-sidebar-border">
           <div className="bg-sidebar-accent rounded-xl p-3 border border-sidebar-border/50 backdrop-blur-sm">
             <div className="flex items-center gap-3">
-              <img 
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format" 
-                alt={isRTL ? "عثمان صالح - مدير النظام" : "Othman Saleh - System Admin"} 
-                className="w-10 h-10 rounded-full transition-all duration-300 hover:scale-110 ring-2 ring-sidebar-border hover:ring-sidebar-primary"
-                loading="lazy"
-              />
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                {user?.name ? user.name.charAt(0) : 'U'}
+              </div>
               <div className="flex-1 transition-opacity duration-300">
                 <p className="text-sidebar-foreground font-medium text-sm">
-                  {isRTL ? 'عثمان صالح' : 'Othman Saleh'}
+                  {user?.name || (isRTL ? 'مستخدم' : 'User')}
                 </p>
                 <p className="text-sidebar-foreground/70 text-xs">
-                  {isRTL ? 'مدير النظام' : 'System Admin'}
+                  {userRole || (isRTL ? 'مستخدم' : 'User')}
                 </p>
               </div>
               <button 
