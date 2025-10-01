@@ -20,20 +20,37 @@ function TaskModal({
   formData, 
   onInputChange, 
   onSubmit, 
-  onFileChange, 
-  onRemoveFile, 
   employees = [], 
   loadingEmployees, 
   employeesError,
   priorityOptions = [],
-  taskTypeOptions = [],
-  // Drag and drop props
-  isDragOver = false,
-  onDragOver,
-  onDragLeave,
-  onDrop
+  // Formik setFieldValue for direct file handling
+  setFieldValue
 }) {
   const { t } = useTranslations()
+
+  // Handle file changes - use setFieldValue if available, otherwise fallback to onInputChange
+  const handleFileChange = (files) => {
+    const currentFiles = formData.attachedFiles || []
+    const newFiles = [...currentFiles, ...files]
+    
+    if (setFieldValue && typeof setFieldValue === 'function') {
+      setFieldValue('attachedFiles', newFiles)
+    } else if (onInputChange) {
+      onInputChange('attachedFiles', newFiles)
+    }
+  }
+
+  // Handle file removal
+  const handleFileRemove = (index) => {
+    const updatedFiles = (formData.attachedFiles || []).filter((_, i) => i !== index)
+    
+    if (setFieldValue && typeof setFieldValue === 'function') {
+      setFieldValue('attachedFiles', updatedFiles)
+    } else if (onInputChange) {
+      onInputChange('attachedFiles', updatedFiles)
+    }
+  }
 
   const isEditMode = mode === "edit"
   const dialogTitle = isEditMode ? t('tasks.editTask') : t('tasks.addTask')
@@ -41,11 +58,11 @@ function TaskModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogTitle className='text-center mr-3'>{dialogTitle}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-y-auto flex-1 pr-2">
           {/* Task Title */}
           <div className="space-y-2">
             <Label htmlFor={`${mode}-title`}>{t('tasks.taskTitle')}</Label>
@@ -70,23 +87,8 @@ function TaskModal({
             />
           </div>
 
-          {/* Task Type */}
+          {/* Priority */}
           <div className="flex items-center gap-4">
- <div className="space-y-2">
-            <Label htmlFor={`${mode}-taskType`}>{t('tasks.taskType')}</Label>
-            <Select value={formData.taskType} onValueChange={(value) => onInputChange("taskType", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('tasks.selectTaskType')} />
-              </SelectTrigger>
-              <SelectContent>
-                {taskTypeOptions.map((taskType) => (
-                  <SelectItem key={taskType.value} value={taskType.value}>
-                    {taskType.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
            <div className="space-y-2">
             <Label htmlFor={`${mode}-priority`}>{t('tasks.priority')}</Label>
             <Select value={formData.priority} onValueChange={(value) => onInputChange("priority", value)}>
@@ -103,7 +105,6 @@ function TaskModal({
                 ))}
               </SelectContent>
             </Select>
-          </div>
           </div>
          
           
@@ -144,6 +145,7 @@ function TaskModal({
               </SelectContent>
             </Select>
           </div>
+          </div>
 
           {/* Due Date */}
           <div className="space-y-2">
@@ -151,6 +153,7 @@ function TaskModal({
             <Popover>
               <PopoverTrigger asChild>
                 <Button
+                type="button"
                   variant="outline"
                   className={cn(
                     "w-full justify-start text-left font-normal",
@@ -159,7 +162,13 @@ function TaskModal({
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {formData.dueDate ? (
-                    format(formData.dueDate, "PPP", { locale: ar })
+                    format(
+                      typeof formData.dueDate === 'string' 
+                        ? new Date(formData.dueDate) 
+                        : formData.dueDate, 
+                      "PPP", 
+                      { locale: ar }
+                    )
                   ) : (
                     <span>{t('tasks.selectDueDate')}</span>
                   )}
@@ -168,8 +177,18 @@ function TaskModal({
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={formData.dueDate}
-                  onSelect={(date) => onInputChange("dueDate", date)}
+                  selected={
+                    formData.dueDate 
+                      ? typeof formData.dueDate === 'string' 
+                        ? new Date(formData.dueDate) 
+                        : formData.dueDate
+                      : undefined
+                  }
+                  onSelect={(date) => {
+                    // Format date as YYYY-MM-DD for database compatibility
+                    const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
+                    onInputChange("dueDate", formattedDate);
+                  }}
                   initialFocus
                 />
               </PopoverContent>
@@ -189,13 +208,22 @@ function TaskModal({
             <div
               className={cn(
                 "border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer",
-                isDragOver
-                  ? "border-primary bg-primary/10"
-                  : "border-gray-300 hover:border-gray-400"
+                "border-gray-300 hover:border-gray-400"
               )}
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop}
+              onDragOver={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+              }}
+              onDrop={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                const files = Array.from(e.dataTransfer.files)
+                handleFileChange(files)
+              }}
               onClick={() => document.getElementById(`${mode}FileUpload`).click()}
             >
               <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
@@ -213,12 +241,17 @@ function TaskModal({
               type="file"
               multiple
               className="hidden"
-              onChange={onFileChange}
+              onChange={(e) => {
+                const files = Array.from(e.target.files)
+                handleFileChange(files)
+                // Reset input value to allow selecting the same file again
+                e.target.value = ''
+              }}
               accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
             />
 
             {/* Display Selected Files */}
-            {formData.attachedFiles.length > 0 && (
+            {formData.attachedFiles && formData.attachedFiles.length > 0 && (
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 <div className="text-sm font-medium text-gray-700">
                   {t('tasks.selectedFiles')} ({formData.attachedFiles.length})
@@ -235,9 +268,10 @@ function TaskModal({
                       </span>
                     </div>
                     <Button
+                    type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => onRemoveFile(index)}
+                      onClick={() => handleFileRemove(index)}
                       className="h-6 w-6 p-0 text-blue-600 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
                     >
                       <X className="w-3 h-3" />
@@ -249,10 +283,10 @@ function TaskModal({
           </div>
           
           <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button  type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {t('tasks.cancel')}
             </Button>
-            <Button onClick={onSubmit}>
+            <Button type="button" onClick={onSubmit}>
               {submitButtonText}
             </Button>
           </div>

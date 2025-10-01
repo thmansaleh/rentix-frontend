@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  isAuth: true,
+  isAuth: false,
   jobId: null,
   email: null,
   roleAr: null,
@@ -62,7 +62,7 @@ const authSlice = createSlice({
       const { user, permissions } = action.payload;
       if (user) {
         state.isAuth = true;
-        state.jobId = user.job_id;
+        state.jobId = user.id; // Use 'id' instead of 'job_id' to match API response
         state.email = user.email;
         state.roleAr = user.role_ar;
         state.roleEn = user.role_en;
@@ -70,6 +70,8 @@ const authSlice = createSlice({
         state.departmentEn = user.department_en;
         state.permissions = permissions || [];
         state.user = user;
+        state.loading = false; // Reset loading state
+        state.error = null; // Clear any previous errors
       }
     }
   }

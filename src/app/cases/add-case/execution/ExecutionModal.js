@@ -30,24 +30,21 @@ function ExecutionModal({
   const dialogTitle = isEditMode ? t('executions.editExecution') : t('executions.addExecution')
   const submitButtonText = isEditMode ? t('executions.update') : t('executions.add')
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    onSubmit()
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{dialogTitle}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           {/* Execution Date */}
           <div className="space-y-2">
             <Label>{t('executions.date')}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
+                                type="button"
+
                   variant="outline"
                   className={cn(
                     "w-full justify-start text-left font-normal",
@@ -163,13 +160,14 @@ function ExecutionModal({
               {t('common.cancel')}
             </Button>
             <Button 
-              type="submit"
+              type="button"
               disabled={!formData.date || !formData.type || !formData.status || !formData.amount}
+              onClick={onSubmit}
             >
               {submitButtonText}
             </Button>
           </div>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   )

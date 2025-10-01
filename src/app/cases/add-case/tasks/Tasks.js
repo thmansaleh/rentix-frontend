@@ -7,28 +7,8 @@ import useSWR from 'swr'
 import { useTranslations } from "@/hooks/useTranslations"
 import { useFormikContext } from '../FormikContext';
 
-// Convert File to base64 for Redux serialization
-const fileToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = error => reject(error)
-  })
-}
 
-// Convert base64 back to File object for editing
-const base64ToFile = (base64String, fileName, fileType) => {
-  const arr = base64String.split(',')
-  const mime = arr[0].match(/:(.*?);/)[1]
-  const bstr = atob(arr[1])
-  let n = bstr.length
-  const u8arr = new Uint8Array(n)
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
-  }
-  return new File([u8arr], fileName, { type: mime })
-}
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -57,7 +37,6 @@ function Tasks() {
     attachedFiles: [] // Will store base64 files like parties/petitions
   })
 
-  console.log("🟡 TASKS COMPONENT - Current tasks from Formik:", tasks);
 
   // Helper function to convert file to base64
   const fileToBase64 = (file) => {
@@ -69,21 +48,8 @@ function Tasks() {
     });
   };
 
-  // Format file size
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+  
 
-  // Get file icon
-  const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
-    if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
-    return <FileIcon className="h-4 w-4" />;
-  };
 
   // Fetch employees using SWR
   const { data: employeesResponse, error: employeesError, isLoading: loadingEmployees } = useSWR(
@@ -95,8 +61,7 @@ function Tasks() {
   const employees = employeesResponse?.success ? employeesResponse.data : []
 
   const handleAddTask = async () => {
-    if (formData.title && formData.description && formData.taskType && formData.assignedTo && formData.dueDate && formData.priority) {
-      console.log("🔥 TASKS - Adding new task to Formik state:", formData);
+    if (formData.title && formData.description  && formData.assignedTo && formData.dueDate && formData.priority) {
       
       const newTask = {
         id: Date.now(),
@@ -294,7 +259,7 @@ function Tasks() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>{t('tasks.title')}</CardTitle>
-            <Button onClick={() => setIsDialogOpen(true)}>
+            <Button type="button" onClick={() => setIsDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               {t('tasks.addTask')}
             </Button>
@@ -362,6 +327,7 @@ function Tasks() {
                     <TableCell className="text-center">
                       <div className="flex justify-center space-x-2">
                         <Button
+                        type="button"
                           variant="ghost"
                           size="sm"
                           onClick={() => handleEditTask(index)}
@@ -369,6 +335,7 @@ function Tasks() {
                           <Pen className="h-4 w-4" />
                         </Button>
                         <Button
+                        type="button"
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteTask(index)}

@@ -83,7 +83,9 @@ function Petition() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>{t('petitions.title')}</CardTitle>
-            <Button onClick={() => setIsAddModalOpen(true)}>
+            <Button
+            type="button"
+             onClick={() => setIsAddModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               {t('petitions.addPetition')}
             </Button>
@@ -145,6 +147,7 @@ function Petition() {
                     <TableCell className="text-center">
                       <div className="flex justify-center space-x-2">
                         <Button
+                          type="button"
                           variant="ghost"
                           size="sm"
                           onClick={() => handleEditPetition(petition)}
@@ -152,6 +155,7 @@ function Petition() {
                           <Pen className="h-4 w-4" />
                         </Button>
                         <Button
+                          type="button"
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeletePetition(petition.id)}

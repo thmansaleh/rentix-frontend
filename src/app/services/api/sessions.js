@@ -8,6 +8,10 @@ export const getSession = async (id) => {
   const response = await api.get(`/sessions/${id}`);
   return response.data;
 };
+export const getCaseSessions = async (caseId) => {
+  const response = await api.get(`/cases/${caseId}/sessions`);
+  return response.data;
+}
 export const getSessionsThisWeek = async () => {
   const response = await api.get("/sessions/this-week");
   return response.data;

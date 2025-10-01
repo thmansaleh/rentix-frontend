@@ -4,6 +4,10 @@ export const getCases = async () => {
   const response = await api.get(`/cases`);
   return response.data;
 }
+export const getCaseById = async (id) => {
+  const response = await api.get(`/cases/${id}`);
+  return response.data;
+}
 export const createCase = async (caseData, caseFiles, employeesFiles, courtFiles) => {
  if (caseFiles && caseFiles.length > 0) {
    const uploadedFiles = await uploadFiles(caseFiles);
@@ -21,7 +25,57 @@ export const createCase = async (caseData, caseFiles, employeesFiles, courtFiles
  
   return response.data;
 } 
-export const caseTypes = async () => {  
+export const getCaseDocuments = async (id) => {
+  const response = await api.get(`/cases/${id}/documents`);
+  return response.data;
+};
+export const deleteCaseDocument = async (caseId, documentId) => {
+  const response = await api.delete(`/cases/${caseId}/documents/${documentId}`);
+  return response.data;
+};
+export const getCaseEmployeesDocuments = async (id) => {
+  const response = await api.get(`/cases/${id}/employees-documents`);
+  return response.data;
+};
+export const deleteCaseEmployeeDocument = async (caseId, documentId) => {
+  const response = await api.delete(`/cases/${caseId}/employees-documents/${documentId}`);
+  return response.data;
+}
+
+export const getCaseCourtDocuments = async (id) => {
+  const response = await api.get(`/cases/${id}/court-documents`);
+  return response.data;
+};
+export const deleteCaseCourtDocument = async (caseId, documentId) => {
+  const response = await api.delete(`/cases/${caseId}/court-documents/${documentId}`);
+  return response.data;
+};
+export const deleteCase = async (id) => {
+  const response = await api.delete(`/cases/${id}`);
+  return response.data;
+};
+export const updateCase = async (id, caseData, caseFiles, employeesFiles, courtFiles) => {
+//  console.log('updateCase called with:', { caseFiles });
+//   return null
+  if (caseFiles && caseFiles.length > 0) {
+    const uploadedFiles = await uploadFiles(caseFiles);
+    caseData.files = uploadedFiles;
+  }
+  if (employeesFiles && employeesFiles.length > 0) {
+    const uploadedEmployeesFiles = await uploadFiles(employeesFiles);
+    caseData.employeesFiles = uploadedEmployeesFiles;
+  }
+  if (courtFiles && courtFiles.length > 0) {
+    const uploadedCourtFiles = await uploadFiles(courtFiles);
+    caseData.courtFiles = uploadedCourtFiles;
+  }
+  const response = await api.put(`/cases/${id}`, caseData);
+
+  return response.data;
+}
+
+
+export const caseTypes = async () => {
   const response = await api.get(`/case-types`);
   return response.data;
 }

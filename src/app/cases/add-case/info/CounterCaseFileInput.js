@@ -95,22 +95,22 @@ function CounterCaseFileInput() {
         <PopoverContent className="w-full max-w-md p-0" align="start">
           <Command>
             <CommandInput 
-              placeholder={t('counterClaim.searchPlaceholder') || "Search by case number or file number..."}
+              placeholder={t('counterClaim.searchPlaceholder')}
               value={searchTerm}
               onValueChange={setSearchTerm}
             />
             <CommandList>
               {isLoading && (
                 <div className="p-4 text-sm text-center text-muted-foreground">
-                  Searching...
+                  {t('counterClaim.searching')}
                 </div>
               )}
               {!isLoading && searchTerm.length >= 3 && cases.length === 0 && (
-                <CommandEmpty>No cases found.</CommandEmpty>
+                <CommandEmpty>{t('counterClaim.noResults')}</CommandEmpty>
               )}
               {!isLoading && searchTerm.length < 3 && (
                 <div className="p-4 text-sm text-center text-muted-foreground">
-                  Type at least 3 characters to search
+                  {t('counterClaim.minCharactersSearch')}
                 </div>
               )}
               <CommandGroup>
@@ -132,14 +132,14 @@ function CounterCaseFileInput() {
                     <FileText className="mr-2 h-4 w-4" />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium truncate">
-                        Case: {caseItem.case_number}
+                        {t('counterClaim.caseLabel')} {caseItem.case_number}
                       </div>
                       <div className="text-sm text-muted-foreground truncate">
-                        File: {caseItem.file_number}
+                        {t('counterClaim.fileLabel')} {caseItem.file_number}
                       </div>
                       {caseItem.topic && (
                         <div className="text-sm text-muted-foreground truncate">
-                          Topic: {caseItem.topic}
+                          {t('counterClaim.topicLabel')} {caseItem.topic}
                         </div>
                       )}
                     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, Save, X } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import { useFormikContext } from 'formik';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -20,16 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
 
 const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
   const { isRTL, language } = useLanguage();
@@ -44,7 +37,6 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
     referral_date: null
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [calendarOpen, setCalendarOpen] = useState(false);
 
   // Handle edit data when editData prop changes
   React.useEffect(() => {
@@ -212,51 +204,20 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
             />
           </div>
 
-          {/* Referral Date Calendar */}
+          {/* Referral Date Input */}
           <div className="space-y-2">
-            <Label className={isRTL ? 'text-right block' : 'text-left block'}>
+            <Label htmlFor="referral_date" className={isRTL ? 'text-right block' : 'text-left block'}>
               {language === 'ar' ? 'تاريخ الإحالة' : 'Referral Date'} *
             </Label>
-            <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !formData.referral_date && "text-muted-foreground",
-                    isRTL && "text-right"
-                  )}
-                >
-                  <CalendarIcon className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                  {formData.referral_date ? (
-                    formData.referral_date.toLocaleDateString(
-                      language === 'ar' ? 'ar-AE' : 'en-US',
-                      { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      }
-                    )
-                  ) : (
-                    language === 'ar' ? 'اختر تاريخ الإحالة' : 'Pick referral date'
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={formData.referral_date}
-                  onSelect={(date) => {
-                    handleInputChange('referral_date', date);
-                    setCalendarOpen(false);
-                  }}
-                  disabled={(date) =>
-                    date > new Date() || date < new Date("1900-01-01")
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <Input
+              id="referral_date"
+              type="date"
+              value={formData.referral_date ? formData.referral_date.toISOString().split('T')[0] : ''}
+              onChange={(e) => handleInputChange('referral_date', e.target.value ? new Date(e.target.value) : null)}
+              className={isRTL ? 'text-right' : 'text-left'}
+              max={new Date().toISOString().split('T')[0]}
+              min="1900-01-01"
+            />
           </div>
 
           <DialogFooter className="gap-2">

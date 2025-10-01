@@ -30,6 +30,8 @@ import { createCaseDegree } from '@/app/services/api/caseDegrees';
 import { createCasePetition } from '@/app/services/api/CasePetitions';
 import { createExecution } from '@/app/services/api/executions';
 import { createJudicialOrder } from '@/app/services/api/judicialOrders';
+import { createTask } from "@/app/services/api/tasks";
+import { ca } from "date-fns/locale";
 function AddCasePage() {
   const { t } = useTranslations();
 
@@ -68,7 +70,7 @@ function AddCasePage() {
         is_secret: values.is_secret || 0,
         is_archived: values.is_archived || 0
       };
-
+   
       
       // First, create the case
       const employeesFiles = values.caseFiles || [];
@@ -76,6 +78,8 @@ function AddCasePage() {
       const createdCase = await createCase(caseData, values.caseFiles, employeesFiles, courtFiles);
       console.log('Case created successfully:', createdCase);
       const caseId = createdCase.caseId;
+
+
 
       // Then, associate parties with the created case
       if(values.parties && values.parties.length > 0){
@@ -157,6 +161,26 @@ function AddCasePage() {
           });
         }
       }
+
+
+   // add tasks
+      if(values.tasks && values.tasks.length > 0){
+        for(const task of values.tasks){
+            // const { title, description, priority, assigned_to, due_date, case_id } = task;
+
+          await createTask({
+            case_id: caseId,
+            title: task.title,
+            description: task.description,
+            assigned_to: task.assignedTo,
+            due_date: task.dueDate,
+            priority: task.priority,
+            files: task.files || []
+          });
+        }
+      }
+
+
 
       // Show success toast
       toast.dismiss(loadingToast); // Dismiss loading toast first
@@ -310,11 +334,11 @@ function AddCasePage() {
       icon: <NotebookText />,
     },
    
-    // {
-    //   title: t('addCase.tasks'),
-    //   content: <Tasks />,
-    //   icon: <NotebookText />,
-    // },
+    {
+      title: t('addCase.tasks'),
+      content: <Tasks />,
+      icon: <NotebookText />,
+    },
   ];
   
   return (

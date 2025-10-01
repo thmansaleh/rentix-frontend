@@ -156,18 +156,18 @@ function AddPetitionModal({
       />
       
       {/* Modal */}
-      <div className="fixed inset-0 z-50 overflow-y-auto">
-        <div className="flex min-h-screen items-center justify-center p-2 sm:p-4">
-          <div 
-            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all my-4"
-            onClick={(e) => e.stopPropagation()}
-          >
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+        <div 
+          className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all max-h-[95vh] flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
             {/* Header */}
-            <div className="sticky top-0 z-10 flex items-center justify-between bg-white px-4 sm:px-6 py-4 border-b border-gray-200">
+            <div className="flex-shrink-0 z-10 flex items-center justify-between bg-white px-4 sm:px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 truncate pr-4">
                 {title}
               </h3>
               <button
+                type="button"
                 onClick={handleClose}
                 className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
               >
@@ -176,7 +176,7 @@ function AddPetitionModal({
             </div>
 
             {/* Body - Scrollable */}
-            <div className="max-h-[70vh] sm:max-h-[80vh] overflow-y-auto">
+            <div className="flex-1 overflow-y-auto scrollbar-thin">
               <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
                 {/* Submission Date */}
                 <div className="space-y-2">
@@ -187,6 +187,8 @@ function AddPetitionModal({
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
+                                      type="button"
+
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal border hover:border-blue-300 transition-colors h-10 text-sm",
@@ -260,6 +262,8 @@ function AddPetitionModal({
                     {t('petitions.appealDate')}
                   </Label>
                   <Button
+                    type="button"
+                    onClick={() => setCalendarOpen(true)}
                     variant="outline"
                     disabled
                     className={cn(
@@ -322,7 +326,7 @@ function AddPetitionModal({
                       <Label className="text-sm font-medium text-gray-700">
                         {t('files.uploadedFiles')} ({formData.files.length})
                       </Label>
-                      <div className="max-h-32 sm:max-h-40 overflow-y-auto border border-gray-200 rounded-lg">
+                      <div className="max-h-32 sm:max-h-36 overflow-y-auto border border-gray-200 rounded-lg scrollbar-thin">
                         <div className="p-3 space-y-2">
                           {formData.files.map((file, index) => (
                             <div key={file.name + index} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg border">
@@ -336,6 +340,8 @@ function AddPetitionModal({
                                 </div>
                               </div>
                               <Button
+                                              type="button"
+
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => removeFile(index)}
@@ -354,8 +360,10 @@ function AddPetitionModal({
             </div>
 
             {/* Footer - Sticky */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
+            <div className="flex-shrink-0 bg-white border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
               <Button 
+                              type="button"
+
                 variant="outline" 
                 onClick={handleClose}
                 className="w-full sm:w-auto px-4 py-2 text-sm"
@@ -363,6 +371,8 @@ function AddPetitionModal({
                 {t('petitions.cancel')}
               </Button>
               <Button 
+                              type="button"
+
                 onClick={handleSubmit}
                 className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-sm"
                 disabled={!formData.submissionDate || !formData.orderType || formData.judgeDecision === null}
@@ -371,7 +381,6 @@ function AddPetitionModal({
               </Button>
             </div>
           </div>
-        </div>
       </div>
     </>
   )

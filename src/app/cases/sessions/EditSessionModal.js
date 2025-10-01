@@ -161,8 +161,10 @@ const EditSessionModal = ({
     decision: Yup.string().trim(),
     session_date: Yup.date()
       .required(isRtl ? "تاريخ الجلسة مطلوب" : "Session date is required"),
+    session_time: Yup.string()
+      .required(isRtl ? "وقت الجلسة مطلوب" : "Session time is required"),
     note: Yup.string().trim(),
-    link: Yup.string().url(isRtl ? "رابط غير صحيح" : "Invalid URL").trim(),
+    // link: Yup.string().url(isRtl ? "رابط غير صحيح" : "Invalid URL").trim(),
     is_expert_session: Yup.boolean(),
     is_judgment_reserved: Yup.boolean(),
     is_judgment_deferred: Yup.boolean(),
@@ -174,7 +176,10 @@ const EditSessionModal = ({
     initialValues: {
       decision: session?.decision || "",
       session_date: session?.session_date 
-        ? new Date(session.session_date).toISOString().slice(0, 16)
+        ? new Date(session.session_date).toISOString().slice(0, 10)
+        : "",
+      session_time: session?.session_date 
+        ? new Date(session.session_date).toTimeString().slice(0, 5)
         : "",
       note: session?.note || "",
       link: session?.link || "",
@@ -209,10 +214,13 @@ const EditSessionModal = ({
           }
         }
 
+        // Combine date and time for API
+        const combinedDateTime = `${values.session_date}T${values.session_time}:00`;
+
         // Transform data for API
         const updateData = {
           decision: values.decision.trim() || null,
-          session_date: formatDateForMySQL(values.session_date),
+          session_date: formatDateForMySQL(combinedDateTime),
           note: values.note.trim() || null,
           link: values.link.trim() || null,
           is_expert_session: values.is_expert_session,
@@ -406,25 +414,49 @@ const EditSessionModal = ({
                   )}
                 </div>
 
-                {/* Session Date Field */}
-                <div className="space-y-2">
-                  <Label htmlFor="session_date" className="text-sm font-medium text-gray-700">
-                    {isRtl ? "تاريخ الجلسة" : "Session Date"} *
-                  </Label>
-                  <Input
-                    id="session_date"
-                    name="session_date"
-                    type="datetime-local"
-                    value={formik.values.session_date}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
-                  />
-                  {formik.touched.session_date && formik.errors.session_date && (
-                    <p className="text-sm text-red-500">
-                      {formik.errors.session_date}
-                    </p>
-                  )}
+                {/* Session Date and Time Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Session Date Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="session_date" className="text-sm font-medium text-gray-700">
+                      {isRtl ? "تاريخ الجلسة" : "Session Date"} *
+                    </Label>
+                    <Input
+                      id="session_date"
+                      name="session_date"
+                      type="date"
+                      value={formik.values.session_date}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
+                    />
+                    {formik.touched.session_date && formik.errors.session_date && (
+                      <p className="text-sm text-red-500">
+                        {formik.errors.session_date}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Session Time Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="session_time" className="text-sm font-medium text-gray-700">
+                      {isRtl ? "وقت الجلسة" : "Session Time"} *
+                    </Label>
+                    <Input
+                      id="session_time"
+                      name="session_time"
+                      type="time"
+                      value={formik.values.session_time}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
+                    />
+                    {formik.touched.session_time && formik.errors.session_time && (
+                      <p className="text-sm text-red-500">
+                        {formik.errors.session_time}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Note Field */}
@@ -456,7 +488,7 @@ const EditSessionModal = ({
                   <Input
                     id="link"
                     name="link"
-                    type="url"
+                    type="text"
                     value={formik.values.link}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}

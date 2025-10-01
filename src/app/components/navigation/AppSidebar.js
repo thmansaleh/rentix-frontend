@@ -305,7 +305,7 @@ const AppSidebar = () => {
       type: 'category',
       submenu: [
         { id: 'employees', label: t('navigation.employees'), icon: Users },
-        { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
+        // { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
       ]
     },
  
@@ -329,18 +329,18 @@ const AppSidebar = () => {
     //   badge: '5',
     //   badgeColor: 'bg-green-500'
     // },
-    {
-      id: 'settings',
-      label: t('navigation.settings'),
-      icon: Settings2,
-      type: 'category',
-      submenu: [
-        { id: 'settings/general', label: t('navigation.general'), icon: Info },
-        { id: 'settings/profile', label: t('navigation.profile'), icon: User },
-        { id: 'settings/security', label: t('navigation.security'), icon: Shield },
-        { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
-      ]
-    }
+    // {
+    //   id: 'settings',
+    //   label: t('navigation.settings'),
+    //   icon: Settings2,
+    //   type: 'category',
+    //   submenu: [
+    //     { id: 'settings/general', label: t('navigation.general'), icon: Info },
+    //     { id: 'settings/profile', label: t('navigation.profile'), icon: User },
+    //     { id: 'settings/security', label: t('navigation.security'), icon: Shield },
+    //     { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
+    //   ]
+    // }
   ], [t]);
 
   // Memoized callbacks
@@ -585,11 +585,11 @@ const AppSidebar = () => {
           <div className="bg-sidebar-accent rounded-xl p-3 border border-sidebar-border/50 backdrop-blur-sm">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
-                {user?.name ? user.name.charAt(0) : 'U'}
+                {user?.employeeName ? user.employeeName.charAt(0) : 'U'}
               </div>
               <div className="flex-1 transition-opacity duration-300">
                 <p className="text-sidebar-foreground font-medium text-sm">
-                  {user?.name || (isRTL ? 'مستخدم' : 'User')}
+                  {user?.employeeName || (isRTL ? 'مستخدم' : 'User')}
                 </p>
                 <p className="text-sidebar-foreground/70 text-xs">
                   {userRole || (isRTL ? 'مستخدم' : 'User')}

@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import useSWR from 'swr';
+import { useRouter } from 'next/navigation';
 import { Eye, Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale } from 'lucide-react';
 import { getCases } from '@/app/services/api/cases';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -9,6 +10,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 import AddSessionModal from '@/app/cases/modals/AddSessionModal';
 import AddTaskModal from '@/app/cases/modals/AddTaskModal';
 import AddCaseDegreeModal from '@/app/cases/modals/AddCaseDegreeModal';
+import AddExecutionModal from '@/app/cases/[id]/edit/executions/AddExecutionModal';
 import CasesSearchForm from '@/app/cases/modals/CasesSearchForm';
 import {
   Table,
@@ -32,11 +34,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 const CasesPage = () => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
+  const router = useRouter();
   
   // Modal state
   const [isAddSessionModalOpen, setIsAddSessionModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isAddCaseDegreeModalOpen, setIsAddCaseDegreeModalOpen] = useState(false);
+  const [isAddExecutionModalOpen, setIsAddExecutionModalOpen] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   
   // Fetch cases data using SWR
@@ -115,8 +119,7 @@ const CasesPage = () => {
   };
 
   const handleEdit = (caseId) => {
-    console.log('Edit case:', caseId);
-    // TODO: Implement edit functionality
+    router.push(`/cases/${caseId}/edit`);
   };
 
   const handleDelete = (caseId) => {
@@ -150,8 +153,8 @@ const CasesPage = () => {
   };
 
   const handleAddExecution = (caseId) => {
-    console.log('Add execution to case:', caseId);
-    // TODO: Implement add execution functionality
+    setSelectedCaseId(caseId);
+    setIsAddExecutionModalOpen(true);
   };
 
   const handleAddPetition = (caseId) => {
@@ -391,19 +394,19 @@ const CasesPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align={isRTL ? 'start' : 'end'}>
-                            <DropdownMenuItem onClick={() => handleView(case_.id)}>
+                            {/* <DropdownMenuItem onClick={() => handleView(case_.id)}>
                               <Eye className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.view')}
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                             <DropdownMenuItem onClick={() => handleEdit(case_.id)}>
                               <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.edit')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
+                            {/* <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
                               <FileText className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.addNote')}
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                             <DropdownMenuItem onClick={() => handleAddSession(case_.id)}>
                               <Calendar className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.addSession')}
@@ -416,10 +419,10 @@ const CasesPage = () => {
                               <Gavel className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.addExecution')}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddPetition(case_.id)}>
+                            {/* <DropdownMenuItem onClick={() => handleAddPetition(case_.id)}>
                               <FileSearch className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.addPetition')}
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                             <DropdownMenuItem onClick={() => handleAddCourtLevel(case_.id)}>
                               <Scale className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {language === 'ar' ? 'اضافة درجة تقاضي' : 'Add Court Level'}
@@ -466,6 +469,13 @@ const CasesPage = () => {
         onClose={() => setIsAddCaseDegreeModalOpen(false)}
         caseId={selectedCaseId}
         onCaseDegreeAdded={handleCaseDegreeAdded}
+      />
+
+      {/* Add Execution Modal */}
+      <AddExecutionModal
+        isOpen={isAddExecutionModalOpen}
+        onClose={() => setIsAddExecutionModalOpen(false)}
+        caseId={selectedCaseId}
       />
     </div>
   );

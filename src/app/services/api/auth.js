@@ -65,24 +65,31 @@ export const logoutWithRedux = () => async (dispatch) => {
 export const checkAuthStatus = () => async (dispatch) => {
   try {
     dispatch({ type: 'auth/loginStart' });
-    const data = await getProfile();
+    const response = await getProfile();
     
-    if (data.success && data.user) {
+    // Check if the response has the expected structure: { success: true, data: { user object } }
+    if (response && response.success && response.data) {
       dispatch({
         type: 'auth/restoreAuth',
         payload: {
-          user: data.user,
-          permissions: data.permissions || []
+          user: response.data,
+          permissions: [] // Set empty array since permissions aren't included in getProfile response
         }
       });
-      return { success: true };
+      return { success: true, user: response.data };
     } else {
+      // Handle case where API returns success: false or no user data
       dispatch({ type: 'auth/logout' });
-      return { success: false };
+      return { success: false, error: 'Authentication failed' };
     }
   } catch (error) {
+    // Log the actual error for debugging
+    console.error('checkAuthStatus error:', error);
     dispatch({ type: 'auth/logout' });
-    return { success: false, error: error.message };
+    return { 
+      success: false, 
+      error: error.response?.data?.message || error.message || 'Authentication check failed'
+    };
   }
 };
 

@@ -126,8 +126,8 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
       .required(t('validation.required')),
     session_time: Yup.string()
       .required(t('validation.required')),
-    link: Yup.string()
-      .url(t('validation.invalidUrl')),
+    // link: Yup.string()
+    //   .url(t('validation.invalidUrl')),
     note: Yup.string(),
     is_expert_session: Yup.boolean(),
     is_judgment_reserved: Yup.boolean()
@@ -332,7 +332,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
                         as={Input}
                         id="link"
                         name="link"
-                        type="url"
+                        type="text"
                         placeholder="https://..."
                         className={`h-12 rounded-xl border-2 transition-all ${
                           errors.link && touched.link 

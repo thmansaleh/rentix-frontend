@@ -142,7 +142,9 @@ function Execution() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
           <CardTitle className="text-lg font-medium">{t('executions.title')}</CardTitle>
-          <Button onClick={() => setIsDialogOpen(true)} size="sm">
+          <Button 
+                          type="button"
+onClick={() => setIsDialogOpen(true)} size="sm">
             <Plus className="h-4 w-4 mr-2" />
             {t('executions.addExecution')}
           </Button>
@@ -218,6 +220,8 @@ function Execution() {
                       <TableCell className="text-center">
                         <div className="flex justify-center space-x-2">
                           <Button
+                                          type="button"
+
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEditExecution(index)}
@@ -225,6 +229,8 @@ function Execution() {
                             <Pen className="h-4 w-4" />
                           </Button>
                           <Button
+                                          type="button"
+
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteExecution(index)}
