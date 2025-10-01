@@ -15,8 +15,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarIcon, X, Upload, File as FileIcon, FileText, Image, FileSpreadsheet, Trash2, Clock } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { CalendarIcon,  File as FileIcon, FileText, Image, FileSpreadsheet, Trash2, Clock,  EyeClosedIcon } from 'lucide-react';
+import {  toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -229,7 +229,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
                   onClick={onClose}
                   className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
                 >
-                  <X className="h-5 w-5" />
+                  <EyeClosedIcon className="h-5 w-5" />
                 </button>
               </div>
             </div>
@@ -397,7 +397,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
                     {/* Files Upload Section */}
                     <div className="space-y-3">
                       <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <Upload className="h-4 w-4" />
+                        <FileIcon className="h-4 w-4" />
                         {language === 'ar' ? 'الملفات' : 'Files'}
                       </Label>
                       
@@ -424,7 +424,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
                           accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.bmp,.webp,.xlsx,.xls,.csv"
                         />
                         <div className="space-y-2">
-                          <Upload className="h-8 w-8 mx-auto text-gray-400" />
+                          <FileIcon className="h-8 w-8 mx-auto text-gray-400" />
                           <div>
                             <p className="text-sm font-medium text-gray-700">
                               {language === 'ar' ? 'اسحب الملفات هنا أو انقر للتصفح' : 'Drop files here or click to browse'}
