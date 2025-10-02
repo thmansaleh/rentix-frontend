@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Plus, File as FileIcon, CircleX, User2, Loader2 } from "lucide-react"
+import { CalendarIcon, Plus, File as FileIcon, CircleX, User2, Loader2, Upload } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function EditTaskModal({ 
