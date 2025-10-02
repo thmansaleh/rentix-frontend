@@ -37,7 +37,8 @@ import {
   Scale,
   Calendar,
   Gavel,
-  FolderPlus
+  FolderPlus,
+  CircleX
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
