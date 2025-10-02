@@ -17,7 +17,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calendar, User, AlertCircle, CheckCircle, Clock, XCircle, Plus, Pen, Trash2 } from 'lucide-react'
+import { Calendar, User, AlertCircle, CheckCircle, Clock, XCircle, Plus, Trash2, Eye } from 'lucide-react'
 import { getEmployees } from "@/app/services/api/employees"
 import { deleteTask } from "@/app/services/api/tasks"
 import { useCaseTasks } from '@/hooks/useCaseTasks'
@@ -322,6 +322,7 @@ function Tasks({ caseId }) {
                 <TableHead>{t('tasks.title') || 'Title'}</TableHead>
                 <TableHead>{t('tasks.description') || 'Description'}</TableHead>
                 <TableHead>{t('tasks.assignedTo') || 'Assigned To'}</TableHead>
+                <TableHead>{t('tasks.assignedBy') || 'Assigned By'}</TableHead>
                 <TableHead>{t('tasks.priority') || 'Priority'}</TableHead>
                 <TableHead>{t('tasks.status') || 'Status'}</TableHead>
                 <TableHead>{t('tasks.dueDate') || 'Due Date'}</TableHead>
@@ -340,6 +341,12 @@ function Tasks({ caseId }) {
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4" />
                       {task.assigned_to_name || getEmployeeName(task.assigned_to) || 'Unassigned'}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      {task.created_by || 'Unknown'}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -372,7 +379,7 @@ function Tasks({ caseId }) {
                         onClick={() => handleEditTask(task)}
                         className="h-8 w-8 p-0 hover:bg-blue-100"
                       >
-                        <Pen className="h-4 w-4 text-blue-600" />
+                        <Eye className="h-4 w-4 text-blue-600" />
                       </Button>
                       <Button
                         variant="ghost"

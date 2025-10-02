@@ -263,6 +263,7 @@ function AddTaskModal({
             />
           </div>
 
+          <div className="flex gap-4 items-center">
           {/* Task Type */}
           {taskTypeOptions && taskTypeOptions.length > 0 && (
             <div className="space-y-2">
@@ -338,7 +339,7 @@ function AddTaskModal({
               </SelectContent>
             </Select>
           </div>
-
+</div>
           {/* Due Date */}
           <div className="space-y-2">
             <Label htmlFor="add-dueDate">{t('tasks.dueDate')}</Label>

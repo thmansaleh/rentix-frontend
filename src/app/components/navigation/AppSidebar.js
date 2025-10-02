@@ -38,7 +38,8 @@ import {
   Calendar,
   Gavel,
   FolderPlus,
-  CircleX
+  CircleX,
+  CheckSquare
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
@@ -296,6 +297,7 @@ const AppSidebar = () => {
         { id: 'cases', label: t('navigation.cases'), icon: Scale },
         { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus },
         { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
+        { id: 'cases/my-tasks', label: t('navigation.myTasks'), icon: CheckSquare },
         // { id: 'judgments', label: t('navigation.issuedJudgments'), icon: Gavel },
       ]
     },

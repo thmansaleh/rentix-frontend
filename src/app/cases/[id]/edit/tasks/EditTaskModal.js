@@ -17,6 +17,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon, Plus, File as FileIcon, CircleX, User2, Loader2, Upload } from "lucide-react"
 import { cn } from "@/lib/utils"
+import TaskDocuments from "./TaskDocuments"
+import TaskComments from "./TaskComments"
 
 function EditTaskModal({ 
   isOpen, 
@@ -35,14 +37,24 @@ function EditTaskModal({
     assignedTo: "",
     dueDate: null,
     priority: "",
-    attachedFiles: []
+    status: "",
+    attachedFiles: [],
+    documents: [],
+    comments: []
   })
 
   // Define options internally
   const priorityOptions = [
     { value: "high", label: "عالية", color: "bg-red-100 text-red-800" },
     { value: "normal", label: "عادية", color: "bg-blue-100 text-blue-800" },
-    { value: "low", label: "منخفضة", color: "bg-green-100 text-green-800" }
+    // { value: "low", label: "منخفضة", color: "bg-green-100 text-green-800" }
+  ]
+
+  const statusOptions = [
+    { value: "pending", label: t('tasks.statusPending') || "في الانتظار", color: "bg-yellow-100 text-yellow-800" },
+    { value: "in_progress", label: t('tasks.statusInProgress') || "قيد التنفيذ", color: "bg-blue-100 text-blue-800" },
+    { value: "completed", label: t('tasks.statusCompleted') || "مكتملة", color: "bg-green-100 text-green-800" },
+    { value: "cancelled", label: t('tasks.statusCancel') || "ملغاة", color: "bg-red-100 text-red-800" }
   ]
 
 
@@ -76,7 +88,10 @@ function EditTaskModal({
         assignedTo: task.assigned_to?.toString() || "",
         dueDate: task.due_date ? new Date(task.due_date) : null,
         priority: task.priority || "",
-        attachedFiles: task.files || []
+        status: task.status || "",
+        attachedFiles: task.files || [],
+        documents: task.documents || [],
+        comments: task.comments || []
       })
     }
   }, [taskData, isOpen])
@@ -90,7 +105,10 @@ function EditTaskModal({
         assignedTo: "",
         dueDate: null,
         priority: "",
-        attachedFiles: []
+        status: "",
+        attachedFiles: [],
+        documents: [],
+        comments: []
       })
     }
   }, [isOpen])
@@ -119,7 +137,7 @@ function EditTaskModal({
   const handleSubmit = async () => {
     if (!taskId || !taskData) return
 
-    if (formData.title && formData.description && formData.assignedTo && formData.dueDate && formData.priority) {
+    if (formData.title && formData.description && formData.assignedTo && formData.dueDate && formData.priority && formData.status) {
       console.log("🔥 EDIT MODAL - Updating task:", taskId, formData)
       
       setIsSubmitting(true)
@@ -130,10 +148,11 @@ function EditTaskModal({
           title: formData.title,
           description: formData.description,
           assigned_to: formData.assignedTo,
-          due_date: formData.dueDate,
+          due_date: formData.dueDate ? format(formData.dueDate, "yyyy-MM-dd") : null,
           priority: formData.priority,
+          status: formData.status,
           case_id: taskData.case_id, // Get case_id from loaded task data
-          files: formData.attachedFiles || []
+          files: formData.attachedFiles || [],
         }
         
         await updateTask(taskId, updateData)
@@ -163,7 +182,7 @@ function EditTaskModal({
   if (taskLoading || !taskData) {
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle className='text-center mr-3'>{t('tasks.editTask') || 'تعديل المهمة'}</DialogTitle>
           </DialogHeader>
@@ -198,7 +217,7 @@ function EditTaskModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className='text-center mr-3'>{t('tasks.editTask') || 'تعديل المهمة'}</DialogTitle>
         </DialogHeader>
@@ -227,6 +246,8 @@ function EditTaskModal({
             />
           </div>
 
+
+<div className="flex items-center gap-4">
           {/* Priority */}
           <div className="space-y-2">
             <Label htmlFor="edit-priority">{t('tasks.priority') || 'الأولوية'}</Label>
@@ -239,6 +260,25 @@ function EditTaskModal({
                   <SelectItem key={priority.value} value={priority.value}>
                     <span className={cn("px-2 py-1 rounded-full text-xs font-medium", priority.color)}>
                       {priority.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Status */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-status">{t('tasks.status') || 'الحالة'}</Label>
+            <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('tasks.selectStatus') || 'اختر الحالة'} />
+              </SelectTrigger>
+              <SelectContent>
+                {statusOptions.map((status) => (
+                  <SelectItem key={status.value} value={status.value}>
+                    <span className={cn("px-2 py-1 rounded-full text-xs font-medium", status.color)}>
+                      {status.label}
                     </span>
                   </SelectItem>
                 ))}
@@ -284,7 +324,10 @@ function EditTaskModal({
             </Select>
           </div>
 
-          {/* Due Date */}
+       
+          </div>
+
+   {/* Due Date */}
           <div className="space-y-2">
             <Label htmlFor="edit-dueDate">{t('tasks.dueDate') || 'تاريخ الاستحقاق'}</Label>
             <Popover>
@@ -309,9 +352,7 @@ function EditTaskModal({
                   mode="single"
                   selected={formData.dueDate || undefined}
                   onSelect={(date) => {
-                    // Format date as YYYY-MM-DD for database compatibility
-                    const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
-                    handleInputChange("dueDate", formattedDate);
+                    handleInputChange("dueDate", date);
                   }}
                   initialFocus
                 />
@@ -319,6 +360,8 @@ function EditTaskModal({
             </Popover>
           </div>
           
+
+          <div className="flex items-center gap-4">
           {/* File Upload Section */}
           <div className="space-y-3">
             <Label htmlFor="editFileUpload" className="text-sm font-medium">
@@ -400,6 +443,27 @@ function EditTaskModal({
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Documents Section */}
+          <div className="border-t flex-1 ">
+            <TaskDocuments 
+              documents={formData.documents}
+              onDocumentsChange={(docs) => handleInputChange('documents', docs)}
+              isEditable={true}
+              taskId={taskId}
+            />
+          </div>
+
+</div>
+          {/* Comments Section */}
+          <div className="border-t pt-4">
+            <TaskComments 
+              comments={formData.comments}
+              onCommentsChange={(comments) => handleInputChange('comments', comments)}
+              isEditable={true}
+              taskId={taskId}
+            />
           </div>
           
           <div className="flex justify-end space-x-2">

@@ -45,15 +45,7 @@ export const updateTask = async (taskId, updatedData) => {
   }
 };
 
-export const deleteTask = async (taskId) => {
-  try {
-    const response = await api.delete(`/tasks/${taskId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting task:", error);
-    throw error;
-  }
-};
+
 
 export const getCaseTasks = async (caseId) => {
   try {
@@ -70,6 +62,55 @@ export const getCaseTasks = async (caseId) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching task by ID:", error);
+    throw error;
+  }
+};
+
+ export const getCreatorTasks = async (employeeId,status) => {
+  try {
+    const response = await api.get(`/tasks/creator/${employeeId}?status=${status}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tasks created by employee:", error);
+    throw error;
+  }
+};
+
+export const addCommentToTask = async (taskId, comment) => {
+  try {
+    const response = await api.post(`/tasks/${taskId}/comments`, {comment: comment});
+    return response.data;
+  } catch (error) {
+    console.error("Error adding task comment:", error);
+    throw error;
+  }
+};
+
+export const deleteTask = async (taskId) => {
+  try {
+    const response = await api.delete(`/tasks/${taskId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    throw error;
+  }
+};
+export const deleteTaskComment = async ( commentId) => {
+  try {
+    const response = await api.delete(`/tasks/comments/${commentId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting task comment:", error);
+    throw error;
+  }
+};  
+
+export const deleteTaskDocument = async (documentId) => {
+  try {
+    const response = await api.delete(`/tasks/documents/${documentId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting task document:", error);
     throw error;
   }
 };
