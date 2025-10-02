@@ -15,7 +15,7 @@ import { useParams } from "next/navigation"
 import { FormikProvider } from "./info/FormikContext"
 import { getCaseById } from "@/app/services/api/cases"
 import Tasks from "./tasks/Tasks"
-function page() {
+function Page() {
     const { id } = useParams();
     const [caseData, setCaseData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -112,4 +112,4 @@ function page() {
     )
 }
 
-export default page
+export default Page
