@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useCallback } from 'react';
-import { Upload, File, X, FileText, Image, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
+import { Plus, File, Minus, FileText, Image, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -148,7 +148,7 @@ function Files() {
             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt"
           />
           <label htmlFor="parties-file-upload" className="cursor-pointer">
-            <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <Plus className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-sm text-muted-foreground mb-2">
               {isArabic 
                 ? 'اسحب الملفات هنا أو انقر للاختيار'

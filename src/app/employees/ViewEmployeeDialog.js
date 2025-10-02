@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from 'react';
 import useSWR from 'swr';
@@ -144,7 +144,7 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
                 onClick={() => setOpen(false)}
                 className="p-1 rounded-full hover:bg-gray-100 transition-colors"
               >
-                <X className="w-5 h-5" />
+                <Minus className="w-5 h-5" />
               </button>
             </div>
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Save, X, Settings, FileText, Download, Trash2, Upload, Plus } from "lucide-react";
+import { Calendar, Save, Minus, Settings, FileText, Download, Trash2, Plus, Plus } from "lucide-react";
 
 // Helper function to format date for MySQL
 const formatDateForMySQL = (dateString) => {
@@ -374,7 +374,7 @@ const EditSessionModal = ({
               onClick={onClose}
               className="h-8 w-8 p-0 rounded-full hover:bg-gray-200"
             >
-              <X className="h-4 w-4" />
+              <Minus className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -597,7 +597,7 @@ const EditSessionModal = ({
               {/* File Upload Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <Upload className="h-4 w-4 text-gray-500" />
+                  <Plus className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
                     {isRtl ? "رفع الملفات" : "Upload Files"}
                   </h3>
@@ -619,7 +619,7 @@ const EditSessionModal = ({
                     className="hidden"
                   />
                   <div className="flex flex-col items-center gap-2">
-                    <Upload className="h-8 w-8 text-gray-400" />
+                    <Plus className="h-8 w-8 text-gray-400" />
                     <p className="text-sm text-gray-600">
                       {isRtl 
                         ? "انقر لاختيار الملفات أو اسحبها هنا"
@@ -674,7 +674,7 @@ const EditSessionModal = ({
                             onClick={() => removeSelectedFile(index)}
                             className="text-red-600 hover:bg-red-50 h-6 w-6 p-0"
                           >
-                            <X className="h-3 w-3" />
+                            <Minus className="h-3 w-3" />
                           </Button>
                         </div>
                       ))}
@@ -790,7 +790,7 @@ const EditSessionModal = ({
                   disabled={isLoading}
                   className="flex items-center gap-2 px-6"
                 >
-                  <X className="h-4 w-4" />
+                  <Minus className="h-4 w-4" />
                   {isRtl ? "إلغاء" : "Cancel"}
                 </Button>
                 <Button

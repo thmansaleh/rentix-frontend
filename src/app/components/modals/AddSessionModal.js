@@ -24,7 +24,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Minus } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -269,7 +269,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
                       : "border-gray-300 bg-gray-50 hover:bg-gray-100"
                   )}>
                     <div className="flex flex-col items-center space-y-2 text-gray-500">
-                      <Upload className="w-6 h-6" />
+                      <Plus className="w-6 h-6" />
                       <div className="text-sm text-center">
                         <span className="font-medium">
                           {isDragOver 
@@ -312,7 +312,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
                           onClick={() => removeFile(index)}
                           className="h-8 w-8 flex items-center justify-center text-blue-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors flex-shrink-0"
                         >
-                          <X className="w-4 h-4" />
+                          <Minus className="w-4 h-4" />
                         </button>
                       </div>
                     ))}

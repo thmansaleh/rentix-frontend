@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useCallback } from "react"
 import { format } from "date-fns"
@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { Plus, CalendarIcon, Pen, Trash2, Upload, File, X, Check, FileText, Image, FileSpreadsheet } from "lucide-react"
+import { Plus, CalendarIcon, Pen, Trash2, Plus, File, Minus, Check, FileText, Image, FileSpreadsheet } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // Helper function to get file type icon
@@ -312,7 +312,7 @@ function JudicialNotices() {
                           : "border-gray-300 bg-gray-50 hover:bg-gray-100"
                       )}>
                         <div className="flex flex-col items-center space-y-2 text-gray-500">
-                          <Upload className="w-6 h-6" />
+                          <Plus className="w-6 h-6" />
                           <div className="text-sm text-center">
                             <span className="font-medium">
                               {isDragOver ? t('judicialNotices.dropFiles') : t('judicialNotices.clickToAddFiles')}
@@ -351,7 +351,7 @@ function JudicialNotices() {
                               onClick={() => removeFile(index)}
                               className="h-8 w-8 p-0 text-blue-600 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
                             >
-                              <X className="w-4 h-4" />
+                              <Minus className="w-4 h-4" />
                             </Button>
                           </div>
                         ))}
@@ -463,7 +463,7 @@ function JudicialNotices() {
                       />
                       <div className="flex items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
                         <div className="flex flex-col items-center space-y-2 text-gray-500">
-                          <Upload className="w-6 h-6" />
+                          <Plus className="w-6 h-6" />
                           <div className="text-sm text-center">
                             <span className="font-medium">{t('judicialNotices.clickToAddFiles')}</span>
                             <br />
@@ -500,7 +500,7 @@ function JudicialNotices() {
                               onClick={() => removeFile(index)}
                               className="h-8 w-8 p-0 text-blue-600 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
                             >
-                              <X className="w-4 h-4" />
+                              <Minus className="w-4 h-4" />
                             </Button>
                           </div>
                         ))}

@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { format } from "date-fns"
 import { ar } from "date-fns/locale"
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Upload, File as FileIcon, X } from "lucide-react"
+import { CalendarIcon, Plus, File as FileIcon, Minus } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function ExecutionModal({ 
@@ -122,7 +122,7 @@ function ExecutionModal({
                   accept="*/*"
                 />
                 <Button type="button" size="sm" variant="outline" onClick={() => document.querySelector(`input[type="file"]`).click()}>
-                  <Upload className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-2" />
                   {t('executions.upload')}
                 </Button>
               </div>
@@ -145,7 +145,7 @@ function ExecutionModal({
                         onClick={() => removeFile(index)}
                         className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
                       >
-                        <X className="h-4 w-4" />
+                        <Minus className="h-4 w-4" />
                       </Button>
                     </div>
                   ))}

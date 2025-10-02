@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useCallback, useEffect } from "react";
 import { 
@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, X, FileText, Image, FileIcon } from "lucide-react";
+import { Plus, Minus, FileText, Image, FileIcon } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useFormikContext } from '../../FormikContext';
 import { cn } from "@/lib/utils";
@@ -184,7 +184,7 @@ const EditPartyModal = ({ children, party }) => {
               onDrop={handleDrop}
               onClick={() => document.getElementById('edit-party-file-input').click()}
             >
-              <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+              <Plus className="h-6 w-6 mx-auto mb-2 text-gray-400" />
               <p className="text-sm text-gray-600 mb-1">
                 {t('files.dragAndDrop')}
               </p>
@@ -222,7 +222,7 @@ const EditPartyModal = ({ children, party }) => {
                       onClick={() => removeFile(index)}
                       className="text-red-600 hover:text-red-800 hover:bg-red-50"
                     >
-                      <X className="h-4 w-4" />
+                      <Minus className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}

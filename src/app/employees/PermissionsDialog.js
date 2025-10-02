@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Shield, X, Loader2 } from "lucide-react";
+import { Shield, Minus, Loader2 } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { assignPermissionsToEmployee, getEmployeePermissions } from "@/app/services/api/employees";
 import useSWR from "swr";
@@ -108,7 +108,7 @@ export default function PermissionsModal({ trigger,id }) {
                                 onClick={() => setOpen(false)}
                                 className="p-1 hover:bg-muted rounded-full transition-colors"
                             >
-                                <X className="w-5 h-5 text-muted-foreground" />
+                                <Minus className="w-5 h-5 text-muted-foreground" />
                             </button>
                         </div>
 

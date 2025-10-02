@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useCallback, useEffect } from "react"
 import { format } from "date-fns"
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { CalendarIcon, Upload, X, FileText, Image, FileIcon } from "lucide-react"
+import { CalendarIcon, Plus, Minus, FileText, Image, FileIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function EditPetitionModal({ 
@@ -159,7 +159,7 @@ function EditPetitionModal({
                 onClick={handleClose}
                 className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
               >
-                <X className="h-5 w-5" />
+                <Minus className="h-5 w-5" />
               </button>
             </div>
 
@@ -296,7 +296,7 @@ function EditPetitionModal({
                     onDrop={handleDrop}
                     onClick={() => document.getElementById('editPetitionFileUpload').click()}
                   >
-                    <Upload className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-gray-400" />
+                    <Plus className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-gray-400" />
                     <p className="text-sm text-gray-600 mb-1">
                       {t('files.dragAndDrop')}
                     </p>
@@ -340,7 +340,7 @@ function EditPetitionModal({
                                 onClick={() => removeFile(index)}
                                 className="flex-shrink-0 text-red-600 hover:text-red-800 hover:bg-red-50 p-1"
                               >
-                                <X className="h-4 w-4" />
+                                <Minus className="h-4 w-4" />
                               </Button>
                             </div>
                           ))}

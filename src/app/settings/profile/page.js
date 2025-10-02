@@ -8,9 +8,9 @@ import {
   Mail,
   Edit,
   Save,
-  X,
+  Minus,
   Camera,
-  Upload
+  Plus
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -149,7 +149,7 @@ const ProfileSettingsPage = () => {
 
               {isEditing && (
                 <Button variant="outline" className="w-full">
-                  <Upload className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-2" />
                   {t('settings.uploadPhoto')}
                 </Button>
               )}
@@ -173,7 +173,7 @@ const ProfileSettingsPage = () => {
                       onClick={handleEditToggle}
                       disabled={isSaving}
                     >
-                      <X className="h-4 w-4 mr-2" />
+                      <Minus className="h-4 w-4 mr-2" />
                       {t('buttons.cancel')}
                     </Button>
                     <Button

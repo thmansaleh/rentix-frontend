@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2, X } from "lucide-react";
+import { Trash2, Minus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DeleteSessionDialog({ 
@@ -89,7 +89,7 @@ export default function DeleteSessionDialog({
             disabled={isDeleting}
             className="flex items-center mx-3 gap-2"
           >
-            <X className="w-4 h-4" />
+            <Minus className="w-4 h-4" />
             {isRtl ? "إلغاء" : "Cancel"}
           </Button>
           <Button

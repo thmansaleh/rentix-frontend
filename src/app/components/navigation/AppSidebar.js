@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { 
@@ -464,7 +464,7 @@ const AppSidebar = () => {
                   className="p-2 rounded-lg text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
                   aria-label={isRTL ? "إغلاق القائمة" : "Close Menu"}
                 >
-                  <X className="w-5 h-5" />
+                  <Minus className="w-5 h-5" />
                 </button>
               </div>
 

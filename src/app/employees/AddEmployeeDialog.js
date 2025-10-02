@@ -1,11 +1,11 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Shield, Plus, X, CalendarIcon, Loader2 } from "lucide-react";
+import { Shield, Plus, Minus, CalendarIcon, Loader2 } from "lucide-react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
@@ -275,7 +275,7 @@ export default function AddEmployeeModal({ onAdd }) {
             onClick={handleClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X className="w-5 h-5" />
+            <Minus className="w-5 h-5" />
           </button>
         </div>
 
@@ -613,7 +613,7 @@ export default function AddEmployeeModal({ onAdd }) {
                                 </svg>
                               </Button>
                               <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                                <X className="w-4 h-4" />
+                                <Minus className="w-4 h-4" />
                               </Button>
                             </div>
                           </div>

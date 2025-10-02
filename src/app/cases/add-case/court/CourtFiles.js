@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { useFormikContext } from '../FormikContext'
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Upload, File, X, Download } from "lucide-react"
+import { Plus, File, Minus, Download } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function CourtFiles() {
@@ -153,7 +153,7 @@ function CourtFiles() {
               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt,.rtf"
             />
             <div className="flex flex-col items-center gap-2">
-              <Upload className="w-8 h-8 text-gray-400" />
+              <Plus className="w-8 h-8 text-gray-400" />
               <div className="text-sm text-gray-600">
                 <span className="font-medium text-blue-600">{t('court.clickToUpload')}</span>
                 <span className="mx-2">{t('common.or')}</span>
@@ -222,7 +222,7 @@ function CourtFiles() {
                         onClick={() => handleRemoveFile(index)}
                         className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
-                        <X className="w-4 h-4" />
+                        <Minus className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>

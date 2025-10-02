@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { X, Clock, AlertCircle } from "lucide-react";
+import { Minus, Clock, AlertCircle } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import useSWR from "swr";
 import { getEmployeeLogs } from "@/app/services/api/logs";
@@ -102,7 +102,7 @@ export default function ActivityLogModal({ trigger, employeeId }) {
             <div className="flex justify-between items-center p-4 border-b">
               <h2 className="text-lg font-bold">{t('admins.activityLogTitle')}</h2>
               <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
-                <X className="w-5 h-5" />
+                <Minus className="w-5 h-5" />
               </Button>
             </div>
             
