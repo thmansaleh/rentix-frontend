@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, Save, X } from 'lucide-react';
+import { Calendar as CalendarIcon, Save } from 'lucide-react';
 import { createCaseDegree } from '@/app/services/api/caseDegrees';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -255,7 +255,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onCaseDegreeAdded }) => {
               disabled={isLoading}
               className={`${isRTL ? 'ml-auto' : 'mr-auto'}`}
             >
-              <X className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              {/* < className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} /> */}
               {language === 'ar' ? 'إلغاء' : 'Cancel'}
             </Button>
             <Button type="submit" disabled={isLoading}>

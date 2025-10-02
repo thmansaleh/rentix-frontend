@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
-import { X, Loader2, Upload, FileText, Trash2, Calendar as CalendarIcon, Clock, User, Flag, CheckSquare } from 'lucide-react';
+import { Loader2, FileText, Trash2, Calendar as CalendarIcon, Clock, User, Flag, CheckSquare, FilesIcon, EyeClosed, Circle } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { getEmployees } from '@/app/services/api/employees';
@@ -271,7 +271,7 @@ const AddTaskModal = ({ isOpen, onClose, caseId, onTaskAdded }) => {
                 className="rounded-full"
                 disabled={isSubmitting}
               >
-                <X className="h-4 w-4" />
+                <Circle className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -501,7 +501,7 @@ const AddTaskModal = ({ isOpen, onClose, caseId, onTaskAdded }) => {
                       disabled={isSubmitting || isUploadingFiles}
                       className="flex items-center gap-2"
                     >
-                      <Upload className="h-4 w-4" />
+                      <FilesIcon className="h-4 w-4" />
                       {t('tasks.selectFiles')}
                     </Button>
                     <input
