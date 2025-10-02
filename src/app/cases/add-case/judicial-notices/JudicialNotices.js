@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { Plus, CalendarIcon, Pen, Trash2, Plus, File, Minus, Check, FileText, Image, FileSpreadsheet } from "lucide-react"
+import { Plus, CalendarIcon, Pen, Trash2, File, Minus, Check, FileText, Image, FileSpreadsheet } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // Helper function to get file type icon

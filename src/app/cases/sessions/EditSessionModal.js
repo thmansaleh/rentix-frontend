@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Save, Minus, Settings, FileText, Download, Trash2, Plus, Plus } from "lucide-react";
+import { Calendar, Save, Minus, Settings, FileText, Download, Trash2,Plus } from "lucide-react";
 
 // Helper function to format date for MySQL
 const formatDateForMySQL = (dateString) => {

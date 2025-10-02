@@ -19,7 +19,7 @@ import Info from "./info/Info";
 import Parties from "./parties/Parties";
 import Petition from "./petition/Petition";
 import Execution from "./execution/Execution";
-import JudicialNotices from "./judicial-notices/JudicialNotices";
+import JudicialNoticess from "./judicial-notices/JudicialNotices";
 import CaseDegrees from "./case-degrees/CaseDegrees";
 import Tasks from "./tasks/Tasks";
 import SaveCaseButton from "./SaveCaseButton";
@@ -330,7 +330,7 @@ function AddCasePage() {
     },
     {
       title: t('addCase.judicialNotices'),
-      content: <JudicialNotices />,
+      content: <JudicialNoticess />,
       icon: <NotebookText />,
     },
    
