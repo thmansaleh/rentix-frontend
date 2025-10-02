@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
-import { Plus, CalendarIcon, Pen, Trash2, File, Minus, Check, FileText, Image, FileSpreadsheet } from "lucide-react"
+import { Plus, CalendarIcon, Pen, Trash2, File, CircleX, Check, FileText, Image, FileSpreadsheet } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // Helper function to get file type icon
@@ -351,7 +351,7 @@ function JudicialNotices() {
                               onClick={() => removeFile(index)}
                               className="h-8 w-8 p-0 text-blue-600 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
                             >
-                              <Minus className="w-4 h-4" />
+                              <CircleX className="w-4 h-4" />
                             </Button>
                           </div>
                         ))}
@@ -500,7 +500,7 @@ function JudicialNotices() {
                               onClick={() => removeFile(index)}
                               className="h-8 w-8 p-0 text-blue-600 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
                             >
-                              <Minus className="w-4 h-4" />
+                              <CircleX className="w-4 h-4" />
                             </Button>
                           </div>
                         ))}

@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import React, { useState } from 'react';
-import { Save, Minus } from 'lucide-react';
+import { Save, CircleX } from 'lucide-react';
 import { useFormikContext } from 'formik';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -228,7 +228,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
               disabled={isLoading}
               className={`${isRTL ? 'ml-auto' : 'mr-auto'}`}
             >
-              <Minus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              <CircleX className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
               {language === 'ar' ? 'إلغاء' : 'Cancel'}
             </Button>
             <Button type="button" disabled={isLoading} onClick={handleSubmit}>

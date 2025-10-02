@@ -144,7 +144,7 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
                 onClick={() => setOpen(false)}
                 className="p-1 rounded-full hover:bg-gray-100 transition-colors"
               >
-                <Minus className="w-5 h-5" />
+                <CircleX className="w-5 h-5" />
               </button>
             </div>
 

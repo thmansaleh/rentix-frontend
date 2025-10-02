@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Plus, File as FileIcon, Minus, User, User2, Loader2 } from "lucide-react"
+import { CalendarIcon, Plus, File as FileIcon, User2, Loader2, FolderUp,  CircleX } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getEmployees } from "@/app/services/api/employees"
 import { createTask } from "@/app/services/api/tasks"
@@ -417,7 +417,7 @@ function AddTaskModal({
               }}
               onClick={() => document.getElementById('addFileUpload').click()}
             >
-              <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+              <FolderUp className="h-6 w-6 mx-auto mb-2 text-gray-400" />
               <p className="text-sm text-gray-600 mb-1">
                 {t('files.dragAndDrop')}
               </p>
@@ -464,7 +464,7 @@ function AddTaskModal({
                       onClick={() => handleFileRemove(index)}
                       className="h-6 w-6 p-0 text-blue-600 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
                     >
-                      <X className="w-3 h-3" />
+                      <CircleX className="w-3 h-3" />
                     </Button>
                   </div>
                 ))}

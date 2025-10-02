@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { CalendarIcon, Plus, Minus, FileText, Image, FileIcon } from "lucide-react"
+import { CalendarIcon, Plus, CircleX, FileText, Image, FileIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function EditPetitionModal({ 
@@ -159,7 +159,7 @@ function EditPetitionModal({
                 onClick={handleClose}
                 className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
               >
-                <Minus className="h-5 w-5" />
+                <CircleX className="h-5 w-5" />
               </button>
             </div>
 
@@ -340,7 +340,7 @@ function EditPetitionModal({
                                 onClick={() => removeFile(index)}
                                 className="flex-shrink-0 text-red-600 hover:text-red-800 hover:bg-red-50 p-1"
                               >
-                                <Minus className="h-4 w-4" />
+                                <CircleX className="h-4 w-4" />
                               </Button>
                             </div>
                           ))}

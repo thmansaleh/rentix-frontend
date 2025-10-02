@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, UserPlus, Minus, File, FileText, Image, FileIcon } from "lucide-react";
+import { Plus, UserPlus, CircleX, File, FileText, Image, FileIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PartyTypeSelector from "./PartyTypeSelector";
 import PartySelector from "./PartySelector";
@@ -302,7 +302,7 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
                         onClick={() => removeFile(index)}
                         className="text-red-600 hover:text-red-800 hover:bg-red-50"
                       >
-                        <Minus className="h-4 w-4" />
+                        <CircleX className="h-4 w-4" />
                       </Button>
                     </div>
                   ))}

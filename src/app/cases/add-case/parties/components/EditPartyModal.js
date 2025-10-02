@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Minus, FileText, Image, FileIcon } from "lucide-react";
+import { Plus, CircleX, FileText, Image, FileIcon } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useFormikContext } from '../../FormikContext';
 import { cn } from "@/lib/utils";
@@ -222,7 +222,7 @@ const EditPartyModal = ({ children, party }) => {
                       onClick={() => removeFile(index)}
                       className="text-red-600 hover:text-red-800 hover:bg-red-50"
                     >
-                      <Minus className="h-4 w-4" />
+                      <CircleX className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}

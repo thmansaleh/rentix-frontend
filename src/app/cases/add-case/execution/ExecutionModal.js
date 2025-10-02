@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Plus, File as FileIcon, Minus } from "lucide-react"
+import { CalendarIcon, Plus, File as FileIcon, CircleX } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function ExecutionModal({ 
@@ -145,7 +145,7 @@ function ExecutionModal({
                         onClick={() => removeFile(index)}
                         className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
                       >
-                        <Minus className="h-4 w-4" />
+                        <CircleX className="h-4 w-4" />
                       </Button>
                     </div>
                   ))}

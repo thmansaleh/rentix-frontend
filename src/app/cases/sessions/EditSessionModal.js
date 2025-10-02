@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Save, Minus, Settings, FileText, Download, Trash2,Plus } from "lucide-react";
+import { Calendar, Save, Settings, FileText, Download, Trash2,Plus, CircleX } from "lucide-react";
 
 // Helper function to format date for MySQL
 const formatDateForMySQL = (dateString) => {
@@ -374,7 +374,7 @@ const EditSessionModal = ({
               onClick={onClose}
               className="h-8 w-8 p-0 rounded-full hover:bg-gray-200"
             >
-              <Minus className="h-4 w-4" />
+              <CircleX className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -674,7 +674,7 @@ const EditSessionModal = ({
                             onClick={() => removeSelectedFile(index)}
                             className="text-red-600 hover:bg-red-50 h-6 w-6 p-0"
                           >
-                            <Minus className="h-3 w-3" />
+                            <CircleX className="h-3 w-3" />
                           </Button>
                         </div>
                       ))}
@@ -790,7 +790,7 @@ const EditSessionModal = ({
                   disabled={isLoading}
                   className="flex items-center gap-2 px-6"
                 >
-                  <Minus className="h-4 w-4" />
+                  <CircleX className="h-4 w-4" />
                   {isRtl ? "إلغاء" : "Cancel"}
                 </Button>
                 <Button
