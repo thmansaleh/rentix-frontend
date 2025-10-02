@@ -26,7 +26,8 @@ import {
   AlertCircle,
   Loader2,
   X,
-  Save
+  Save,
+  Minus
 } from 'lucide-react';
 
 const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {

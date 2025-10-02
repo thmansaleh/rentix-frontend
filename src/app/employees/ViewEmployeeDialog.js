@@ -23,7 +23,8 @@ import {
   FileText,
   AlertCircle,
   Loader2,
-  X
+  X,
+  CircleX
 } from 'lucide-react';
 
 const ViewEmployeeDialog = ({ employeeId, trigger }) => {
