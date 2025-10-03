@@ -64,6 +64,7 @@ function Page() {
         {label: "التنفيذات", value: "executions", Component:<Executions caseId={id}/>},
         {label: "الاشعارات القضائية", value: "notifications", Component:<Notifications caseId={id}/>},
         {label: "المهام", value: "tasks", Component:<Tasks caseId={id}/>},
+        {label: "المذكرات", value: "memos", Component:<div>comming soon</div>},
     ];
     
     // Show loading state

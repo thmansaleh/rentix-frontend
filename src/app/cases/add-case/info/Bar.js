@@ -60,6 +60,7 @@ function Bar() {
             const IconComponent = item.icon
             return (
               <button
+                type='button'
                 key={item.id}
                 onClick={() => item.onChange(!item.value)}
                 className={`

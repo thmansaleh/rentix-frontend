@@ -8,6 +8,10 @@ export const getCaseById = async (id) => {
   const response = await api.get(`/cases/${id}`);
   return response.data;
 }
+export const getAllCaseDetails = async (id) => {
+  const response = await api.get(`/cases/all-details/${id}`);
+  return response.data;
+}
 export const createCase = async (caseData, caseFiles, employeesFiles, courtFiles) => {
  if (caseFiles && caseFiles.length > 0) {
    const uploadedFiles = await uploadFiles(caseFiles);

@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Book, Building2, List, NotebookText, StickyNote, Users } from "lucide-react";
+import {  Building2, List, NotebookText, StickyNote, Users } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -31,7 +31,6 @@ import { createCasePetition } from '@/app/services/api/CasePetitions';
 import { createExecution } from '@/app/services/api/executions';
 import { createJudicialOrder } from '@/app/services/api/judicialOrders';
 import { createTask } from "@/app/services/api/tasks";
-import { ca } from "date-fns/locale";
 function AddCasePage() {
   const { t } = useTranslations();
 
@@ -129,6 +128,7 @@ function AddCasePage() {
             link: session.link,
             is_expert_session: session.isExpertSession,
             note: session.note,
+            decision: session.decision || "",
             files: session.files || []
           });
         }
@@ -261,7 +261,7 @@ function AddCasePage() {
 
   // Validation schema using Yup
   const validationSchema = Yup.object({
-    caseNumber: Yup.string().required(t('validation.caseNumberRequired') || 'Case number is required'),
+    // caseNumber: Yup.string().required(t('validation.caseNumberRequired') || 'Case number is required'),
     caseTypeId: Yup.string().required(t('validation.caseTypeRequired') || 'Case type is required'),
     caseClassificationId: Yup.string().required(t('validation.caseClassificationRequired') || 'Case classification is required'),
     branchId: Yup.string().required(t('validation.branchRequired') || 'Branch is required'),
@@ -348,10 +348,10 @@ function AddCasePage() {
       onSubmit={handleSubmit}
       enableReinitialize={true}
     >
-      {({ values, errors, touched, isSubmitting, setFieldValue, setFieldTouched, submitForm, validateForm, isValid, status }) => (
+      {({ values, errors, touched, isSubmitting, setFieldValue, setFieldTouched, submitForm, validateForm, isValid, status, setTouched }) => (
         <FormikProvider formikProps={{ values, errors, touched, isSubmitting, setFieldValue, setFieldTouched, submitForm }}>
           <Form>
-            <div className="pb-24"> {/* Add bottom padding to prevent content being hidden behind sticky button */}
+            <div className="pb-24 relative"> {/* Add bottom padding to prevent content being hidden behind sticky button */}
               {/* Status Display */}
               {status && (
                 <div className={`mb-4 p-4 rounded-lg ${status.type === 'error' ? 'bg-red-50 border border-red-200' : 'bg-green-50 border border-green-200'}`}>
@@ -360,8 +360,8 @@ function AddCasePage() {
                   </p>
                 </div>
               )}
-              
-              <Accordion type="multiple" defaultValue={["users"]}>
+
+              <Accordion type="multiple" defaultValue={[t('addCase.basicInfo')]}>
                 {accordions.map((accordion, index) => (
                   <AccordionItem className="border-b my-2" value={accordion.title} key={index}>
                     <AccordionTrigger className="hover:no-underline">
@@ -385,6 +385,7 @@ function AddCasePage() {
                 isValid={isValid}
                 isLoading={isSubmitting}
                 formValues={values}
+                setTouched={setTouched}
               />
             </div>
           </Form>

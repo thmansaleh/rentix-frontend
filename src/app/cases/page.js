@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
-import { Eye, Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale } from 'lucide-react';
+import { Eye, Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gavel, FileSearch, User, Scale, Printer } from 'lucide-react';
 import { getCases } from '@/app/services/api/cases';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -12,6 +12,7 @@ import AddTaskModal from '@/app/cases/modals/AddTaskModal';
 import AddCaseDegreeModal from '@/app/cases/modals/AddCaseDegreeModal';
 import AddExecutionModal from '@/app/cases/[id]/edit/executions/AddExecutionModal';
 import CasesSearchForm from '@/app/cases/modals/CasesSearchForm';
+import ExportButtons from '@/app/cases/ExportButtons';
 import {
   Table,
   TableBody,
@@ -172,6 +173,10 @@ const CasesPage = () => {
     mutate();
   };
 
+  const handlePrint = (caseId) => {
+    router.push(`/cases/${caseId}`);
+  };
+
   if (error) {
     return (
       <div className="container mx-auto p-2">
@@ -212,6 +217,11 @@ const CasesPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Export Buttons Section */}
+          <div className="mb-4 pb-4 border-b">
+            <ExportButtons data={cases} t={t} language={language} />
+          </div>
+
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -401,6 +411,10 @@ const CasesPage = () => {
                             <DropdownMenuItem onClick={() => handleEdit(case_.id)}>
                               <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.edit')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handlePrint(case_.id)}>
+                              <Printer className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                              {language === 'ar' ? 'طباعة الملف' : 'Print Case'}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             {/* <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>

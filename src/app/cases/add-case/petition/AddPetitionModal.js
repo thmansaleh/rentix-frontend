@@ -158,7 +158,7 @@ function AddPetitionModal({
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
         <div 
-          className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all max-h-[95vh] flex flex-col"
+          className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all h-[90vh] max-h-[600px] flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
             {/* Header */}
@@ -176,7 +176,7 @@ function AddPetitionModal({
             </div>
 
             {/* Body - Scrollable */}
-            <div className="flex-1 overflow-y-auto scrollbar-thin">
+            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
                 {/* Submission Date */}
                 <div className="space-y-2">

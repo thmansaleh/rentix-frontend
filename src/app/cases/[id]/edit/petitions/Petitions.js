@@ -207,7 +207,7 @@ function Petitions({ caseId }) {
                     </span>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {formatDateTime(petition['created at'])}
+                    {formatDateTime(petition['created_at'])}
                   </TableCell>
                   <TableCell>
                     <Button

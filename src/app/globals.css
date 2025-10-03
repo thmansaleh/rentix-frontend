@@ -348,3 +348,72 @@
   scrollbar-width: thin;
   scrollbar-color: rgb(209 213 219) rgb(243 244 246);
 }
+
+/* Print Styles - Hide everything except print content */
+@media print {
+  /* Hide navigation, sidebars, and headers */
+  aside, header, nav, .sidebar, .navigation {
+    display: none !important;
+  }
+  
+  /* Hide print button when printing */
+  .print-hide {
+    display: none !important;
+  }
+  
+  /* Ensure the main content is visible and full width */
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  
+  /* Full width for print container */
+  .print-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  .print-full-width {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+  }
+  
+  /* Preserve colors and backgrounds */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Optimize page breaks */
+  .print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Remove shadows for cleaner printing */
+  .print-no-shadow {
+    box-shadow: none !important;
+  }
+  
+  /* Ensure proper page margins */
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+  
+  /* Remove body overflow */
+  body {
+    overflow: visible !important;
+  }
+  
+  /* Hide scrollbars in print */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

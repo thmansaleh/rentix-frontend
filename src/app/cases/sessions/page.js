@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
 import EditSessionModal from "./EditSessionModal";
 import DeleteSessionDialog from "./DeleteSessionDialog";
+import SessionsExportButtons from "./SessionsExportButtons";
 import { deleteSession } from "@/app/services/api/sessions";
 
 export default function SessionsPage() {
@@ -143,6 +144,11 @@ export default function SessionsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Export Buttons Section */}
+          <div className="mb-4 pb-4 border-b">
+            <SessionsExportButtons data={sessions} language={language} />
+          </div>
+
           {sessions.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground">

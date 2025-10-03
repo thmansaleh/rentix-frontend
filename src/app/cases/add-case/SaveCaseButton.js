@@ -4,6 +4,7 @@ import { Save, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { toast } from 'react-toastify';
 
 const SaveCaseButton = ({ 
   isLoading = false, 
@@ -14,6 +15,7 @@ const SaveCaseButton = ({
   onSubmitForm = () => {}, // This will be the Formik submitForm function
   validateForm = () => {}, // Formik's validateForm function
   isValid = true, // Formik's isValid state
+  setTouched = () => {}, // Formik's setTouched function to mark fields as touched
   ...props 
 }) => {
   const { t } = useTranslations();
@@ -32,12 +34,11 @@ const SaveCaseButton = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
     const now = Date.now();
-    
+    console.log(formValues);
     // Prevent rapid successive clicks (debouncing)
     if (now - lastSubmissionTime.current < DEBOUNCE_DELAY) {
-      console.log('Submission blocked: too soon after last submission');
+      // console.log('Submission blocked: too soon after last submission');
       return;
     }
     
@@ -62,6 +63,34 @@ const SaveCaseButton = ({
       // Check if there are validation errors
       if (Object.keys(errors).length > 0) {
         console.log('Form validation failed:', errors);
+        
+        // Mark all fields as touched so errors are displayed
+        const touchedFields = {};
+        const markAllTouched = (obj, prefix = '') => {
+          Object.keys(obj).forEach(key => {
+            const fieldPath = prefix ? `${prefix}.${key}` : key;
+            if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+              markAllTouched(obj[key], fieldPath);
+            } else {
+              touchedFields[fieldPath] = true;
+            }
+          });
+        };
+        markAllTouched(errors);
+        
+        // Set all fields as touched
+        if (setTouched) {
+          setTouched(touchedFields);
+        }
+        
+        // Show error toast with the first error message
+        const firstError = Object.values(errors)[0];
+        const errorMessage = typeof firstError === 'string' 
+          ? firstError 
+          : (typeof firstError === 'object' ? Object.values(firstError)[0] : 'يرجى ملء جميع الحقول المطلوبة');
+        
+        toast.error(errorMessage || 'يرجى ملء جميع الحقول المطلوبة');
+        
         setIsSubmitting(false);
         return;
       }
@@ -96,8 +125,7 @@ const SaveCaseButton = ({
   const isButtonDisabled = isLoading || disabled || isSubmitting;
 
   return (
-    <div className={`sticky bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="max-w-7xl sticky  bottom-0 left-0 right-0 z-10 h-20 bg-white w-full flex items-center justify-between">
       
 
         {/* Action buttons */}
@@ -137,7 +165,7 @@ const SaveCaseButton = ({
       </div>
 
       
-    </div>
+ 
   );
 };
 

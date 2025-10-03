@@ -93,7 +93,7 @@ export const FormikProvider = ({ children, caseId, caseData }) => {
   }, [initialValues]);
 
   const validationSchema = Yup.object().shape({
-    case_number: Yup.string().required('Case number is required'),
+    // case_number: Yup.string().required('Case number is required'),
     police_station_id: Yup.string().required('Police station is required'),
     public_prosecution_id: Yup.string().required('Public prosecution is required'),
     court_id: Yup.string().required('Court is required'),

@@ -215,7 +215,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
               value={formData.referral_date ? formData.referral_date.toISOString().split('T')[0] : ''}
               onChange={(e) => handleInputChange('referral_date', e.target.value ? new Date(e.target.value) : null)}
               className={isRTL ? 'text-right' : 'text-left'}
-              max={new Date().toISOString().split('T')[0]}
+              // max={new Date().toISOString().split('T')[0]}
               min="1900-01-01"
             />
           </div>

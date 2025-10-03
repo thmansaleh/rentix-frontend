@@ -11,7 +11,7 @@ export const createExecution = async (executionData) => {
 };
 
 export const getExecutionByCaseId = async (caseId) => {
-  const response = await api.get(`/executions?case_id=${caseId}`);
+  const response = await api.get(`/executions/case/${caseId}`);
   return response.data;
 };
 

@@ -10,9 +10,13 @@ const messages = {
 };
 
 export const useTranslations = (namespace = null) => {
-  const { language } = useLanguage();
+  const { language, isLoading } = useLanguage();
 
   const t = (key, params = {}) => {
+    // Return empty string or key while loading
+    if (isLoading) {
+      return '';
+    }
     const keys = key.split('.');
     let translation = messages[language];
 

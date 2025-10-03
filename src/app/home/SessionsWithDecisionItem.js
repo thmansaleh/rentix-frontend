@@ -216,7 +216,7 @@ function SessionsWithDecisionItem({
             <Calendar className="w-4 h-4 animate-pulse text-purple-600" />
             <span>{tSessions('labels.deadline')} </span>
             <span className="font-medium text-gray-900">
-              {deadlineInfo ? `${displayCaseType === 'Criminal' ? '15' : '30'} ${tSessions('labels.day')} (${deadlineInfo.deadlineDate})` : tSessions('labels.notCalculated')}
+              {deadlineInfo ? ` (${deadlineInfo.deadlineDate})` : tSessions('labels.notCalculated')}
             </span>
           </div>
           
@@ -233,10 +233,41 @@ function SessionsWithDecisionItem({
               ) : (
                 <Clock className="w-4 h-4 animate-pulse" />
               )}
-              <span>
+              <span className="flex items-center gap-2">
+                {/* {deadlineInfo.isOverdue ? '⚠️' : '⏰'}  */}
                 {deadlineInfo.isOverdue 
-                  ? `⚠️ ${tSessions('labels.overdue')} ${Math.abs(deadlineInfo.daysRemaining)} ${Math.abs(deadlineInfo.daysRemaining) === 1 ? tSessions('labels.day') : tSessions('labels.days')}` 
-                  : `⏰ ${tSessions('labels.remaining')} ${deadlineInfo.daysRemaining} ${deadlineInfo.daysRemaining === 1 ? tSessions('labels.day') : tSessions('labels.days')}`
+                  ? `${tSessions('labels.overdue')} `
+                  : `${tSessions('labels.remaining')} `
+                }
+                <div className="relative inline-flex items-center justify-center">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white relative z-10 ${
+                    deadlineInfo.isOverdue 
+                      ? 'bg-red-500' 
+                      : deadlineInfo.isUrgent 
+                        ? 'bg-orange-500' 
+                        : 'bg-green-500'
+                  }`}>
+                    {Math.abs(deadlineInfo.daysRemaining)}
+                  </div>
+                  {/* Glowing/flashing rings */}
+                  <div className={`absolute inset-0 rounded-full animate-ping ${
+                    deadlineInfo.isOverdue 
+                      ? 'bg-red-400' 
+                      : deadlineInfo.isUrgent 
+                        ? 'bg-orange-400' 
+                        : 'bg-green-400'
+                  } opacity-75`}></div>
+                  <div className={`absolute inset-[-2px] rounded-full animate-pulse ${
+                    deadlineInfo.isOverdue 
+                      ? 'bg-red-300' 
+                      : deadlineInfo.isUrgent 
+                        ? 'bg-orange-300' 
+                        : 'bg-green-300'
+                  } opacity-50`} style={{animationDelay: '0.5s'}}></div>
+                </div>
+                {deadlineInfo.daysRemaining === 1 || Math.abs(deadlineInfo.daysRemaining) === 1 
+                  ? ` ${tSessions('labels.day')}` 
+                  : ` ${tSessions('labels.days')}`
                 }
               </span>
             </div>

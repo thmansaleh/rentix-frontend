@@ -45,7 +45,7 @@ function Inputs({ formikProps }) {
       {/* Case Number */}
       <div className="space-y-2">
         <Label htmlFor="case_number">
-          {t('caseForm.caseNumber')} <span className="text-red-500">*</span>
+          {t('caseForm.caseNumber')} 
         </Label>
         <Input
           id="case_number"
@@ -53,10 +53,9 @@ function Inputs({ formikProps }) {
           type="text"
           value={values.case_number}
           onChange={handleChange}
-          onBlur={handleBlur}
           placeholder={t('caseForm.enterCaseNumber')}
           className={`w-full ${errors.case_number && touched.case_number ? 'border-red-500' : ''}`}
-          required
+          
         />
         {errors.case_number && touched.case_number && (
           <div className="text-red-500 text-sm">{errors.case_number}</div>

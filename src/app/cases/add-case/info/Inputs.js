@@ -48,7 +48,7 @@ function Inputs() {
       {/* Case Number */}
       <div className="space-y-2">
         <Label htmlFor="caseNumber">
-          {t('caseForm.caseNumber')} <span className="text-red-500">*</span>
+          {t('caseForm.caseNumber')} 
         </Label>
         <Input
           id="caseNumber"
@@ -58,7 +58,7 @@ function Inputs() {
           onSubmit={() => setFieldTouched('caseNumber', true)}
           placeholder={t('caseForm.enterCaseNumber')}
           className={`w-full ${errors.caseNumber && touched.caseNumber ? 'border-red-500' : ''}`}
-          required
+          
         />
         {errors.caseNumber && touched.caseNumber && (
           <div className="text-red-500 text-sm">{errors.caseNumber}</div>
@@ -151,7 +151,7 @@ function Inputs() {
       {/* Additional Notes */}
       <div className="space-y-2">
         <Label htmlFor="additionalNotes">
-          {t('caseForm.additionalNotes')} <span className="text-red-500">*</span>
+          {t('caseForm.additionalNotes')}
         </Label>
         <Textarea
           id="additionalNotes"
