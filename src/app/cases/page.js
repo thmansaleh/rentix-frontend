@@ -12,6 +12,7 @@ import AddSessionModal from '@/app/cases/modals/AddSessionModal';
 import AddTaskModal from '@/app/cases/modals/AddTaskModal';
 import AddCaseDegreeModal from '@/app/cases/modals/AddCaseDegreeModal';
 import AddExecutionModal from '@/app/cases/[id]/edit/executions/AddExecutionModal';
+import AddMemoModal from '@/app/cases/[id]/edit/memos/AddMemoModal';
 import CasesSearchForm from '@/app/cases/CasesSearchForm';
 import ExportButtons from '@/app/cases/ExportButtons';
 import {
@@ -52,6 +53,7 @@ const CasesPage = () => {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isAddCaseDegreeModalOpen, setIsAddCaseDegreeModalOpen] = useState(false);
   const [isAddExecutionModalOpen, setIsAddExecutionModalOpen] = useState(false);
+  const [isAddMemoModalOpen, setIsAddMemoModalOpen] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   
   // Pagination and search state
@@ -213,8 +215,8 @@ const CasesPage = () => {
   };
 
   const handleAddNote = (caseId) => {
-    console.log('Add note to case:', caseId);
-    // TODO: Implement add note functionality
+    setSelectedCaseId(caseId);
+    setIsAddMemoModalOpen(true);
   };
 
   const handleAddSession = (caseId) => {
@@ -253,6 +255,11 @@ const CasesPage = () => {
   };
 
   const handleCaseDegreeAdded = (newCaseDegree) => {
+    // Refresh the cases data to show any updates
+    mutate();
+  };
+
+  const handleMemoAdded = () => {
     // Refresh the cases data to show any updates
     mutate();
   };
@@ -503,10 +510,10 @@ const CasesPage = () => {
                               {language === 'ar' ? 'طباعة الملف' : 'Print Case'}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            {/* <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
+                            <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
                               <FileText className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.addNote')}
-                            </DropdownMenuItem> */}
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleAddSession(case_.id)}>
                               <Calendar className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.addSession')}
@@ -631,6 +638,14 @@ const CasesPage = () => {
         isOpen={isAddExecutionModalOpen}
         onClose={() => setIsAddExecutionModalOpen(false)}
         caseId={selectedCaseId}
+      />
+
+      {/* Add Memo Modal */}
+      <AddMemoModal
+        isOpen={isAddMemoModalOpen}
+        onClose={() => setIsAddMemoModalOpen(false)}
+        caseId={selectedCaseId}
+        onSuccess={handleMemoAdded}
       />
     </div>
   );

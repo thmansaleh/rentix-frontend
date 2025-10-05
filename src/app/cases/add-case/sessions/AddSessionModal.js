@@ -135,7 +135,7 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
   }
 
   const handleSubmit = () => {
-    if (formData.date && formData.link) {
+    if (formData.date ) {
       const formattedDate = format(formData.date, 'yyyy-MM-dd HH:mm:ss')
       
       const newSession = {
