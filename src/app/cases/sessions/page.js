@@ -282,13 +282,13 @@ export default function SessionsPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem
+                            {/* <DropdownMenuItem
                               onClick={() => handleView(session)}
                               className="cursor-pointer"
                             >
                               <Eye className="mr-2 h-4 w-4" />
                               <span>{isRtl ? "عرض" : "View"}</span>
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                             <DropdownMenuItem
                               onClick={() => handleEdit(session)}
                               className="cursor-pointer"

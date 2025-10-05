@@ -1,9 +1,14 @@
 import { uploadFiles } from "../../../../utils/fileUpload";
 import api from "./axiosInstance";
 
-export const getPartiesByBranch = async (branchId) => {
+export const getAllParties = async (params = {}) => {
   try {
-    const response = await api.get(`/parties/branch/${branchId}`);
+    const queryString = new URLSearchParams(
+      Object.entries(params).filter(([_, value]) => value !== undefined && value !== '')
+    ).toString();
+    
+    const url = queryString ? `/parties?${queryString}` : '/parties';
+    const response = await api.get(url);
     return response.data;
   } catch (error) {
     throw error;
@@ -62,3 +67,18 @@ export const deleteCasePartyDocument = async (caseId, partyId, documentId) => {
   const response = await api.delete(`/cases/${caseId}/party-documents/${partyId}/${documentId}`);
   return response.data;
 }
+
+export const getPartyCases = async (partyId) => {
+  try {
+    const response = await api.get(`/parties/${partyId}/cases`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const getPartiesByBranch = async (branchId) => {
+  const response = await api.get(`/parties/branch/${branchId}`);
+  return response.data;
+};

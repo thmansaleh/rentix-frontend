@@ -349,6 +349,24 @@
   scrollbar-color: rgb(209 213 219) rgb(243 244 246);
 }
 
+/* Hide scrollbar for mobile tabs */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Smooth scroll for tabs on mobile */
+@media (max-width: 768px) {
+  [data-slot="tabs-list"] {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* Print Styles - Hide everything except print content */
 @media print {
   /* Hide navigation, sidebars, and headers */

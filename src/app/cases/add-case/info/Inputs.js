@@ -92,7 +92,7 @@ function Inputs() {
         </Label>
         <Popover>
           <PopoverTrigger asChild>
-            <Button
+            <Button type="button"
               variant="outline"
               className={cn(
                 "w-full justify-start text-left font-normal",

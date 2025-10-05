@@ -100,7 +100,7 @@ function Employees() {
             {isArabic ? 'تعيين الموظفين للقضية' : 'Assign Employees to Case'}
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex  gap-4">
+        <CardContent className="flex flex-wrap  gap-4">
           {/* Lawyer Selection */}
           <div className="space-y-2 ">
             <Label className={isArabic ? 'text-right block' : 'text-left block'}>

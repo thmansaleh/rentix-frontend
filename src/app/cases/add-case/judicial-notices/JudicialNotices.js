@@ -250,7 +250,7 @@ function JudicialNotices() {
                     <Label htmlFor="noticePeriod">{t('judicialNotices.noticePeriod')}</Label>
                     <Input
                       id="noticePeriod"
-                      type="text"
+                      type="number"
                       placeholder={t('judicialNotices.noticePeriodPlaceholder')}
                       value={formData.noticePeriod}
                       onChange={(e) => handleInputChange("noticePeriod", e.target.value)}

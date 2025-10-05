@@ -39,7 +39,8 @@ import {
   Gavel,
   FolderPlus,
   CircleX,
-  CheckSquare
+  CheckSquare,
+  Scroll
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
@@ -298,9 +299,16 @@ const AppSidebar = () => {
         { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus },
         { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
         { id: 'cases/my-tasks', label: t('navigation.myTasks'), icon: CheckSquare },
+        { id: 'cases/memos', label: t('navigation.myMemos'), icon: Scroll },
         // { id: 'judgments', label: t('navigation.issuedJudgments'), icon: Gavel },
       ]
     },
+    // {
+    //   id: 'parties',
+    //   label: t('navigation.parties'),
+    //   icon: Users,
+    //   type: 'link'
+    // },
     {
       id: 'humanResources',
       label: t('navigation.humanResources'),
@@ -451,14 +459,14 @@ const AppSidebar = () => {
               <div className="flex items-center justify-between p-6 border-b border-sidebar-border">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-to-r from-sidebar-primary to-sidebar-primary/80 rounded-xl flex items-center justify-center shadow-lg">
-                    <CarIcon className="w-5 h-5 text-sidebar-primary-foreground" />
+                    <Scale className="w-5 h-5 text-sidebar-primary-foreground" />
                   </div>
                   <div>
                     <h1 className="text-sidebar-foreground font-bold text-xl">
-                      {isRTL ? 'لوحة الإدارة' : 'Admin Panel'}
+                      {isRTL ? 'محمد بني هاشم' : 'Mohammed Bani Hashem'}
                     </h1>
                     <p className="text-sidebar-foreground/70 text-sm">
-                      {isRTL ? 'نظام الإدارة' : 'Management System'}
+                      {isRTL ? 'مكتب محاماة' : 'Law Office'}
                     </p>
                   </div>
                 </div>
@@ -549,14 +557,14 @@ const AppSidebar = () => {
         <header className="p-6 border-b border-sidebar-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-r from-sidebar-primary to-sidebar-primary/80 rounded-xl flex items-center justify-center shadow-lg">
-              <CarIcon className="w-5 h-5 text-sidebar-primary-foreground" />
+              <Scale className="w-5 h-5 text-sidebar-primary-foreground" />
             </div>
             <div className="flex-1 transition-opacity duration-300">
               <h1 className="text-sidebar-foreground font-bold text-xl">
-                {isRTL ? 'لوحة الإدارة' : 'Admin Panel'}
+                {isRTL ? 'محمد بني هاشم' : 'Mohammed Bani Hashem'}
               </h1>
               <p className="text-sidebar-foreground/70 text-sm">
-                {isRTL ? 'نظام الإدارة' : 'Management System'}
+                {isRTL ? 'مكتب محاماة' : 'Law Office'}
               </p>
             </div>
           </div>

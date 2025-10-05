@@ -31,6 +31,8 @@ import { createCasePetition } from '@/app/services/api/CasePetitions';
 import { createExecution } from '@/app/services/api/executions';
 import { createJudicialOrder } from '@/app/services/api/judicialOrders';
 import { createTask } from "@/app/services/api/tasks";
+import { createMemo } from "@/app/services/api/memos";
+import Memos from "./memos/Memos";
 function AddCasePage() {
   const { t } = useTranslations();
 
@@ -46,7 +48,9 @@ function AddCasePage() {
     const loadingToast = toast.loading('جاري انشاء قضية...');
     
     try {
-      console.log('Form values at submission:', values);
+
+      
+      // console.log('Form values at submission:', values);
       
       const caseData = {
         case_number: values.caseNumber || null,
@@ -67,7 +71,8 @@ function AddCasePage() {
         branch_id: values.branchId || null,
         isImportant: values.isImportant || 0,
         is_secret: values.is_secret || 0,
-        is_archived: values.is_archived || 0
+        is_archived: values.is_archived || 0,
+        related_cases: values.related_cases ? values.related_cases.map(c => c.id) : []
       };
    
       
@@ -78,6 +83,7 @@ function AddCasePage() {
       console.log('Case created successfully:', createdCase);
       const caseId = createdCase.caseId;
 
+    
 
 
       // Then, associate parties with the created case
@@ -180,6 +186,21 @@ function AddCasePage() {
         }
       }
 
+      // add memos
+      if(values.memos && values.memos.length > 0){
+        for(const memo of values.memos){
+          await createMemo({
+            case_id: caseId,
+            title: memo.title,
+            submission_date: memo.submission_date,
+            description: memo.description,
+            status: memo.status,
+            admin_note: memo.admin_note,
+            files: memo.files || []
+          });
+        }
+      }
+
 
 
       // Show success toast
@@ -193,7 +214,7 @@ function AddCasePage() {
         touched: {},
         status: {
           type: 'success',
-          message: 'تم انشاء القضية بنجاح وتم إعادة تعيين النموذج'
+          message: 'تم انشاء القضية بنجاح '
         }
       });
 
@@ -255,8 +276,10 @@ function AddCasePage() {
     petition: [],
     litigationStages: [],
     tasks: [],
+    memos: [],
     employeeFiles: [],
     courtFiles: [],
+    related_cases: [], // Related cases field
   };
 
   // Validation schema using Yup
@@ -282,6 +305,7 @@ function AddCasePage() {
     JudicialNotices: Yup.array(),
     petition: Yup.array(),
     tasks: Yup.array(),
+    memos: Yup.array(),
   });
 
   const accordions = [
@@ -337,6 +361,11 @@ function AddCasePage() {
     {
       title: t('addCase.tasks'),
       content: <Tasks />,
+      icon: <NotebookText />,
+    },
+    {
+      title: t('addCase.memos'),
+      content: <Memos />,
       icon: <NotebookText />,
     },
   ];

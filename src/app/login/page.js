@@ -1,16 +1,18 @@
 'use client';
-import  { useState } from 'react';
+import  { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Eye, EyeOff, Lock, Mail, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Lock, User, Loader2, Scale } from 'lucide-react';
 
 // shadcn/ui components
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Checkbox } from '@/components/ui/checkbox';
 import { loginWithRedux } from '../services/api/auth';
 import { selectAuthLoading, selectAuthError, clearError } from '@/redux/slices/authSlice';
+
 export default function Page() {
   const dispatch = useDispatch();
   const authLoading = useSelector(selectAuthLoading);
@@ -20,8 +22,22 @@ export default function Page() {
     email: '',
     password: ''
   });
+  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Load saved credentials on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    if (savedEmail && savedPassword) {
+      setFormData({
+        email: savedEmail,
+        password: savedPassword
+      });
+      setRememberMe(true);
+    }
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -54,10 +70,16 @@ export default function Page() {
       const result = await dispatch(loginWithRedux(formData.email, formData.password));
       
       if (result.success) {
-        // Login successful - the AuthProvider will handle the redirect
+        // Save credentials if remember me is checked
+        if (rememberMe) {
+          localStorage.setItem('rememberedEmail', formData.email);
+          localStorage.setItem('rememberedPassword', formData.password);
+        } else {
+          localStorage.removeItem('rememberedEmail');
+          localStorage.removeItem('rememberedPassword');
+        }
         console.log('Login successful');
       }
-      // If login fails, the error will be handled by the Redux slice
     } catch (err) {
       console.error('Login error:', err);
     }
@@ -80,29 +102,33 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4" dir="rtl">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mb-4">
-            <Lock className="w-6 h-6 text-white" />
+    <div className="bg-slate-50 py-8 px-4" dir="rtl">
+      <div className="w-full max-w-md mx-auto">
+        {/* Header Section */}
+        <div className="text-center flex items-center flex-col mb-6">
+          <div className="mx-auto w-14 h-14 bg-gray-600 rounded-lg flex items-center justify-center mb-3 shadow-md">
+            <Scale className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">نظام Lexra لإدارة مكاتب المحاماة</h1>
-          <p className="text-slate-600">حلكم الشامل لإدارة فعالة وحديثة لمكاتب المحاماة.</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-1">
+            محمد بني هاشم
+          </h1>
+          {/* <p className="text-slate-600 text-center text-sm">مكتب المحاماة</p> */}
         </div>
 
-        <Card className="border-0 shadow-xl">
-          <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-2xl text-center">تسجيل الدخول</CardTitle>
-            {/* <CardDescription className="text-center">
-              أدخل بياناتك للوصول إلى حسابك
-            </CardDescription> */}
+        {/* Login Card */}
+        <Card className="shadow-lg">
+          {/* <div className="text-gray-600 flex items-center p-4">
+            <h2 className="text-xl font-bold  text-gray-900 text-center ">تسجيل الدخول</h2>
+          </div> */}
+          <CardHeader className=" p-4">
+            <h2 className="text-xl font-bold text-gray-900   text-center">تسجيل الدخول</h2>
           </CardHeader>
           
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handleSubmit}>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {authError && (
-                  <Alert variant="destructive" className="mb-4">
+                  <Alert variant="destructive">
                     <AlertDescription>{authError}</AlertDescription>
                   </Alert>
                 )}
@@ -111,20 +137,17 @@ export default function Page() {
                   <Label htmlFor="email" className="text-sm font-medium text-slate-700">
                     اسم المستخدم
                   </Label>
-                  <div className="relative">
-                    <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-                    <Input
-                      id="email"
-                      name="email"
-                      type="text"
-                      placeholder="اسم المستخدم "
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className={`pr-10 h-12 ${errors.email ? 'border-red-500' : ''}`}
-                      disabled={authLoading}
-                      dir="rtl"
-                    />
-                  </div>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="text"
+                    placeholder="أدخل اسم المستخدم"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`h-11 ${errors.email ? 'border-red-500' : ''}`}
+                    disabled={authLoading}
+                    dir="rtl"
+                  />
                   {errors.email && (
                     <p className="text-sm text-red-500 mt-1">{errors.email}</p>
                   )}
@@ -135,7 +158,6 @@ export default function Page() {
                     كلمة المرور
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
                     <Input
                       id="password"
                       name="password"
@@ -143,7 +165,7 @@ export default function Page() {
                       placeholder="أدخل كلمة المرور"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`pr-10 pl-10 h-12 ${errors.password ? 'border-red-500' : ''}`}
+                      className={`h-11 pl-10 ${errors.password ? 'border-red-500' : ''}`}
                       disabled={authLoading}
                       dir="rtl"
                     />
@@ -152,6 +174,7 @@ export default function Page() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
                       disabled={authLoading}
+                      tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -161,9 +184,24 @@ export default function Page() {
                   )}
                 </div>
 
+                {/* Remember Me Checkbox */}
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <Checkbox 
+                    id="rememberMe" 
+                    checked={rememberMe}
+                    onCheckedChange={setRememberMe}
+                  />
+                  <Label 
+                    htmlFor="rememberMe" 
+                    className="text-sm mx-2 text-slate-600 cursor-pointer select-none"
+                  >
+                    تذكرني
+                  </Label>
+                </div>
+
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full h-11"
                   disabled={authLoading}
                 >
                   {authLoading ? (
@@ -177,10 +215,15 @@ export default function Page() {
                 </Button>
               </div>
             </form>
-
-       
           </CardContent>
         </Card>
+
+        {/* Footer */}
+        <div className="mt-4 text-center">
+          <p className="text-slate-500 text-xs">
+            © 2025 مكتب محاماة محمد بني هاشم
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,6 @@
 import React, { useState, useCallback } from 'react';
 import { useFormikContext } from '../FormikContext';
 import { Plus, File, Minus, FileText, Image, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from '@/contexts/LanguageContext';

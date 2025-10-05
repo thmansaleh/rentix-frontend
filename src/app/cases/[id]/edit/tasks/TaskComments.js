@@ -33,7 +33,7 @@ function TaskComments({ comments = [], onCommentsChange, isEditable = true, task
         id: Date.now() + Math.random(),
         comment: newComment.trim(),
         created_at: new Date().toISOString(),
-        commented_by_name: "Current User", // This should come from auth context
+        commented_by_name: 'انت', // This should come from auth context
         isNew: true
       }
 

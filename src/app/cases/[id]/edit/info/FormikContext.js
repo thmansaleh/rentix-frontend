@@ -18,78 +18,77 @@ export const useFormikContext = () => {
 };
 
 export const FormikProvider = ({ children, caseId, caseData }) => {
-  const [initialValues, setInitialValues] = useState({
-    case_number: '',
-    police_station_id: '',
-    public_prosecution_id: '',
-    court_id: '',
-    // Employee IDs should match the type returned by the API (likely numbers)
-    lawyer_id: null,
-    secretary_id: null,
-    legal_advisor_id: null,
-    legal_researcher_id: null,
-    case_classification_id: '',
-    case_type_id: '',
-    counter_case_id: '',
-    fees: '',
-    start_date: '',
-    additional_note: '',
-    topic: '',
-    branch_id: '',
-    isImportant: false,
-    is_secret: false,
-    is_archived: false,
-    employeesFiles: [],
-    courtFiles: [],
-    caseFiles: []
-  });
+  // Format the date to YYYY-MM-DD for input compatibility
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
 
-  // Process case data when it changes
-  useEffect(() => {
-    if (caseData) {
-      console.log('� Processing Case Data from parent:', caseData);
-      
-      // Format the date to YYYY-MM-DD for input compatibility
-      const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
-      };
-
-      const newInitialValues = {
-        case_number: caseData.case_number || '',
-        police_station_id: caseData.police_station_id?.toString() || '',
-        public_prosecution_id: caseData.public_prosecution_id?.toString() || '',
-        court_id: caseData.court_id?.toString() || '',
-        // Keep employee IDs as numbers to match the employee data from API
-        lawyer_id: caseData.lawyer_id || '',
-        secretary_id: caseData.secretary_id || '',
-        legal_advisor_id: caseData.legal_advisor_id || '',
-        legal_researcher_id: caseData.legal_researcher_id || '',
-        case_classification_id: caseData.case_classification_id?.toString() || '',
-        case_type_id: caseData.case_type_id?.toString() || '',
-        counter_case_id: caseData.counter_case_id || '',
-        fees: caseData.fees || '',
-        start_date: formatDate(caseData.start_date),
-        additional_note: caseData.additional_note || '',
-        topic: caseData.topic || '',
-        branch_id: caseData.branch_id?.toString() || '',
-        isImportant: Boolean(caseData.is_important),
-        is_secret: Boolean(caseData.is_secret),
-        is_archived: Boolean(caseData.is_archived),
+  // Process case data directly into initialValues (no useState needed)
+  const initialValues = React.useMemo(() => {
+    if (!caseData) {
+      return {
+        case_number: '',
+        police_station_id: '',
+        public_prosecution_id: '',
+        court_id: '',
+        counter_file_number: '',
+        lawyer_id: null,
+        secretary_id: null,
+        legal_advisor_id: null,
+        legal_researcher_id: null,
+        case_classification_id: '',
+        case_type_id: '',
+        counter_case_id: '',
+        fees: '',
+        start_date: '',
+        additional_note: '',
+        topic: '',
+        branch_id: '',
+        isImportant: false,
+        is_secret: false,
+        is_archived: false,
         employeesFiles: [],
         courtFiles: [],
-        caseFiles: []
+        caseFiles: [],
+        related_cases: []
       };
-      
-      console.log('🚀 Setting new initial values:', newInitialValues);
-      setInitialValues(newInitialValues);
     }
+
+    console.log('📝 Processing Case Data:', caseData);
+
+    return {
+      case_number: caseData.case_number || '',
+      counter_file_number: caseData.counter_file_number || '',
+      police_station_id: caseData.police_station_id?.toString() || '',
+      public_prosecution_id: caseData.public_prosecution_id?.toString() || '',
+      court_id: caseData.court_id?.toString() || '',
+      // Keep employee IDs as numbers to match the employee data from API
+      lawyer_id: caseData.lawyer_id || '',
+      secretary_id: caseData.secretary_id || '',
+      legal_advisor_id: caseData.legal_advisor_id || '',
+      legal_researcher_id: caseData.legal_researcher_id || '',
+      case_classification_id: caseData.case_classification_id?.toString() || '',
+      case_type_id: caseData.case_type_id?.toString() || '',
+      counter_case_id: caseData.counter_case_id || '',
+      fees: caseData.fees || '',
+      start_date: formatDate(caseData.start_date),
+      additional_note: caseData.additional_note || '',
+      topic: caseData.topic || '',
+      branch_id: caseData.branch_id?.toString() || '',
+      isImportant: Boolean(caseData.is_important),
+      is_secret: Boolean(caseData.is_secret),
+      is_archived: Boolean(caseData.is_archived),
+      employeesFiles: [],
+      courtFiles: [],
+      caseFiles: [],
+      related_cases: caseData.relatedCases || []
+    };
   }, [caseData]);
 
-  // Add debugging for initial values changes
+  // Add debugging for initial values
   useEffect(() => {
-    console.log('📊 Initial values updated:', initialValues);
   }, [initialValues]);
 
   const validationSchema = Yup.object().shape({
@@ -114,7 +113,8 @@ export const FormikProvider = ({ children, caseId, caseData }) => {
     is_secret: Yup.boolean(),
     is_archived: Yup.boolean(),
     employeesFiles: Yup.array(),
-    courtFiles: Yup.array()
+    courtFiles: Yup.array(),
+    related_cases: Yup.array()
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -141,7 +141,8 @@ export const FormikProvider = ({ children, caseId, caseData }) => {
       branch_id: parseInt(values.branch_id) || null,
       isImportant: values.isImportant,
       is_secret: values.is_secret,
-      is_archived: values.is_archived
+      is_archived: values.is_archived,
+      related_cases: values.related_cases || []
     };
 
     const employeesFiles = values.employeesFiles || [];

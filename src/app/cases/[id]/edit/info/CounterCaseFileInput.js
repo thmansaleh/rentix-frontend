@@ -24,7 +24,7 @@ function CounterCaseFileInput({ formikProps }) {
   const { values, setFieldValue } = formikProps
   const { t } = useTranslations()
   const [open, setOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState(values.counter_file_number || '')
   const [cases, setCases] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 

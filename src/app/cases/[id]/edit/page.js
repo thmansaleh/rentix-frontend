@@ -15,8 +15,14 @@ import { useParams } from "next/navigation"
 import { FormikProvider } from "./info/FormikContext"
 import { getCaseById } from "@/app/services/api/cases"
 import Tasks from "./tasks/Tasks"
+import Memos from "./memos/Memos"
+import { useTranslations } from "@/hooks/useTranslations"
+import { useLanguage } from "@/contexts/LanguageContext"
 function Page() {
     const { id } = useParams();
+    const { t} = useTranslations();
+    const { language } = useLanguage();
+    const isRTL = language === 'ar';
     const [caseData, setCaseData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -54,17 +60,17 @@ function Page() {
     }, [id]);
     
     const tabs =[
-        {label: "المعلومات الاساسية", value: "info", Component:<Info caseId={id}/> },
-        {label: "المحاكم ومراكز الشرطة", value: "courts", Component:<Court caseId={id}/>},
-        {label: "الموظفين", value: "employees", Component:<Employees caseId={id}/>},
-        {label: "الاطراف", value: "parties", Component:<Parties caseId={id}/>},
-        {label: "مراحل القضية", value: "stages", Component:<Stages caseId={id}/>},
-        {label: "الجلسات", value: "sessions", Component:<Sessions caseId={id}/>},
-        {label: "العرائض", value: "petitions", Component:<Petitions caseId={id}/>},
-        {label: "التنفيذات", value: "executions", Component:<Executions caseId={id}/>},
-        {label: "الاشعارات القضائية", value: "notifications", Component:<Notifications caseId={id}/>},
-        {label: "المهام", value: "tasks", Component:<Tasks caseId={id}/>},
-        {label: "المذكرات", value: "memos", Component:<div>comming soon</div>},
+        {label: t('caseTabs.info'), value: "info", Component:<Info caseId={id}/> },
+        {label: t('caseTabs.courts'), value: "courts", Component:<Court caseId={id}/>},
+        {label: t('caseTabs.employees'), value: "employees", Component:<Employees caseId={id}/>},
+        {label: t('caseTabs.parties'), value: "parties", Component:<Parties caseId={id}/>},
+        {label: t('caseTabs.stages'), value: "stages", Component:<Stages caseId={id}/>},
+        {label: t('caseTabs.sessions'), value: "sessions", Component:<Sessions caseId={id}/>},
+        {label: t('caseTabs.petitions'), value: "petitions", Component:<Petitions caseId={id}/>},
+        {label: t('caseTabs.executions'), value: "executions", Component:<Executions caseId={id}/>},
+        {label: t('caseTabs.notifications'), value: "notifications", Component:<Notifications caseId={id}/>},
+        {label: t('caseTabs.tasks'), value: "tasks", Component:<Tasks caseId={id}/>},
+        {label: t('caseTabs.memos'), value: "memos", Component:<Memos caseId={id}/>},
     ];
     
     // Show loading state
@@ -91,17 +97,30 @@ function Page() {
         );
     }
     
+    // Don't render FormikProvider until we have data
+    if (!caseData) {
+        return (
+            <div className="flex items-center justify-center p-8">
+                <div className="text-center">
+                    <p>No case data available</p>
+                </div>
+            </div>
+        );
+    }
+    
     return (
         <FormikProvider caseId={id} caseData={caseData}>
-            <div>
-                <Tabs dir="rtl" defaultValue="info" >
-                    <TabsList>
-                        {tabs.map((tab) => (
-                            <TabsTrigger className='px-4' key={tab.value} value={tab.value}>
-                                {tab.label}
-                            </TabsTrigger>
-                        ))}
-                    </TabsList>
+            <div className="w-full">
+                <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="info" className="w-full">
+                    <div className="sticky top-0 z-10 bg-background pb-2 md:pb-4">
+                        <TabsList className="w-full md:w-auto">
+                            {tabs.map((tab) => (
+                                <TabsTrigger className='px-3 md:px-4' key={tab.value} value={tab.value}>
+                                    {tab.label}
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
+                    </div>
                     {tabs.map((tab) => (
                         <TabsContent key={tab.value} value={tab.value}>
                             {tab.Component}

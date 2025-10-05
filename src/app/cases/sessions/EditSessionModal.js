@@ -539,58 +539,94 @@ const EditSessionModal = ({
                   </div>
                 </div>
 
-                {/* Checkboxes Group */}
-                <div className="bg-gray-50 p-4 rounded-lg flex items-center gap-x-5">
-                  {/* Expert Session Checkbox */}
-                  <div className="flex items-center space-x-3 space-x-reverse">
-                    <Checkbox
-                      id="is_expert_session"
-                      checked={formik.values.is_expert_session}
-                      onCheckedChange={(checked) => 
-                        formik.setFieldValue("is_expert_session", checked)
-                      }
-                    />
-                    <Label 
-                      htmlFor="is_expert_session" 
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      {isRtl ? "جلسة خبير" : "Expert Session"}
-                    </Label>
+                {/* Session Options - Using Switches */}
+                <div className="space-y-3">
+                  {/* Expert Session Switch */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label 
+                          htmlFor="is_expert_session" 
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          {isRtl ? "جلسة خبير" : "Expert Session"}
+                        </Label>
+                        <p className="text-xs text-gray-500">
+                          {formik.values.is_expert_session 
+                            ? (isRtl ? "هذه جلسة خبير" : "This is an expert session")
+                            : (isRtl ? "ليست جلسة خبير" : "Not an expert session")
+                          }
+                        </p>
+                      </div>
+                      <Switch
+                        id="is_expert_session"
+                        checked={formik.values.is_expert_session}
+                        onCheckedChange={(checked) => 
+                          formik.setFieldValue("is_expert_session", checked)
+                        }
+                      />
+                    </div>
                   </div>
 
-                  {/* Judgment Reserved Checkbox */}
-                  <div className="flex items-center space-x-3 space-x-reverse">
-                    <Checkbox
-                      id="is_judgment_reserved"
-                      checked={formik.values.is_judgment_reserved}
-                      onCheckedChange={(checked) => 
-                        formik.setFieldValue("is_judgment_reserved", checked)
-                      }
-                    />
-                    <Label 
-                      htmlFor="is_judgment_reserved" 
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      {isRtl ? "حجز للحكم" : "Judgment Reserved"}
-                    </Label>
+                  {/* Judgment Reserved Switch */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label 
+                          htmlFor="is_judgment_reserved" 
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          {isRtl ? "حجز للحكم" : "Judgment Reserved"}
+                        </Label>
+                        <p className="text-xs text-gray-500">
+                          {formik.values.is_judgment_reserved 
+                            ? (isRtl ? "الحكم محجوز" : "Judgment is reserved")
+                            : (isRtl ? "الحكم غير محجوز" : "Judgment is not reserved")
+                          }
+                        </p>
+                      </div>
+                      <Switch
+                        id="is_judgment_reserved"
+                        checked={formik.values.is_judgment_reserved}
+                        onCheckedChange={(checked) => {
+                          formik.setFieldValue("is_judgment_reserved", checked);
+                          // Reset is_judgment_deferred when is_judgment_reserved is unchecked
+                          if (!checked) {
+                            formik.setFieldValue("is_judgment_deferred", false);
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
 
-                  {/* Judgment Deferred Checkbox */}
-                  <div className="flex items-center space-x-3 space-x-reverse">
-                    <Checkbox
-                      id="is_judgment_deferred"
-                      checked={formik.values.is_judgment_deferred}
-                      onCheckedChange={(checked) => 
-                        formik.setFieldValue("is_judgment_deferred", checked)
-                      }
-                    />
-                    <Label 
-                      htmlFor="is_judgment_deferred" 
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      {isRtl ? "تأجيل الحكم" : "Judgment Deferred"}
-                    </Label>
-                  </div>
+                  {/* Judgment Deferred Switch - Only show when Judgment Reserved is checked */}
+                  {formik.values.is_judgment_reserved && (
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <Label 
+                            htmlFor="is_judgment_deferred" 
+                            className="text-sm font-medium text-gray-700"
+                          >
+                            {isRtl ? "تأجيل الحكم" : "Judgment Deferred"}
+                          </Label>
+                          <p className="text-xs text-gray-500">
+                            {formik.values.is_judgment_deferred 
+                              ? (isRtl ? "الحكم مؤجل" : "Judgment is deferred")
+                              : (isRtl ? "الحكم غير مؤجل" : "Judgment is not deferred")
+                            }
+                          </p>
+                        </div>
+                        <Switch
+                          id="is_judgment_deferred"
+                          checked={formik.values.is_judgment_deferred}
+                          onCheckedChange={(checked) => 
+                            formik.setFieldValue("is_judgment_deferred", checked)
+                          }
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

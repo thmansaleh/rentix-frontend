@@ -41,6 +41,16 @@ function Branch({ formikProps }) {
     name_en: ''
   })
 
+  // Debug logging to see what value we have and what options are available
+  useEffect(() => {
+    if (data?.data && values.branch_id) {
+      console.log('🏢 Branch - Current value:', values.branch_id, 'Type:', typeof values.branch_id);
+      console.log('🏢 Branch - Available options:', data.data.map(b => ({ id: b.id, type: typeof b.id })));
+      const match = data.data.find(b => b.id.toString() === values.branch_id);
+      console.log('🏢 Branch - Match found:', match);
+    }
+  }, [values.branch_id, data]);
+
   const handleBranchChange = (value) => {
     setFieldValue('branch_id', value)
   }
@@ -90,6 +100,7 @@ function Branch({ formikProps }) {
 
   return (
     <div className="space-y-2">
+      <Label>تغيير الفرع الى</Label>
       <div className="flex items-center gap-2">
         <Select dir={language === 'ar' ? 'rtl' : 'ltr'} value={values.branch_id} onValueChange={handleBranchChange}>
           <SelectTrigger className={`w-full ${errors.branch_id && touched.branch_id ? 'border-red-500' : ''}`}>

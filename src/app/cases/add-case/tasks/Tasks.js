@@ -221,9 +221,9 @@ function Tasks() {
   }
 
   const priorityOptions = [
-    { value: "high", label: "عالية", color: "bg-red-100 text-red-800" },
     { value: "normal", label: "عادية", color: "bg-blue-100 text-blue-800" },
-    { value: "low", label: "منخفضة", color: "bg-green-100 text-green-800" }
+    { value: "high", label: "عالية", color: "bg-yellow-100 text-yellow-800" },
+    { value: "urgent", label: "عاجلة", color: "bg-red-100 text-red-800" }
   ]
 
   const taskTypeOptions = [

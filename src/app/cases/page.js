@@ -7,11 +7,12 @@ import { Eye, Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gav
 import { getCases } from '@/app/services/api/cases';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import { cn } from '@/lib/utils';
 import AddSessionModal from '@/app/cases/modals/AddSessionModal';
 import AddTaskModal from '@/app/cases/modals/AddTaskModal';
 import AddCaseDegreeModal from '@/app/cases/modals/AddCaseDegreeModal';
 import AddExecutionModal from '@/app/cases/[id]/edit/executions/AddExecutionModal';
-import CasesSearchForm from '@/app/cases/modals/CasesSearchForm';
+import CasesSearchForm from '@/app/cases/CasesSearchForm';
 import ExportButtons from '@/app/cases/ExportButtons';
 import {
   Table,
@@ -31,6 +32,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const CasesPage = () => {
   const { isRTL, language } = useLanguage();
@@ -44,17 +54,38 @@ const CasesPage = () => {
   const [isAddExecutionModalOpen, setIsAddExecutionModalOpen] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   
-  // Fetch cases data using SWR
-  const { data: casesData, error, isLoading, mutate } = useSWR('/cases', getCases, {
-    refreshInterval: 300000, // Refresh every 5 minutes
-    revalidateOnFocus: true
-  });
+  // Pagination and search state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useState({});
+  const itemsPerPage = 10;
+  
+  // Build query parameters for API call
+  const queryParams = useMemo(() => ({
+    page: currentPage,
+    limit: itemsPerPage,
+    ...searchParams
+  }), [currentPage, searchParams]);
+  
+  // Fetch cases data using SWR with query parameters
+  const { data: casesData, error, isLoading, mutate } = useSWR(
+    ['/cases', queryParams],
+    ([url, params]) => getCases(params),
+    {
+      refreshInterval: 300000, // Refresh every 5 minutes
+      revalidateOnFocus: true
+    }
+  );
 
   // Process cases data
   const cases = useMemo(() => {
     if (!casesData?.success || !casesData?.data) return [];
     return casesData.data;
   }, [casesData, language]);
+  
+  // Get pagination info
+  const pagination = useMemo(() => {
+    return casesData?.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 };
+  }, [casesData]);
 
   // Helper function to get localized text
   const getLocalizedText = (arText, enText) => {
@@ -111,6 +142,59 @@ const CasesPage = () => {
         {text}
       </Badge>
     );
+  };
+
+  // Handle search
+  const handleSearch = (params) => {
+    setSearchParams({
+      branchId: params.branchId || undefined,
+      fromDate: params.fromDate || undefined,
+      toDate: params.toDate || undefined,
+      fileNumber: params.fileNumber || undefined,
+      caseNumber: params.caseNumber || undefined,
+    });
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages = [];
+    const { totalPages } = pagination;
+    const current = currentPage;
+    
+    if (totalPages <= 7) {
+      // Show all pages if 7 or fewer
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      if (current > 3) {
+        pages.push('ellipsis-start');
+      }
+      
+      // Show pages around current page
+      for (let i = Math.max(2, current - 1); i <= Math.min(totalPages - 1, current + 1); i++) {
+        pages.push(i);
+      }
+      
+      if (current < totalPages - 2) {
+        pages.push('ellipsis-end');
+      }
+      
+      // Always show last page
+      pages.push(totalPages);
+    }
+    
+    return pages;
   };
 
   // Action handlers
@@ -203,17 +287,19 @@ const CasesPage = () => {
       </div>
 
       {/* Search Form */}
-      <CasesSearchForm onSearch={(searchParams) => {
-        // TODO: Handle search functionality later
-        console.log('Search params from cases page:', searchParams);
-      }} />
+      <CasesSearchForm onSearch={handleSearch} />
 
       {/* Cases Table */}
       <Card>
         <CardHeader>
           <CardTitle>{t('navigation.cases')}</CardTitle>
           <CardDescription>
-            {t('casesTable.totalCases')}: {cases.length}
+            {t('casesTable.totalCases')}: {pagination.total}
+            {pagination.totalPages > 1 && (
+              <span className={isRTL ? 'mr-2' : 'ml-2'}>
+                ({language === 'ar' ? 'صفحة' : 'Page'} {currentPage} {language === 'ar' ? 'من' : 'of'} {pagination.totalPages})
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -456,6 +542,61 @@ const CasesPage = () => {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+          )}
+          
+          {/* Pagination Controls */}
+          {!isLoading && cases.length > 0 && pagination.totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                      className={cn(
+                        currentPage === 1 && 'pointer-events-none opacity-50',
+                        'cursor-pointer'
+                      )}
+                    >
+                      {language === 'ar' ? 'السابق' : 'Previous'}
+                    </PaginationPrevious>
+                  </PaginationItem>
+                  
+                  {getPageNumbers().map((page, index) => {
+                    if (page === 'ellipsis-start' || page === 'ellipsis-end') {
+                      return (
+                        <PaginationItem key={`ellipsis-${index}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => handlePageChange(page)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+                  
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => currentPage < pagination.totalPages && handlePageChange(currentPage + 1)}
+                      className={cn(
+                        currentPage === pagination.totalPages && 'pointer-events-none opacity-50',
+                        'cursor-pointer'
+                      )}
+                    >
+                      {language === 'ar' ? 'التالي' : 'Next'}
+                    </PaginationNext>
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           )}
         </CardContent>

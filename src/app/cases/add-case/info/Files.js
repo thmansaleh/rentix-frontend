@@ -172,7 +172,7 @@ function Files() {
                     </div>
                     
                     <div className="flex items-center space-x-1">
-                      <Button
+                      <Button type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() => removeFile(index)}

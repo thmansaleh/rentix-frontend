@@ -9,6 +9,7 @@ import Files from "./Files"
 import Inputs from "./Inputs"
 import SubmitButton from "./SubmitButton"
 import CaseDocuments from "./CaseDocuments"
+import RelatedCases from "./RelatedCases"
 
 function Info({ caseId }) {
   const formikProps = useFormikContext();
@@ -17,7 +18,7 @@ function Info({ caseId }) {
     <Form className="space-y-6 p-4">
       <SubmitButton />
       <Bar formikProps={formikProps} />
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-4">
         <div className="space-y-2">
           <CaseType formikProps={formikProps} />
         </div>
@@ -30,6 +31,9 @@ function Info({ caseId }) {
       </div>
       <Inputs formikProps={formikProps} />
       <Files formikProps={formikProps} />
+      
+      {/* Related Cases Section */}
+      <RelatedCases caseId={caseId} />
       
       {/* Case Documents Section */}
       <CaseDocuments caseId={caseId} />

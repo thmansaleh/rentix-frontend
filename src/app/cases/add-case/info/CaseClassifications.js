@@ -106,7 +106,7 @@ function CaseClassifications() {
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="icon" className="shrink-0">
+            <Button  type="button" variant="outline" size="icon" className="shrink-0">
               <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
@@ -155,7 +155,7 @@ function CaseClassifications() {
               >
                 {t('buttons.cancel')}
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="button" disabled={isSubmitting}>
                 {isSubmitting ? t('caseClassifications.creating') : t('caseClassifications.createCaseClassification')}
               </Button>
             </DialogFooter>

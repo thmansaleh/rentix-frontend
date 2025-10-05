@@ -1,7 +1,21 @@
 import { uploadFiles } from "../../../../utils/fileUpload";
 import api from "./axiosInstance";
-export const getCases = async () => {
-  const response = await api.get(`/cases`);
+
+export const getCases = async (params = {}) => {
+  const queryParams = new URLSearchParams();
+  
+  if (params.page) queryParams.append('page', params.page);
+  if (params.limit) queryParams.append('limit', params.limit);
+  if (params.branchId) queryParams.append('branchId', params.branchId);
+  if (params.fromDate) queryParams.append('fromDate', params.fromDate);
+  if (params.toDate) queryParams.append('toDate', params.toDate);
+  if (params.fileNumber) queryParams.append('fileNumber', params.fileNumber);
+  if (params.caseNumber) queryParams.append('caseNumber', params.caseNumber);
+  
+  const queryString = queryParams.toString();
+  const url = queryString ? `/cases?${queryString}` : '/cases';
+  
+  const response = await api.get(url);
   return response.data;
 }
 export const getCaseById = async (id) => {

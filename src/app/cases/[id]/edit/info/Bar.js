@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext"
 import { Eye, Archive, Star } from "lucide-react"
 import CounterCaseFileInput from './CounterCaseFileInput'
 import { Button } from '@/components/ui/button'
+import RelatedCasesDialog from './RelatedCasesDialog'
 
 function Bar({ formikProps }) {
   const { values, setFieldValue } = formikProps
@@ -54,7 +55,7 @@ function Bar({ formikProps }) {
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {t('caseSettings.title')}
         </h3>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center flex-wrap gap-3">
           {toggleItems.map((item) => {
             const IconComponent = item.icon
             return (
@@ -73,10 +74,12 @@ function Bar({ formikProps }) {
               </Button>
             )
           })}
+
+          <RelatedCasesDialog caseId={formikProps.values.id} />
+      <CounterCaseFileInput formikProps={formikProps} />
         </div>
       </div>
 
-      <CounterCaseFileInput formikProps={formikProps} />
     </div>
   )
 }

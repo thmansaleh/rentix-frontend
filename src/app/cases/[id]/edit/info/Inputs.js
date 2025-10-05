@@ -41,7 +41,7 @@ function Inputs({ formikProps }) {
   }
 
   return (
-    <div className="space-y-4 grid grid-cols-3  md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="space-y-4 grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {/* Case Number */}
       <div className="space-y-2">
         <Label htmlFor="case_number">
