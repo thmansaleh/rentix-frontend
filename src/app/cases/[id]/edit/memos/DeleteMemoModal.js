@@ -44,7 +44,7 @@ export default function DeleteMemoModal({ isOpen, onClose, memoId, memoTitle, on
             <DialogTitle>تأكيد الحذف</DialogTitle>
           </div>
           <DialogDescription className="text-right">
-            هل أنت متأكد من حذف المذكرة "{memoTitle}"؟ هذا الإجراء لا يمكن التراجع عنه.
+            هل أنت متأكد من حذف المذكرة &quot;{memoTitle}&quot;؟ هذا الإجراء لا يمكن التراجع عنه.
           </DialogDescription>
         </DialogHeader>
 
