@@ -379,39 +379,84 @@
     display: none !important;
   }
   
+  /* Critical: Remove all height and overflow restrictions */
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
   /* Ensure the main content is visible and full width */
   main {
     width: 100% !important;
     max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
+    position: static !important;
   }
   
   /* Full width for print container */
   .print-container {
     width: 100% !important;
     max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
     margin: 0 !important;
+    overflow: visible !important;
+    position: static !important;
   }
   
   .print-full-width {
     width: 100% !important;
     max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
     margin: 0 !important;
     padding: 1rem !important;
+    overflow: visible !important;
+  }
+  
+  /* Remove all overflow and height restrictions from divs */
+  div {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
   }
   
   /* Preserve colors and backgrounds */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
   
   /* Optimize page breaks */
   .print-avoid-break {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+  }
+  
+  /* Allow page breaks in tables if needed */
+  table {
+    page-break-inside: auto !important;
+  }
+  
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+  
+  thead {
+    display: table-header-group !important;
   }
   
   /* Remove shadows for cleaner printing */
@@ -425,13 +470,13 @@
     size: A4;
   }
   
-  /* Remove body overflow */
-  body {
-    overflow: visible !important;
-  }
-  
   /* Hide scrollbars in print */
   ::-webkit-scrollbar {
-    display: none;
+    display: none !important;
+  }
+  
+  /* Ensure all content is visible */
+  * {
+    overflow: visible !important;
   }
 }

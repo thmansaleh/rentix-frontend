@@ -108,8 +108,8 @@ function CaseDetailsPage({ params }) {
   };
 
   return (
-    <div className="min-h-screen bg-white p-8 print:p-6 print-container print-full-width" dir="rtl">
-      <div className="max-w-4xl mx-auto space-y-8 print:space-y-6">
+    <div className="min-h-screen bg-white p-8 print:p-6 print:min-h-0 print:h-auto print-container print-full-width" dir="rtl">
+      <div className="max-w-4xl mx-auto space-y-8 print:space-y-6 print:max-w-full">
         {/* Header */}
         <div className="text-center border-b-2 border-gray-300 pb-6 print:pb-4">
             <div className='flex justify-between items-center'>
@@ -212,10 +212,10 @@ function CaseDetailsPage({ params }) {
         </div>
 
         {/* Parties */}
-        {parties && parties.length > 0 && (
-          <div className="space-y-6 print:space-y-4 print-avoid-break">
-            <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">الأطراف ({parties.length})</h2>
-            
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">الأطراف ({parties?.length || 0})</h2>
+          
+          {parties && parties.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
               <Table>
                 <TableHeader>
@@ -254,14 +254,18 @@ function CaseDetailsPage({ params }) {
                 </TableBody>
               </Table>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-8 text-center">
+              <p className="text-gray-500">لا توجد أطراف مسجلة</p>
+            </div>
+          )}
+        </div>
 
         {/* Sessions */}
-        {sessions && sessions.length > 0 && (
-          <div className="space-y-6 print:space-y-4 print-avoid-break">
-            <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">الجلسات ({sessions.length})</h2>
-            
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">الجلسات ({sessions?.length || 0})</h2>
+          
+          {sessions && sessions.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
               <Table>
                 <TableHeader>
@@ -319,14 +323,18 @@ function CaseDetailsPage({ params }) {
                 </TableBody>
               </Table>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-8 text-center">
+              <p className="text-gray-500">لا توجد جلسات مسجلة</p>
+            </div>
+          )}
+        </div>
 
         {/* Tasks */}
-        {tasks && tasks.length > 0 && (
-          <div className="space-y-6 print:space-y-4 print-avoid-break">
-            <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">المهام ({tasks.length})</h2>
-            
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">المهام ({tasks?.length || 0})</h2>
+          
+          {tasks && tasks.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
               <Table>
                 <TableHeader>
@@ -377,14 +385,18 @@ function CaseDetailsPage({ params }) {
                 </TableBody>
               </Table>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-8 text-center">
+              <p className="text-gray-500">لا توجد مهام مسجلة</p>
+            </div>
+          )}
+        </div>
 
         {/* Executions */}
-        {executions && executions.length > 0 && (
-          <div className="space-y-6 print:space-y-4 print-avoid-break">
-            <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">التنفيذ ({executions.length})</h2>
-            
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">التنفيذ ({executions?.length || 0})</h2>
+          
+          {executions && executions.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
               <Table>
                 <TableHeader>
@@ -439,14 +451,18 @@ function CaseDetailsPage({ params }) {
                 </TableBody>
               </Table>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-8 text-center">
+              <p className="text-gray-500">لا توجد سجلات تنفيذ</p>
+            </div>
+          )}
+        </div>
 
         {/* Judicial Notices */}
-        {judicial && judicial.length > 0 && (
-          <div className="space-y-6 print:space-y-4 print-avoid-break">
-            <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">الإشعارات القضائية ({judicial.length})</h2>
-            
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">الإشعارات القضائية ({judicial?.length || 0})</h2>
+          
+          {judicial && judicial.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
               <Table>
                 <TableHeader>
@@ -487,16 +503,20 @@ function CaseDetailsPage({ params }) {
                 </TableBody>
               </Table>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-8 text-center">
+              <p className="text-gray-500">لا توجد إشعارات قضائية</p>
+            </div>
+          )}
+        </div>
 
         {/* Petitions */}
-        {((petitions && petitions.length > 0) || (petition && petition.length > 0)) && (
-          <div className="space-y-6 print:space-y-4 print-avoid-break">
-            <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">
-              العرائض ({(petitions?.length || 0) + (petition?.length || 0)})
-            </h2>
-            
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">
+            العرائض ({(petitions?.length || 0) + (petition?.length || 0)})
+          </h2>
+          
+          {((petitions && petitions.length > 0) || (petition && petition.length > 0)) ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
               <Table>
                 <TableHeader>
@@ -538,14 +558,18 @@ function CaseDetailsPage({ params }) {
                 </TableBody>
               </Table>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-8 text-center">
+              <p className="text-gray-500">لا توجد عرائض مسجلة</p>
+            </div>
+          )}
+        </div>
 
         {/* Degrees */}
-        {degrees && degrees.length > 0 && (
-          <div className="space-y-6 print:space-y-4 print-avoid-break">
-            <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">الدرجات ({degrees.length})</h2>
-            
+        <div className="space-y-6 print:space-y-4 print-avoid-break">
+          <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-2 print:text-xl">الدرجات ({degrees?.length || 0})</h2>
+          
+          {degrees && degrees.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden print-no-shadow">
               <Table>
                 <TableHeader>
@@ -572,8 +596,12 @@ function CaseDetailsPage({ params }) {
                 </TableBody>
               </Table>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-8 text-center">
+              <p className="text-gray-500">لا توجد درجات مسجلة</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
