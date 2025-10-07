@@ -40,7 +40,8 @@ import {
   FolderPlus,
   CircleX,
   CheckSquare,
-  Scroll
+  Scroll,
+  CheckCircle
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
@@ -298,17 +299,17 @@ const AppSidebar = () => {
         { id: 'cases', label: t('navigation.cases'), icon: Scale },
         { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus },
         { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
-        { id: 'cases/my-tasks', label: t('navigation.myTasks'), icon: CheckSquare },
-        { id: 'cases/memos', label: t('navigation.myMemos'), icon: Scroll },
+        // { id: 'cases/my-tasks', label: t('navigation.myTasks'), icon: CheckSquare },
+        // { id: 'cases/memos', label: t('navigation.myMemos'), icon: Scroll },
         // { id: 'judgments', label: t('navigation.issuedJudgments'), icon: Gavel },
       ]
     },
-    // {
-    //   id: 'parties',
-    //   label: t('navigation.parties'),
-    //   icon: Users,
-    //   type: 'link'
-    // },
+    {
+      id: 'parties',
+      label: t('navigation.parties'),
+      icon: Users,
+      type: 'link'
+    },
     {
       id: 'humanResources',
       label: t('navigation.humanResources'),
@@ -318,6 +319,12 @@ const AppSidebar = () => {
         { id: 'employees', label: t('navigation.employees'), icon: Users },
         // { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
       ]
+    },
+    {
+      id: 'approvals',
+      label: t('navigation.approvalsCenter'),
+      icon: CheckCircle,
+      type: 'link'
     },
  
     // {

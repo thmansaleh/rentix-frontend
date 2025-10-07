@@ -94,3 +94,12 @@ export const deleteMemo = async (memoId) => {
     throw error;
   }
 };
+export const updateEmployeeMemoStatus = async (memoId, position, status) => {
+  try {
+    const response = await api.patch(`/memos/${memoId}/employee-status`, { position, status });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating employee memo status:", error);
+    throw error;
+  }
+};

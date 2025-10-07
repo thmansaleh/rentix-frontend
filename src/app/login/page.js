@@ -48,8 +48,8 @@ export default function Page() {
     
     if (!formData.password) {
       newErrors.password = 'كلمة المرور مطلوبة';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
+    } else if (formData.password.length < 3) {
+      newErrors.password = 'يجب أن تكون كلمة المرور 3 أحرف على الأقل';
     }
     
     setErrors(newErrors);

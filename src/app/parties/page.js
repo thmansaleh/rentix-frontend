@@ -9,6 +9,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { cn } from '@/lib/utils';
 import PartiesSearchForm from '@/app/parties/PartiesSearchForm';
+import AddPartyModal from '@/app/parties/AddPartyModal';
+import EditPartyModal from '@/app/parties/EditPartyModal';
+import DeletePartyModal from '@/app/parties/DeletePartyModal';
 import {
   Table,
   TableBody,
@@ -185,15 +188,6 @@ const PartiesPage = () => {
     router.push(`/parties/${partyId}`);
   };
 
-  const handleEdit = (partyId) => {
-    router.push(`/parties/${partyId}/edit`);
-  };
-
-  const handleDelete = (partyId) => {
-    console.log('Delete party:', partyId);
-    // TODO: Implement delete functionality
-  };
-
   if (error) {
     return (
       <div className="container mx-auto p-2">
@@ -212,11 +206,14 @@ const PartiesPage = () => {
   return (
     <div className={`container mx-auto p-2 space-y-6 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Page Header */}
-      <div className={`flex flex-col space-y-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-        <h1 className="text-3xl font-bold tracking-tight">{t('partiesPage.title')}</h1>
-        <p className="text-muted-foreground">
-          {t('partiesPage.description')}
-        </p>
+      <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 ${isRTL ? 'text-right' : 'text-left'}`}>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t('partiesPage.title')}</h1>
+          <p className="text-muted-foreground">
+            {t('partiesPage.description')}
+          </p>
+        </div>
+        <AddPartyModal onPartyAdded={() => mutate()} />
       </div>
 
       {/* Search Form */}
@@ -314,22 +311,33 @@ const PartiesPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align={isRTL ? "start" : "end"}>
-                            <DropdownMenuItem onClick={() => handleView(party.id)}>
+                            {/* <DropdownMenuItem onClick={() => handleView(party.id)}>
                               <Eye className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
                               {t('buttons.view')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleEdit(party.id)}>
-                              <Edit className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-                              {t('buttons.edit')}
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem 
-                              onClick={() => handleDelete(party.id)}
-                              className="text-destructive focus:text-destructive"
+                            </DropdownMenuItem> */}
+                            <EditPartyModal 
+                              partyId={party.id} 
+                              onPartyUpdated={() => mutate()}
                             >
-                              <Trash2 className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-                              {t('buttons.delete')}
-                            </DropdownMenuItem>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Edit className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                                {t('buttons.edit')}
+                              </DropdownMenuItem>
+                            </EditPartyModal>
+                            <DropdownMenuSeparator />
+                            <DeletePartyModal 
+                              partyId={party.id}
+                              partyName={party.name}
+                              onPartyDeleted={() => mutate()}
+                            >
+                              <DropdownMenuItem 
+                                onSelect={(e) => e.preventDefault()}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                                {t('buttons.delete')}
+                              </DropdownMenuItem>
+                            </DeletePartyModal>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

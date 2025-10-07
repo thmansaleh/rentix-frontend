@@ -1,13 +1,15 @@
 // Firebase configuration - Add your Firebase config here
-const firebaseConfig = {
-  apiKey: "AIzaSyDlYdINFsWtPrpRvIopaD8emuxzcwv2AXk",
-  authDomain: "store-6d415.firebaseapp.com",
-  projectId: "store-6d415",
-  storageBucket: "store-6d415.firebasestorage.app",
-  messagingSenderId: "127445742560",
-  appId: "1:127445742560:web:6219b28192044275267185"
-};
 
+const firebaseConfig = {
+  apiKey: "AIzaSyApxxFvpqpUpgVrU3wiTXN8oR9VUDbE3Gc",
+  authDomain: "sage-sight-471908-g2.firebaseapp.com",
+  databaseURL: "https://sage-sight-471908-g2-default-rtdb.firebaseio.com",
+  projectId: "sage-sight-471908-g2",
+  storageBucket: "sage-sight-471908-g2.firebasestorage.app",
+  messagingSenderId: "246023670849",
+  appId: "1:246023670849:web:897cc8d3570f2180e2cac0",
+  measurementId: "G-C7L4MRT7N6"
+};
 // Initialize Firebase
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';

@@ -23,6 +23,10 @@ export const getCaseParties = async (caseId) => {
   }
 };
 export const createParty = async (partyData) => {
+  const files = partyData.files && partyData.files.length > 0
+    ? await uploadFiles(partyData.files)
+    : [];
+  partyData.files = files;
   const response = await api.post("/parties", partyData);
   return response.data;
 }
@@ -81,4 +85,35 @@ export const getPartyCases = async (partyId) => {
 export const getPartiesByBranch = async (branchId) => {
   const response = await api.get(`/parties/branch/${branchId}`);
   return response.data;
+};
+
+export const getPartyById = async (partyId) => {
+  try {
+    const response = await api.get(`/parties/${partyId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateParty = async (partyId, partyData) => {
+  const files = partyData.files && partyData.files.length > 0
+    ? await uploadFiles(partyData.files)
+    : [];
+  if (files.length > 0) {
+    partyData.files = files;
+  } else {
+    delete partyData.files;
+  }
+  const response = await api.put(`/parties/${partyId}`, partyData);
+  return response.data;
+};
+
+export const deleteParty = async (partyId) => {
+  try {
+    const response = await api.delete(`/parties/${partyId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };

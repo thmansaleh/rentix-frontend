@@ -214,7 +214,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
               </div>
 
               {/* Status - Only show for admin or secretary */}
-              {canEditStatus && (
+              {/* {canEditStatus && (
                 <div className="space-y-2">
                   <Label>
                     الحالة <span className="text-red-500">*</span>
@@ -243,7 +243,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
                     </div>
                   )}
                 </div>
-              )}
+              )} */}
 
               {/* Description */}
               <div className="space-y-2">

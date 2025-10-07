@@ -6,12 +6,12 @@ import { useSelector } from 'react-redux';
 import { Eye, FileText, CheckCircle } from 'lucide-react';
 import useSWR from 'swr';
 import { useActiveEmployeeMemos } from '@/hooks/useActiveEmployeeMemos';
-import { updateMemoApproval, getActiveMemos } from '@/app/services/api/memos';
+import { updateEmployeeMemoStatus, getActiveMemos } from '@/app/services/api/memos';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { toast } from 'react-toastify';
 import ApprovalModal from './ApprovalModal';
-import EditMemoModal from '../[id]/edit/memos/EditMemoModal';
+import EditMemoModal from '../../cases/[id]/edit/memos/EditMemoModal';
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const MemosPage = () => {
+const Memos = () => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
   const router = useRouter();
@@ -57,10 +57,45 @@ const MemosPage = () => {
   const { memos: employeeMemos, isLoading: employeeLoading, isError: employeeError, mutate: employeeMutate } = useActiveEmployeeMemos();
   
   // Use the appropriate data source based on role
-  const memos = isAdmin ? (adminData?.data || []) : employeeMemos;
+  const rawMemos = isAdmin ? (adminData?.data || []) : employeeMemos;
   const isLoading = isAdmin ? adminLoading : employeeLoading;
   const isError = isAdmin ? adminError : employeeError;
   const mutate = isAdmin ? adminMutate : employeeMutate;
+
+  // Filter memos based on role and status
+  const filterMemosByRole = (memos, role) => {
+    if (!role || !memos) return [];
+    
+    const normalizedRole = role.toLowerCase();
+    
+    return memos.filter((memo) => {
+      // Legal Advisor: show memos where lawyer_status = "Rejected"
+      if (normalizedRole === 'legal advisor') {
+        return memo.lawyer_status === 'Rejected';
+      }
+      
+      // Lawyer: show memos where admin_status = "Rejected"
+      if (normalizedRole === 'lawyer') {
+        return memo.admin_status === 'Rejected';
+      }
+      
+      // Secretary: show memos where admin_status = "Approved"
+      if (normalizedRole === 'secretary') {
+        return memo.admin_status === 'Approved';
+      }
+      
+      // Admin: show all memos (no filtering)
+      if (normalizedRole === 'admin') {
+        return memo.admin_status !== 'Approved';
+      }
+      
+      // Default: don't show memo if role doesn't match
+      return false;
+    });
+  };
+
+  // Apply filtering
+  const memos = filterMemosByRole(rawMemos, employeeRole);
 
   // Helper function to format date
   const formatDate = (dateString) => {
@@ -69,13 +104,7 @@ const MemosPage = () => {
     return date.toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US');
   };
 
-  // Helper function to get individual approval badge
-  const getIndividualApprovalBadge = (isApproved) => {
-    if (isApproved === 1) {
-      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{language === 'ar' ? '✓' : '✓'}</Badge>;
-    }
-    return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">{language === 'ar' ? '✗' : '✗'}</Badge>;
-  };
+ 
 
   // Handle opening approval modal
   const handleOpenApprovalModal = (memo) => {
@@ -123,7 +152,7 @@ const MemosPage = () => {
     setIsSubmitting(true);
     
     try {
-      await updateMemoApproval(selectedMemo.id, employeeRole, isApproved);
+      await updateEmployeeMemoStatus(selectedMemo.id, employeeRole, isApproved);
       
       // Refresh the memos list
       await mutate();
@@ -249,21 +278,10 @@ const MemosPage = () => {
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
                       {language === 'ar' ? 'تاريخ التقديم' : 'Submission Date'}
                     </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
+                    {/* <TableHead className={isRTL ? 'text-right' : 'text-left'}>
                       {language === 'ar' ? 'الحالة' : 'Status'}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'المحامي' : 'Lawyer'}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'السكرتير' : 'Secretary'}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'المستشار' : 'Consultant'}
-                    </TableHead>
-                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'المدير' : 'Admin'}
-                    </TableHead>
+                    </TableHead> */}
+                
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
                       {language === 'ar' ? 'تم الإنشاء بواسطة' : 'Created By'}
                     </TableHead>
@@ -286,11 +304,7 @@ const MemosPage = () => {
                         </div>
                       </TableCell>
                       <TableCell>{formatDate(memo.submission_date)}</TableCell>
-                      <TableCell>{getStatusBadge(memo.status)}</TableCell>
-                      <TableCell>{getIndividualApprovalBadge(memo.is_lawyer_approved)}</TableCell>
-                      <TableCell>{getIndividualApprovalBadge(memo.is_secretary_approved)}</TableCell>
-                      <TableCell>{getIndividualApprovalBadge(memo.is_consultant_approved)}</TableCell>
-                      <TableCell>{getIndividualApprovalBadge(memo.is_admin_approved)}</TableCell>
+                      {/* <TableCell>{getStatusBadge(memo.status)}</TableCell> */}
                       <TableCell>{memo.created_by_name || '-'}</TableCell>
                       <TableCell>{formatDate(memo.created_at)}</TableCell>
                       <TableCell>
@@ -344,4 +358,4 @@ const MemosPage = () => {
   );
 };
 
-export default MemosPage;
+export default Memos;
