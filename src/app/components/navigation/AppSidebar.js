@@ -316,7 +316,14 @@ const AppSidebar = () => {
       icon: UserRoundPlus,
       type: 'link'
     },
+   
     {
+      id: 'approvals',
+      label: t('navigation.approvalsCenter'),
+      icon: CheckCircle,
+      type: 'link'
+    },
+     {
       id: 'humanResources',
       label: t('navigation.humanResources'),
       icon: Users,
@@ -325,12 +332,6 @@ const AppSidebar = () => {
         { id: 'employees', label: t('navigation.employees'), icon: Users },
         // { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
       ]
-    },
-    {
-      id: 'approvals',
-      label: t('navigation.approvalsCenter'),
-      icon: CheckCircle,
-      type: 'link'
     },
  
     // {

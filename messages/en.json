@@ -390,6 +390,10 @@
     "client": "Client",
     "opponent": "Opponent"
   },
+  "dealsPage": {
+    "title": "Client Deals",
+    "description": "Manage and review client deals and agreements"
+  },
   "potentialClientsPage": {
     "title": "Potential Clients ",
     "description": "Manage and review potential client agreements",
@@ -584,6 +588,14 @@
       "createError": "Failed to create meeting. Please try again.",
       "updateSuccess": "Meeting updated successfully!",
       "updateError": "Failed to update meeting. Please try again."
+    },
+    "delete": {
+      "title": "Delete Meeting",
+      "description": "Are you sure you want to delete this meeting?",
+      "warning": "This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "deleting": "Deleting..."
     },
     "pagination": {
       "showing": "Showing {count} of {total} meetings",

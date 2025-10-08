@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar, Clock, User, MapPin, Monitor, Users, Search, Loader2, Eye, Edit, Trash2 } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { EditMeetingModal } from "./EditMeetingModal";
+import { DeleteMeetingModal } from "./DeleteMeetingModal";
 
 function Meetings() {
   const { t } = useTranslations();
@@ -31,6 +32,8 @@ function Meetings() {
   });
   const [selectedMeetingId, setSelectedMeetingId] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedMeetingForDelete, setSelectedMeetingForDelete] = useState(null);
   const limit = 10;
 
   // SWR fetcher function
@@ -92,6 +95,21 @@ function Meetings() {
   };
 
   const handleEditSuccess = () => {
+    // Refresh the meetings data
+    mutate();
+  };
+
+  const handleDeleteMeeting = (meeting) => {
+    setSelectedMeetingForDelete(meeting);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedMeetingForDelete(null);
+  };
+
+  const handleDeleteSuccess = () => {
     // Refresh the meetings data
     mutate();
   };
@@ -318,7 +336,7 @@ function Meetings() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => console.log("Delete meeting", meeting.id)}
+                            onClick={() => handleDeleteMeeting(meeting)}
                             title={t("meetings.actions.delete")}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -376,6 +394,15 @@ function Meetings() {
         onClose={handleCloseEditModal}
         meetingId={selectedMeetingId}
         onSuccess={handleEditSuccess}
+      />
+
+      {/* Delete Meeting Modal */}
+      <DeleteMeetingModal 
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        meetingId={selectedMeetingForDelete?.id}
+        meetingTitle={selectedMeetingForDelete ? `Meeting with ${selectedMeetingForDelete.client_name || 'Client'} on ${formatDate(selectedMeetingForDelete.date)}` : ''}
+        onSuccess={handleDeleteSuccess}
       />
     </div>
   );

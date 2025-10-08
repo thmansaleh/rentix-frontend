@@ -1,0 +1,308 @@
+"use client"
+
+import React, { useState, useEffect } from 'react'
+import { format } from 'date-fns'
+import useSWR from 'swr'
+import { useSelector } from 'react-redux'
+import { useTranslations } from "@/hooks/useTranslations"
+import { useLanguage } from "@/contexts/LanguageContext"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DatePicker } from "@/components/ui/date-picker"
+import { Loader2, Plus, X } from 'lucide-react'
+import { toast } from 'react-toastify'
+import { createClientDeal } from '@/app/services/api/clientsDeals'
+import { getPartiesByBranch } from '@/app/services/api/parties'
+
+const AddDealModal = ({ 
+  isOpen, 
+  onClose, 
+  onSuccess 
+}) => {
+  const { t } = useTranslations()
+  const { language } = useLanguage()
+  const isArabic = language === 'ar'
+
+  // Get current user from Redux
+  const currentUser = useSelector((state) => state.auth.jobId)
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    client_id: '',
+    amount: '',
+    type: 'normal',
+    status: 'draft',
+    start_date: null,
+    end_date: null,
+    created_by: currentUser || null
+  })
+
+  // Fetch clients/parties for dropdown
+  const { data: partiesResponse } = useSWR(
+    'parties-branch-1',
+    () => getPartiesByBranch(1),
+    {
+      revalidateOnFocus: false,
+    }
+  )
+
+  const clients = partiesResponse?.success ? partiesResponse.data : []
+
+  // Status options
+  const statusOptions = [
+    { value: 'draft', label: isArabic ? 'مسودة' : 'Draft' },
+    { value: 'completed', label: isArabic ? 'مكتمل' : 'Completed' }
+  ]
+
+  // Type options
+  const typeOptions = [
+    { value: 'normal', label: isArabic ? 'عادية' : 'Normal' },
+    { value: 'yearly', label: isArabic ? 'سنوية' : 'Yearly' }
+  ]
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({
+        client_id: '',
+        amount: '',
+        type: 'normal',
+        status: 'draft',
+        start_date: null,
+        end_date: null,
+        created_by: currentUser || null
+      })
+    }
+  }, [isOpen, currentUser])
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const validateForm = () => {
+    if (!formData.client_id) {
+      toast.error(isArabic ? 'يرجى اختيار العميل' : 'Please select a client')
+      return false
+    }
+    if (!formData.amount || isNaN(parseFloat(formData.amount))) {
+      toast.error(isArabic ? 'يرجى إدخال مبلغ صحيح' : 'Please enter a valid amount')
+      return false
+    }
+    if (parseFloat(formData.amount) <= 0) {
+      toast.error(isArabic ? 'المبلغ يجب أن يكون أكبر من الصفر' : 'Amount must be greater than zero')
+      return false
+    }
+    return true
+  }
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return
+
+    setIsLoading(true)
+    try {
+      const createData = {
+        client_id: parseInt(formData.client_id),
+        amount: parseFloat(formData.amount),
+        type: formData.type,
+        status: formData.status,
+        start_date: formData.start_date ? format(formData.start_date, 'yyyy-MM-dd') : null,
+        end_date: formData.end_date ? format(formData.end_date, 'yyyy-MM-dd') : null,
+        created_by: formData.created_by
+      }
+
+      const response = await createClientDeal(createData)
+      
+      if (response.success) {
+        toast.success(isArabic ? 'تم إنشاء الصفقة بنجاح' : 'Deal created successfully')
+        onSuccess?.()
+        onClose()
+      } else {
+        toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الصفقة' : 'Error creating deal'))
+      }
+    } catch (error) {
+      console.error('Error creating deal:', error)
+      toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الصفقة' : 'Error creating deal')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            {isArabic ? 'إضافة صفقة جديدة' : 'Add New Deal'}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="grid gap-4 py-4">
+          {/* Client Selection */}
+          <div className="space-y-2">
+            <Label htmlFor="client_id">
+              {isArabic ? 'العميل *' : 'Client *'}
+            </Label>
+            <Select
+              value={formData.client_id}
+              onValueChange={(value) => handleInputChange('client_id', value)}
+              disabled={isLoading}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={isArabic ? 'اختر العميل' : 'Select client'} />
+              </SelectTrigger>
+              <SelectContent>
+                {clients.map((client) => (
+                  <SelectItem key={client.id} value={client.id.toString()}>
+                    {client.name} {client.phone ? `- ${client.phone}` : ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Amount */}
+          <div className="space-y-2">
+            <Label htmlFor="amount">
+              {isArabic ? 'المبلغ *' : 'Amount *'}
+            </Label>
+            <Input
+              id="amount"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder={isArabic ? 'أدخل المبلغ' : 'Enter amount'}
+              value={formData.amount}
+              onChange={(e) => handleInputChange('amount', e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Type and Status Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Type */}
+            <div className="space-y-2">
+              <Label>
+                {isArabic ? 'نوع الصفقة' : 'Deal Type'}
+              </Label>
+              <Select
+                value={formData.type}
+                onValueChange={(value) => handleInputChange('type', value)}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {typeOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Status */}
+            <div className="space-y-2">
+              <Label>
+                {isArabic ? 'الحالة' : 'Status'}
+              </Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => handleInputChange('status', value)}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Date Range */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Start Date */}
+            <div className="space-y-2">
+              <Label>
+                {isArabic ? 'تاريخ البداية' : 'Start Date'}
+              </Label>
+              <DatePicker
+                date={formData.start_date}
+                onDateChange={(date) => handleInputChange('start_date', date)}
+                placeholder={isArabic ? 'اختر التاريخ' : 'Select date'}
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* End Date */}
+            <div className="space-y-2">
+              <Label>
+                {isArabic ? 'تاريخ النهاية' : 'End Date'}
+              </Label>
+              <DatePicker
+                date={formData.end_date}
+                onDateChange={(date) => handleInputChange('end_date', date)}
+                placeholder={isArabic ? 'اختر التاريخ' : 'Select date'}
+                minDate={formData.start_date}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          {/* Info Note */}
+          <div className="bg-muted/50 p-3 rounded-md">
+            <p className="text-sm text-muted-foreground">
+              {isArabic 
+                ? 'الحقول المميزة بـ (*) مطلوبة'
+                : 'Fields marked with (*) are required'
+              }
+            </p>
+          </div>
+        </div>
+
+        <DialogFooter className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={onClose}
+            disabled={isLoading}
+          >
+            <X className="h-4 w-4 mr-2" />
+            {isArabic ? 'إلغاء' : 'Cancel'}
+          </Button>
+          <Button 
+            onClick={handleSubmit}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                {isArabic ? 'جاري الإنشاء...' : 'Creating...'}
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4 mr-2" />
+                {isArabic ? 'إضافة الصفقة' : 'Add Deal'}
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export default AddDealModal
