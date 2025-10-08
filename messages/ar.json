@@ -220,6 +220,7 @@
     "myMemos": "المذكرات",
     "approvalsCenter": "مركز الموافقات",
     "parties": "العملاء والخصوم",
+    "potentialClients": "العملاء المحتملين",
     "settings": "الإعدادات",
     "general": "عام",
     "profile": "الملف الشخصي",
@@ -388,6 +389,208 @@
     "selectPartyType": "اختر نوع الطرف",
     "client": "عميل",
     "opponent": "خصم"
+  },
+  "potentialClientsPage": {
+    "title": "العملاء المحتملون ",
+    "description": "إدارة ومراجعة اتفاقيات العملاء المحتملين",
+    "search": {
+      "placeholder": "البحث بالاسم أو رقم الهاتف...",
+      "button": "بحث",
+      "clear": "مسح",
+      "allStatuses": "جميع الحالات"
+    },
+    "table": {
+      "id": "المعرف",
+      "name": "الاسم",
+      "phone": "الهاتف",
+      "status": "الحالة",
+      "source": "المصدر",
+      "branch": "الفرع",
+      "consultationType": "نوع الاستشارة",
+      "category": "الفئة",
+      "createdBy": "أنشأ بواسطة",
+      "createdAt": "تاريخ الإنشاء",
+      "actions": "الإجراءات"
+    },
+    "status": {
+      "new": "جديد",
+      "contacted": "تم التواصل",
+      "qualified": "مؤهل",
+      "notQualified": "غير مؤهل",
+      "convertToClient": "تحويل موكل"
+    },
+    "source": {
+      "website": "الموقع الالكتروني",
+      "officeVisit": "زيارة المكتب",
+      "phoneContact": "التواصل عبر الهاتف"
+    },
+    "consultationType": {
+      "legal": "قانونية",
+      "financial": "مالية",
+      "administrative": "إدارية"
+    },
+    "category": {
+      "individual": "فردي",
+      "company": "شركة"
+    },
+    "messages": {
+      "loading": "جارٍ تحميل العملاء المحتملين...",
+      "error": "خطأ في تحميل البيانات. يرجى المحاولة مرة أخرى.",
+      "noResults": "لم يتم العثور على عملاء محتملين.",
+      "viewDetails": "عرض التفاصيل",
+      "editClient": "تعديل العميل",
+      "addMeeting": "إضافة اجتماع",
+      "updateSuccess": "تم تحديث العميل بنجاح!",
+      "updateError": "فشل في تحديث العميل. يرجى المحاولة مرة أخرى.",
+      "createSuccess": "تم إنشاء العميل بنجاح!",
+      "createError": "فشل في إنشاء العميل. يرجى المحاولة مرة أخرى."
+    },
+    "validation": {
+      "nameRequired": "الاسم مطلوب",
+      "statusRequired": "الحالة مطلوبة",
+      "sourceRequired": "المصدر مطلوب",
+      "branchRequired": "الفرع مطلوب",
+      "consultationTypeRequired": "نوع الاستشارة مطلوب",
+      "categoryRequired": "الفئة مطلوبة"
+    },
+    "pagination": {
+      "showing": "عرض {count} من {total} نتيجة"
+    },
+    "modal": {
+      "title": "تفاصيل العميل",
+      "description": "عرض المعلومات التفصيلية لهذا العميل المحتمل",
+      "basicInfo": "المعلومات الأساسية",
+      "additionalInfo": "معلومات إضافية",
+      "trackingInfo": "معلومات التتبع",
+      "notes": "الملاحظات",
+      "updatedAt": "آخر تحديث",
+      "category": "الفئة",
+      "consultationType": "نوع الاستشارة",
+      "branch": "الفرع"
+    },
+    "editModal": {
+      "title": "تعديل العميل",
+      "description": "تحديث معلومات العميل والحالة",
+      "namePlaceholder": "أدخل اسم العميل",
+      "phonePlaceholder": "أدخل رقم الهاتف",
+      "sourcePlaceholder": "أدخل مصدر العميل",
+      "notePlaceholder": "إضافة ملاحظات أو تعليقات...",
+      "selectStatus": "اختر الحالة",
+      "selectSource": "اختر المصدر",
+      "selectBranch": "اختر الفرع",
+      "selectConsultationType": "اختر نوع الاستشارة",
+      "selectCategory": "اختر الفئة",
+      "save": "حفظ التغييرات",
+      "cancel": "إلغاء"
+    },
+    "addModal": {
+      "title": "إضافة عميل جديد",
+      "description": "إضافة عميل محتمل جديد إلى النظام",
+      "namePlaceholder": "أدخل اسم العميل",
+      "phonePlaceholder": "أدخل رقم الهاتف",
+      "sourcePlaceholder": "أدخل مصدر العميل (مثل: الموقع الإلكتروني، إحالة، إلخ)",
+      "notePlaceholder": "إضافة ملاحظات أو تعليقات أولية...",
+      "selectStatus": "اختر الحالة الأولية",
+      "selectSource": "اختر المصدر",
+      "selectBranch": "اختر الفرع",
+      "selectConsultationType": "اختر نوع الاستشارة",
+      "selectCategory": "اختر الفئة",
+      "create": "إنشاء العميل",
+      "cancel": "إلغاء"
+    },
+    "addButton": "إضافة عميل جديد",
+    "files": {
+      "title": "الملفات والمرفقات",
+      "existing": "الملفات الموجودة:",
+      "selectFiles": "اختيار الملفات",
+      "selected": "الملفات المحددة:",
+      "supportedFormats": "الصيغ المدعومة: PDF, DOC, DOCX, TXT, JPG, PNG (حد أقصى 10 ميجابايت لكل ملف)",
+      "uploading": "جارٍ الرفع...",
+      "fileDeleted": "تم حذف الملف بنجاح",
+      "deleteError": "فشل في حذف الملف",
+      "invalidType": "نوع الملف غير صالح",
+      "tooLarge": "حجم الملف كبير جداً (الحد الأقصى 10 ميجابايت)"
+    }
+  },
+  "meetings": {
+    "title": "الاجتماعات",
+    "addModal": {
+      "title": "إضافة اجتماع جديد"
+    },
+    "editModal": {
+      "title": "تعديل الاجتماع",
+      "clientInfo": "معلومات العميل",
+      "update": "تحديث الاجتماع"
+    },
+    "table": {
+      "id": "الرقم",
+      "client": "العميل",
+      "lawyer": "المحامي",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "type": "النوع",
+      "status": "الحالة",
+      "notes": "الملاحظات",
+      "actions": "الإجراءات"
+    },
+    "search": {
+      "placeholder": "البحث في الاجتماعات..."
+    },
+    "filters": {
+      "allStatuses": "جميع الحالات",
+      "allTypes": "جميع الأنواع",
+      "selectDate": "اختر التاريخ"
+    },
+    "actions": {
+      "view": "عرض التفاصيل",
+      "edit": "تعديل الاجتماع",
+      "delete": "حذف الاجتماع"
+    },
+    "fields": {
+      "date": "تاريخ الاجتماع",
+      "startTime": "وقت البداية",
+      "endTime": "وقت النهاية",
+      "notes": "ملاحظات",
+      "result": "نتيجة الاجتماع",
+      "lawyer": "المحامي أو المستشار",
+      "meetingType": "نوع الاجتماع"
+    },
+    "results": {
+      "scheduled": "مجدول",
+      "completed": "مكتمل",
+      "cancelled": "ملغى",
+      "rescheduled": "معاد جدولته",
+      "noShow": "لم يحضر"
+    },
+    "types": {
+      "online": "عبر الإنترنت",
+      "onsite": "حضوري"
+    },
+    "placeholders": {
+      "selectResult": "اختر نتيجة الاجتماع",
+      "enterNotes": "ادخل ملاحظات أو تفاصيل الاجتماع...",
+      "selectLawyer": "اختر المحامي أو المستشار",
+      "selectMeetingType": "اختر نوع الاجتماع"
+    },
+    "validation": {
+      "dateRequired": "تاريخ الاجتماع مطلوب",
+      "endTimeAfterStart": "وقت النهاية يجب أن يكون بعد وقت البداية"
+    },
+    "messages": {
+      "loading": "جارٍ تحميل الاجتماعات...",
+      "error": "خطأ في تحميل الاجتماعات. يرجى المحاولة مرة أخرى.",
+      "noResults": "لم يتم العثور على اجتماعات.",
+      "createSuccess": "تم إنشاء الاجتماع بنجاح!",
+      "createError": "فشل في إنشاء الاجتماع. يرجى المحاولة مرة أخرى.",
+      "updateSuccess": "تم تحديث الاجتماع بنجاح!",
+      "updateError": "فشل في تحديث الاجتماع. يرجى المحاولة مرة أخرى."
+    },
+    "pagination": {
+      "showing": "عرض {count} من {total} اجتماع",
+      "previous": "السابق",
+      "next": "التالي",
+      "pageInfo": "الصفحة {current} من {total}"
+    }
   },
   "caseToggles": {
     "isSecret": "سري",

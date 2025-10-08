@@ -311,6 +311,12 @@ const AppSidebar = () => {
       type: 'link'
     },
     {
+      id: 'potential-clients',
+      label: t('navigation.potentialClients'),
+      icon: UserRoundPlus,
+      type: 'link'
+    },
+    {
       id: 'humanResources',
       label: t('navigation.humanResources'),
       icon: Users,

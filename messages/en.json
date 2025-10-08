@@ -220,6 +220,7 @@
     "myMemos": "My Memos",
     "approvalsCenter": "Approvals Center",
     "parties": "Clients & Opponents",
+    "potentialClients": "Potential Clients",
     "settings": "Settings",
     "general": "General",
     "profile": "Profile",
@@ -388,6 +389,208 @@
     "selectPartyType": "Select Party Type",
     "client": "Client",
     "opponent": "Opponent"
+  },
+  "potentialClientsPage": {
+    "title": "Potential Clients ",
+    "description": "Manage and review potential client agreements",
+    "search": {
+      "placeholder": "Search by name or phone...",
+      "button": "Search",
+      "clear": "Clear",
+      "allStatuses": "All Statuses"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Name", 
+      "phone": "Phone",
+      "status": "Status",
+      "source": "Source",
+      "branch": "Branch",
+      "consultationType": "Consultation Type",
+      "category": "Category",
+      "createdBy": "Created By",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "status": {
+      "new": "New",
+      "contacted": "Contacted", 
+      "qualified": "Qualified",
+      "notQualified": "Not Qualified",
+      "convertToClient": "Convert to Client"
+    },
+    "source": {
+      "website": "Website",
+      "officeVisit": "Office Visit",
+      "phoneContact": "Phone Contact"
+    },
+    "consultationType": {
+      "legal": "Legal",
+      "financial": "Financial",
+      "administrative": "Administrative"
+    },
+    "category": {
+      "individual": "Individual",
+      "company": "Company"
+    },
+    "messages": {
+      "loading": "Loading potential clients...",
+      "error": "Error loading data. Please try again.",
+      "noResults": "No potential clients found.",
+      "viewDetails": "View Details",
+      "editClient": "Edit Client",
+      "addMeeting": "Add Meeting",
+      "updateSuccess": "Client updated successfully!",
+      "updateError": "Failed to update client. Please try again.",
+      "createSuccess": "Client created successfully!",
+      "createError": "Failed to create client. Please try again."
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "statusRequired": "Status is required",
+      "sourceRequired": "Source is required",
+      "branchRequired": "Branch is required",
+      "consultationTypeRequired": "Consultation type is required",
+      "categoryRequired": "Category is required"
+    },
+    "pagination": {
+      "showing": "Showing {count} of {total} results"
+    },
+    "modal": {
+      "title": "Client Details",
+      "description": "View detailed information about this potential client",
+      "basicInfo": "Basic Information",
+      "additionalInfo": "Additional Information",
+      "trackingInfo": "Tracking Information",
+      "notes": "Notes",
+      "updatedAt": "Last Updated",
+      "category": "Category",
+      "consultationType": "Consultation Type",
+      "branch": "Branch"
+    },
+    "editModal": {
+      "title": "Edit Client",
+      "description": "Update client information and status",
+      "namePlaceholder": "Enter client name",
+      "phonePlaceholder": "Enter phone number",
+      "sourcePlaceholder": "Enter client source",
+      "notePlaceholder": "Add notes or comments...",
+      "selectStatus": "Select status",
+      "selectSource": "Select source",
+      "selectBranch": "Select branch",
+      "selectConsultationType": "Select consultation type",
+      "selectCategory": "Select category",
+      "save": "Save Changes",
+      "cancel": "Cancel"
+    },
+    "addModal": {
+      "title": "Add New Client",
+      "description": "Add a new potential client to the system",
+      "namePlaceholder": "Enter client name",
+      "selectBranch": "Select branch",
+      "selectConsultationType": "Select consultation type",
+      "selectCategory": "Select category",
+      "phonePlaceholder": "Enter phone number",
+      "sourcePlaceholder": "Enter client source (e.g. Website, Referral, etc.)",
+      "notePlaceholder": "Add initial notes or comments...",
+      "selectStatus": "Select initial status",
+      "selectSource": "Select source",
+      "create": "Create Client",
+      "cancel": "Cancel"
+    },
+    "addButton": "Add New Client",
+    "files": {
+      "title": "Files & Attachments",
+      "existing": "Existing Files:",
+      "selectFiles": "Select Files",
+      "selected": "Selected Files:",
+      "supportedFormats": "Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB each)",
+      "uploading": "Uploading...",
+      "fileDeleted": "File deleted successfully",
+      "deleteError": "Failed to delete file",
+      "invalidType": "Invalid file type",
+      "tooLarge": "File size too large (Max 10MB)"
+    }
+  },
+  "meetings": {
+    "title": "Meetings",
+    "addModal": {
+      "title": "Add New Meeting"
+    },
+    "editModal": {
+      "title": "Edit Meeting",
+      "clientInfo": "Client Information",
+      "update": "Update Meeting"
+    },
+    "table": {
+      "id": "ID",
+      "client": "Client",
+      "lawyer": "Lawyer",
+      "date": "Date",
+      "time": "Time",
+      "type": "Type",
+      "status": "Status",
+      "notes": "Notes",
+      "actions": "Actions"
+    },
+    "search": {
+      "placeholder": "Search meetings..."
+    },
+    "filters": {
+      "allStatuses": "All Statuses",
+      "allTypes": "All Types",
+      "selectDate": "Select Date"
+    },
+    "actions": {
+      "view": "View Details",
+      "edit": "Edit Meeting", 
+      "delete": "Delete Meeting"
+    },
+    "fields": {
+      "date": "Meeting Date",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "notes": "Notes",
+      "result": "Meeting Result",
+      "lawyer": "Lawyer/Advisor",
+      "meetingType": "Meeting Type"
+    },
+    "results": {
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "rescheduled": "Rescheduled",
+      "noShow": "No Show"
+    },
+    "types": {
+      "online": "Online",
+      "onsite": "On-site"
+    },
+    "placeholders": {
+      "selectResult": "Select meeting result",
+      "enterNotes": "Enter meeting notes or details...",
+      "selectLawyer": "Select lawyer or advisor",
+      "selectMeetingType": "Select meeting type"
+    },
+    "validation": {
+      "dateRequired": "Meeting date is required",
+      "endTimeAfterStart": "End time must be after start time"
+    },
+    "messages": {
+      "loading": "Loading meetings...",
+      "error": "Error loading meetings. Please try again.",
+      "noResults": "No meetings found.",
+      "createSuccess": "Meeting created successfully!",
+      "createError": "Failed to create meeting. Please try again.",
+      "updateSuccess": "Meeting updated successfully!",
+      "updateError": "Failed to update meeting. Please try again."
+    },
+    "pagination": {
+      "showing": "Showing {count} of {total} meetings",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {current} of {total}"
+    }
   },
   "caseToggles": {
     "isSecret": "Secret",

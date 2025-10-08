@@ -95,8 +95,8 @@ const PartiesSearchForm = ({ onSearch }) => {
                   <SelectValue placeholder={t('partiesPage.selectPartyType')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="عميل">{t('partiesPage.client')}</SelectItem>
-                  <SelectItem value="خصم">{t('partiesPage.opponent')}</SelectItem>
+                  <SelectItem value="client">{t('partiesPage.client')}</SelectItem>
+                  <SelectItem value="opponent">{t('partiesPage.opponent')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
