@@ -46,7 +46,9 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
     party_type: "",
     status: "active",
     nationality: "",
-    branch_id: 1
+    branch_id: 1,
+    consultation_type: "",
+    passport: ""
   });
 
   // Fetch branches
@@ -123,7 +125,9 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
       party_type: "",
       status: "active",
       nationality: "",
-      branch_id: 1
+      branch_id: 1,
+      consultation_type: "",
+      passport: ""
     });
     setPartyFiles([]);
   };
@@ -167,6 +171,12 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
       setLoading(false);
     }
   };
+
+  const consultationTypeOptions = [
+    { value: "legal", label: t("parties.consultationTypeLegal") || "قانونية" },
+    { value: "financial", label: t("parties.consultationTypeFinancial") || "مالية" },
+    { value: "administrative", label: t("parties.consultationTypeAdministrative") || "إدارية" },
+  ];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -254,6 +264,27 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
             </Select>
           </div>
 
+          {/* Consultation Type */}
+          {/* <div className="space-y-2">
+            <Label>{t('parties.consultationType') || 'نوع الاستشارة'}</Label>
+            <Select 
+              dir={isRTL ? "rtl" : "ltr"}
+              value={formData.consultation_type} 
+              onValueChange={(value) => handleInputChange("consultation_type", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={t('parties.chooseConsultationType') || 'اختر نوع الاستشارة'} />
+              </SelectTrigger>
+              <SelectContent>
+                {consultationTypeOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div> */}
+
           {/* Emirates ID */}
           <div className="space-y-2">
             <Label htmlFor="e_id">{t('parties.emiratesId') || 'رقم الهوية الإماراتية'}</Label>
@@ -273,6 +304,17 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
               value={formData.nationality}
               onChange={(e) => handleInputChange("nationality", e.target.value)}
               placeholder={t('parties.nationalityExample') || 'الإمارات العربية المتحدة'}
+            />
+          </div>
+
+          {/* Passport */}
+          <div className="space-y-2">
+            <Label htmlFor="passport">{t('parties.passport') || 'رقم جواز السفر'}</Label>
+            <Input
+              id="passport"
+              value={formData.passport}
+              onChange={(e) => handleInputChange("passport", e.target.value)}
+              placeholder={t('parties.passportPlaceholder') || 'أدخل رقم جواز السفر'}
             />
           </div>
 

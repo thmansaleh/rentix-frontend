@@ -1,14 +1,12 @@
 // Firebase configuration - Add your Firebase config here
 
 const firebaseConfig = {
-  apiKey: "AIzaSyApxxFvpqpUpgVrU3wiTXN8oR9VUDbE3Gc",
-  authDomain: "sage-sight-471908-g2.firebaseapp.com",
-  databaseURL: "https://sage-sight-471908-g2-default-rtdb.firebaseio.com",
-  projectId: "sage-sight-471908-g2",
-  storageBucket: "sage-sight-471908-g2.firebasestorage.app",
-  messagingSenderId: "246023670849",
-  appId: "1:246023670849:web:897cc8d3570f2180e2cac0",
-  measurementId: "G-C7L4MRT7N6"
+  apiKey: "AIzaSyAhkYhsAx1_D_inve1n8_P7uRH3DyyR_nU",
+  authDomain: "mbh-backend-6219a.firebaseapp.com",
+  projectId: "mbh-backend-6219a",
+  storageBucket: "mbh-backend-6219a.firebasestorage.app",
+  messagingSenderId: "239366713349",
+  appId: "1:239366713349:web:8db8b5d5cd3c9c5ab1ac6c"
 };
 // Initialize Firebase
 import { initializeApp } from 'firebase/app';

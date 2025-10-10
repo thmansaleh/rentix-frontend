@@ -14,6 +14,20 @@ export const getAllParties = async (params = {}) => {
     throw error;
   }
 };
+export const getPotentialClients = async (params = {}) => {
+  try {
+    const queryString = new URLSearchParams(
+      Object.entries(params).filter(([_, value]) => value !== undefined && value !== '')
+    ).toString();
+
+    const url = queryString ? `/parties/potential-clients?${queryString}` : '/parties/potential-clients';
+    const response = await api.get(url);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getCaseParties = async (caseId) => {
   try {
     const response = await api.get(`/cases/${caseId}/parties`);

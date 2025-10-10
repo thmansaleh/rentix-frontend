@@ -74,15 +74,15 @@ export function AddMeetingModal({ isOpen, onClose, clientId, onSuccess }) {
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       const meetingData = {
-        client_agreement_id: clientId,
+        party_id: clientId,
         date: values.date,
         start_time: values.start_time || null,
         end_time: values.end_time || null,
         note: values.note || null,
         meet_result: values.meet_result || null,
         lawyer_id: values.lawyer_id || null,
-        meeting_type: values.meeting_type || null,
-        // created_by will be set from auth context in the backend
+        meeting_type: values.meeting_type || null
+        // Note: created_by is automatically set from the authentication token in the backend
       };
 
       const result = await meetingsApi.createMeeting(meetingData);

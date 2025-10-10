@@ -344,6 +344,13 @@ const Memos = () => {
         onConfirm={handleApprovalConfirm}
         memoTitle={selectedMemo?.title || ''}
         isLoading={isSubmitting}
+        currentStatus={
+          employeeRole?.toLowerCase() === 'admin' ? selectedMemo?.admin_status :
+          employeeRole?.toLowerCase() === 'secretary' ? selectedMemo?.secretary_status :
+          employeeRole?.toLowerCase() === 'legal advisor' ? selectedMemo?.consultant_status :
+          employeeRole?.toLowerCase() === 'lawyer' ? selectedMemo?.lawyer_status :
+          selectedMemo?.admin_status
+        }
       />
 
       {/* Edit Memo Modal */}

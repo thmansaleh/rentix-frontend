@@ -1,7 +1,9 @@
 "use client";
 
-import useSWR from "swr";
-import { getClientAgreementById } from "../services/api/clientsAgreements";
+import { useState } from "react";
+import useSWR, { mutate } from "swr";
+import { getPartyById } from "../services/api/parties";
+import { deletePartyDocument } from "../services/api/partiesDocuments";
 import {
   Dialog,
   DialogContent,
@@ -9,23 +11,38 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, User, Phone, FileText, Calendar, Globe, UserCheck, Building, MessageSquare, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, User, Phone, FileText, Calendar, Globe, UserCheck, Building, MessageSquare, MapPin, Download, ExternalLink, Trash2, FolderOpen } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
+import { toast } from "react-toastify";
 
 export function ClientDetailsModal({ clientId, isOpen, onClose }) {
   const { t } = useTranslations();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // SWR fetcher function
   const fetcher = () => {
     if (!clientId) return null;
-    return getClientAgreementById(clientId);
+    return getPartyById(clientId);
   };
 
   // Use SWR for data fetching
   const { data, error, isLoading } = useSWR(
-    clientId ? [`/clients-agreements/${clientId}`] : null,
+    clientId ? [`/parties/${clientId}`] : null,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -76,7 +93,33 @@ export function ClientDetailsModal({ clientId, isOpen, onClose }) {
     return "bg-gray-100 text-gray-800 border-gray-200";
   };
 
-  const client = data?.data;
+  const handleDeleteFile = async (fileId, fileName) => {
+    setFileToDelete({ id: fileId, name: fileName });
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteFile = async () => {
+    if (!fileToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await deletePartyDocument(fileToDelete.id);
+      
+      // Refresh the data
+      mutate([`/parties/${clientId}`]);
+      
+      toast.success(t("potentialClientsPage.files.deleteSuccess") || "تم حذف الملف بنجاح");
+      setDeleteDialogOpen(false);
+      setFileToDelete(null);
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      toast.error(t("potentialClientsPage.files.deleteError") || "فشل حذف الملف");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const client = data;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -234,9 +277,117 @@ export function ClientDetailsModal({ clientId, isOpen, onClose }) {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Documents Section */}
+              {client?.documents && client.documents.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <FolderOpen className="h-4 w-4" />
+                      {t("potentialClientsPage.files.title") || "المستندات"}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {client.documents.map((file) => (
+                        <div 
+                          key={file.id} 
+                          className="flex items-center justify-between p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-5 w-5 text-blue-500" />
+                            <div>
+                              <p className="text-sm font-medium">{file.document_name}</p>
+                              {file.created_at && (
+                                <p className="text-xs text-muted-foreground">
+                                  {formatDate(file.created_at)}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => window.open(file.url, '_blank')}
+                              title={t("potentialClientsPage.files.open") || "فتح الملف"}
+                            >
+                              <ExternalLink className="h-4 w-4 text-blue-500" />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = file.document_url;
+                                link.download = file.document_url;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              }}
+                              title={t("potentialClientsPage.files.download") || "تحميل الملف"}
+                            >
+                              <Download className="h-4 w-4 text-green-500" />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteFile(file.id, file.name)}
+                              title={t("potentialClientsPage.files.delete") || "حذف الملف"}
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           )}
         </div>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {t("potentialClientsPage.files.deleteConfirmTitle") || "تأكيد حذف الملف"}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {t("potentialClientsPage.files.deleteConfirmMessage") || "هل أنت متأكد من حذف الملف"} "{fileToDelete?.name}"?
+                <br />
+                {t("potentialClientsPage.files.deleteWarning") || "لا يمكن التراجع عن هذا الإجراء."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isDeleting}>
+                {t("potentialClientsPage.editModal.cancel") || "إلغاء"}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmDeleteFile}
+                disabled={isDeleting}
+                className="bg-red-500 hover:bg-red-600"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {t("potentialClientsPage.files.deleting") || "جاري الحذف..."}
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {t("potentialClientsPage.files.delete") || "حذف"}
+                  </>
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   );

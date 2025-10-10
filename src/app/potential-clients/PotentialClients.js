@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { getAllClientsAgreements } from "../services/api/clientsAgreements";
+import { getPotentialClients } from "../services/api/parties";
 import { SearchBar } from "./SearchBar";
 import { Pagination } from "./Pagination";
 import { ClientDetailsModal } from "./ClientDetailsModal";
 import { EditClientModal } from "./EditClientModal";
 import { AddClientModal } from "./AddClientModal";
 import { AddMeetingModal } from "./meetings/AddMeetingModal";
+import ActionsDropdown from "./ActionsDropdown";
 import {
   Table,
   TableBody,
@@ -18,8 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Eye, Edit, Calendar, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 
 function PotentialClients() {
@@ -56,15 +56,15 @@ function PotentialClients() {
       params.status = searchFilters.status;
     }
     if (searchFilters.type) {
-      params.type = searchFilters.type;
+      params.party_type = searchFilters.type;
     }
 
-    return getAllClientsAgreements(params);
+    return getPotentialClients(params);
   };
 
   // Use SWR for data fetching
-  const { data, error, isLoading } = useSWR(
-    [`/clients-agreements`, page, searchFilters.searchTerm, searchFilters.status],
+  const { data, error, isLoading, mutate } = useSWR(
+    [`/parties/potential-clients`, page, searchFilters.searchTerm, searchFilters.status],
     fetcher,
     {
       revalidateOnFocus: false,
@@ -134,6 +134,11 @@ function PotentialClients() {
     // You can add SWR revalidation here if necessary
   };
 
+  const handleClientDeleted = () => {
+    // Refresh the data after successful deletion
+    mutate();
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -143,21 +148,16 @@ function PotentialClients() {
     });
   };
 
-  const getTranslatedStatus = (status) => {
-    if (!status) return "-";
-    const statusMap = {
-      "new": t("potentialClientsPage.status.new"),
-      "": t("potentialClientsPage.status.contacted"),
-      "Qualified": t("potentialClientsPage.status.qualified"),
-      "Unqualified": t("potentialClientsPage.status.notQualified"),
-      "Converted to Client": t("potentialClientsPage.status.convertToClient"),
-      // Keep backward compatibility
-      "New": t("potentialClientsPage.status.new"),
-      "Contacted": t("potentialClientsPage.status.contacted"),
-      "Converted": t("potentialClientsPage.status.qualified"),
-      "Rejected": t("potentialClientsPage.status.notQualified"),
+  const getTranslatedPartyType = (partyType) => {
+    if (!partyType) return "-";
+    const lowerType = partyType.toLowerCase();
+    const typeMap = {
+      "new": t("potentialClientsPage.partyType.new"),
+      "contacted": t("potentialClientsPage.partyType.contacted"),
+      "qualified": t("potentialClientsPage.partyType.qualified"),
+      "unqualified": t("potentialClientsPage.partyType.unqualified"),
     };
-    return statusMap[status] || status;
+    return typeMap[lowerType] || partyType;
   };
 
   return (
@@ -196,10 +196,11 @@ function PotentialClients() {
                     <TableHead>{t("potentialClientsPage.table.id")}</TableHead>
                     <TableHead>{t("potentialClientsPage.table.name")}</TableHead>
                     <TableHead>{t("potentialClientsPage.table.phone")}</TableHead>
-                    <TableHead>{t("potentialClientsPage.table.status")}</TableHead>
                     <TableHead>{t("potentialClientsPage.table.source")}</TableHead>
+                    <TableHead>{t("potentialClientsPage.table.category")}</TableHead>
+                    <TableHead>{t("potentialClientsPage.table.partyType")}</TableHead>
+                    <TableHead>{t("potentialClientsPage.table.nationality")}</TableHead>
                     <TableHead>{t("potentialClientsPage.table.createdBy")}</TableHead>
-                    <TableHead>{t("potentialClientsPage.table.createdAt")}</TableHead>
                     <TableHead className="text-center">{t("potentialClientsPage.table.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -209,55 +210,33 @@ function PotentialClients() {
                       <TableCell className="font-medium">{client.id}</TableCell>
                       <TableCell>{client.name}</TableCell>
                       <TableCell>{client.phone || "-"}</TableCell>
+                      <TableCell>{client.source || "-"}</TableCell>
+                      <TableCell>{client.category || "-"}</TableCell>
                       <TableCell>
                         <span
                           className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                            client.status === "جديد" || client.status === "New"
+                            client.party_type === "Qualified"
                               ? "bg-green-50 text-green-700 ring-green-600/20"
-                              : client.status === "تم التواصل" || client.status === "Contacted"
-                              ? "bg-yellow-50 text-yellow-800 ring-yellow-600/20"
-                              : client.status === "مؤهل"
-                              ? "bg-blue-50 text-blue-700 ring-blue-700/10"
-                              : client.status === "غير مؤهل"
-                              ? "bg-red-50 text-red-700 ring-red-600/20"
-                              : client.status === "تحويل موكل"
-                              ? "bg-purple-50 text-purple-700 ring-purple-600/20"
+                              : client.party_type === "new"
+                              ? "bg-blue-50 text-blue-700 ring-blue-600/20"
+                              : client.party_type === "contacted"
+                              ? "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
                               : "bg-gray-50 text-gray-600 ring-gray-500/10"
                           }`}
                         >
-                          {getTranslatedStatus(client.status)}
+                          {getTranslatedPartyType(client.party_type)}
                         </span>
                       </TableCell>
-                      <TableCell>{client.source || "-"}</TableCell>
+                      <TableCell>{client.nationality || "-"}</TableCell>
                       <TableCell>{client.created_by_name || "-"}</TableCell>
-                      <TableCell>{formatDate(client.created_at)}</TableCell>
                       <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewDetails(client.id)}
-                            title={t("potentialClientsPage.messages.viewDetails")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEditClient(client.id)}
-                            title={t("potentialClientsPage.messages.editClient")}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleAddMeeting(client.id)}
-                            title={t("potentialClientsPage.messages.addMeeting")}
-                          >
-                            <Calendar className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        <ActionsDropdown
+                          client={client}
+                          onViewDetails={handleViewDetails}
+                          onEdit={handleEditClient}
+                          onAddMeeting={handleAddMeeting}
+                          onDeleted={handleClientDeleted}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}

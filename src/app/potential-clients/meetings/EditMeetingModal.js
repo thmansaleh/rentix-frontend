@@ -147,7 +147,7 @@ export function EditMeetingModal({ isOpen, onClose, meetingId, onSuccess }) {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const meetingUpdateData = {
-        client_agreement_id: meetingData?.data?.client_agreement_id,
+        party_id: meetingData?.data?.party_id,
         date: formatDateForAPI(values.date),
         start_time: values.start_time || null,
         end_time: values.end_time || null,

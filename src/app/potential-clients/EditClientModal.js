@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import useSWR, { mutate } from "swr";
-import { getClientAgreementById, updateClientAgreement } from "../services/api/clientsAgreements";
+import { getPartyById, updateParty } from "../services/api/parties";
 import { getBranches } from "../services/api/branches";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Dialog,
   DialogContent,
@@ -25,28 +26,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, X, Upload, FileText, Trash2 } from "lucide-react";
+import { Loader2, Save, X, Upload, FileText } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { toast } from "react-toastify";
-// import { uploadFile, deleteFile } from "@/utils/fileUpload";
 
 export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
   const { t } = useTranslations();
+  const { isRTL, language } = useLanguage();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
 
   // Fetch branches data
-  const { data: branchesData } = useSWR('branches', getBranches);
+  const { data: branchesData } = useSWR(isOpen ? 'branches' : null, getBranches);
+  const branches = branchesData?.data || [];
 
   // SWR fetcher function
   const fetcher = () => {
     if (!clientId) return null;
-    return getClientAgreementById(clientId);
+    return getPartyById(clientId);
   };
 
   // Use SWR for data fetching
   const { data, error, isLoading } = useSWR(
-    clientId ? [`/clients-agreements/${clientId}`] : null,
+    clientId ? [`/parties/${clientId}`] : null,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -61,53 +63,66 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
     phone: Yup.string(),
     status: Yup.string()
       .required(t("potentialClientsPage.validation.statusRequired")),
-    source: Yup.string()
-      .required(t("potentialClientsPage.validation.sourceRequired")),
-    branch_id: Yup.string()
-      .required(t("potentialClientsPage.validation.branchRequired")),
-    consultation_type: Yup.string()
-      .required(t("potentialClientsPage.validation.consultationTypeRequired")),
+    party_type: Yup.string()
+      .required("Party type is required"),
     category: Yup.string()
       .required(t("potentialClientsPage.validation.categoryRequired")),
-    note: Yup.string(),
+    nationality: Yup.string(),
+    address: Yup.string(),
+    email: Yup.string().email("Invalid email format"),
+    e_id: Yup.string(),
   });
 
   // Initial values for Formik
   const getInitialValues = () => {
-    if (data?.data) {
-      const client = data.data;
+    if (data) {
+      const client = data;
       return {
         name: client.name || "",
         phone: client.phone || "",
-        note: client.note || "",
         status: client.status || "",
-        source: client.source || "",
-        branch_id: client.branch_id?.toString() || "",
-        consultation_type: client.consultation_type || "",
+        party_type: client.party_type || "New",
         category: client.category || "",
+        nationality: client.nationality || "",
+        address: client.address || "",
+        email: client.email || "",
+        e_id: client.e_id || "",
+        consultation_type: client.consultation_type || "",
+        passport: client.passport || "",
+        source: client.source || "",
+        branch_id: client.branch_id || 1,
       };
     }
     return {
       name: "",
       phone: "",
-      note: "",
       status: "",
-      source: "",
-      branch_id: "",
-      consultation_type: "",
+      party_type: "New",
       category: "",
+      nationality: "",
+      address: "",
+      email: "",
+      e_id: "",
+      consultation_type: "",
+      passport: "",
+      source: "",
+      branch_id: 1,
     };
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-  
+      // Include files in the request data
+      const requestData = {
+        ...values,
+        files: selectedFiles.length > 0 ? selectedFiles : undefined
+      };
 
-      await updateClientAgreement(clientId, values);
+      await updateParty(clientId, requestData);
       
       // Mutate SWR cache to refresh data
-      mutate([`/clients-agreements`, 1, "", undefined]);
-      mutate([`/clients-agreements/${clientId}`]);
+      mutate([`/parties/potential-clients`, 1, "", undefined]);
+      mutate([`/parties/${clientId}`]);
       
       toast.success(t("potentialClientsPage.messages.updateSuccess"));
       
@@ -153,33 +168,35 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleDeleteExistingFile = async (fileId, fileName) => {
-  
-  };
-
   const statusOptions = [
-    { value: "New", label: t("potentialClientsPage.status.new") },
-    { value: "Contacted", label: t("potentialClientsPage.status.contacted") },
-    { value: "Qualified", label: t("potentialClientsPage.status.qualified") },
-    { value: "Unqualified", label: t("potentialClientsPage.status.notQualified") },
-    { value: "Converted to Client", label: t("potentialClientsPage.status.convertToClient") },
+    { value: "active", label: t('potentialClientsPage.status.active') || "نشط" },
+    { value: "inactive", label: t('potentialClientsPage.status.inactive') || "غير نشط" },
+  ];
+
+  const partyTypeOptions = [
+    { value: "New", label: "جديد" },
+    { value: "Unqualified", label: "غير مؤهل" },
+    { value: "Qualified", label: "مؤهل" },
+    { value: "Contacted", label: "تم التواصل" },
+    { value: "client", label: "تحويل ل موكل" },
   ];
 
   const sourceOptions = [
-    { value: "الموقع الالكتروني", label: t("potentialClientsPage.source.website") },
-    { value: "زيارة المكتب", label: t("potentialClientsPage.source.officeVisit") },
-    { value: "التواصل عبر الهاتف", label: t("potentialClientsPage.source.phoneContact") },
-  ];
-
-  const consultationTypeOptions = [
-    { value: "قانونية", label: t("potentialClientsPage.consultationType.legal") },
-    { value: "مالية", label: t("potentialClientsPage.consultationType.financial") },
-    { value: "ادارية", label: t("potentialClientsPage.consultationType.administrative") },
+    { value: "الموقع الالكتروني", label: t('potentialClientsPage.source.website') || "الموقع الالكتروني" },
+    { value: "زيارة المكتب", label: t('potentialClientsPage.source.officeVisit') || "زيارة المكتب" },
+    { value: "التواصل ع الهاتف", label: t('potentialClientsPage.source.phoneContact') || "التواصل ع الهاتف" },
+    { value: "احالة", label: "احالة" },
   ];
 
   const categoryOptions = [
     { value: "individual", label: t("potentialClientsPage.category.individual") },
     { value: "company", label: t("potentialClientsPage.category.company") },
+  ];
+
+  const consultationTypeOptions = [
+    { value: "قانونية", label: t("potentialClientsPage.consultationType.legal") || "قانونية" },
+    { value: "مالية", label: t("potentialClientsPage.consultationType.financial") || "مالية" },
+    { value: "إدارية", label: t("potentialClientsPage.consultationType.administrative") || "إدارية" },
   ];
 
   return (
@@ -203,7 +220,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
           <div className="flex items-center justify-center py-12 text-destructive">
             <p>{t("potentialClientsPage.messages.error")}</p>
           </div>
-        ) : data?.data ? (
+        ) : data ? (
           <Formik
             initialValues={getInitialValues()}
             validationSchema={validationSchema}
@@ -252,10 +269,28 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                     </Field>
                   </div>
 
+                  {/* Email Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="email">{t('potentialClientsPage.table.email') || 'البريد الإلكتروني'}</Label>
+                    <Field name="email">
+                      {({ field }) => (
+                        <Input
+                          {...field}
+                          id="email"
+                          type="email"
+                          placeholder="example@email.com"
+                          disabled={isSubmitting}
+                        />
+                      )}
+                    </Field>
+                    {errors.email && touched.email && (
+                      <p className="text-sm text-red-500">{errors.email}</p>
+                    )}
+                  </div>
 
 <div className="flex gap-4 flex-wrap">
                   {/* Status Field */}
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="status">
                       {t("potentialClientsPage.table.status")} *
                     </Label>
@@ -278,84 +313,63 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                     {errors.status && touched.status && (
                       <p className="text-sm text-red-500">{errors.status}</p>
                     )}
-                  </div>
+                  </div> */}
 
-                  {/* Source Field */}
+                  {/* Party Type Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="source">
-                      {t("potentialClientsPage.table.source")} *
+                    <Label htmlFor="party_type">
+                      {t('potentialClientsPage.table.partyType') || 'نوع العميل'} *
                     </Label>
                     <Select
-                      value={values.source || ""}
-                      onValueChange={(value) => setFieldValue("source", value)}
+                      dir={isRTL ? "rtl" : "ltr"}
+                      value={values.party_type || ""}
+                      onValueChange={(value) => setFieldValue("party_type", value)}
                       disabled={isSubmitting}
                     >
-                      <SelectTrigger className={errors.source && touched.source ? "border-red-500" : ""}>
-                        <SelectValue placeholder={t("potentialClientsPage.editModal.selectSource")} />
+                      <SelectTrigger className={errors.party_type && touched.party_type ? "border-red-500" : ""}>
+                        <SelectValue placeholder={t('potentialClientsPage.editModal.selectPartyType') || 'اختر نوع العميل'} />
                       </SelectTrigger>
                       <SelectContent>
-                        {sourceOptions.map((option) => (
+                        {partyTypeOptions.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.source && touched.source && (
-                      <p className="text-sm text-red-500">{errors.source}</p>
+                    {errors.party_type && touched.party_type && (
+                      <p className="text-sm text-red-500">{errors.party_type}</p>
                     )}
                   </div>
 
-                  {/* Branch Field */}
+                  {/* Nationality Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="branch_id">
-                      {t("potentialClientsPage.table.branch")} *
-                    </Label>
-                    <Select
-                      value={values.branch_id || ""}
-                      onValueChange={(value) => setFieldValue("branch_id", value)}
-                      disabled={isSubmitting}
-                    >
-                      <SelectTrigger className={errors.branch_id && touched.branch_id ? "border-red-500" : ""}>
-                        <SelectValue placeholder={t("potentialClientsPage.editModal.selectBranch")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {branchesData?.success && branchesData.data?.map((branch) => (
-                          <SelectItem key={branch.id} value={branch.id.toString()}>
-                            {branch.name_ar} ({branch.name_en})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.branch_id && touched.branch_id && (
-                      <p className="text-sm text-red-500">{errors.branch_id}</p>
-                    )}
+                    <Label htmlFor="nationality">{t('potentialClientsPage.table.nationality') || 'الجنسية'}</Label>
+                    <Field name="nationality">
+                      {({ field }) => (
+                        <Input
+                          {...field}
+                          id="nationality"
+                          placeholder={t('potentialClientsPage.addModal.nationalityPlaceholder') || 'الإمارات العربية المتحدة'}
+                          disabled={isSubmitting}
+                        />
+                      )}
+                    </Field>
                   </div>
 
-                  {/* Consultation Type Field */}
+                  {/* ID Number Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="consultation_type">
-                      {t("potentialClientsPage.table.consultationType")} *
-                    </Label>
-                    <Select
-                      value={values.consultation_type || ""}
-                      onValueChange={(value) => setFieldValue("consultation_type", value)}
-                      disabled={isSubmitting}
-                    >
-                      <SelectTrigger className={errors.consultation_type && touched.consultation_type ? "border-red-500" : ""}>
-                        <SelectValue placeholder={t("potentialClientsPage.editModal.selectConsultationType")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {consultationTypeOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.consultation_type && touched.consultation_type && (
-                      <p className="text-sm text-red-500">{errors.consultation_type}</p>
-                    )}
+                    <Label htmlFor="e_id">{t('potentialClientsPage.table.emiratesId') || 'رقم الهوية الإماراتية'}</Label>
+                    <Field name="e_id">
+                      {({ field }) => (
+                        <Input
+                          {...field}
+                          id="e_id"
+                          placeholder="784-1234-1234567-1"
+                          disabled={isSubmitting}
+                        />
+                      )}
+                    </Field>
                   </div>
 
                   {/* Category Field */}
@@ -383,57 +397,121 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                       <p className="text-sm text-red-500">{errors.category}</p>
                     )}
                   </div>
-</div>
-                  {/* Note Field */}
+
+                  {/* Consultation Type Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="note">
-                      {t("potentialClientsPage.modal.notes")}
+                    <Label htmlFor="consultation_type">
+                      {t("potentialClientsPage.table.consultationType") || "نوع الاستشارة"}
                     </Label>
-                    <Field name="note">
+                    <Select
+                      dir={isRTL ? "rtl" : "ltr"}
+                      value={values.consultation_type || ""}
+                      onValueChange={(value) => setFieldValue("consultation_type", value)}
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("potentialClientsPage.addModal.selectConsultationType") || "اختر نوع الاستشارة"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {consultationTypeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Source Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="source">
+                      {t('potentialClientsPage.table.source') || 'المصدر'}
+                    </Label>
+                    <Select
+                      dir={isRTL ? "rtl" : "ltr"}
+                      value={values.source || ""}
+                      onValueChange={(value) => setFieldValue("source", value)}
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('potentialClientsPage.addModal.selectSource') || 'اختر المصدر'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sourceOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Branch Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="branch_id">
+                      {t('potentialClientsPage.table.branch') || 'الفرع'}
+                    </Label>
+                    <Select
+                      dir={isRTL ? "rtl" : "ltr"}
+                      value={values.branch_id?.toString() || ""}
+                      onValueChange={(value) => setFieldValue("branch_id", parseInt(value))}
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('potentialClientsPage.addModal.selectBranch') || 'اختر الفرع'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {branches.length > 0 ? (
+                          branches.map((branch) => (
+                            <SelectItem key={branch.id} value={branch.id.toString()}>
+                              {language === 'ar' ? branch.name_ar : branch.name_en}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="loading" disabled>
+                            {t('potentialClientsPage.addModal.loadingBranches') || 'جاري التحميل...'}
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Passport Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="passport">{t("potentialClientsPage.table.passport") || "رقم جواز السفر"}</Label>
+                    <Field name="passport">
+                      {({ field }) => (
+                        <Input
+                          {...field}
+                          id="passport"
+                          placeholder={t("potentialClientsPage.addModal.passportPlaceholder") || "أدخل رقم جواز السفر"}
+                          disabled={isSubmitting}
+                        />
+                      )}
+                    </Field>
+                  </div>
+</div>
+
+                  {/* Address Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="address">{t('potentialClientsPage.table.address') || 'العنوان'}</Label>
+                    <Field name="address">
                       {({ field }) => (
                         <Textarea
                           {...field}
-                          id="note"
-                          placeholder={t("potentialClientsPage.editModal.notePlaceholder")}
-                          rows={4}
+                          id="address"
+                          placeholder={t('potentialClientsPage.addModal.addressPlaceholder') || 'أدخل العنوان التفصيلي'}
+                          rows={3}
                           disabled={isSubmitting}
                         />
                       )}
                     </Field>
                   </div>
 
-                  {/* Files Section */}
-                  <div className="space-y-4">
-                    <Label>{t("potentialClientsPage.files.title")}</Label>
+                  {/* File Upload Section - Add New Files Only */}
+                  <div className="space-y-4 border-t pt-4 mt-4">
+                    <Label>{t("potentialClientsPage.files.addNew") || "إضافة ملفات جديدة"}</Label>
                     
-                    {/* Existing Files */}
-                    {data?.data?.files && data.data.files.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">
-                          {t("potentialClientsPage.files.existing")}
-                        </p>
-                        <div className="space-y-2 max-h-32 overflow-y-auto">
-                          {data.data.files.map((file) => (
-                            <div key={file.id} className="flex items-center justify-between p-2 bg-muted rounded-md">
-                              <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4" />
-                                <span className="text-sm">{file.name}</span>
-                              </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDeleteExistingFile(file.id, file.name)}
-                                disabled={isSubmitting}
-                              >
-                                <Trash2 className="h-4 w-4 text-red-500" />
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
                     {/* File Upload */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
@@ -464,7 +542,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                       {selectedFiles.length > 0 && (
                         <div className="space-y-2">
                           <p className="text-sm font-medium">
-                            {t("potentialClientsPage.files.selected")}
+                            {t("potentialClientsPage.files.selected")} ({selectedFiles.length})
                           </p>
                           <div className="space-y-2 max-h-32 overflow-y-auto">
                             {selectedFiles.map((file, index) => (
@@ -491,6 +569,10 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                         </div>
                       )}
                     </div>
+
+                    <p className="text-xs text-muted-foreground italic">
+                      {t("potentialClientsPage.files.viewExistingHint") || "💡 لعرض أو حذف الملفات الموجودة، افتح تفاصيل العميل"}
+                    </p>
                   </div>
                 </div>
 
@@ -506,7 +588,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isSubmitting || isUploading || !values.name?.trim() || !values.status || !values.source || !values.branch_id || !values.consultation_type || !values.category}
+                    disabled={isSubmitting || isUploading || !values.name?.trim() || !values.status || !values.party_type || !values.category}
                   >
                     {isSubmitting || isUploading ? (
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />

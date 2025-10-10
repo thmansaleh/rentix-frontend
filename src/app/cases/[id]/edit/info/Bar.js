@@ -75,7 +75,7 @@ function Bar({ formikProps }) {
             )
           })}
 
-          <RelatedCasesDialog caseId={formikProps.values.id} />
+          {/* <RelatedCasesDialog caseId={formikProps.values.id} /> */}
       <CounterCaseFileInput formikProps={formikProps} />
         </div>
       </div>

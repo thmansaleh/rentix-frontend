@@ -17,6 +17,8 @@ function Info({ caseId }) {
   return (
     <Form className="space-y-6 p-4">
       <SubmitButton />
+                       <RelatedCases caseId={caseId} />
+
       <Bar formikProps={formikProps} />
       <div className="flex flex-wrap gap-4">
         <div className="space-y-2">
