@@ -8,7 +8,7 @@ import Deals from './deals/Deals'
 import Parties from './Parties'
 import Orders from './orders/Orders';
 
-function page() {
+function Page() {
   const { t } = useTranslations();
   const { isRTL } = useLanguage();
   
@@ -30,4 +30,4 @@ function page() {
   </Tabs>
 }
 
-export default page
+export default Page

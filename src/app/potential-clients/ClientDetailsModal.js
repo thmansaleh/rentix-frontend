@@ -359,7 +359,7 @@ export function ClientDetailsModal({ clientId, isOpen, onClose }) {
                 {t("potentialClientsPage.files.deleteConfirmTitle") || "تأكيد حذف الملف"}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                {t("potentialClientsPage.files.deleteConfirmMessage") || "هل أنت متأكد من حذف الملف"} "{fileToDelete?.name}"?
+                {t("potentialClientsPage.files.deleteConfirmMessage") || "هل أنت متأكد من حذف الملف"} {fileToDelete?.name}؟
                 <br />
                 {t("potentialClientsPage.files.deleteWarning") || "لا يمكن التراجع عن هذا الإجراء."}
               </AlertDialogDescription>

@@ -52,7 +52,7 @@ export function DeleteMeetingModal({ isOpen, onClose, meetingId, meetingTitle, o
             {t("meetings.delete.description")}
             {meetingTitle && (
               <div className="mt-2 font-medium text-foreground">
-                "{meetingTitle}"
+                {meetingTitle}
               </div>
             )}
             <div className="mt-2 text-red-600 font-medium">
