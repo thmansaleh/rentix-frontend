@@ -321,7 +321,7 @@ function AddJudicialOrderModal({ isOpen, onClose, caseId }) {
             <Button variant="outline" onClick={handleCancel} disabled={isSubmitting}>
               {t('common.cancel')}
             </Button>
-            <Button onClick={handleSave} disabled={isSubmitting || !formData.date || !formData.notification_period_days}>
+            <Button onClick={handleSave} disabled={isSubmitting || !formData.date }>
               {isSubmitting ? t('common.saving') : t('common.save')}
             </Button>
           </div>

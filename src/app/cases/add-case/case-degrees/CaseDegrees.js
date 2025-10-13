@@ -20,6 +20,16 @@ function CaseDegrees() {
   const [editingDegree, setEditingDegree] = useState(null)
   const [editingIndex, setEditingIndex] = useState(null)
 
+  const getDegreeLabel = (degreeValue) => {
+    const degreeTypes = {
+      'appeal': t('initiationProceeding.degreeTypes.appeal'),
+      'first_instance': t('initiationProceeding.degreeTypes.first_instance'),
+      'cassation': t('initiationProceeding.degreeTypes.cassation')
+    }
+    
+    return degreeTypes[degreeValue] || degreeValue || t('initiationProceeding.notSpecified')
+  }
+
   const handleEditDegree = (degree, index) => {
     setEditingDegree(degree)
     setEditingIndex(index)
@@ -81,7 +91,7 @@ function CaseDegrees() {
                 {caseDegrees.map((degree, index) => (
                   <TableRow key={degree.id || index}>
                     <TableCell className="text-center">
-                      {degree.degree || t('initiationProceeding.notSpecified')}
+                      {getDegreeLabel(degree.degree)}
                     </TableCell>
                     <TableCell className="text-center">
                       {degree.case_number || t('initiationProceeding.notSpecified')}

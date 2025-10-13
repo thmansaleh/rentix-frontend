@@ -97,7 +97,7 @@ function JudicialNotices() {
   }, [])
 
   const handleAddNotice = async () => {
-    if (formData.certificationDate && formData.noticePeriod) {
+    if (formData.certificationDate ) {
       const newNotice = {
         id: Date.now(),
         certificationDate: formData.certificationDate.toISOString().split('T')[0],
@@ -164,7 +164,7 @@ function JudicialNotices() {
   }
 
   const handleUpdateNotice = async () => {
-    if (formData.certificationDate && formData.noticePeriod && editingNoticeIndex !== null) {
+    if (formData.certificationDate  && editingNoticeIndex !== null) {
       const updatedNotice = {
         id: notices[editingNoticeIndex].id,
         certificationDate: formData.certificationDate.toISOString().split('T')[0],

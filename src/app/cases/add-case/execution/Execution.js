@@ -35,7 +35,7 @@ function Execution() {
   ]
 
   const handleAddExecution = async () => {
-    if (formData.date && formData.type && formData.status && formData.amount) {
+    if (formData.date && formData.type && formData.status ) {
       const newExecution = {
         id: Date.now(),
         date: format(formData.date, "yyyy-MM-dd"), // Format date as YYYY-MM-DD for database

@@ -289,7 +289,7 @@ const AddExecutionModal = ({
             </Button>
             <Button 
               type="submit"
-              disabled={!formData.date || !formData.type || !formData.status || !formData.amount || isSubmitting}
+              disabled={!formData.date || !formData.type || !formData.status  || isSubmitting}
             >
               {isSubmitting ? tc('saving') : tc('save')}
             </Button>

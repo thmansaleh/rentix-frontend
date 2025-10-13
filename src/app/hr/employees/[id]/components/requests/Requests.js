@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react'
 import { toast } from 'react-toastify'
 import RequestModal from './RequestModal'
-import { getEmployeeRequests, deleteEmployeeRequest } from '@/app/services/api/employeeRequests'
+import { getRequestsByEmployeeId, deleteEmployeeRequest } from '@/app/services/api/employeeRequests'
 
 function Requests({ employeeId }) {
   const { t } = useTranslations()
@@ -25,7 +25,7 @@ function Requests({ employeeId }) {
   // Fetch requests data
   const { data: requestsData, error, mutate, isLoading } = useSWR(
     employeeId ? ['employee-requests', employeeId] : null,
-    () => getEmployeeRequests(employeeId)
+    () => getRequestsByEmployeeId(employeeId)
   )
 
   const requests = requestsData?.data || []

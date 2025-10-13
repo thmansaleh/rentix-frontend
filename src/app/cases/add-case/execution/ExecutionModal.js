@@ -161,7 +161,7 @@ function ExecutionModal({
             </Button>
             <Button 
               type="button"
-              disabled={!formData.date || !formData.type || !formData.status || !formData.amount}
+              disabled={!formData.date || !formData.type || !formData.status }
               onClick={onSubmit}
             >
               {submitButtonText}

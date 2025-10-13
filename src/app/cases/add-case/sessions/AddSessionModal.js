@@ -345,7 +345,7 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
           <Button type="button" variant="outline" onClick={handleCancel}>
             {t('sessions.cancel')}
           </Button>
-          <Button type="button" onClick={handleSubmit} disabled={!formData.date || !formData.link}>
+          <Button type="button" onClick={handleSubmit} disabled={!formData.date}>
             {t('sessions.add')}
           </Button>
         </div>

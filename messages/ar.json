@@ -929,6 +929,11 @@
     "noProceedings": "لا توجد مراحل تقاضي مسجلة",
     "degree": "الدرجة",
     "degreePlaceholder": "أدخل درجة التقاضي",
+    "degreeTypes": {
+      "appeal": "استئناف",
+      "first_instance": "ابتدائي",
+      "cassation": "الطعن"
+    },
     "caseNumber": "رقم القضية",
     "caseNumberPlaceholder": "أدخل رقم القضية",
     "year": "السنة",

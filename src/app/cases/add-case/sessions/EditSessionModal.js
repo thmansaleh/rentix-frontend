@@ -341,7 +341,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
           <Button type="button" variant="outline" onClick={handleCancel}>
             {t('sessions.cancel')}
           </Button>
-          <Button type="button" onClick={handleSubmit} disabled={!formData.date || !formData.link}>
+          <Button type="button" onClick={handleSubmit} disabled={!formData.date }>
             {t('sessions.update')}
           </Button>
         </div>

@@ -31,6 +31,11 @@ export const getEmployeeRequestById = async (id) => {
   return response.data;
 };
 
+export const getRequestsByEmployeeId = async (employeeId) => {
+  const response = await api.get(`/employee-requests/employee/${employeeId}`);
+  return response.data;
+};
+
 export const createEmployeeRequest = async (requestData) => {
   const response = await api.post("/employee-requests", requestData);
   return response.data;

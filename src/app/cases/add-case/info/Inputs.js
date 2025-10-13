@@ -60,9 +60,9 @@ function Inputs() {
           className={`w-full ${errors.caseNumber && touched.caseNumber ? 'border-red-500' : ''}`}
           
         />
-        {errors.caseNumber && touched.caseNumber && (
+        {/* {errors.caseNumber && touched.caseNumber && (
           <div className="text-red-500 text-sm">{errors.caseNumber}</div>
-        )}
+        )} */}
       </div>
 
       {/* Fees and Expenses Combined */}
