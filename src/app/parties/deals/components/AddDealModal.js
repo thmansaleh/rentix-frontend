@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
-import useSWR from 'swr'
 import { useSelector } from 'react-redux'
 import { useTranslations } from "@/hooks/useTranslations"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -11,11 +10,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { SearchableCombobox } from "@/components/ui/searchable-combobox"
 import { DatePicker } from "@/components/ui/date-picker"
 import { Loader2, Plus, X } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { createClientDeal } from '@/app/services/api/clientsDeals'
-import { getPartiesByBranch } from '@/app/services/api/parties'
+import { searchParties } from '@/app/services/api/parties'
 
 const AddDealModal = ({ 
   isOpen, 
@@ -30,6 +30,7 @@ const AddDealModal = ({
   const currentUser = useSelector((state) => state.auth.jobId)
 
   const [isLoading, setIsLoading] = useState(false)
+  const [searchResults, setSearchResults] = useState([])
   const [formData, setFormData] = useState({
     client_id: '',
     amount: '',
@@ -40,16 +41,25 @@ const AddDealModal = ({
     created_by: currentUser || null
   })
 
-  // Fetch clients/parties for dropdown
-  const { data: partiesResponse } = useSWR(
-    'parties-branch-1',
-    () => getPartiesByBranch(1),
-    {
-      revalidateOnFocus: false,
+  // Handle party search - wrapped in useCallback to prevent infinite re-renders
+  const handlePartySearch = useCallback(async (query) => {
+    try {
+      const response = await searchParties(query)
+      if (response.success) {
+        setSearchResults(response.data)
+      }
+    } catch (error) {
+      console.error('Error searching parties:', error)
     }
-  )
+  }, []) // Empty dependency array since searchParties is imported and stable
 
-  const clients = partiesResponse?.success ? partiesResponse.data : []
+  // Format options for combobox
+  const clientOptions = searchResults.map(client => ({
+    value: client.id,
+    label: `${client.name}${client.phone ? ` - ${client.phone}` : ''}`,
+    phone: client.phone,
+    name: client.name
+  }))
 
   // Status options
   const statusOptions = [
@@ -75,6 +85,7 @@ const AddDealModal = ({
         end_date: null,
         created_by: currentUser || null
       })
+      setSearchResults([])
     }
   }, [isOpen, currentUser])
 
@@ -149,22 +160,17 @@ const AddDealModal = ({
             <Label htmlFor="client_id">
               {isArabic ? 'العميل *' : 'Client *'}
             </Label>
-            <Select
+            <SearchableCombobox
               value={formData.client_id}
               onValueChange={(value) => handleInputChange('client_id', value)}
+              onSearch={handlePartySearch}
+              options={clientOptions}
+              placeholder={isArabic ? 'ابحث عن عميل...' : 'Search for client...'}
+              searchPlaceholder={isArabic ? 'ابحث بالاسم أو الهاتف...' : 'Search by name or phone...'}
+              emptyMessage={isArabic ? 'لم يتم العثور على نتائج' : 'No results found'}
               disabled={isLoading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={isArabic ? 'اختر العميل' : 'Select client'} />
-              </SelectTrigger>
-              <SelectContent>
-                {clients.map((client) => (
-                  <SelectItem key={client.id} value={client.id.toString()}>
-                    {client.name} {client.phone ? `- ${client.phone}` : ''}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              minSearchLength={3}
+            />
           </div>
 
           {/* Amount */}

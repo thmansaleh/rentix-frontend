@@ -107,21 +107,14 @@ function Deals() {
   // Get status badge variant and text
   const getStatusDisplay = (status) => {
     const statusMap = {
-      active: { 
-        variant: 'default', 
-        text: isArabic ? 'نشط' : 'Active' 
-      },
-      pending: { 
+     
+      draft: { 
         variant: 'secondary', 
-        text: isArabic ? 'في الانتظار' : 'Pending' 
+        text: isArabic ? 'مسودة' : 'Draft' 
       },
       completed: { 
         variant: 'outline', 
         text: isArabic ? 'مكتمل' : 'Completed' 
-      },
-      cancelled: { 
-        variant: 'destructive', 
-        text: isArabic ? 'ملغى' : 'Cancelled' 
       }
     }
     return statusMap[status] || { variant: 'secondary', text: status }

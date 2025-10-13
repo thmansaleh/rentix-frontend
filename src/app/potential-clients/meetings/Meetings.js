@@ -14,12 +14,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, Clock, User, MapPin, Monitor, Users, Search, Loader2, Eye, Edit, Trash2 } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { EditMeetingModal } from "./EditMeetingModal";
 import { DeleteMeetingModal } from "./DeleteMeetingModal";
+import { MeetingsFilterSearch } from "./MeetingsFilterSearch";
 
 function Meetings() {
   const { t } = useTranslations();
@@ -70,14 +69,10 @@ function Meetings() {
     }
   );
 
-  const handleSearch = (e) => {
-    setFilters(prev => ({ ...prev, searchTerm: e.target.value }));
-    setPage(1);
-  };
-
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setPage(1);
+  // Handle search from FilterSearch component
+  const handleSearch = (newFilters) => {
+    setFilters(newFilters);
+    setPage(1); // Reset to first page when searching
   };
 
   const handlePageChange = (newPage) => {
@@ -178,60 +173,8 @@ function Meetings() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder={t("meetings.search.placeholder")}
-                value={filters.searchTerm}
-                onChange={handleSearch}
-                className="pl-10"
-              />
-            </div>
-
-            {/* Status Filter */}
-            <Select 
-              value={filters.meet_result} 
-              onValueChange={(value) => handleFilterChange("meet_result", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t("meetings.filters.allStatuses")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("meetings.filters.allStatuses")}</SelectItem>
-                <SelectItem value="scheduled">{t("meetings.results.scheduled")}</SelectItem>
-                <SelectItem value="completed">{t("meetings.results.completed")}</SelectItem>
-                <SelectItem value="cancelled">{t("meetings.results.cancelled")}</SelectItem>
-                <SelectItem value="rescheduled">{t("meetings.results.rescheduled")}</SelectItem>
-                <SelectItem value="no_show">{t("meetings.results.noShow")}</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Meeting Type Filter */}
-            <Select 
-              value={filters.meeting_type} 
-              onValueChange={(value) => handleFilterChange("meeting_type", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t("meetings.filters.allTypes")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("meetings.filters.allTypes")}</SelectItem>
-                <SelectItem value="online">{t("meetings.types.online")}</SelectItem>
-                <SelectItem value="onsite">{t("meetings.types.onsite")}</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Date Filter */}
-            <Input
-              type="date"
-              value={filters.date}
-              onChange={(e) => handleFilterChange("date", e.target.value)}
-              placeholder={t("meetings.filters.selectDate")}
-            />
-          </div>
+          {/* Filters - Now in separate component */}
+          <MeetingsFilterSearch onSearch={handleSearch} />
 
           {/* Table */}
           <div className="rounded-md border">
@@ -317,14 +260,7 @@ function Meetings() {
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => console.log("View meeting", meeting.id)}
-                            title={t("meetings.actions.view")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                        
                           <Button
                             variant="ghost"
                             size="icon"

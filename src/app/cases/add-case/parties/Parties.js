@@ -95,7 +95,6 @@ function Parties() {
                 <TableRow>
                   <TableHead className='text-center'>{t('parties.partyName')}</TableHead>
                   <TableHead className='text-center'>{t('parties.partyType')}</TableHead>
-                  <TableHead className='text-center'>{t('parties.clientRole')}</TableHead>
                   <TableHead className='text-center'>{t('parties.phone')}</TableHead>
                   <TableHead className='text-center'>{t('parties.email')}</TableHead>
                   <TableHead className='text-center'>{t('parties.category')}</TableHead>
@@ -108,7 +107,6 @@ function Parties() {
                   <TableRow key={party.id}>
                     <TableCell className="font-medium text-center" >{party.name}</TableCell>
                     <TableCell className='text-center'>{getPartyTypeBadge(party.party_type)}</TableCell>
-                    <TableCell className='text-center'>{party.clientRole || t('parties.notSpecified')}</TableCell>
                     <TableCell className='text-center'>{party.phone}</TableCell>
                     <TableCell className='text-center'>{party.email || t('parties.notSpecified')}</TableCell>
                     <TableCell className='text-center'>

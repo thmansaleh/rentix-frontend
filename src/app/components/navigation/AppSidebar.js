@@ -329,7 +329,10 @@ const AppSidebar = () => {
       icon: Users,
       type: 'category',
       submenu: [
-        { id: 'employees', label: t('navigation.employees'), icon: Users },
+        { id: 'hr/employees', label: t('navigation.employees'), icon: Users },
+        { id: 'hr/requests', label: t('navigation.requests'), icon: FileText },
+        { id: 'hr/assets', label: t('navigation.assets'), icon: Package },
+        { id: 'hr/events', label: t('navigation.events'), icon: Calendar },
         // { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
       ]
     },

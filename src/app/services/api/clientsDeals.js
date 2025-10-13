@@ -17,6 +17,15 @@ export const getClientDealById = async (id) => {
     throw error;
   }
 };
+export const getClientDealsByClientId = async (clientId) => {
+  try {
+    const response = await api.get(`/clients-deals/client/${clientId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching client deals by client ID:", error);
+    throw error;
+  }
+};
 export const createClientDeal = async (dealData) => {
   try {
     const response = await api.post(`/clients-deals`, dealData);

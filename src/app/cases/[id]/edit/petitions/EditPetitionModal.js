@@ -10,18 +10,24 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { CalendarIcon, Upload, X, FileText, Image, FileIcon } from "lucide-react"
+import { CalendarIcon, Upload, X, FileText, Image, FileIcon, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { getCasePetitionById, deleteCasePetitionDocument } from '@/app/services/api/CasePetitions'
 
 function EditPetitionModal({ 
   isOpen, 
   onClose, 
   onSubmit, 
-  petition,
+  petitionId,
   title = "Edit Petition",
   isLoading = false
 }) {
   const { t } = useTranslations()
+  
+  // State for petition data and loading
+  const [petition, setPetition] = useState(null)
+  const [isFetching, setIsFetching] = useState(false)
+  const [fetchError, setFetchError] = useState(null)
   
   // Initialize form data with petition data when petition is provided
   const [formData, setFormData] = useState({
@@ -33,6 +39,35 @@ function EditPetitionModal({
   })
 
   const [isDragOver, setIsDragOver] = useState(false)
+  const [existingDocuments, setExistingDocuments] = useState([])
+  const [deletingDocumentId, setDeletingDocumentId] = useState(null)
+
+  // Fetch petition data when petitionId changes
+  useEffect(() => {
+    const fetchPetition = async () => {
+      if (!petitionId || !isOpen) return
+      
+      setIsFetching(true)
+      setFetchError(null)
+      
+      try {
+        const response = await getCasePetitionById(petitionId)
+        // API returns { success: true, data: {...} }
+        if (response.success && response.data) {
+          setPetition(response.data)
+        } else {
+          setFetchError('Invalid response from server')
+        }
+      } catch (error) {
+        console.error('Error fetching petition:', error)
+        setFetchError(error.message || 'Failed to fetch petition data')
+      } finally {
+        setIsFetching(false)
+      }
+    }
+
+    fetchPetition()
+  }, [petitionId, isOpen])
 
   // Initialize form data when petition changes
   useEffect(() => {
@@ -44,6 +79,9 @@ function EditPetitionModal({
         appealDate: petition.appeal_date ? parseISO(petition.appeal_date) : null,
         files: [] // Note: existing files handling could be implemented here if needed
       })
+      
+      // Set existing documents
+      setExistingDocuments(petition.documents || [])
     }
   }, [petition])
 
@@ -80,6 +118,47 @@ function EditPetitionModal({
     if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
     if (type.includes('pdf')) return <FileText className="h-4 w-4" />;
     return <FileIcon className="h-4 w-4" />;
+  };
+
+  // Get file icon from document name
+  const getDocumentIcon = (fileName) => {
+    if (!fileName) return <FileIcon className="h-4 w-4" />;
+    const ext = fileName.toLowerCase().split('.').pop();
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return <Image className="h-4 w-4" />;
+    if (ext === 'pdf') return <FileText className="h-4 w-4" />;
+    return <FileIcon className="h-4 w-4" />;
+  };
+
+  // Open document in new tab
+  const handleOpenDocument = (url) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  // Delete document
+  const handleDeleteDocument = async (e, documentId) => {
+    e.stopPropagation(); // Prevent opening the document when clicking delete
+    
+    if (!confirm(t('petitions.confirmDeleteDocument') || 'Are you sure you want to delete this document?')) {
+      return;
+    }
+
+    setDeletingDocumentId(documentId);
+    
+    try {
+      const response = await deleteCasePetitionDocument(documentId);
+      
+      if (response.success) {
+        // Remove document from local state
+        setExistingDocuments(prev => prev.filter(doc => doc.id !== documentId));
+        // You might want to show a success toast here
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      // You might want to show an error toast here
+      alert(t('petitions.errorDeletingDocument') || 'Failed to delete document');
+    } finally {
+      setDeletingDocumentId(null);
+    }
   };
 
   const handleInputChange = (field, value) => {
@@ -143,7 +222,7 @@ function EditPetitionModal({
         decision: formData.judgeDecision ? 1 : 0,
         files: formData.files
       }
-      onSubmit(petition.id, formattedData)
+      onSubmit(petitionId, formattedData)
       handleClose()
     }
   }
@@ -157,10 +236,66 @@ function EditPetitionModal({
       appealDate: null,
       files: []
     })
+    setPetition(null)
+    setFetchError(null)
+    setExistingDocuments([])
+    setDeletingDocumentId(null)
     onClose()
   }
 
   if (!isOpen) return null
+
+  // Show loading state while fetching
+  if (isFetching) {
+    return (
+      <>
+        <div 
+          className="fixed inset-0 bg-black/50 z-50 transition-opacity backdrop-blur-sm"
+          onClick={handleClose}
+        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div 
+            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all p-8 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">{t('common.loading') || 'Loading petition data...'}</p>
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  // Show error state if fetch failed
+  if (fetchError) {
+    return (
+      <>
+        <div 
+          className="fixed inset-0 bg-black/50 z-50 transition-opacity backdrop-blur-sm"
+          onClick={handleClose}
+        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div 
+            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <X className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {t('common.error') || 'Error'}
+              </h3>
+              <p className="text-sm text-gray-500 mb-4">{fetchError}</p>
+              <Button onClick={handleClose} variant="outline">
+                {t('common.close') || 'Close'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </>
+    )
+  }
 
   return (
     <>
@@ -292,10 +427,64 @@ function EditPetitionModal({
                   </Button>
                 </div>
                 
+                {/* Existing Documents Section */}
+                {existingDocuments.length > 0 && (
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-gray-700">
+                      {t('petitions.existingDocuments') || 'Existing Documents'}
+                    </Label>
+                    <div className="border border-gray-200 rounded-lg">
+                      <div className="max-h-40 overflow-y-auto scrollbar-thin">
+                        <div className="p-3 space-y-2">
+                          {existingDocuments.map((doc) => (
+                            <div 
+                              key={doc.id} 
+                              className="flex items-center justify-between p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors group"
+                            >
+                              <div 
+                                className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0 cursor-pointer"
+                                onClick={() => handleOpenDocument(doc.document_url)}
+                              >
+                                <div className="flex-shrink-0 text-blue-600">
+                                  {getDocumentIcon(doc.document_name)}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium truncate text-gray-900">
+                                    {doc.document_name}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {t('petitions.clickToView') || 'Click to view'}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2 flex-shrink-0">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => handleDeleteDocument(e, doc.id)}
+                                  disabled={deletingDocumentId === doc.id}
+                                  className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors"
+                                  title={t('petitions.deleteDocument') || 'Delete document'}
+                                >
+                                  {deletingDocumentId === doc.id ? (
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                                  ) : (
+                                    <Trash2 className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 {/* File Upload Section */}
                 <div className="space-y-3">
                   <Label className="text-sm font-medium text-gray-700">
-                    {t('petitions.attachFiles') || 'Attach Files'}
+                    {t('petitions.attachFiles') || 'Attach New Files'}
                   </Label>
                   
                   {/* Enhanced File Upload Area */}

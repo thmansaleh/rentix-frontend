@@ -10,6 +10,11 @@ const getMeetingById = async (meetingId) => {
   return response.data;
 };
 
+const getMeetingsByPartyId = async (partyId) => {
+  const response = await api.get(`/meetings/party/${partyId}`);
+  return response.data;
+};
+
 const createMeeting = async (meetingData) => {
   const response = await api.post("/meetings", meetingData);
   return response.data;
@@ -28,6 +33,7 @@ const deleteMeeting = async (meetingId) => {
 export default {
   getMeetings,
   getMeetingById,
+  getMeetingsByPartyId,
   createMeeting,
   updateMeeting,
   deleteMeeting

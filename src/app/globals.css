@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "../styles/rtl.css";
 @import "./font-fallbacks.css";
+@import "react-big-calendar/lib/css/react-big-calendar.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -479,4 +480,101 @@
   * {
     overflow: visible !important;
   }
+}
+
+/* React Big Calendar Customization */
+.rbc-calendar {
+  font-family: inherit;
+}
+
+.rbc-header {
+  padding: 12px 6px;
+  font-weight: 600;
+  border-bottom: 2px solid hsl(var(--border));
+  background-color: hsl(var(--muted));
+}
+
+.rbc-month-view,
+.rbc-time-view {
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rbc-day-bg {
+  border-left: 1px solid hsl(var(--border));
+}
+
+.rbc-today {
+  background-color: hsl(var(--accent));
+}
+
+.rbc-off-range-bg {
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.rbc-event {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.rbc-event:hover {
+  opacity: 0.85;
+}
+
+.rbc-event-label {
+  font-size: 12px;
+}
+
+.rbc-toolbar {
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: hsl(var(--card));
+  border-radius: 8px;
+  border: 1px solid hsl(var(--border));
+}
+
+.rbc-toolbar button {
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  padding: 8px 16px;
+  border-radius: 6px;
+  background-color: hsl(var(--background));
+  transition: all 0.2s;
+}
+
+.rbc-toolbar button:hover {
+  background-color: hsl(var(--accent));
+}
+
+.rbc-toolbar button.rbc-active {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+.rbc-time-slot {
+  border-top: 1px solid hsl(var(--border));
+}
+
+.rbc-agenda-view {
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+}
+
+.rbc-agenda-table {
+  border-spacing: 0;
+}
+
+.rbc-agenda-date-cell,
+.rbc-agenda-time-cell {
+  padding: 12px;
+  border-left: 1px solid hsl(var(--border));
+}
+
+.rbc-agenda-event-cell {
+  padding: 12px;
 }

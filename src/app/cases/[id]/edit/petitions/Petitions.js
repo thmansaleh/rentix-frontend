@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useSWR from 'swr'
 import { toast } from 'react-toastify'
 import { useTranslations } from '@/hooks/useTranslations'
-import { getCasePetitionsByCaseId, createCasePetition, updateCasePetition } from '@/app/services/api/CasePetitions' 
+import { getCasePetitionsByCaseId, createCasePetition, updateCasePetition, deleteCasePetition } from '@/app/services/api/CasePetitions' 
 import {
   Table,
   TableBody,
@@ -12,14 +12,17 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Plus, Edit } from 'lucide-react'
+import { Plus, Edit, Trash2 } from 'lucide-react'
 import AddPetitionModal from './AddPetitionModal'
 import EditPetitionModal from './EditPetitionModal'
+import DeletePetitionModal from './DeletePetitionModal'
 
 function Petitions({ caseId }) {
   const { t, language } = useTranslations()
   const [showModal, setShowModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [selectedPetitionId, setSelectedPetitionId] = useState(null)
   const [selectedPetition, setSelectedPetition] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -69,13 +72,13 @@ function Petitions({ caseId }) {
   }
 
   const handleEditPetition = (petition) => {
-    setSelectedPetition(petition)
+    setSelectedPetitionId(petition.id)
     setShowEditModal(true)
   }
 
   const handleCloseEditModal = () => {
     setShowEditModal(false)
-    setSelectedPetition(null)
+    setSelectedPetitionId(null)
   }
 
   const handleUpdateSubmit = async (petitionId, formData) => {
@@ -106,6 +109,45 @@ function Petitions({ caseId }) {
     } catch (err) {
       // Show error toast for exceptions
       toast.error(`${t('petitions.errorUpdatingPetition')}: ${err.message}`)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleDeletePetition = (petition) => {
+    setSelectedPetitionId(petition.id)
+    setSelectedPetition(petition)
+    setShowDeleteModal(true)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false)
+    setSelectedPetitionId(null)
+    setSelectedPetition(null)
+  }
+
+  const handleConfirmDelete = async (petitionId) => {
+    try {
+      setSubmitting(true)
+      
+      const response = await deleteCasePetition(petitionId)
+      
+      if (response.success) {
+        // Show success toast
+        toast.success(t('petitions.petitionDeletedSuccessfully'))
+        
+        // Close modal
+        handleCloseDeleteModal()
+        
+        // Refresh petitions list
+        await mutate()
+      } else {
+        // Show error toast
+        toast.error(t('petitions.failedToDeletePetition'))
+      }
+    } catch (err) {
+      // Show error toast for exceptions
+      toast.error(`${t('petitions.errorDeletingPetition')}: ${err.message}`)
     } finally {
       setSubmitting(false)
     }
@@ -210,15 +252,26 @@ function Petitions({ caseId }) {
                     {formatDateTime(petition['created_at'])}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditPetition(petition)}
-                      className="flex items-center gap-2 h-8 px-3"
-                    >
-                      <Edit className="h-4 w-4" />
-                      {t('petitions.edit')}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditPetition(petition)}
+                        className="flex items-center gap-2 h-8 px-3"
+                      >
+                        <Edit className="h-4 w-4" />
+                        {t('petitions.edit')}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeletePetition(petition)}
+                        className="flex items-center gap-2 h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        {t('common.delete')}
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -241,8 +294,18 @@ function Petitions({ caseId }) {
         isOpen={showEditModal}
         onClose={handleCloseEditModal}
         onSubmit={handleUpdateSubmit}
-        petition={selectedPetition}
+        petitionId={selectedPetitionId}
         title={t('petitions.editPetition')}
+        isLoading={submitting}
+      />
+
+      {/* Delete Petition Modal */}
+      <DeletePetitionModal
+        isOpen={showDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        petitionId={selectedPetitionId}
+        petitionData={selectedPetition}
         isLoading={submitting}
       />
     </div>

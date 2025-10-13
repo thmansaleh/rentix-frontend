@@ -131,3 +131,15 @@ export const deleteParty = async (partyId) => {
     throw error;
   }
 };
+
+export const searchParties = async (query) => {
+  try {
+    if (!query || query.trim().length < 3) {
+      return { success: true, data: [] };
+    }
+    const response = await api.get(`/parties/search?query=${encodeURIComponent(query.trim())}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

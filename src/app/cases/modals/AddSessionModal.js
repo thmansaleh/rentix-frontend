@@ -1,510 +1,534 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { createPortal } from 'react-dom';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { createSession } from '@/app/services/api/sessions';
-import { uploadFilesToFirebase } from '@/app/services/api/firebaseStorage';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import { uploadFiles } from '../../../utils/fileUpload';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarIcon,  File as FileIcon, FileText, Image, FileSpreadsheet, Trash2, Clock,  EyeClosedIcon } from 'lucide-react';
-import {  toast } from 'react-toastify';
-import { format } from 'date-fns';
+import { Calendar, Save, Settings, FileText, Plus, CircleX, Clock } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 
+// Helper function to format date for MySQL
+const formatDateForMySQL = (dateString) => {
+  const date = new Date(dateString);
+  // Format as YYYY-MM-DD HH:MM:SS
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
 const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
-  const { isRTL, language } = useLanguage();
+  const { language } = useLanguage();
   const { t } = useTranslations();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isRtl = language === 'ar';
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   
-  // Generate time options (every 15 minutes from 8:00 AM to 6:00 PM)
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let hour = 8; hour <= 18; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        const displayTime = new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        });
-        times.push({
-          value: timeString,
-          display: displayTime
-        });
-      }
-    }
-    return times;
-  };
-
-  const timeOptions = generateTimeOptions();
-  
-  // Get file type for icon display
-  const getFileIcon = (fileName) => {
-    const extension = fileName.split('.').pop().toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
-      return <Image className="w-4 h-4" />;
-    } else if (['pdf'].includes(extension)) {
-      return <FileText className="w-4 h-4" />;
-    } else if (['xlsx', 'xls', 'csv'].includes(extension)) {
-      return <FileSpreadsheet className="w-4 h-4" />;
-    }
-    return <FileIcon className="w-4 h-4" />;
-  };
-
-  // Handle file selection
-  const handleFileSelect = useCallback((files) => {
-    const fileArray = Array.from(files);
-    const validFiles = fileArray.filter(file => {
-      // Basic file validation
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (file.size > maxSize) {
-        toast.error(`${file.name} is too large (max 10MB)`);
-        return false;
-      }
-      return true;
-    });
+  // File handling functions
+  const validateFile = (file) => {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'image/jpeg', 'image/jpg', 'image/png'];
     
+    if (file.size > maxSize) {
+      toast.error(
+        isRtl ? `الملف "${file.name}" كبير جداً. الحد الأقصى 10MB` : `File "${file.name}" is too large. Maximum size is 10MB`,
+        { position: "top-right", autoClose: 3000 }
+      );
+      return false;
+    }
+    
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(
+        isRtl ? `نوع الملف "${file.name}" غير مدعوم` : `File type of "${file.name}" is not supported`,
+        { position: "top-right", autoClose: 3000 }
+      );
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleFileSelect = (event) => {
+    const files = Array.from(event.target.files);
+    const validFiles = files.filter(validateFile);
     setSelectedFiles(prev => [...prev, ...validFiles]);
-  }, []);
+    // Clear the input so the same file can be selected again if needed
+    event.target.value = '';
+  };
 
-  // Handle drag and drop
-  const handleDragEnter = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  }, []);
+  const handleFileDrop = (event) => {
+    event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    const validFiles = files.filter(validateFile);
+    setSelectedFiles(prev => [...prev, ...validFiles]);
+  };
 
-  const handleDragLeave = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  }, []);
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
 
-  const handleDragOver = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
-
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      handleFileSelect(files);
-    }
-  }, [handleFileSelect]);
-
-  // Remove file
-  const removeFile = (index) => {
+  const removeSelectedFile = (index) => {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  const clearAllFiles = () => {
+    setSelectedFiles([]);
   };
 
   // Validation schema
   const validationSchema = Yup.object({
-    session_date: Yup.string()
-      .required(t('validation.required')),
+    session_date: Yup.date()
+      .required(isRtl ? "تاريخ الجلسة مطلوب" : "Session date is required"),
     session_time: Yup.string()
-      .required(t('validation.required')),
-    // link: Yup.string()
-    //   .url(t('validation.invalidUrl')),
-    note: Yup.string(),
+      .required(isRtl ? "وقت الجلسة مطلوب" : "Session time is required"),
+    note: Yup.string().trim(),
+    // link: Yup.string().url(isRtl ? "رابط غير صحيح" : "Invalid URL").trim(),
     is_expert_session: Yup.boolean(),
-    is_judgment_reserved: Yup.boolean()
+    is_judgment_reserved: Yup.boolean(),
   });
 
-  // Initial values
-  const initialValues = {
-    session_date: '',
-    session_time: '',
-    link: '',
-    note: '',
-    is_expert_session: false,
-    is_judgment_reserved: false
-  };
-
-  // Handle form submission
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    try {
-      setIsSubmitting(true);
-      
-      // Upload files to Firebase if any are selected
-      let filesUrls = [];
-      if (selectedFiles.length > 0) {
-        try {
-          filesUrls = await uploadFilesToFirebase(selectedFiles);
-        } catch (uploadError) {
-          console.error('File upload error:', uploadError);
-          toast.error('Failed to upload files');
-          setIsSubmitting(false);
-          return;
+  // Formik setup
+  const formik = useFormik({
+    initialValues: {
+      session_date: '',
+      session_time: '',
+      note: '',
+      link: '',
+      is_expert_session: false,
+      is_judgment_reserved: false,
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setIsLoading(true);
+      try {
+        // Upload files first if any are selected
+        let uploadedFiles = [];
+        if (selectedFiles.length > 0) {
+          setIsUploading(true);
+          try {
+            uploadedFiles = await uploadFiles(selectedFiles, 'sessions');
+            toast.success(
+              isRtl ? `تم رفع ${uploadedFiles.length} ملف بنجاح` : `Successfully uploaded ${uploadedFiles.length} files`,
+              { position: "top-right", autoClose: 2000 }
+            );
+          } catch (uploadError) {
+            toast.error(
+              isRtl ? "فشل في رفع الملفات" : "Failed to upload files",
+              { position: "top-right", autoClose: 3000 }
+            );
+            console.error("File upload error:", uploadError);
+            // Continue with form submission even if file upload fails
+            uploadedFiles = [];
+          }
         }
-      }
-      
-      // Combine date and time into a datetime string
-      const sessionDateTime = values.session_date && values.session_time 
-        ? `${values.session_date}T${values.session_time}`
-        : null;
-      
-      const sessionData = {
-        case_id: caseId,
-        session_date: sessionDateTime,
-        link: values.link,
-        is_expert_session: values.is_expert_session,
-        is_judgment_reserved: values.is_judgment_reserved,
-        note: values.note,
-        files: filesUrls
-      };
 
-      const response = await createSession(sessionData);
-      
-      if (response.success) {
-        toast.success(t('sessions.addSuccess'));
-        resetForm();
-        setSelectedFiles([]); // Clear selected files
-        onSessionAdded && onSessionAdded(response.data);
-        onClose();
-      } else {
-        toast.error(t('sessions.addError'));
-      }
-    } catch (error) {
-      console.error('Error creating session:', error);
-      toast.error(t('sessions.addError'));
-    } finally {
-      setIsSubmitting(false);
-      setSubmitting(false);
-    }
-  };
+        // Combine date and time for API
+        const combinedDateTime = `${values.session_date}T${values.session_time}:00`;
 
-  return (
-    <>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop with blur effect */}
-          <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
-            onClick={onClose}
-          ></div>
+        const sessionData = {
+          case_id: caseId,
+          session_date: formatDateForMySQL(combinedDateTime),
+          link: values.link.trim() || null,
+          is_expert_session: values.is_expert_session,
+          is_judgment_reserved: values.is_judgment_reserved,
+          note: values.note.trim() || null,
+          files: uploadedFiles,
+        };
+
+        const response = await createSession(sessionData);
+        
+        if (response.success) {
+          toast.success(
+            isRtl ? "تم إضافة الجلسة بنجاح" : "Session added successfully",
+            {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            }
+          );
           
-          {/* Modal Content - Modern Card Design */}
-          <div 
-            className={`relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden ${isRTL ? 'text-right' : 'text-left'}`} 
-            dir={isRTL ? 'rtl' : 'ltr'}
-          >
-            {/* Header with gradient background */}
-            <div className="bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-4 text-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                      <CalendarIcon className="h-5 w-5" />
-                    </div>
-                    {t('sessions.addSession')}
-                  </h2>
-                  <p className="text-blue-100 mt-1 text-sm">
-                    {t('sessions.addSessionDescription')}
-                  </p>
-                </div>
-                <button
-                  onClick={onClose}
-                  className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <EyeClosedIcon className="h-5 w-5" />
-                </button>
+          // Clear selected files
+          setSelectedFiles([]);
+          formik.resetForm();
+          onSessionAdded && onSessionAdded(response.data);
+          onClose();
+        } else {
+          toast.error(
+            isRtl ? "فشل في إضافة الجلسة" : "Failed to add session",
+            {
+              position: "top-right",
+              autoClose: 3000,
+            }
+          );
+        }
+      } catch (error) {
+        toast.error(
+          isRtl ? "فشل في إضافة الجلسة" : "Failed to add session",
+          {
+            position: "top-right",
+            autoClose: 3000,
+          }
+        );
+        console.error("Error creating session:", error);
+      } finally {
+        setIsLoading(false);
+        setIsUploading(false);
+      }
+    },
+  });
+
+  if (!isOpen) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative w-full max-w-2xl mx-4 h-[90vh] flex flex-col bg-white rounded-lg shadow-2xl">
+        {/* Header */}
+        <div className={`pb-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg p-6 ${isRtl ? "text-right" : "text-left"}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Calendar className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {isRtl ? "إضافة جلسة" : "Add Session"}
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  {isRtl 
+                    ? "أدخل معلومات الجلسة الجديدة أدناه"
+                    : "Enter the new session information below"}
+                </p>
               </div>
             </div>
-
-            {/* Body with better spacing */}
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-              <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-              >
-                {({ values, setFieldValue, errors, touched }) => (
-                  <Form className="space-y-6">
-                    {/* Form fields in a nice grid layout */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Session Date */}
-                      <div className="space-y-3">
-                        <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                          <CalendarIcon className="h-4 w-4" />
-                          {t('sessions.sessionDate')} *
-                        </Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full h-12 justify-start text-left font-normal rounded-xl border-2 transition-all",
-                                !values.session_date && "text-muted-foreground",
-                                errors.session_date && touched.session_date 
-                                  ? 'border-red-400 focus:border-red-500 focus:ring-red-200' 
-                                  : 'border-gray-200 hover:border-blue-400 focus:border-blue-400 focus:ring-blue-100'
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {values.session_date ? (
-                                format(new Date(values.session_date), "PPP")
-                              ) : (
-                                <span>{t('sessions.selectDate')}</span>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={values.session_date ? new Date(values.session_date) : undefined}
-                              onSelect={(date) => {
-                                if (date) {
-                                  setFieldValue('session_date', format(date, 'yyyy-MM-dd'));
-                                } else {
-                                  setFieldValue('session_date', '');
-                                }
-                              }}
-                              disabled={(date) => date < new Date().setHours(0, 0, 0, 0)}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <ErrorMessage name="session_date" component="div" className="text-red-500 text-xs font-medium" />
-                      </div>
-
-                      {/* Session Time */}
-                      <div className="space-y-3">
-                        <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
-                          {t('sessions.sessionTime')} *
-                        </Label>
-                        <Select
-                          value={values.session_time}
-                          onValueChange={(value) => setFieldValue('session_time', value)}
-                        >
-                          <SelectTrigger className={cn(
-                            "w-full h-12 rounded-xl border-2 transition-all",
-                            errors.session_time && touched.session_time 
-                              ? 'border-red-400 focus:border-red-500 focus:ring-red-200' 
-                              : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100'
-                          )}>
-                            <SelectValue placeholder={t('sessions.selectTime')} />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-60">
-                            {timeOptions.map((time) => (
-                              <SelectItem key={time.value} value={time.value}>
-                                <div className="flex items-center gap-2">
-                                  <Clock className="h-4 w-4 text-muted-foreground" />
-                                  {time.display}
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <ErrorMessage name="session_time" component="div" className="text-red-500 text-xs font-medium" />
-                      </div>
-                    </div>
-
-                    {/* Link - Full width */}
-                    <div className="space-y-3">
-                      <Label htmlFor="link" className="text-sm font-semibold text-gray-700">
-                        {t('sessions.link')}
-                      </Label>
-                      <Field
-                        as={Input}
-                        id="link"
-                        name="link"
-                        type="text"
-                        placeholder="https://..."
-                        className={`h-12 rounded-xl border-2 transition-all ${
-                          errors.link && touched.link 
-                            ? 'border-red-400 focus:border-red-500 focus:ring-red-200' 
-                            : 'border-gray-200 focus:border-blue-400 focus:ring-blue-100'
-                        }`}
-                      />
-                      <ErrorMessage name="link" component="div" className="text-red-500 text-xs font-medium" />
-                    </div>
-<div className='flex items-center gap-4'>
-
-                    {/* Expert Session Toggle */}
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border">
-                      <Label htmlFor="is_expert_session" className="text-sm font-semibold text-gray-700 cursor-pointer">
-                        {language === 'ar' ? 'جلسة خبير' : 'Expert Session'}
-                      </Label>
-                      <Field name="is_expert_session">
-                        {({ field }) => (
-                          <Checkbox
-                            id="is_expert_session"
-                            checked={field.value}
-                            onCheckedChange={(checked) => setFieldValue('is_expert_session', checked)}
-                            className="h-5 w-5"
-                          />
-                        )}
-                      </Field>
-                    </div>
-
-                    {/* Judgment Reserved Toggle */}
-                    <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-200">
-                      <Label htmlFor="is_judgment_reserved" className="text-sm font-semibold text-gray-700 cursor-pointer">
-                        {language === 'ar' ? 'حجز للحكم' : 'Reserved for Judgment'}
-                      </Label>
-                      <Field name="is_judgment_reserved">
-                        {({ field }) => (
-                          <Checkbox
-                            id="is_judgment_reserved"
-                            checked={field.value}
-                            onCheckedChange={(checked) => setFieldValue('is_judgment_reserved', checked)}
-                            className="h-5 w-5"
-                          />
-                        )}
-                      </Field>
-                    </div>
-</div>
-
-                    {/* Note */}
-                    <div className="space-y-3">
-                      <Label htmlFor="note" className="text-sm font-semibold text-gray-700">
-                        {t('common.note')}
-                      </Label>
-                      <Field
-                        as={Textarea}
-                        id="note"
-                        name="note"
-                        rows={3}
-                        placeholder={t('common.noteOptional')}
-                        className="rounded-xl border-2 border-gray-200 focus:border-blue-400 focus:ring-blue-100 transition-all resize-none"
-                      />
-                    </div>
-
-                    {/* Files Upload Section */}
-                    <div className="space-y-3">
-                      <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <FileIcon className="h-4 w-4" />
-                        {language === 'ar' ? 'الملفات' : 'Files'}
-                      </Label>
-                      
-                      {/* File Drop Zone */}
-                      <div
-                        className={cn(
-                          "relative border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 cursor-pointer",
-                          isDragging 
-                            ? "border-blue-400 bg-blue-50" 
-                            : "border-gray-300 hover:border-gray-400 bg-gray-50"
-                        )}
-                        onDragEnter={handleDragEnter}
-                        onDragLeave={handleDragLeave}
-                        onDragOver={handleDragOver}
-                        onDrop={handleDrop}
-                        onClick={() => document.getElementById('fileInput').click()}
-                      >
-                        <input
-                          id="fileInput"
-                          type="file"
-                          multiple
-                          onChange={(e) => handleFileSelect(e.target.files)}
-                          className="hidden"
-                          accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.bmp,.webp,.xlsx,.xls,.csv"
-                        />
-                        <div className="space-y-2">
-                          <FileIcon className="h-8 w-8 mx-auto text-gray-400" />
-                          <div>
-                            <p className="text-sm font-medium text-gray-700">
-                              {language === 'ar' ? 'اسحب الملفات هنا أو انقر للتصفح' : 'Drop files here or click to browse'}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {language === 'ar' ? 'PDF, DOC, صور، إكسل (حد أقصى 10 ميجابايت لكل ملف)' : 'PDF, DOC, Images, Excel (max 10MB each)'}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Selected Files List */}
-                      {selectedFiles.length > 0 && (
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-gray-700">
-                            {language === 'ar' ? `الملفات المحددة (${selectedFiles.length})` : `Selected Files (${selectedFiles.length})`}
-                          </p>
-                          <div className="space-y-2 max-h-32 overflow-y-auto">
-                            {selectedFiles.map((file, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
-                              >
-                                <div className="flex items-center gap-3 min-w-0 flex-1">
-                                  <div className="flex-shrink-0 text-gray-500">
-                                    {getFileIcon(file.name)}
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium text-gray-900 truncate">
-                                      {file.name}
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                      {formatFileSize(file.size)}
-                                    </p>
-                                  </div>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => removeFile(index)}
-                                  className="flex-shrink-0 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Action Buttons with better styling */}
-                    <div className={`flex gap-4 pt-6 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="flex-1 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                      >
-                        {isSubmitting 
-                          ? t('common.saving')
-                          : t('sessions.addSession')
-                        }
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onClose}
-                        disabled={isSubmitting}
-                        className="flex-1 h-12 rounded-xl border-2 border-gray-300 hover:border-gray-400 font-semibold transition-all duration-200"
-                      >
-                        {t('common.cancel')}
-                      </Button>
-                    </div>
-                  </Form>
-                )}
-              </Formik>
-            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="h-8 w-8 p-0 rounded-full hover:bg-gray-200"
+            >
+              <CircleX className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-      )}
-    </>
+
+        {/* Form wrapper */}
+        <form onSubmit={formik.handleSubmit} className="flex-1 flex flex-col min-h-0">
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto min-h-0 p-6">
+            <div className="space-y-6">
+              {/* Basic Information Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <h3 className="text-md font-medium text-gray-900">
+                    {isRtl ? "المعلومات الأساسية" : "Basic Information"}
+                  </h3>
+                </div>
+
+                {/* Session Date and Time Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Session Date Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="session_date" className="text-sm font-medium text-gray-700">
+                      {isRtl ? "تاريخ الجلسة" : "Session Date"} *
+                    </Label>
+                    <Input
+                      id="session_date"
+                      name="session_date"
+                      type="date"
+                      value={formik.values.session_date}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
+                    />
+                    {formik.touched.session_date && formik.errors.session_date && (
+                      <p className="text-sm text-red-500">
+                        {formik.errors.session_date}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Session Time Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="session_time" className="text-sm font-medium text-gray-700">
+                      {isRtl ? "وقت الجلسة" : "Session Time"} *
+                    </Label>
+                    <Input
+                      id="session_time"
+                      name="session_time"
+                      type="time"
+                      value={formik.values.session_time}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
+                    />
+                    {formik.touched.session_time && formik.errors.session_time && (
+                      <p className="text-sm text-red-500">
+                        {formik.errors.session_time}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Note Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="note" className="text-sm font-medium text-gray-700">
+                    {isRtl ? "ملاحظات" : "Notes"}
+                  </Label>
+                  <Textarea
+                    id="note"
+                    name="note"
+                    value={formik.values.note}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder={isRtl ? "أدخل الملاحظات" : "Enter notes"}
+                    className={`min-h-[100px] resize-none ${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
+                  />
+                  {formik.touched.note && formik.errors.note && (
+                    <p className="text-sm text-red-500">
+                      {formik.errors.note}
+                    </p>
+                  )}
+                </div>
+
+                {/* Link Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="link" className="text-sm font-medium text-gray-700">
+                    {isRtl ? "الرابط" : "Link"}
+                  </Label>
+                  <Input
+                    id="link"
+                    name="link"
+                    type="text"
+                    value={formik.values.link}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder={isRtl ? "أدخل الرابط" : "Enter link"}
+                    className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
+                  />
+                  {formik.touched.link && formik.errors.link && (
+                    <p className="text-sm text-red-500">
+                      {formik.errors.link}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Session Settings Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                  <Settings className="h-4 w-4 text-gray-500" />
+                  <h3 className="text-md font-medium text-gray-900">
+                    {isRtl ? "إعدادات الجلسة" : "Session Settings"}
+                  </h3>
+                </div>
+
+                {/* Session Options - Using Switches */}
+                <div className="space-y-3">
+                  {/* Expert Session Switch */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label 
+                          htmlFor="is_expert_session" 
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          {isRtl ? "جلسة خبير" : "Expert Session"}
+                        </Label>
+                        <p className="text-xs text-gray-500">
+                          {formik.values.is_expert_session 
+                            ? (isRtl ? "هذه جلسة خبير" : "This is an expert session")
+                            : (isRtl ? "ليست جلسة خبير" : "Not an expert session")
+                          }
+                        </p>
+                      </div>
+                      <Switch
+                        id="is_expert_session"
+                        checked={formik.values.is_expert_session}
+                        onCheckedChange={(checked) => 
+                          formik.setFieldValue("is_expert_session", checked)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  {/* Judgment Reserved Switch */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label 
+                          htmlFor="is_judgment_reserved" 
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          {isRtl ? "حجز للحكم" : "Judgment Reserved"}
+                        </Label>
+                        <p className="text-xs text-gray-500">
+                          {formik.values.is_judgment_reserved 
+                            ? (isRtl ? "الحكم محجوز" : "Judgment is reserved")
+                            : (isRtl ? "الحكم غير محجوز" : "Judgment is not reserved")
+                          }
+                        </p>
+                      </div>
+                      <Switch
+                        id="is_judgment_reserved"
+                        checked={formik.values.is_judgment_reserved}
+                        onCheckedChange={(checked) => 
+                          formik.setFieldValue("is_judgment_reserved", checked)
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* File Upload Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                  <Plus className="h-4 w-4 text-gray-500" />
+                  <h3 className="text-md font-medium text-gray-900">
+                    {isRtl ? "رفع الملفات" : "Upload Files"}
+                  </h3>
+                </div>
+
+                {/* File Drop Zone */}
+                <div
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                  onDrop={handleFileDrop}
+                  onDragOver={handleDragOver}
+                  onClick={() => document.getElementById('file-input').click()}
+                >
+                  <input
+                    id="file-input"
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <div className="flex flex-col items-center gap-2">
+                    <Plus className="h-8 w-8 text-gray-400" />
+                    <p className="text-sm text-gray-600">
+                      {isRtl 
+                        ? "انقر لاختيار الملفات أو اسحبها هنا"
+                        : "Click to select files or drag and drop here"
+                      }
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {isRtl 
+                        ? "PDF, DOC, TXT أو صور"
+                        : "PDF, DOC, TXT, or images"
+                      }
+                    </p>
+                  </div>
+                </div>
+
+                {/* Selected Files Display */}
+                {selectedFiles.length > 0 && (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-medium text-gray-900">
+                        {isRtl ? "الملفات المحددة" : "Selected Files"} ({selectedFiles.length})
+                      </h4>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearAllFiles}
+                        className="text-red-600 hover:bg-red-50"
+                      >
+                        {isRtl ? "مسح الكل" : "Clear All"}
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2 bg-white rounded border"
+                        >
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-blue-600" />
+                            <span className="text-sm text-gray-700 truncate">
+                              {file.name}
+                            </span>
+                            <span className="text-xs text-gray-400">
+                              ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                            </span>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeSelectedFile(index)}
+                            className="text-red-600 hover:bg-red-50 h-6 w-6 p-0"
+                          >
+                            <CircleX className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Fixed Footer */}
+          <div className="border-t border-gray-100 p-6 bg-white rounded-b-lg">
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isLoading}
+                className="flex items-center gap-2 px-6"
+              >
+                <CircleX className="h-4 w-4" />
+                {isRtl ? "إلغاء" : "Cancel"}
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="flex items-center gap-2 px-6 bg-blue-600 hover:bg-blue-700"
+              >
+                <Save className="h-4 w-4" />
+                {isUploading
+                  ? (isRtl ? "جار رفع الملفات..." : "Uploading files...")
+                  : isLoading 
+                    ? (isRtl ? "جار الإضافة..." : "Adding...") 
+                    : (isRtl ? "إضافة" : "Add")}
+              </Button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>,
+    document.body
   );
 };
 

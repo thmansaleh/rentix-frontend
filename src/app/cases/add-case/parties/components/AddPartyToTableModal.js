@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import PartyTypeSelector from "./PartyTypeSelector";
 import PartySelector from "./PartySelector";
 import AddPartyModal from "./AddPartyModal";
-import { useParties } from "../hooks/useParties";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useFormikContext } from '../../FormikContext';
 import { cn } from "@/lib/utils";
@@ -25,7 +24,7 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
   const [open, setOpen] = useState(false);
   const [selectedPartyType, setSelectedPartyType] = useState("");
   const [selectedParty, setSelectedParty] = useState("");
-  const [clientRole, setClientRole] = useState("");
+  const [selectedPartyData, setSelectedPartyData] = useState(null); // NEW: store full party object
   const [partyFiles, setPartyFiles] = useState([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const { t } = useTranslations();
@@ -34,8 +33,8 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
   const { values, setFieldValue } = useFormikContext();
   const currentSelectedParties = values.selectedParties || [];
 
-  // Use custom hook for parties data
-  const { parties, isLoading, getPartiesByType, getPartyById, mutate } = useParties(1);
+  // No longer need useParties hook - we get party data from search
+  // const { parties, isLoading, getPartiesByType, getPartyById, mutate } = useParties(1);
 
   // Handle file selection - store files directly
   const handleFileSelect = useCallback((selectedFiles) => {
@@ -92,60 +91,64 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
     return <FileIcon className="h-4 w-4" />;
   };
 
-  // Filter parties based on selected party type and exclude already selected ones
-  const filteredParties = selectedPartyType 
-    ? getPartiesByType(selectedPartyType).filter(party => 
-        !currentSelectedParties.some(selected => selected.id === party.id)
-      )
-    : parties.filter(party => 
-        !currentSelectedParties.some(selected => selected.id === party.id)
-      );
+  // No longer need filteredParties - search handles filtering
+  // const filteredParties = selectedPartyType 
+  //   ? getPartiesByType(selectedPartyType).filter(party => 
+  //       !currentSelectedParties.some(selected => selected.id === party.id)
+  //     )
+  //   : parties.filter(party => 
+  //       !currentSelectedParties.some(selected => selected.id === party.id)
+  //     );
 
   const handlePartyTypeChange = (value) => {
     setSelectedPartyType(value);
     setSelectedParty(""); // Reset party selection when type changes
-    setClientRole(""); // Reset client role when type changes
+    setSelectedPartyData(null); // Reset party data
     setPartyFiles([]); // Reset files when type changes
   };
 
+  // Handle when party is selected from search
+  const handlePartySelect = useCallback((partyData) => {
+    setSelectedPartyData(partyData);
+  }, []);
+
   const handleAddParty = () => {
-    if (selectedParty) {
-      const party = getPartyById(selectedParty);
-      if (party) {
-        // Add client role and files to the party data
-        const partyWithRoleAndFiles = {
-          ...party,
-          clientRole: clientRole.trim() || null,
-          files: partyFiles // Add files array to each party
-        };
+    console.log("Selected Party ID:", selectedParty); // Debug log
+    console.log("Selected Party Data:", selectedPartyData); // Debug log
+    
+    if (selectedParty && selectedPartyData) {
+      // Add files to the party data
+      const partyWithFiles = {
+        ...selectedPartyData,
+        files: partyFiles // Add files array to each party
+      };
+      
+      // Check if party is already in the table
+      if (!currentSelectedParties.some(p => p.id === selectedPartyData.id)) {
+        const updatedParties = [...currentSelectedParties, partyWithFiles];
         
-        // Check if party is already in the table
-        if (!currentSelectedParties.some(p => p.id === party.id)) {
-          const updatedParties = [...currentSelectedParties, partyWithRoleAndFiles];
-          
-          // Update the form state directly using Formik
-          setFieldValue('selectedParties', updatedParties);
-          
-          // Also update the parties array for backward compatibility
-          setFieldValue('parties', updatedParties);
-        }
+        // Update the form state directly using Formik
+        setFieldValue('selectedParties', updatedParties);
         
-        // Reset form
-        setSelectedPartyType("");
-        setSelectedParty("");
-        setClientRole("");
-        setPartyFiles([]); // Reset files
-        setOpen(false);
+        // Also update the parties array for backward compatibility
+        setFieldValue('parties', updatedParties);
       }
+      
+      // Reset form
+      setSelectedPartyType("");
+      setSelectedParty("");
+      setSelectedPartyData(null);
+      setPartyFiles([]); // Reset files
+      setOpen(false);
     }
   };
 
   const handleNewPartyCreated = (newParty) => {
-    // Refresh the parties list after creating a new party
-    mutate();
-    // Optionally, auto-select the newly created party if it matches the selected type
+    // No need to refresh parties list - search will handle it
+    // Optionally, auto-select the newly created party
     if (newParty.party_type === selectedPartyType) {
       setSelectedParty(newParty.id.toString());
+      setSelectedPartyData(newParty);
     }
   };
 
@@ -155,7 +158,7 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
       // Reset form when closing
       setSelectedPartyType("");
       setSelectedParty("");
-      setClientRole("");
+      setSelectedPartyData(null);
       setPartyFiles([]); // Reset files
     }
   };
@@ -182,7 +185,6 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
             <PartyTypeSelector
               value={selectedPartyType}
               onValueChange={handlePartyTypeChange}
-              disabled={isLoading}
             />
           </div>
 
@@ -192,19 +194,15 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
             <div className="flex gap-2">
               <div className="flex-1">
                 <PartySelector
-                  parties={filteredParties}
                   value={selectedParty}
                   onValueChange={setSelectedParty}
+                  onPartySelect={handlePartySelect}
                   placeholder={
                     !selectedPartyType 
                       ? t('parties.selectPartyTypeFirst')
-                      : isLoading 
-                      ? t('parties.loading')
-                      : filteredParties.length === 0
-                      ? t('parties.noPartiesAvailable')
                       : t('parties.chooseParty')
                   }
-                  disabled={!selectedPartyType || isLoading}
+                  disabled={!selectedPartyType}
                 />
               </div>
               <AddPartyModal 
@@ -228,23 +226,6 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
               </p>
             )}
           </div>
-
-          {/* Client Role Input */}
-          {selectedParty && (
-            <div className="space-y-2">
-              <Label htmlFor="clientRole">{t('parties.clientRole')}</Label>
-              <Input
-                id="clientRole"
-                value={clientRole}
-                onChange={(e) => setClientRole(e.target.value)}
-                placeholder={t('parties.clientRolePlaceholder')}
-                className="w-full"
-              />
-              <p className="text-sm text-muted-foreground">
-                {t('parties.clientRoleHelper')}
-              </p>
-            </div>
-          )}
 
           {/* File Upload Section */}
           {selectedParty && (

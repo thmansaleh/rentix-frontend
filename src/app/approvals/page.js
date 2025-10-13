@@ -5,18 +5,23 @@ import React from 'react';
 import Memos from './memos/Memos';
 import AssignedToTasks from '../cases/my-tasks/AssignedToTasks';
 import MyTasks from '../cases/my-tasks/MyTasks';
+import EmployeesRequests from './employees-requests/EmployeesRequests';
 
 export default function ApprovalsPage() {
   return <Tabs dir="rtl" defaultValue="memos" className="w-full">
     <TabsList>
       <TabsTrigger value="memos">المذكرات</TabsTrigger>
       <TabsTrigger value="tasks">المهام</TabsTrigger>
+      <TabsTrigger value="employees requests">طلبات الموظفين</TabsTrigger>
     </TabsList>
       <TabsContent value="memos">
         <Memos />
       </TabsContent>
       <TabsContent value="tasks">
         <MyTasks />
+      </TabsContent>
+      <TabsContent value="employees requests">
+        <EmployeesRequests />
       </TabsContent>
   </Tabs>;
 }

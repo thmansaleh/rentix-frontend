@@ -1,7 +1,7 @@
-import { uploadFilesToFirebase } from '../src/app/services/api/firebaseStorage.js';
+import api from "@/app/services/api/axiosInstance";
 
 /**
- * Upload files to Firebase Storage and return formatted result
+ * Upload files to Cloudflare R2 via backend API and return formatted result
  * @param {File[]} files - Array of files to upload
  * @param {string} folder - Optional folder path in storage (default: 'documents')
  * @returns {Promise<Array<{document_name: string, document_url: string}>>}
@@ -13,21 +13,43 @@ export const uploadFiles = async (files, folder = 'documents') => {
       return [];
     }
 
-    // Upload files using existing Firebase service
-    const result = await uploadFilesToFirebase(files, folder);
+    // Create FormData to send files
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('files', file);
+    });
+    formData.append('folder', folder);
+
+    // Get the backend URL from environment or default
+    const backendUrl = api|| 'http://localhost:8080/api';
+    
+    // Get auth token from localStorage or cookie
+    const token = localStorage.getItem('token');
+
+    // Upload files to backend API
+    const response = await fetch(`${backendUrl}/upload`, {
+      method: 'POST',
+      headers: {
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+      credentials: 'include', // Include cookies
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Upload failed');
+    }
+
+    const result = await response.json();
 
     // Check if upload was successful
     if (!result.success) {
       throw new Error(result.error || 'Upload failed');
     }
 
-    // Transform the result to match the requested format
-    const formattedResult = result.files.map(file => ({
-      document_name: file.filename,
-      document_url: file.url
-    }));
-
-    return formattedResult;
+    // Return the array of {document_name, document_url}
+    return result.files;
   } catch (error) {
     console.error('Error uploading files:', error);
     throw new Error(error.message || 'Failed to upload files');
@@ -58,21 +80,3 @@ export const uploadFile = async (file, folder = 'documents') => {
     throw new Error(error.message || 'Failed to upload file');
   }
 };
-
-/**
- * Example usage:
- * 
- * // Upload multiple files
- * const files = [file1, file2, file3];
- * const uploadedFiles = await uploadFiles(files, 'cases');
- * console.log(uploadedFiles);
- * // Output: [
- * //   { document_name: "contract.pdf", document_url: "https://firebase..." },
- * //   { document_name: "evidence.jpg", document_url: "https://firebase..." }
- * // ]
- * 
- * // Upload single file
- * const uploadedFile = await uploadFile(file, 'documents');
- * console.log(uploadedFile);
- * // Output: { document_name: "document.pdf", document_url: "https://firebase..." }
- */

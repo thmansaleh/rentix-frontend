@@ -16,7 +16,6 @@ import { DatePicker } from "@/components/ui/date-picker"
 import { Loader2, Save, X, AlertCircle } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { getClientDealById, updateClientDeal } from '@/app/services/api/clientsDeals'
-import { getPartiesByBranch } from '@/app/services/api/parties'
 
 const EditDealModal = ({ 
   isOpen, 
@@ -30,7 +29,6 @@ const EditDealModal = ({
 
   // Validation schema
   const validationSchema = Yup.object({
-    client_id: Yup.string().required(isArabic ? 'العميل مطلوب' : 'Client is required'),
     amount: Yup.number()
       .required(isArabic ? 'المبلغ مطلوب' : 'Amount is required')
       .positive(isArabic ? 'المبلغ يجب أن يكون أكبر من الصفر' : 'Amount must be greater than zero'),
@@ -47,6 +45,7 @@ const EditDealModal = ({
   const formik = useFormik({
     initialValues: {
       client_id: '',
+      client_name: '',
       amount: '',
       type: 'normal',
       status: 'draft',
@@ -92,17 +91,6 @@ const EditDealModal = ({
     }
   )
 
-  // Fetch clients/parties for dropdown
-  const { data: partiesResponse } = useSWR(
-    'parties-branch-1',
-    () => getPartiesByBranch(1),
-    {
-      revalidateOnFocus: false,
-    }
-  )
-
-  const clients = partiesResponse?.success ? partiesResponse.data : []
-
   // Status options
   const statusOptions = [
     { value: 'draft', label: isArabic ? 'مسودة' : 'Draft' },
@@ -121,6 +109,7 @@ const EditDealModal = ({
       const deal = dealData.data
       formik.setValues({
         client_id: deal.client_id?.toString() || '',
+        client_name: deal.client_name || '',
         amount: deal.amount?.toString() || '',
         type: deal.type || 'normal',
         status: deal.status || 'draft',
@@ -188,34 +177,18 @@ const EditDealModal = ({
         ) : (
           <form onSubmit={formik.handleSubmit}>
             <div className="grid gap-4 py-4">
-              {/* Client Selection */}
+              {/* Client Name (Read-only) */}
               <div className="space-y-2">
-                <Label htmlFor="client_id">
-                  {isArabic ? 'العميل *' : 'Client *'}
+                <Label htmlFor="client_name">
+                  {isArabic ? 'العميل' : 'Client'}
                 </Label>
-                <Select
-                  name="client_id"
-                  value={formik.values.client_id}
-                  onValueChange={(value) => formik.setFieldValue('client_id', value)}
-                  disabled={formik.isSubmitting}
-                >
-                  <SelectTrigger className={getErrorMessage('client_id') ? 'border-destructive' : ''}>
-                    <SelectValue placeholder={isArabic ? 'اختر العميل' : 'Select client'} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {clients.map((client) => (
-                      <SelectItem key={client.id} value={client.id.toString()}>
-                        {client.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {getErrorMessage('client_id') && (
-                  <div className="flex items-center gap-2 text-sm text-destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    {getErrorMessage('client_id')}
-                  </div>
-                )}
+                <Input
+                  id="client_name"
+                  name="client_name"
+                  value={formik.values.client_name}
+                  disabled
+                  className="bg-muted"
+                />
               </div>
 
               {/* Amount */}
