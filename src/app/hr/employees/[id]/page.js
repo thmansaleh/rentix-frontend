@@ -21,7 +21,7 @@ function EmployeeDetailPage({ params }) {
           <TabsTrigger value="info">المعلومات الأساسية</TabsTrigger>
           <TabsTrigger value="time-management">إدارة الوقت</TabsTrigger>
           <TabsTrigger value="performance-reviews">الاداء والتقييمات</TabsTrigger>
-          <TabsTrigger value="salary">معلومات الراتب</TabsTrigger>
+          {/* <TabsTrigger value="salary">معلومات الراتب</TabsTrigger> */}
           <TabsTrigger value="files">الوثائق</TabsTrigger>
           <TabsTrigger value="requests">الطلبات</TabsTrigger>
           <TabsTrigger value="permissions">الصلاحيات</TabsTrigger>
@@ -38,10 +38,10 @@ function EmployeeDetailPage({ params }) {
         <TabsContent value="performance-reviews" className="px-4">
           <PerformanceReviewsTab employeeId={id} />
         </TabsContent>
-        <TabsContent value="salary" className="px-4">
+        {/* <TabsContent value="salary" className="px-4">
           <SalaryTab employeeId={id} />
         </TabsContent>
-        
+         */}
         <TabsContent value="files" className="mt-4">
           <DocumentsTab employeeId={id} />
         </TabsContent>
