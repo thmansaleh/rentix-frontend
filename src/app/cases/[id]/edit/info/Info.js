@@ -35,7 +35,7 @@ function Info({ caseId }) {
       <Files formikProps={formikProps} />
       
       {/* Related Cases Section */}
-      <RelatedCases caseId={caseId} />
+      {/* <RelatedCases caseId={caseId} /> */}
       
       {/* Case Documents Section */}
       <CaseDocuments caseId={caseId} />

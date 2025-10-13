@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import useSWR from 'swr'
 import { useFormik } from 'formik'
@@ -13,9 +13,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DatePicker } from "@/components/ui/date-picker"
-import { Loader2, Save, X, AlertCircle } from 'lucide-react'
+import { Badge } from "@/components/ui/badge"
+import { Loader2, Save, X, AlertCircle, Upload, FileText, Image as ImageIcon, File, Trash2, ExternalLink } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { getClientDealById, updateClientDeal } from '@/app/services/api/clientsDeals'
+import { getClientDealById, updateClientDeal, deleteDealDocument } from '@/app/services/api/clientsDeals'
+import { cn } from "@/lib/utils"
 
 const EditDealModal = ({ 
   isOpen, 
@@ -27,6 +29,9 @@ const EditDealModal = ({
   const { language } = useLanguage()
   const isArabic = language === 'ar'
 
+  const [files, setFiles] = useState([])
+  const [existingDocuments, setExistingDocuments] = useState([])
+
   // Validation schema
   const validationSchema = Yup.object({
     amount: Yup.number()
@@ -34,11 +39,21 @@ const EditDealModal = ({
       .positive(isArabic ? 'المبلغ يجب أن يكون أكبر من الصفر' : 'Amount must be greater than zero'),
     type: Yup.string().required(isArabic ? 'نوع الاتفاقية مطلوب' : 'Deal type is required'),
     status: Yup.string().required(isArabic ? 'الحالة مطلوبة' : 'Status is required'),
-    start_date: Yup.date().nullable(),
+    start_date: Yup.date().nullable().transform((value, originalValue) => {
+      return originalValue === '' || originalValue === 'null' ? null : value
+    }),
     end_date: Yup.date().nullable()
-      .when('start_date', (start_date, schema) => 
-        start_date ? schema.min(start_date, isArabic ? 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية' : 'End date must be after start date') : schema
-      )
+      .transform((value, originalValue) => {
+        return originalValue === '' || originalValue === 'null' ? null : value
+      })
+      .when('start_date', {
+        is: (val) => val instanceof Date && !isNaN(val),
+        then: (schema) => schema.min(
+          Yup.ref('start_date'),
+          isArabic ? 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية' : 'End date must be after start date'
+        ),
+        otherwise: (schema) => schema
+      })
   })
 
   // Formik setup
@@ -64,7 +79,7 @@ const EditDealModal = ({
           end_date: values.end_date ? format(values.end_date, 'yyyy-MM-dd') : null
         }
 
-        const response = await updateClientDeal(dealId, updateData)
+        const response = await updateClientDeal(dealId, updateData, files)
         
         if (response.success) {
           toast.success(isArabic ? 'تم تحديث الاتفاقية بنجاح' : 'Deal updated successfully')
@@ -116,6 +131,9 @@ const EditDealModal = ({
         start_date: deal.start_date ? new Date(deal.start_date) : null,
         end_date: deal.end_date ? new Date(deal.end_date) : null
       })
+      
+      // Set existing documents
+      setExistingDocuments(deal.documents || [])
     }
   }, [dealData])
 
@@ -123,8 +141,55 @@ const EditDealModal = ({
   useEffect(() => {
     if (!isOpen) {
       formik.resetForm()
+      setFiles([])
+      setExistingDocuments([])
     }
   }, [isOpen])
+
+  // File handling functions
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files || [])
+    if (selectedFiles.length > 0) {
+      setFiles(prev => [...prev, ...selectedFiles])
+    }
+  }
+
+  const removeFile = (index) => {
+    setFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleDeleteExistingDocument = async (documentId) => {
+    if (!confirm(isArabic ? 'هل أنت متأكد من حذف هذا المستند؟' : 'Are you sure you want to delete this document?')) {
+      return
+    }
+
+    try {
+      const response = await deleteDealDocument(dealId, documentId)
+      if (response.success) {
+        toast.success(isArabic ? 'تم حذف المستند بنجاح' : 'Document deleted successfully')
+        setExistingDocuments(prev => prev.filter(doc => doc.id !== documentId))
+      } else {
+        toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document'))
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error)
+      toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
+    }
+  }
+
+  const getFileIcon = (fileType) => {
+    if (fileType?.startsWith('image/')) return <ImageIcon className="h-5 w-5 text-blue-500" />
+    if (fileType?.includes('pdf')) return <FileText className="h-5 w-5 text-red-500" />
+    return <File className="h-5 w-5 text-gray-500" />
+  }
+
+  const formatFileSize = (bytes) => {
+    if (!bytes || bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
+  }
 
   // Helper function to get error message
   const getErrorMessage = (fieldName) => {
@@ -320,6 +385,126 @@ const EditDealModal = ({
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* Existing Documents */}
+              {existingDocuments.length > 0 && (
+                <div className="space-y-2">
+                  <Label>
+                    {isArabic ? 'المستندات الحالية' : 'Existing Documents'}
+                  </Label>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {existingDocuments.map((doc) => (
+                      <div
+                        key={doc.id}
+                        className="flex items-center justify-between p-2 border rounded-lg bg-muted/30"
+                      >
+                        <div className="flex items-center space-x-2 flex-1 min-w-0">
+                          <FileText className="h-5 w-5 text-blue-500" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{doc.document_name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {doc.created_by_name && `${isArabic ? 'بواسطة' : 'By'}: ${doc.created_by_name}`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(doc.document_url, '_blank')}
+                            className="h-8 w-8 p-0"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteExistingDocument(doc.id)}
+                            disabled={formik.isSubmitting}
+                            className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* File Upload Section */}
+              <div className="space-y-2">
+                <Label>
+                  {isArabic ? 'إضافة مستندات جديدة' : 'Add New Documents'}
+                </Label>
+                
+                {/* Upload Button */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="deal-file-upload-edit"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
+                    disabled={formik.isSubmitting}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('deal-file-upload-edit')?.click()}
+                    disabled={formik.isSubmitting}
+                    className="w-full"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    {isArabic ? 'رفع ملفات' : 'Upload Files'}
+                  </Button>
+                </div>
+
+                {/* New Files List */}
+                {files.length > 0 && (
+                  <div className="space-y-2 mt-3">
+                    <p className="text-sm text-muted-foreground">
+                      {isArabic ? `ملفات جديدة (${files.length})` : `New Files (${files.length})`}
+                    </p>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {files.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2 border rounded-lg bg-muted/30"
+                        >
+                          <div className="flex items-center space-x-2 flex-1 min-w-0">
+                            {getFileIcon(file.type)}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{file.name}</p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <Badge variant="secondary" className="text-xs">
+                                  {file.type.split('/')[1]?.toUpperCase() || 'FILE'}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {formatFileSize(file.size)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFile(index)}
+                            disabled={formik.isSubmitting}
+                            className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </form>

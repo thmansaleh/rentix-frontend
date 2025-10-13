@@ -12,10 +12,12 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SearchableCombobox } from "@/components/ui/searchable-combobox"
 import { DatePicker } from "@/components/ui/date-picker"
-import { Loader2, Plus, X } from 'lucide-react'
+import { Badge } from "@/components/ui/badge"
+import { Loader2, Plus, X, Upload, FileText, Image as ImageIcon, File, Trash2 } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { createClientDeal } from '@/app/services/api/clientsDeals'
 import { searchParties } from '@/app/services/api/parties'
+import { cn } from "@/lib/utils"
 
 const AddDealModal = ({ 
   isOpen, 
@@ -31,6 +33,7 @@ const AddDealModal = ({
 
   const [isLoading, setIsLoading] = useState(false)
   const [searchResults, setSearchResults] = useState([])
+  const [files, setFiles] = useState([])
   const [formData, setFormData] = useState({
     client_id: '',
     amount: '',
@@ -86,6 +89,7 @@ const AddDealModal = ({
         created_by: currentUser || null
       })
       setSearchResults([])
+      setFiles([])
     }
   }, [isOpen, currentUser])
 
@@ -94,6 +98,32 @@ const AddDealModal = ({
       ...prev,
       [field]: value
     }))
+  }
+
+  // File handling functions
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files || [])
+    if (selectedFiles.length > 0) {
+      setFiles(prev => [...prev, ...selectedFiles])
+    }
+  }
+
+  const removeFile = (index) => {
+    setFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const getFileIcon = (fileType) => {
+    if (fileType.startsWith('image/')) return <ImageIcon className="h-5 w-5 text-blue-500" />
+    if (fileType.includes('pdf')) return <FileText className="h-5 w-5 text-red-500" />
+    return <File className="h-5 w-5 text-gray-500" />
+  }
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
   }
 
   const validateForm = () => {
@@ -127,7 +157,7 @@ const AddDealModal = ({
         created_by: formData.created_by
       }
 
-      const response = await createClientDeal(createData)
+      const response = await createClientDeal(createData, files)
       
       if (response.success) {
         toast.success(isArabic ? 'تم إنشاء الاتفاقية بنجاح' : 'Deal created successfully')
@@ -267,6 +297,78 @@ const AddDealModal = ({
                 disabled={isLoading}
               />
             </div>
+          </div>
+
+          {/* File Upload Section */}
+          <div className="space-y-2">
+            <Label>
+              {isArabic ? 'المستندات' : 'Documents'}
+            </Label>
+            
+            {/* Upload Button */}
+            <div className="flex items-center gap-2">
+              <input
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+                id="deal-file-upload"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
+                disabled={isLoading}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById('deal-file-upload')?.click()}
+                disabled={isLoading}
+                className="w-full"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {isArabic ? 'رفع ملفات' : 'Upload Files'}
+              </Button>
+            </div>
+
+            {/* Files List */}
+            {files.length > 0 && (
+              <div className="space-y-2 mt-3">
+                <p className="text-sm text-muted-foreground">
+                  {isArabic ? `الملفات المرفوعة (${files.length})` : `Uploaded Files (${files.length})`}
+                </p>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {files.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-2 border rounded-lg bg-muted/30"
+                    >
+                      <div className="flex items-center space-x-2 flex-1 min-w-0">
+                        {getFileIcon(file.type)}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{file.name}</p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <Badge variant="secondary" className="text-xs">
+                              {file.type.split('/')[1]?.toUpperCase() || 'FILE'}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {formatFileSize(file.size)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFile(index)}
+                        disabled={isLoading}
+                        className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Info Note */}

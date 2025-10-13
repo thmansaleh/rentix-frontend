@@ -20,8 +20,8 @@ export const uploadFiles = async (files, folder = 'documents') => {
     });
     formData.append('folder', folder);
 
-    // Get the backend URL from environment or default
-    const backendUrl = api|| 'http://localhost:8080/api';
+    // Get the backend URL - use the axios instance's baseURL
+    const backendUrl = api.defaults.baseURL || 'http://localhost:8080/api';
     
     // Get auth token from localStorage or cookie
     const token = localStorage.getItem('token');
@@ -37,8 +37,16 @@ export const uploadFiles = async (files, folder = 'documents') => {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Upload failed');
+      const errorText = await response.text();
+      let errorMessage = 'Upload failed';
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.error || errorMessage;
+      } catch (e) {
+        // If response is not JSON, use the text as error
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
     }
 
     const result = await response.json();

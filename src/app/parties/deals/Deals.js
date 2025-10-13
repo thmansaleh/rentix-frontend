@@ -176,15 +176,15 @@ function Deals() {
       const response = await deleteClientDeal(deleteModal.dealId)
       
       if (response.success) {
-        toast.success(isArabic ? 'تم حذف الصفقة بنجاح' : 'Deal deleted successfully')
+        toast.success(isArabic ? 'تم حذف الاتفاقية بنجاح' : 'Deal deleted successfully')
         handleModalSuccess()
         setDeleteModal({ isOpen: false, dealId: null, dealInfo: null, isDeleting: false })
       } else {
-        toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف الصفقة' : 'Error deleting deal'))
+        toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف الاتفاقية' : 'Error deleting deal'))
       }
     } catch (error) {
       console.error('Error deleting deal:', error)
-      toast.error(isArabic ? 'حدث خطأ أثناء حذف الصفقة' : 'Error deleting deal')
+      toast.error(isArabic ? 'حدث خطأ أثناء حذف الاتفاقية' : 'Error deleting deal')
     } finally {
       setDeleteModal(prev => ({ ...prev, isDeleting: false }))
     }
@@ -215,7 +215,7 @@ function Deals() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              {isArabic ? 'صفقات العملاء' : 'Client Deals'}
+              {isArabic ? 'اتفاقيات العملاء' : 'Client Deals'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -249,7 +249,7 @@ function Deals() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              {isArabic ? 'صفقات العملاء' : 'Client Deals'}
+              {isArabic ? 'اتفاقيات العملاء' : 'Client Deals'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -290,7 +290,7 @@ function Deals() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              {isArabic ? 'صفقات العملاء' : 'Client Deals'}
+              {isArabic ? 'اتفاقيات العملاء' : 'Client Deals'}
               {totalCount > 0 && (
                 <Badge variant="secondary" className="ml-2">
                   {totalCount}
@@ -299,7 +299,7 @@ function Deals() {
             </CardTitle>
             <Button className="flex items-center gap-2" onClick={handleAddDeal}>
               <Plus className="h-4 w-4" />
-              {isArabic ? 'إضافة صفقة' : 'Add Deal'}
+              {isArabic ? 'إضافة اتفاقية' : 'Add Deal'}
             </Button>
           </div>
         </CardHeader>
@@ -309,11 +309,11 @@ function Deals() {
             <div className="text-center py-12">
               <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-lg font-semibold mb-2">
-                {isArabic ? 'لا توجد صفقات' : 'No Deals Found'}
+                {isArabic ? 'لا توجد اتفاقيات' : 'No Deals Found'}
               </h3>
               <p className="text-muted-foreground">
                 {isArabic 
-                  ? 'لم يتم العثور على صفقات تطابق معايير البحث'
+                  ? 'لم يتم العثور على اتفاقيات تطابق معايير البحث'
                   : 'No deals found matching your search criteria'
                 }
               </p>
@@ -477,7 +477,7 @@ function Deals() {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-left">
               {isArabic 
-                ? `هل أنت متأكد من أنك تريد حذف هذه الصفقة؟`
+                ? `هل أنت متأكد من أنك تريد حذف هذه الاتفاقية؟`
                 : `Are you sure you want to delete this deal?`
               }
               {deleteModal.dealInfo && (
