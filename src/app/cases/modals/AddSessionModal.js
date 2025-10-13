@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import { createSession } from '@/app/services/api/sessions';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import { uploadFiles } from '../../../utils/fileUpload';
+import { uploadFiles } from '../../../../utils/fileUpload';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
