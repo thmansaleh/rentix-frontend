@@ -130,15 +130,15 @@ const AddDealModal = ({
       const response = await createClientDeal(createData)
       
       if (response.success) {
-        toast.success(isArabic ? 'تم إنشاء الصفقة بنجاح' : 'Deal created successfully')
+        toast.success(isArabic ? 'تم إنشاء الاتفاقية بنجاح' : 'Deal created successfully')
         onSuccess?.()
         onClose()
       } else {
-        toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الصفقة' : 'Error creating deal'))
+        toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الاتفاقية' : 'Error creating deal'))
       }
     } catch (error) {
       console.error('Error creating deal:', error)
-      toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الصفقة' : 'Error creating deal')
+      toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الاتفاقية' : 'Error creating deal')
     } finally {
       setIsLoading(false)
     }
@@ -150,7 +150,7 @@ const AddDealModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5" />
-            {isArabic ? 'إضافة صفقة جديدة' : 'Add New Deal'}
+            {isArabic ? 'إضافة اتفاقية جديدة' : 'Add New Deal'}
           </DialogTitle>
         </DialogHeader>
 
@@ -195,7 +195,7 @@ const AddDealModal = ({
             {/* Type */}
             <div className="space-y-2">
               <Label>
-                {isArabic ? 'نوع الصفقة' : 'Deal Type'}
+                {isArabic ? 'نوع الاتفاقية' : 'Deal Type'}
               </Label>
               <Select
                 value={formData.type}
@@ -301,7 +301,7 @@ const AddDealModal = ({
             ) : (
               <>
                 <Plus className="h-4 w-4 mr-2" />
-                {isArabic ? 'إضافة الصفقة' : 'Add Deal'}
+                {isArabic ? 'إضافة الاتفاقية' : 'Add Deal'}
               </>
             )}
           </Button>

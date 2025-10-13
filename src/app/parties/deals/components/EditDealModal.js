@@ -32,7 +32,7 @@ const EditDealModal = ({
     amount: Yup.number()
       .required(isArabic ? 'المبلغ مطلوب' : 'Amount is required')
       .positive(isArabic ? 'المبلغ يجب أن يكون أكبر من الصفر' : 'Amount must be greater than zero'),
-    type: Yup.string().required(isArabic ? 'نوع الصفقة مطلوب' : 'Deal type is required'),
+    type: Yup.string().required(isArabic ? 'نوع الاتفاقية مطلوب' : 'Deal type is required'),
     status: Yup.string().required(isArabic ? 'الحالة مطلوبة' : 'Status is required'),
     start_date: Yup.date().nullable(),
     end_date: Yup.date().nullable()
@@ -67,15 +67,15 @@ const EditDealModal = ({
         const response = await updateClientDeal(dealId, updateData)
         
         if (response.success) {
-          toast.success(isArabic ? 'تم تحديث الصفقة بنجاح' : 'Deal updated successfully')
+          toast.success(isArabic ? 'تم تحديث الاتفاقية بنجاح' : 'Deal updated successfully')
           onSuccess?.()
           onClose()
         } else {
-          toast.error(response.error || (isArabic ? 'حدث خطأ أثناء تحديث الصفقة' : 'Error updating deal'))
+          toast.error(response.error || (isArabic ? 'حدث خطأ أثناء تحديث الاتفاقية' : 'Error updating deal'))
         }
       } catch (error) {
         console.error('Error updating deal:', error)
-        toast.error(isArabic ? 'حدث خطأ أثناء تحديث الصفقة' : 'Error updating deal')
+        toast.error(isArabic ? 'حدث خطأ أثناء تحديث الاتفاقية' : 'Error updating deal')
       } finally {
         setSubmitting(false)
       }
@@ -142,7 +142,7 @@ const EditDealModal = ({
           </DialogHeader>
           <div className="text-center py-4">
             <p className="text-muted-foreground">
-              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الصفقة' : 'Error loading deal data'}
+              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الاتفاقية' : 'Error loading deal data'}
             </p>
           </div>
           <DialogFooter>
@@ -222,7 +222,7 @@ const EditDealModal = ({
                 {/* Type */}
                 <div className="space-y-2">
                   <Label>
-                    {isArabic ? 'نوع الصفقة *' : 'Deal Type *'}
+                    {isArabic ? 'نوع الاتفاقية *' : 'Deal Type *'}
                   </Label>
                   <Select
                     name="type"

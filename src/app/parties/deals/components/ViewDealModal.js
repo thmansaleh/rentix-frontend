@@ -106,7 +106,7 @@ const ViewDealModal = ({
           </DialogHeader>
           <div className="text-center py-4">
             <p className="text-muted-foreground">
-              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الصفقة' : 'Error loading deal data'}
+              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الاتفاقية' : 'Error loading deal data'}
             </p>
           </div>
           <div className="flex justify-end">
@@ -126,7 +126,7 @@ const ViewDealModal = ({
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5" />
-              {isArabic ? 'عرض الصفقة' : 'View Deal'}
+              {isArabic ? 'عرض الاتفاقية' : 'View Deal'}
               {deal && <span className="text-muted-foreground">#{deal.id}</span>}
             </DialogTitle>
             <Button 
@@ -196,20 +196,20 @@ const ViewDealModal = ({
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
                     <FileText className="h-4 w-4" />
-                    {isArabic ? 'تفاصيل الصفقة' : 'Deal Details'}
+                    {isArabic ? 'تفاصيل الاتفاقية' : 'Deal Details'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">
-                      {isArabic ? 'رقم الصفقة:' : 'Deal ID:'}
+                      {isArabic ? 'رقم الاتفاقية:' : 'Deal ID:'}
                     </span>
                     <span className="font-medium">#{deal.id}</span>
                   </div>
                   
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">
-                      {isArabic ? 'نوع الصفقة:' : 'Deal Type:'}
+                      {isArabic ? 'نوع الاتفاقية:' : 'Deal Type:'}
                     </span>
                     <span className="font-medium">{getTypeDisplay(deal.type)}</span>
                   </div>
