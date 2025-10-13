@@ -256,7 +256,7 @@ if (employeesResponse ) {
                     <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('employees.status')}
                     </th>
-                    <th 
+                    {/* <th 
                       className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted/80"
                       onClick={() => handleSort('lastLogin')}
                     >
@@ -264,7 +264,7 @@ if (employeesResponse ) {
                         {t('employees.lastLogin')}
                         <SortIcon column="lastLogin" />
                       </div>
-                    </th>
+                    </th> */}
                     <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('employees.actions')}
                     </th>

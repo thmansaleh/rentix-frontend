@@ -28,12 +28,12 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
       <td className="px-6 py-4 whitespace-nowrap">
         <StatusBadge status={employee.status} />
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+      {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
         {employee.lastLogin || '-'}
-      </td>
+      </td> */}
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2 items-center">
         <button 
-          onClick={() => router.push(`/employees/${employee?.id}`)}
+          onClick={() => router.push(`./employees/${employee?.id}`)}
           className="p-2 rounded-full hover:bg-muted transition-colors"
           title={t('employees.viewDetails')}
         >
@@ -51,7 +51,7 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
             </button>
           }
         /> */}
-        <PermissionsDialog
+        {/* <PermissionsDialog
           id={employee.id}
           trigger={
             <button
@@ -63,8 +63,8 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
               {t('employees.permissions')}
             </button>
           }
-        />
-        <ActivityLogModal
+        /> */}
+        {/* <ActivityLogModal
           employee={employee}
           trigger={
             <div 
@@ -75,7 +75,7 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
               <span>{t('employees.activityLog')}</span>
             </div>
           }
-        />
+        /> */}
       </td>
       
     </tr>
