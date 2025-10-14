@@ -1,10 +1,11 @@
 import React from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Hash, FileText, User, Clock, Calendar, AlertTriangle } from 'lucide-react'
+import { Hash, FileText, User, Clock, Calendar, AlertTriangle, File } from 'lucide-react'
 import Actions from './Actions'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { se } from 'date-fns/locale'
 
 function SessionsWithDecisionItem({ 
   session,
@@ -164,6 +165,16 @@ function SessionsWithDecisionItem({
             {displayTime && <span className="text-purple-600 font-medium">• {displayTime}</span>}
           </div>
           
+
+              {session?.file_number && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <File className="w-4 h-4" />
+              <span>{tSessions('labels.fileNumber')} </span>
+              <span className="font-medium text-gray-900">{session.file_number}</span>
+            </div>
+          )}
+
+          {session?.case_number && (
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <FileText className="w-4 h-4" />
             <span>{tSessions('labels.caseNumber')} </span>
@@ -174,6 +185,9 @@ function SessionsWithDecisionItem({
               </Badge>
             )}
           </div>
+          )}
+
+      
           
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <User className="w-4 h-4" />

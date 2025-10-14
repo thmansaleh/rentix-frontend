@@ -221,6 +221,7 @@
     "requests": "الطلبات",
     "salaries": "الرواتب",
     "assets": "الاصول",
+    "forms": "النماذج",
     "events": "الأحداث",
     "notifications": "التنبيهات",
     "casesManagement": "إدارة القضايا",
@@ -747,6 +748,7 @@
     "labels": {
       "sessionDate": "تاريخ الجلسة:",
       "caseNumber": "رقم القضية:",
+      "fileNumber": "رقم الملف:",
       "client": "العميل:",
       "opponent": "الخصم:",
       "caseType": "نوع القضية:",
@@ -1364,7 +1366,24 @@
     "optional": "اختياري",
     "search": "بحث",
     "filter": "تصفية",
-    "sort": "ترتيب"
+    "sort": "ترتيب",
+    "types": {
+      "early_leave": "طلب خروج مبكر",
+      "car_acknowledgement_letter": "خطاب إقرار السيارة",
+      "annual_leave_encashment": "صرف الإجازة السنوية",
+      "employee_information": "نموذج معلومات الموظف",
+      "emergency_leave": "طلب إجازة طارئة",
+      "email_acknowledgement": "إقرار البريد الإلكتروني",
+      "acknowledgement_letter": "خطاب الإقرار",
+      "end_of_service_acknowledgement": "إقرار نهاية الخدمة",
+      "loan": "طلب قرض",
+      "leave_application": "طلب إجازة",
+      "sickness_self_certificate": "نموذج مرضية",
+      "maternity_leave": "طلب إجازة أمومة",
+      "short_absent": "نموذج غياب ",
+      "salary_advance": "طلب سلفة ",
+      "new_starter": "نموذج موظف جديد"
+    }
   },
   "fines": {
     "title": "إدارة المركبات",

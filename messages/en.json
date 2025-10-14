@@ -221,6 +221,7 @@
     "requests": "Requests",
     "salaries": "Salaries",
     "assets": "Assets",
+    "forms": "Forms",
     "events": "Events",
     "notifications": "Notifications",
     "casesManagement": "Cases Management",
@@ -747,6 +748,7 @@
     "labels": {
       "sessionDate": "Session Date:",
       "caseNumber": "Case Number:",
+      "fileNumber": "File Number:",
       "client": "Client:",
       "opponent": "Opponent:",
       "caseType": "Case Type:",
@@ -1346,7 +1348,23 @@
     "optional": "Optional",
     "search": "Search",
     "filter": "Filter",
-    "sort": "Sort"
+    "sort": "Sort",
+    "types": {
+      "early_leave": "Early Leave Request",
+      "car_acknowledgement_letter": "Car Acknowledgement Letter",
+      "annual_leave_encashment": "Annual Leave Encashment",
+      "employee_information": "Employee Information Form",
+      "emergency_leave": "Emergency Leave Request",
+      "email_acknowledgement": "Email Acknowledgement",
+      "acknowledgement_letter": "Acknowledgement Letter",
+      "end_of_service_acknowledgement": "End of Service Acknowledgement",
+      "loan": "Loan Application",
+      "leave_application": "Leave Application",
+      "sickness_self_certificate": "Sickness Self Certificate",
+      "short_absent": "Short Absence Form",
+      "salary_advance": "Salary Advance Request",
+      "new_starter": "New Starter Form"
+    }
   },
   "fines": {
     "title": "Fines Management",

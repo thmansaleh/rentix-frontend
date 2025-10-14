@@ -333,6 +333,7 @@ const AppSidebar = () => {
         { id: 'hr/employees', label: t('navigation.employees'), icon: Users },
         { id: 'hr/requests', label: t('navigation.requests'), icon: FileText },
         { id: 'hr/assets', label: t('navigation.assets'), icon: Package },
+        { id: 'hr/forms', label: t('navigation.forms'), icon: ScrollText },
         { id: 'hr/events', label: t('navigation.events'), icon: Calendar },
         { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell },
         // { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },

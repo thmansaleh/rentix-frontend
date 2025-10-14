@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plus, Pencil, Trash2, Loader2, FileText, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { toast } from 'react-toastify'
 import ExportButtons from '@/components/ui/export-buttons'
@@ -37,12 +38,28 @@ function RequestsPage() {
   const [selectedRequest, setSelectedRequest] = useState(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [requestToDelete, setRequestToDelete] = useState(null)
+  const [activeTab, setActiveTab] = useState('leaves')
+
+  // Handle tab change and reset filters
+  const handleTabChange = (tab) => {
+    setActiveTab(tab)
+    // Reset filters when switching tabs
+    setSearchTerm('')
+    setManagerApprovalFilter('')
+    setHrApprovalFilter('')
+    setTypeFilter('')
+    setAppliedSearch('')
+    setAppliedManagerApproval('')
+    setAppliedHrApproval('')
+    setAppliedType('')
+    setCurrentPage(1)
+  }
 
   // Request types (same as in RequestModal)
   const requestTypes = getRequestTypes(isArabic)
 
-  // Column configuration for export
-  const hrRequestsColumnConfig = {
+  // Column configuration for export - Leave requests (with manager approval)
+  const leaveRequestsColumnConfig = {
     id: {
       ar: 'المعرف',
       en: 'ID',
@@ -119,6 +136,73 @@ function RequestsPage() {
     }
   }
 
+  // Column configuration for export - Other requests (no manager approval)
+  const otherRequestsColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    employee_name: {
+      ar: 'اسم الموظف',
+      en: 'Employee Name',
+      dataKey: 'employee_name'
+    },
+    type: {
+      ar: 'النوع',
+      en: 'Type',
+      dataKey: 'type',
+      formatter: (value) => {
+        const type = requestTypes.find(t => t.value === value)
+        return type ? type.label : value
+      }
+    },
+    start_date: {
+      ar: 'تاريخ البداية',
+      en: 'Start Date',
+      dataKey: 'start_date',
+      type: 'date'
+    },
+    end_date: {
+      ar: 'تاريخ النهاية',
+      en: 'End Date',
+      dataKey: 'end_date',
+      type: 'date'
+    },
+    days: {
+      ar: 'الأيام',
+      en: 'Days',
+      dataKey: 'days'
+    },
+    hr_approval: {
+      ar: 'موافقة الموارد البشرية',
+      en: 'HR Approval',
+      dataKey: 'hr_approval',
+      type: 'status',
+      statusMap: {
+        'approved': { ar: 'موافق', en: 'Approved' },
+        'rejected': { ar: 'مرفوض', en: 'Rejected' },
+        'pending': { ar: 'قيد الانتظار', en: 'Pending' }
+      }
+    },
+    reason: {
+      ar: 'السبب',
+      en: 'Reason',
+      dataKey: 'reason'
+    },
+    notes: {
+      ar: 'الملاحظات',
+      en: 'Notes',
+      dataKey: 'notes'
+    },
+    created_at: {
+      ar: 'تاريخ الإنشاء',
+      en: 'Created At',
+      dataKey: 'created_at',
+      type: 'date'
+    }
+  }
+
   // Pagination and filter states
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
@@ -136,14 +220,33 @@ function RequestsPage() {
   const [appliedType, setAppliedType] = useState('')
 
   // Build query params with applied filters
-  const queryParams = useMemo(() => ({
-    page: currentPage,
-    limit: pageSize,
-    search: appliedSearch || null,
-    manager_approval: (appliedManagerApproval && appliedManagerApproval !== 'all') ? appliedManagerApproval : null,
-    hr_approval: (appliedHrApproval && appliedHrApproval !== 'all') ? appliedHrApproval : null,
-    type: (appliedType && appliedType !== 'all') ? appliedType : null,
-  }), [currentPage, pageSize, appliedSearch, appliedManagerApproval, appliedHrApproval, appliedType])
+  const queryParams = useMemo(() => {
+    let baseParams = {
+      page: currentPage,
+      limit: pageSize,
+      search: appliedSearch || null,
+      hr_approval: (appliedHrApproval && appliedHrApproval !== 'all') ? appliedHrApproval : null,
+      type: (appliedType && appliedType !== 'all') ? appliedType : null,
+    }
+
+    // Only include manager_approval for leave requests
+    if (activeTab === 'leaves') {
+      baseParams.manager_approval = (appliedManagerApproval && appliedManagerApproval !== 'all') ? appliedManagerApproval : null
+      // Filter to only include leave types
+      const leaveTypes = requestTypes.filter(type => type.isLeave).map(type => type.value)
+      if (!appliedType || appliedType === 'all') {
+        baseParams.type_in = leaveTypes
+      }
+    } else {
+      // Filter to only include non-leave types
+      const otherTypes = requestTypes.filter(type => !type.isLeave).map(type => type.value)
+      if (!appliedType || appliedType === 'all') {
+        baseParams.type_in = otherTypes
+      }
+    }
+
+    return baseParams
+  }, [currentPage, pageSize, appliedSearch, appliedManagerApproval, appliedHrApproval, appliedType, activeTab, requestTypes])
 
   // Fetch requests data with pagination and filters
   const { data: requestsData, error, mutate, isLoading } = useSWR(
@@ -153,6 +256,25 @@ function RequestsPage() {
 
   const requests = requestsData?.data || []
   const pagination = requestsData?.pagination || { total: 0, page: 1, totalPages: 1 }
+
+  // Filter requests by type (leaves vs other requests)
+  const leaveRequests = requests.filter(request => {
+    const requestType = requestTypes.find(type => type.value === request.type)
+    return requestType?.isLeave === true
+  })
+
+  const otherRequests = requests.filter(request => {
+    const requestType = requestTypes.find(type => type.value === request.type)
+    return requestType?.isLeave === false
+  })
+
+  // Get current requests based on active tab
+  const currentRequests = activeTab === 'leaves' ? leaveRequests : otherRequests
+  
+  // Get request types for current tab
+  const currentRequestTypes = requestTypes.filter(type => 
+    activeTab === 'leaves' ? type.isLeave === true : type.isLeave === false
+  )
 
   const handleAddRequest = () => {
     setSelectedRequest(null)
@@ -291,270 +413,332 @@ function RequestsPage() {
           </Button>
         </CardHeader>
 
-        {/* Export Buttons */}
-        {requests && requests.length > 0 && (
-          <div className="px-6 pb-4">
-            <ExportButtons
-              data={requests}
-              columnConfig={hrRequestsColumnConfig}
-              language={language}
-              exportName="hr-requests"
-              sheetName={language === 'ar' ? 'طلبات الموظفين' : 'HR Requests'}
-            />
-          </div>
-        )}
-
         <CardContent>
-          {/* Filters Section */}
-          <div className="mb-6 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-              {/* Search Input */}
-              <div className="relative lg:col-span-2">
-                <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400`} />
-                <Input
-                  placeholder={isArabic ? 'ابحث عن موظف أو نوع...' : 'Search employee or type...'}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className={`${isArabic ? 'pr-10' : 'pl-10'}`}
-                />
-              </div>
+          <Tabs dir={isArabic ? 'rtl' : 'ltr'} value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="leaves">
+                {isArabic ? 'الاجازات' : 'Leaves'}
+              </TabsTrigger>
+              <TabsTrigger value="others">
+                {isArabic ? 'طلبات أخرى' : 'Other Requests'}
+              </TabsTrigger>
+            </TabsList>
 
-              {/* Type Filter */}
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder={isArabic ? 'نوع الطلب' : 'Request Type'} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{isArabic ? 'الكل' : 'All Types'}</SelectItem>
-                  {requestTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <TabsContent value="leaves">
+              {/* Export Buttons for Leaves */}
+              {leaveRequests && leaveRequests.length > 0 && (
+                <div className="mb-4">
+                  <ExportButtons
+                    data={leaveRequests}
+                    columnConfig={leaveRequestsColumnConfig}
+                    language={language}
+                    exportName="leave-requests"
+                    sheetName={language === 'ar' ? 'طلبات الاجازات' : 'Leave Requests'}
+                  />
+                </div>
+              )}
 
-              {/* Manager Approval Filter */}
-              <Select value={managerApprovalFilter} onValueChange={setManagerApprovalFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder={isArabic ? 'موافقة المدير' : 'Manager Approval'} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{isArabic ? 'الكل' : 'All'}</SelectItem>
-                  <SelectItem value="pending">{isArabic ? 'قيد الانتظار' : 'Pending'}</SelectItem>
-                  <SelectItem value="approved">{isArabic ? 'موافق' : 'Approved'}</SelectItem>
-                  <SelectItem value="rejected">{isArabic ? 'مرفوض' : 'Rejected'}</SelectItem>
-                </SelectContent>
-              </Select>
+              {/* Filters Section for Leaves */}
+              <div className="mb-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                  {/* Search Input */}
+                  <div className="relative lg:col-span-2">
+                    <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400`} />
+                    <Input
+                      placeholder={isArabic ? 'ابحث عن موظف أو نوع...' : 'Search employee or type...'}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className={`${isArabic ? 'pr-10' : 'pl-10'}`}
+                    />
+                  </div>
 
-              {/* HR Approval Filter */}
-              <Select value={hrApprovalFilter} onValueChange={setHrApprovalFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder={isArabic ? 'موافقة HR' : 'HR Approval'} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{isArabic ? 'الكل' : 'All'}</SelectItem>
-                  <SelectItem value="pending">{isArabic ? 'قيد الانتظار' : 'Pending'}</SelectItem>
-                  <SelectItem value="approved">{isArabic ? 'موافق' : 'Approved'}</SelectItem>
-                  <SelectItem value="rejected">{isArabic ? 'مرفوض' : 'Rejected'}</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* Action Buttons */}
-              <div className="flex gap-2">
-                <Button onClick={handleApplyFilters} className="flex-1">
-                  <Search className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
-                  {isArabic ? 'بحث' : 'Search'}
-                </Button>
-                <Button variant="outline" onClick={handleResetFilters}>
-                  {isArabic ? 'إعادة' : 'Reset'}
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {requests.length === 0 ? (
-            <div className="text-center p-12">
-              <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">
-                {isArabic ? 'لا توجد طلبات' : 'No requests found'}
-              </p>
-              <p className="text-gray-400 text-sm mt-2">
-                {isArabic 
-                  ? 'ابدأ بإضافة طلب جديد باستخدام الزر أعلاه' 
-                  : 'Start by adding a new request using the button above'
-                }
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[50px]">{isArabic ? '#' : '#'}</TableHead>
-                    <TableHead>{isArabic ? 'الموظف' : 'Employee'}</TableHead>
-                    <TableHead>{isArabic ? 'النوع' : 'Type'}</TableHead>
-                    <TableHead>{isArabic ? 'تاريخ الطلب' : 'Request Date'}</TableHead>
-                    {/* <TableHead>{isArabic ? 'من تاريخ' : 'From Date'}</TableHead>
-                    <TableHead>{isArabic ? 'إلى تاريخ' : 'To Date'}</TableHead> */}
-                    <TableHead>{isArabic ? 'موافقة المدير' : 'Manager'}</TableHead>
-                    <TableHead>{isArabic ? 'موافقة HR' : 'HR'}</TableHead>
-                    <TableHead className="text-center">{isArabic ? 'الإجراءات' : 'Actions'}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {requests.map((request, index) => (
-                    <TableRow key={request.id}>
-                      <TableCell className="font-medium">
-                        {(pagination.page - 1) * pageSize + index + 1}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-medium">
-                            {request.employee_name || '-'}
-                          </span>
-                        
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm font-medium">{request.type || '-'}</span>
-                      </TableCell>
-                      <TableCell>
-                        {request.date 
-                          ? format(new Date(request.date), 'yyyy-MM-dd')
-                          : '-'
-                        }
-                      </TableCell>
-                      {/* <TableCell>
-                        {request.from_date 
-                          ? format(new Date(request.from_date), 'yyyy-MM-dd')
-                          : '-'
-                        }
-                      </TableCell>
-                      <TableCell>
-                        {request.to_date 
-                          ? format(new Date(request.to_date), 'yyyy-MM-dd')
-                          : '-'
-                        }
-                      </TableCell> */}
-                      <TableCell>
-                        {getApprovalBadge(request.manager_approval)}
-                      </TableCell>
-                      <TableCell>
-                        {getApprovalBadge(request.hr_approval)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center justify-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEditRequest(request)}
-                            className="hover:bg-blue-50 hover:text-blue-600"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteClick(request)}
-                            className="hover:bg-red-50 hover:text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-
-          {/* Pagination Controls */}
-          {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between mt-6 pt-4 border-t">
-              <div className="text-sm text-muted-foreground">
-                {isArabic 
-                  ? `عرض ${((pagination.page - 1) * pageSize) + 1} - ${Math.min(pagination.page * pageSize, pagination.total)} من ${pagination.total}`
-                  : `Showing ${((pagination.page - 1) * pageSize) + 1} - ${Math.min(pagination.page * pageSize, pagination.total)} of ${pagination.total}`
-                }
-              </div>
-
-              <div className="flex items-center gap-2">
-                {/* Page Size Selector */}
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    {isArabic ? 'عرض:' : 'Show:'}
-                  </span>
-                  <Select value={pageSize.toString()} onValueChange={(value) => {
-                    setPageSize(Number(value))
-                    setCurrentPage(1)
-                  }}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
+                  {/* Type Filter */}
+                  <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={isArabic ? 'نوع الطلب' : 'Request Type'} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
+                      <SelectItem value="all">{isArabic ? 'الكل' : 'All Types'}</SelectItem>
+                      {currentRequestTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+
+                  {/* Manager Approval Filter */}
+                  <Select value={managerApprovalFilter} onValueChange={setManagerApprovalFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={isArabic ? 'موافقة المدير' : 'Manager Approval'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{isArabic ? 'الكل' : 'All'}</SelectItem>
+                      <SelectItem value="pending">{isArabic ? 'قيد الانتظار' : 'Pending'}</SelectItem>
+                      <SelectItem value="approved">{isArabic ? 'موافق' : 'Approved'}</SelectItem>
+                      <SelectItem value="rejected">{isArabic ? 'مرفوض' : 'Rejected'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* HR Approval Filter */}
+                  <Select value={hrApprovalFilter} onValueChange={setHrApprovalFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={isArabic ? 'موافقة HR' : 'HR Approval'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{isArabic ? 'الكل' : 'All'}</SelectItem>
+                      <SelectItem value="pending">{isArabic ? 'قيد الانتظار' : 'Pending'}</SelectItem>
+                      <SelectItem value="approved">{isArabic ? 'موافق' : 'Approved'}</SelectItem>
+                      <SelectItem value="rejected">{isArabic ? 'مرفوض' : 'Rejected'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <Button onClick={handleApplyFilters} className="flex-1">
+                      <Search className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
+                      {isArabic ? 'بحث' : 'Search'}
+                    </Button>
+                    <Button variant="outline" onClick={handleResetFilters}>
+                      {isArabic ? 'إعادة' : 'Reset'}
+                    </Button>
+                  </div>
                 </div>
-
-                {/* Previous Button */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page === 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  {isArabic ? 'السابق' : 'Previous'}
-                </Button>
-
-                {/* Page Numbers */}
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (pagination.totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (pagination.page <= 3) {
-                      pageNum = i + 1;
-                    } else if (pagination.page >= pagination.totalPages - 2) {
-                      pageNum = pagination.totalPages - 4 + i;
-                    } else {
-                      pageNum = pagination.page - 2 + i;
-                    }
-                    
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={pagination.page === pageNum ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
-                        className="w-10"
-                      >
-                        {pageNum}
-                      </Button>
-                    );
-                  })}
-                </div>
-
-                {/* Next Button */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page === pagination.totalPages}
-                >
-                  {isArabic ? 'التالي' : 'Next'}
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
               </div>
-            </div>
-          )}
+
+              {leaveRequests.length === 0 ? (
+                <div className="text-center p-12">
+                  <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">
+                    {isArabic ? 'لا توجد طلبات اجازات' : 'No leave requests found'}
+                  </p>
+                  <p className="text-gray-400 text-sm mt-2">
+                    {isArabic 
+                      ? 'ابدأ بإضافة طلب إجازة جديد باستخدام الزر أعلاه' 
+                      : 'Start by adding a new leave request using the button above'
+                    }
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">{isArabic ? '#' : '#'}</TableHead>
+                        <TableHead>{isArabic ? 'الموظف' : 'Employee'}</TableHead>
+                        <TableHead>{isArabic ? 'النوع' : 'Type'}</TableHead>
+                        <TableHead>{isArabic ? 'تاريخ الطلب' : 'Request Date'}</TableHead>
+                        <TableHead>{isArabic ? 'موافقة المدير' : 'Manager'}</TableHead>
+                        <TableHead>{isArabic ? 'موافقة HR' : 'HR'}</TableHead>
+                        <TableHead className="text-center">{isArabic ? 'الإجراءات' : 'Actions'}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {leaveRequests.map((request, index) => (
+                        <TableRow key={request.id}>
+                          <TableCell className="font-medium">
+                            {index + 1}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {request.employee_name || '-'}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm font-medium">{request.type || '-'}</span>
+                          </TableCell>
+                          <TableCell>
+                            {request.date 
+                              ? format(new Date(request.date), 'yyyy-MM-dd')
+                              : '-'
+                            }
+                          </TableCell>
+                          <TableCell>
+                            {getApprovalBadge(request.manager_approval)}
+                          </TableCell>
+                          <TableCell>
+                            {getApprovalBadge(request.hr_approval)}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center justify-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditRequest(request)}
+                                className="hover:bg-blue-50 hover:text-blue-600"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteClick(request)}
+                                className="hover:bg-red-50 hover:text-red-600"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="others">
+              {/* Export Buttons for Other Requests */}
+              {otherRequests && otherRequests.length > 0 && (
+                <div className="mb-4">
+                  <ExportButtons
+                    data={otherRequests}
+                    columnConfig={otherRequestsColumnConfig}
+                    language={language}
+                    exportName="other-requests"
+                    sheetName={language === 'ar' ? 'طلبات أخرى' : 'Other Requests'}
+                  />
+                </div>
+              )}
+
+              {/* Filters Section for Other Requests */}
+              <div className="mb-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {/* Search Input */}
+                  <div className="relative lg:col-span-2">
+                    <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400`} />
+                    <Input
+                      placeholder={isArabic ? 'ابحث عن موظف أو نوع...' : 'Search employee or type...'}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className={`${isArabic ? 'pr-10' : 'pl-10'}`}
+                    />
+                  </div>
+
+                  {/* Type Filter */}
+                  <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={isArabic ? 'نوع الطلب' : 'Request Type'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{isArabic ? 'الكل' : 'All Types'}</SelectItem>
+                      {currentRequestTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* HR Approval Filter - Only HR approval for other requests */}
+                  <Select value={hrApprovalFilter} onValueChange={setHrApprovalFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={isArabic ? 'موافقة HR' : 'HR Approval'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{isArabic ? 'الكل' : 'All'}</SelectItem>
+                      <SelectItem value="pending">{isArabic ? 'قيد الانتظار' : 'Pending'}</SelectItem>
+                      <SelectItem value="approved">{isArabic ? 'موافق' : 'Approved'}</SelectItem>
+                      <SelectItem value="rejected">{isArabic ? 'مرفوض' : 'Rejected'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <Button onClick={handleApplyFilters} className="flex-1">
+                      <Search className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
+                      {isArabic ? 'بحث' : 'Search'}
+                    </Button>
+                    <Button variant="outline" onClick={handleResetFilters}>
+                      {isArabic ? 'إعادة' : 'Reset'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {otherRequests.length === 0 ? (
+                <div className="text-center p-12">
+                  <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">
+                    {isArabic ? 'لا توجد طلبات أخرى' : 'No other requests found'}
+                  </p>
+                  <p className="text-gray-400 text-sm mt-2">
+                    {isArabic 
+                      ? 'ابدأ بإضافة طلب جديد باستخدام الزر أعلاه' 
+                      : 'Start by adding a new request using the button above'
+                    }
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">{isArabic ? '#' : '#'}</TableHead>
+                        <TableHead>{isArabic ? 'الموظف' : 'Employee'}</TableHead>
+                        <TableHead>{isArabic ? 'النوع' : 'Type'}</TableHead>
+                        <TableHead>{isArabic ? 'تاريخ الطلب' : 'Request Date'}</TableHead>
+                        <TableHead>{isArabic ? 'موافقة HR' : 'HR Approval'}</TableHead>
+                        <TableHead className="text-center">{isArabic ? 'الإجراءات' : 'Actions'}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {otherRequests.map((request, index) => (
+                        <TableRow key={request.id}>
+                          <TableCell className="font-medium">
+                            {index + 1}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {request.employee_name || '-'}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm font-medium">{request.type || '-'}</span>
+                          </TableCell>
+                          <TableCell>
+                            {request.date 
+                              ? format(new Date(request.date), 'yyyy-MM-dd')
+                              : '-'
+                            }
+                          </TableCell>
+                          <TableCell>
+                            {getApprovalBadge(request.hr_approval)}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center justify-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditRequest(request)}
+                                className="hover:bg-blue-50 hover:text-blue-600"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteClick(request)}
+                                className="hover:bg-red-50 hover:text-red-600"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
@@ -564,6 +748,7 @@ function RequestsPage() {
         onClose={() => setIsModalOpen(false)}
         onSuccess={handleModalSuccess}
         request={selectedRequest}
+        activeTab={activeTab}
       />
 
       {/* Delete Confirmation Dialog */}

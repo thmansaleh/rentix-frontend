@@ -21,7 +21,8 @@ const RequestModal = ({
   isOpen, 
   onClose, 
   onSuccess,
-  request = null // If provided, we're editing
+  request = null, // If provided, we're editing
+  activeTab = 'leaves' // Current active tab to determine request type context
 }) => {
   const { t } = useTranslations()
   const { language } = useLanguage()
@@ -36,8 +37,16 @@ const RequestModal = ({
 
   // Check if user is admin/manager or HR
   const isAdmin = employeeRole?.toLowerCase() === 'admin' || employeeRole?.toLowerCase() === 'manager'
-  const hrDept = language === 'ar' ? 'الموارد البشرية' : 'Human Resources'
-  const isHR = employeeDepartment === hrDept
+  
+  // More flexible HR detection
+  const isHR = employeeDepartment?.toLowerCase().includes('hr') || 
+              employeeDepartment?.toLowerCase().includes('human') ||
+              employeeDepartment?.includes('الموارد البشرية') ||
+              employeeDepartment?.includes('موارد بشرية') ||
+              employeeRole?.toLowerCase() === 'hr'
+  
+  // Debug logging to see actual values
+  console.log('Department:', employeeDepartment, 'Role:', employeeRole, 'isHR:', isHR)
 
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -55,10 +64,15 @@ const RequestModal = ({
   const employees = employeesData?.data || []
 
   // Request types from constants
-  const requestTypes = getRequestTypes(isArabic)
+  const allRequestTypes = getRequestTypes(isArabic)
+  
+  // Filter request types based on active tab
+  const requestTypes = allRequestTypes.filter(type => 
+    activeTab === 'leaves' ? type.isLeave === true : type.isLeave === false
+  )
 
-  // Check if selected type is a leave type
-  const isLeaveType = requestTypes.find(rt => rt.value === formData.type)?.isLeave || false
+  // Check if selected type is a leave type (for form validation)
+  const isLeaveType = allRequestTypes.find(rt => rt.value === formData.type)?.isLeave || false
 
   // Populate form when editing
   useEffect(() => {
@@ -158,13 +172,13 @@ const RequestModal = ({
         // Update basic request data
         response = await updateEmployeeRequest(request.id, submitData)
         
-        // Update manager approval if admin and status changed
-        if (isAdmin && formData.manager_approval !== request.manager_approval) {
+        // Update manager approval ONLY if admin and it's a leave request (leaves tab)
+        if (isAdmin && activeTab === 'leaves' && formData.manager_approval !== request.manager_approval) {
           await updateManagerApproval(request.id, formData.manager_approval)
         }
         
-        // Update HR approval if HR and status changed
-        if (isHR && formData.hr_approval !== request.hr_approval) {
+        // Update HR approval if status changed (for both tabs)
+        if (formData.hr_approval !== request.hr_approval) {
           await updateHrApproval(request.id, formData.hr_approval)
         }
       } else {
@@ -288,8 +302,8 @@ const RequestModal = ({
             </div>
           )}
 
-          {/* Manager Approval - Only for Admin/Manager in Edit Mode */}
-          {isEditMode && isAdmin && (
+          {/* Manager Approval - ONLY for Admin/Manager in Edit Mode and ONLY for Leave Requests Tab */}
+          {isEditMode && isAdmin && activeTab === 'leaves' && (
             <div className="space-y-2">
               <Label htmlFor="manager_approval">
                 {isArabic ? 'موافقة المدير' : 'Manager Approval'}
@@ -316,8 +330,8 @@ const RequestModal = ({
             </div>
           )}
 
-          {/* HR Approval - Only for HR Department in Edit Mode */}
-          {isEditMode && isHR && (
+          {/* HR Approval - For HR Department in Edit Mode for ALL request types */}
+          {isEditMode && (
             <div className="space-y-2">
               <Label htmlFor="hr_approval">
                 {isArabic ? 'موافقة الموارد البشرية' : 'HR Approval'}
@@ -341,6 +355,10 @@ const RequestModal = ({
                   </SelectItem>
                 </SelectContent>
               </Select>
+              {/* Debug info */}
+              <div className="text-xs text-gray-500">
+                Debug: Role: {employeeRole}, Dept: {employeeDepartment}, isHR: {isHR.toString()}, isAdmin: {isAdmin.toString()}
+              </div>
             </div>
           )}
         </div>
