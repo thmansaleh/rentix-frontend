@@ -3,7 +3,7 @@ import api from "./axiosInstance";
 
 export const createTask = async (taskData) => {
   try {
-    const files = await uploadFiles(taskData.files || []);
+    const files = await uploadFiles(taskData.files || [], "tasks");
 
     const response = await api.post("/tasks", { ...taskData, files });
     return response.data;
@@ -36,7 +36,7 @@ export const getAssignedToTasks = async (employeeId) => {
 
 export const updateTask = async (taskId, updatedData) => {
   try {
-    const files = await uploadFiles(updatedData.files || []);
+    const files = await uploadFiles(updatedData.files || [], "tasks");
     const response = await api.put(`/tasks/${taskId}`, { ...updatedData, files });
     return response.data;
   } catch (error) {

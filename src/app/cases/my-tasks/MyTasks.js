@@ -334,6 +334,9 @@ const MyTasks = () => {
                       {t('tasks.assignedTo')}
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
+                      {t('tasks.assignedBy')}
+                    </TableHead>
+                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
                       {t('common.actions')}
                     </TableHead>
                   </TableRow>
@@ -372,6 +375,12 @@ const MyTasks = () => {
                         <div className="flex items-center gap-1">
                           <User className="h-4 w-4 text-muted-foreground" />
                           {task.assigned_to_name}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          {task.assigned_by_name || '-'}
                         </div>
                       </TableCell>
                       <TableCell>

@@ -41,7 +41,8 @@ import {
   CircleX,
   CheckSquare,
   Scroll,
-  CheckCircle
+  CheckCircle,
+  Bell
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
@@ -333,6 +334,7 @@ const AppSidebar = () => {
         { id: 'hr/requests', label: t('navigation.requests'), icon: FileText },
         { id: 'hr/assets', label: t('navigation.assets'), icon: Package },
         { id: 'hr/events', label: t('navigation.events'), icon: Calendar },
+        { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell },
         // { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
       ]
     },

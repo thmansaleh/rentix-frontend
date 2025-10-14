@@ -246,7 +246,7 @@ const AssignedToTasks = () => {
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <User className="h-4 w-4 text-muted-foreground" />
-                          {task.created_by}
+                          {task.assigned_by_name || task.created_by || '-'}
                         </div>
                       </TableCell>
                       <TableCell>

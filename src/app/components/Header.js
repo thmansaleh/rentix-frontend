@@ -1,6 +1,6 @@
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
-import NotificationMenu from '@/components/NotificationMenu'
+import NotificationMenu from '@/app/components/notifications/NotificationMenu'
 import React from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
 
