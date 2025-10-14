@@ -11,6 +11,7 @@ import {
   TableIcon,
   Calendar as CalendarIcon
 } from 'lucide-react'
+import ExportButtons from '@/components/ui/export-buttons'
 import { getEvents } from '@/app/services/api/events'
 import AddEventModal from './AddEventModal'
 import EditEventModal from './EditEventModal'
@@ -58,6 +59,86 @@ function EventsPage() {
     mutate()
   }
 
+  // Column configuration for export
+  const eventsColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    title: {
+      ar: 'العنوان',
+      en: 'Title',
+      dataKey: 'title'
+    },
+    description: {
+      ar: 'الوصف',
+      en: 'Description',
+      dataKey: 'description'
+    },
+    date: {
+      ar: 'التاريخ',
+      en: 'Date',
+      dataKey: 'date',
+      type: 'date'
+    },
+    start_time: {
+      ar: 'وقت البداية',
+      en: 'Start Time',
+      dataKey: 'start_time'
+    },
+    end_time: {
+      ar: 'وقت النهاية',
+      en: 'End Time',
+      dataKey: 'end_time'
+    },
+    location: {
+      ar: 'المكان',
+      en: 'Location',
+      dataKey: 'location'
+    },
+    attendees: {
+      ar: 'الحضور',
+      en: 'Attendees',
+      dataKey: 'attendees'
+    },
+    status: {
+      ar: 'الحالة',
+      en: 'Status',
+      dataKey: 'status',
+      type: 'status',
+      statusMap: {
+        'scheduled': { ar: 'مجدول', en: 'Scheduled' },
+        'completed': { ar: 'مكتمل', en: 'Completed' },
+        'cancelled': { ar: 'ملغي', en: 'Cancelled' }
+      }
+    },
+    priority: {
+      ar: 'الأولوية',
+      en: 'Priority',
+      dataKey: 'priority',
+      formatter: (value) => {
+        const priorityMap = {
+          'low': isArabic ? 'منخفض' : 'Low',
+          'medium': isArabic ? 'متوسط' : 'Medium',
+          'high': isArabic ? 'عالي' : 'High'
+        }
+        return priorityMap[value] || value
+      }
+    },
+    created_by: {
+      ar: 'أنشئ بواسطة',
+      en: 'Created By',
+      dataKey: 'created_by'
+    },
+    created_at: {
+      ar: 'تاريخ الإنشاء',
+      en: 'Created At',
+      dataKey: 'created_at',
+      type: 'date'
+    }
+  }
+
   return (
     <div className="space-y-6">
       <Tabs dir={isArabic ? 'rtl' : 'ltr'} value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -80,6 +161,19 @@ function EventsPage() {
         </div>
 
         <TabsContent value="table" className="mt-6">
+          {/* Export Buttons */}
+          {events && events.length > 0 && !isLoading && (
+            <div className="mb-4">
+              <ExportButtons
+                data={events}
+                columnConfig={eventsColumnConfig}
+                language={language}
+                exportName="hr-events"
+                sheetName={language === 'ar' ? 'فعاليات الموارد البشرية' : 'HR Events'}
+              />
+            </div>
+          )}
+          
           <EventsTable
             events={events}
             isLoading={isLoading}

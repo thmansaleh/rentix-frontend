@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Pencil, Trash2, Loader2, FileText, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { toast } from 'react-toastify'
+import ExportButtons from '@/components/ui/export-buttons'
 import RequestModal from './components/RequestModal'
 import { getEmployeeRequests, deleteEmployeeRequest } from '@/app/services/api/employeeRequests'
 import { getRequestTypes } from './constants/requestTypes'
@@ -39,6 +40,84 @@ function RequestsPage() {
 
   // Request types (same as in RequestModal)
   const requestTypes = getRequestTypes(isArabic)
+
+  // Column configuration for export
+  const hrRequestsColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    employee_name: {
+      ar: 'اسم الموظف',
+      en: 'Employee Name',
+      dataKey: 'employee_name'
+    },
+    type: {
+      ar: 'النوع',
+      en: 'Type',
+      dataKey: 'type',
+      formatter: (value) => {
+        const type = requestTypes.find(t => t.value === value)
+        return type ? type.label : value
+      }
+    },
+    start_date: {
+      ar: 'تاريخ البداية',
+      en: 'Start Date',
+      dataKey: 'start_date',
+      type: 'date'
+    },
+    end_date: {
+      ar: 'تاريخ النهاية',
+      en: 'End Date',
+      dataKey: 'end_date',
+      type: 'date'
+    },
+    days: {
+      ar: 'الأيام',
+      en: 'Days',
+      dataKey: 'days'
+    },
+    manager_approval: {
+      ar: 'موافقة المدير',
+      en: 'Manager Approval',
+      dataKey: 'manager_approval',
+      type: 'status',
+      statusMap: {
+        'approved': { ar: 'موافق', en: 'Approved' },
+        'rejected': { ar: 'مرفوض', en: 'Rejected' },
+        'pending': { ar: 'قيد الانتظار', en: 'Pending' }
+      }
+    },
+    hr_approval: {
+      ar: 'موافقة الموارد البشرية',
+      en: 'HR Approval',
+      dataKey: 'hr_approval',
+      type: 'status',
+      statusMap: {
+        'approved': { ar: 'موافق', en: 'Approved' },
+        'rejected': { ar: 'مرفوض', en: 'Rejected' },
+        'pending': { ar: 'قيد الانتظار', en: 'Pending' }
+      }
+    },
+    reason: {
+      ar: 'السبب',
+      en: 'Reason',
+      dataKey: 'reason'
+    },
+    notes: {
+      ar: 'الملاحظات',
+      en: 'Notes',
+      dataKey: 'notes'
+    },
+    created_at: {
+      ar: 'تاريخ الإنشاء',
+      en: 'Created At',
+      dataKey: 'created_at',
+      type: 'date'
+    }
+  }
 
   // Pagination and filter states
   const [currentPage, setCurrentPage] = useState(1)
@@ -211,6 +290,20 @@ function RequestsPage() {
             {isArabic ? 'إضافة طلب' : 'Add Request'}
           </Button>
         </CardHeader>
+
+        {/* Export Buttons */}
+        {requests && requests.length > 0 && (
+          <div className="px-6 pb-4">
+            <ExportButtons
+              data={requests}
+              columnConfig={hrRequestsColumnConfig}
+              language={language}
+              exportName="hr-requests"
+              sheetName={language === 'ar' ? 'طلبات الموظفين' : 'HR Requests'}
+            />
+          </div>
+        )}
+
         <CardContent>
           {/* Filters Section */}
           <div className="mb-6 space-y-4">

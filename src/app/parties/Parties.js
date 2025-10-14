@@ -8,6 +8,7 @@ import { getAllParties } from '@/app/services/api/parties';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { cn } from '@/lib/utils';
+import ExportButtons from '@/components/ui/export-buttons';
 import PartiesSearchForm from '@/app/parties/PartiesSearchForm';
 import AddPartyModal from '@/app/parties/AddPartyModal';
 import EditPartyModal from '@/app/parties/EditPartyModal';
@@ -133,6 +134,79 @@ const Parties = () => {
     );
   };
 
+  // Column configuration for export
+  const partiesColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    name: {
+      ar: 'الاسم',
+      en: 'Name',
+      dataKey: 'name'
+    },
+    phone: {
+      ar: 'رقم الهاتف',
+      en: 'Phone',
+      dataKey: 'phone'
+    },
+    email: {
+      ar: 'البريد الإلكتروني',
+      en: 'Email',
+      dataKey: 'email'
+    },
+    party_type: {
+      ar: 'نوع الطرف',
+      en: 'Party Type',
+      dataKey: 'party_type',
+      formatter: (value) => {
+        if (value === 'client') {
+          return language === 'ar' ? 'موكل' : 'Client'
+        } else if (value === 'opponent') {
+          return language === 'ar' ? 'خصم' : 'Opponent'
+        }
+        return value
+      }
+    },
+    emirates_id: {
+      ar: 'الهوية الإماراتية',
+      en: 'Emirates ID',
+      dataKey: 'emirates_id'
+    },
+    passport_number: {
+      ar: 'رقم جواز السفر',
+      en: 'Passport Number',
+      dataKey: 'passport_number'
+    },
+    nationality: {
+      ar: 'الجنسية',
+      en: 'Nationality',
+      dataKey: 'nationality'
+    },
+    address: {
+      ar: 'العنوان',
+      en: 'Address',
+      dataKey: 'address'
+    },
+    status: {
+      ar: 'الحالة',
+      en: 'Status',
+      dataKey: 'status',
+      type: 'status',
+      statusMap: {
+        'active': { ar: 'نشط', en: 'Active' },
+        'inactive': { ar: 'غير نشط', en: 'Inactive' }
+      }
+    },
+    created_at: {
+      ar: 'تاريخ الإنشاء',
+      en: 'Created At',
+      dataKey: 'created_at',
+      type: 'date'
+    }
+  };
+
   // Handle search
   const handleSearch = (params) => {
     setSearchParams({
@@ -219,6 +293,21 @@ const Parties = () => {
 
       {/* Search Form */}
       <PartiesSearchForm onSearch={handleSearch} />
+
+      {/* Export Buttons */}
+      {parties && parties.length > 0 && !isLoading && (
+        <Card>
+          <CardContent className="pt-6">
+            <ExportButtons
+              data={parties}
+              columnConfig={partiesColumnConfig}
+              language={language}
+              exportName="parties"
+              sheetName={language === 'ar' ? 'العملاء والخصوم' : 'Clients & Opponents'}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Parties Table */}
       <Card>

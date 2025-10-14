@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Edit, Trash2, Plus, Loader2 } from 'lucide-react'
 import { toast } from 'react-toastify'
+import ExportButtons from '@/components/ui/export-buttons'
 import { deletePartyOrder } from '@/app/services/api/partiesOrders'
 import { usePartiesOrders } from './hooks/usePartiesOrders'
 import AddOrderModal from './components/AddOrderModal'
@@ -97,15 +98,77 @@ function Orders() {
 
   // Get type display text
   const getTypeDisplay = (type) => {
-    
-
-  
     const typeMap = {
       document_request: isArabic ? 'طلب مستندات' : 'Document Request',
       case_details: isArabic ? 'تفاصيل عن القضية' : 'Case Details',
       other: isArabic ? 'أخرى' : 'Other'
     }
     return typeMap[type] || type
+  }
+
+  // Column configuration for export
+  const ordersColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    party_name: {
+      ar: 'اسم العميل',
+      en: 'Party Name',
+      dataKey: 'party_name'
+    },
+    type: {
+      ar: 'نوع الطلب',
+      en: 'Order Type',
+      dataKey: 'type',
+      formatter: (value) => {
+        const typeMap = {
+          document_request: isArabic ? 'طلب مستندات' : 'Document Request',
+          case_details: isArabic ? 'تفاصيل عن القضية' : 'Case Details',
+          other: isArabic ? 'أخرى' : 'Other'
+        }
+        return typeMap[value] || value
+      }
+    },
+    date: {
+      ar: 'التاريخ',
+      en: 'Date',
+      dataKey: 'date',
+      type: 'date'
+    },
+    status: {
+      ar: 'الحالة',
+      en: 'Status',
+      dataKey: 'status',
+      type: 'status',
+      statusMap: {
+        'pending': { ar: 'قيد الانتظار', en: 'Pending' },
+        'approved': { ar: 'موافق عليه', en: 'Approved' },
+        'rejected': { ar: 'مرفوض', en: 'Rejected' }
+      }
+    },
+    case_number: {
+      ar: 'رقم القضية',
+      en: 'Case Number',
+      dataKey: 'case_number'
+    },
+    details: {
+      ar: 'التفاصيل',
+      en: 'Details',
+      dataKey: 'details'
+    },
+    created_by_name: {
+      ar: 'أنشئ بواسطة',
+      en: 'Created By',
+      dataKey: 'created_by_name'
+    },
+    created_at: {
+      ar: 'تاريخ الإنشاء',
+      en: 'Created At',
+      dataKey: 'created_at',
+      type: 'date'
+    }
   }
 
   // Format date for display
@@ -196,6 +259,19 @@ function Orders() {
             </div>
           </div>
         </CardHeader>
+
+        {/* Export Buttons */}
+        {orders && orders.length > 0 && !isLoading && !isError && (
+          <div className="px-6 pb-4">
+            <ExportButtons
+              data={orders}
+              columnConfig={ordersColumnConfig}
+              language={language}
+              exportName="client-requests"
+              sheetName={language === 'ar' ? 'طلبات العملاء' : 'Client Requests'}
+            />
+          </div>
+        )}
 
         <CardContent>
           {isLoading ? (

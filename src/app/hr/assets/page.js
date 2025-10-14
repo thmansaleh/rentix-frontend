@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2 } from 'lucide-react'
+import ExportButtons from '@/components/ui/export-buttons'
 import OfficesTab from './OfficesTab'
 import ResourcesTab from './ResourcesTab'
 import { getAssets } from '@/app/services/api/assets'
@@ -29,6 +30,69 @@ function AssetsPage() {
   // Filter assets by record_type
   const officeAssets = assets.filter(asset => asset.record_type === 'office')
   const resourceAssets = assets.filter(asset => asset.record_type === 'resource')
+
+  // Column configuration for export
+  const assetsColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    name: {
+      ar: 'الاسم',
+      en: 'Name',
+      dataKey: 'name'
+    },
+    record_type: {
+      ar: 'نوع السجل',
+      en: 'Record Type',
+      dataKey: 'record_type',
+      formatter: (value) => {
+        const typeMap = {
+          'office': isArabic ? 'مكتب' : 'Office',
+          'resource': isArabic ? 'مورد' : 'Resource'
+        }
+        return typeMap[value] || value
+      }
+    },
+    description: {
+      ar: 'الوصف',
+      en: 'Description',
+      dataKey: 'description'
+    },
+    location: {
+      ar: 'الموقع',
+      en: 'Location',
+      dataKey: 'location'
+    },
+    status: {
+      ar: 'الحالة',
+      en: 'Status',
+      dataKey: 'status',
+      type: 'status',
+      statusMap: {
+        'available': { ar: 'متاح', en: 'Available' },
+        'occupied': { ar: 'مشغول', en: 'Occupied' },
+        'maintenance': { ar: 'صيانة', en: 'Maintenance' }
+      }
+    },
+    capacity: {
+      ar: 'السعة',
+      en: 'Capacity',
+      dataKey: 'capacity'
+    },
+    amenities: {
+      ar: 'المرافق',
+      en: 'Amenities',
+      dataKey: 'amenities'
+    },
+    created_at: {
+      ar: 'تاريخ الإنشاء',
+      en: 'Created At',
+      dataKey: 'created_at',
+      type: 'date'
+    }
+  }
 
   if (isLoading) {
     return (
@@ -63,10 +127,34 @@ function AssetsPage() {
           </TabsList>
 
           <TabsContent value="offices">
+            {/* Export Buttons for Offices */}
+            {officeAssets && officeAssets.length > 0 && (
+              <div className="mb-4">
+                <ExportButtons
+                  data={officeAssets}
+                  columnConfig={assetsColumnConfig}
+                  language={language}
+                  exportName="office-assets"
+                  sheetName={language === 'ar' ? 'أصول المكاتب' : 'Office Assets'}
+                />
+              </div>
+            )}
             <OfficesTab offices={officeAssets} onMutate={mutate} />
           </TabsContent>
 
           <TabsContent value="resources">
+            {/* Export Buttons for Resources */}
+            {resourceAssets && resourceAssets.length > 0 && (
+              <div className="mb-4">
+                <ExportButtons
+                  data={resourceAssets}
+                  columnConfig={assetsColumnConfig}
+                  language={language}
+                  exportName="resource-assets"
+                  sheetName={language === 'ar' ? 'أصول الموارد' : 'Resource Assets'}
+                />
+              </div>
+            )}
             <ResourcesTab resources={resourceAssets} onMutate={mutate} />
           </TabsContent>
         </Tabs>

@@ -10,6 +10,7 @@ import { EditClientModal } from "./EditClientModal";
 import { AddClientModal } from "./AddClientModal";
 import { AddMeetingModal } from "./meetings/AddMeetingModal";
 import ActionsDropdown from "./ActionsDropdown";
+import ExportButtons from "@/components/ui/export-buttons";
 import {
   Table,
   TableBody,
@@ -21,9 +22,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function PotentialClients() {
   const { t } = useTranslations();
+  const { language } = useLanguage();
   const [page, setPage] = useState(1);
   const [searchFilters, setSearchFilters] = useState({
     searchTerm: "",
@@ -160,6 +163,62 @@ function PotentialClients() {
     return typeMap[lowerType] || partyType;
   };
 
+  // Column configuration for export
+  const potentialClientsColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    name: {
+      ar: 'الاسم',
+      en: 'Name',
+      dataKey: 'name'
+    },
+    phone: {
+      ar: 'رقم الهاتف',
+      en: 'Phone',
+      dataKey: 'phone'
+    },
+    email: {
+      ar: 'البريد الإلكتروني',
+      en: 'Email',
+      dataKey: 'email'
+    },
+    party_type: {
+      ar: 'نوع الطرف',
+      en: 'Party Type',
+      dataKey: 'party_type',
+      formatter: (value) => getTranslatedPartyType(value)
+    },
+    source: {
+      ar: 'المصدر',
+      en: 'Source',
+      dataKey: 'source'
+    },
+    category: {
+      ar: 'الفئة',
+      en: 'Category',
+      dataKey: 'category'
+    },
+    nationality: {
+      ar: 'الجنسية',
+      en: 'Nationality',
+      dataKey: 'nationality'
+    },
+    created_by_name: {
+      ar: 'أنشئ بواسطة',
+      en: 'Created By',
+      dataKey: 'created_by_name'
+    },
+    created_at: {
+      ar: 'تاريخ الإنشاء',
+      en: 'Created At',
+      dataKey: 'created_at',
+      type: 'date'
+    }
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <Card>
@@ -173,6 +232,19 @@ function PotentialClients() {
           <div className="flex justify-between items-center">
             <SearchBar onSearch={handleSearch} onAddNew={handleAddNew} />
           </div>
+
+          {/* Export Buttons */}
+          {data?.data && data.data.length > 0 && (
+            <div className="border-b pb-4">
+              <ExportButtons
+                data={data.data}
+                columnConfig={potentialClientsColumnConfig}
+                language={language}
+                exportName="potential-clients"
+                sheetName={language === 'ar' ? 'العملاء المحتملون' : 'Potential Clients'}
+              />
+            </div>
+          )}
 
           {/* Table */}
           <div className="rounded-md border">

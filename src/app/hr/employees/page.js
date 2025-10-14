@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import EmployeeTableRow from './EmployeeTableRow';
 import AddEmployeeDialog from './add-employee/AddEmployeeDialog';
 import PageHeader from '@/components/PageHeader';
+import ExportButtons from '@/components/ui/export-buttons';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getEmployees } from '@/app/services/api/employees';
@@ -118,6 +119,61 @@ if (employeesResponse ) {
     );
   };
 
+  // Column configuration for export
+  const employeeColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    name: {
+      ar: 'الاسم',
+      en: 'Name',
+      dataKey: 'name'
+    },
+    email: {
+      ar: 'البريد الإلكتروني',
+      en: 'Email',
+      dataKey: 'email'
+    },
+    phone: {
+      ar: 'رقم الهاتف',
+      en: 'Phone',
+      dataKey: 'phone'
+    },
+    role: {
+      ar: 'المنصب',
+      en: 'Role',
+      dataKey: isArabic ? 'role_ar' : 'role_en'
+    },
+    department: {
+      ar: 'القسم',
+      en: 'Department',
+      dataKey: isArabic ? 'department_ar' : 'department_en'
+    },
+    status: {
+      ar: 'الحالة',
+      en: 'Status',
+      dataKey: 'status',
+      type: 'status',
+      statusMap: {
+        'active': { ar: 'نشط', en: 'Active' },
+        'inactive': { ar: 'غير نشط', en: 'Inactive' }
+      }
+    },
+    salary: {
+      ar: 'الراتب',
+      en: 'Salary',
+      dataKey: 'salary'
+    },
+    hire_date: {
+      ar: 'تاريخ التوظيف',
+      en: 'Hire Date',
+      dataKey: 'hire_date',
+      type: 'date'
+    }
+  };
+
   return (
     <div className="" >
       <div className="">
@@ -216,6 +272,19 @@ if (employeesResponse ) {
                 mutate();
               }} />
             </div>
+
+            {/* Export Buttons */}
+            {filteredAndSortedData.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <ExportButtons
+                  data={filteredAndSortedData}
+                  columnConfig={employeeColumnConfig}
+                  language={language}
+                  exportName="employees"
+                  sheetName={language === 'ar' ? 'الموظفون' : 'Employees'}
+                />
+              </div>
+            )}
           </div>
         )}
 
