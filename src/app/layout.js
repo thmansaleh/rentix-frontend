@@ -9,18 +9,13 @@ import ReduxProvider from "@/redux/ReduxProvider";
 import AuthProvider from "@/providers/AuthProvider";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import { Inter } from 'next/font/google';
 import { Noto_Sans_Arabic } from 'next/font/google';
 
-// const inter = Inter({
-//   subsets: ['latin'], // required
-//   weight: ['400', '700'], // optional
-// })
 const notoSansArabic = Noto_Sans_Arabic({
-  subsets: ['arabic'], // required
-  weight: ['400', '700'], // optional
-  // variable: '--font-noto-sans-arabic',
-})
+  subsets: ['arabic'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-noto-sans-arabic',
+});
 
 
 export const metadata = {
@@ -33,8 +28,7 @@ export default function RootLayout({ children }) {
   
   return (
     <html 
-    className={`${notoSansArabic.className}`}
-    // className={`${inter.variable} ${notoSansArabic.variable}`}
+    className={`${notoSansArabic.className} ${notoSansArabic.variable}`}
     >
       <body
         className="font-system-arabic antialiased"

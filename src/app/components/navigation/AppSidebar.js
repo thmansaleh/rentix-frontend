@@ -360,18 +360,18 @@ const AppSidebar = () => {
     //   badge: '5',
     //   badgeColor: 'bg-green-500'
     // },
-    // {
-    //   id: 'settings',
-    //   label: t('navigation.settings'),
-    //   icon: Settings2,
-    //   type: 'category',
-    //   submenu: [
-    //     { id: 'settings/general', label: t('navigation.general'), icon: Info },
-    //     { id: 'settings/profile', label: t('navigation.profile'), icon: User },
-    //     { id: 'settings/security', label: t('navigation.security'), icon: Shield },
-    //     { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
-    //   ]
-    // }
+    {
+      id: 'settings',
+      label: t('navigation.settings'),
+      icon: Settings2,
+      type: 'category',
+      submenu: [
+        // { id: 'settings/general', label: t('navigation.general'), icon: Info },
+        // { id: 'settings/profile', label: t('navigation.profile'), icon: User },
+        // { id: 'settings/security', label: t('navigation.security'), icon: Shield },
+        { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
+      ]
+    }
   ], [t]);
 
   // Memoized callbacks
