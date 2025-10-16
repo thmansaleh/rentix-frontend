@@ -23,8 +23,20 @@ export const uploadFiles = async (files, folder = 'documents') => {
     // Get the backend URL - use the axios instance's baseURL
     const backendUrl = api.defaults.baseURL || 'http://localhost:8080/api';
     
-    // Get auth token from localStorage or cookie
-    const token = localStorage.getItem('token');
+    // Get auth token from cookie
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    };
+    
+    let token = getCookie('authToken');
+    
+    // Fallback to localStorage if cookie doesn't exist
+    if (!token && typeof window !== 'undefined') {
+      token = localStorage.getItem('authToken');
+    }
 
     // Upload files to backend API
     const response = await fetch(`${backendUrl}/upload`, {

@@ -22,6 +22,11 @@ export const loginWithRedux = (username, password) => async (dispatch) => {
     const data = await login(username, password);
     
     if (data.success) {
+      // Store token in localStorage for production compatibility
+      if (data.token && typeof window !== 'undefined') {
+        localStorage.setItem('authToken', data.token);
+      }
+      
       dispatch({
         type: 'auth/loginSuccess',
         payload: {
@@ -52,10 +57,19 @@ export const loginWithRedux = (username, password) => async (dispatch) => {
 export const logoutWithRedux = () => async (dispatch) => {
   try {
     await logout();
+    
+    // Clear token from localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('authToken');
+    }
+    
     dispatch({ type: 'auth/logout' });
     return { success: true };
   } catch (error) {
     // Even if logout API fails, clear local state
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('authToken');
+    }
     dispatch({ type: 'auth/logout' });
     return { success: false, error: error.message };
   }
