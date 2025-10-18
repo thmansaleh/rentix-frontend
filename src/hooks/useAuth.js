@@ -45,12 +45,17 @@ export const useAuth = () => {
  */
 export const usePermission = (permissionName) => {
   const permissions = useSelector(selectPermissions);
-  
-  return permissions.some(
+  const role = useSelector(s => s.auth.roleEn);
+
+
+
+  const hasPermission = permissions.some(
     permission => 
       permission.permission_ar === permissionName || 
       permission.permission_en === permissionName
   );
+
+  return {  hasPermission, role};
 };
 
 /**

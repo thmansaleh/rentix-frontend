@@ -45,175 +45,15 @@
     "updatedAt": "تاريخ التحديث",
     "view": "عرض",
     "deleteSuccess": "تم الحذف بنجاح",
-    "deleteError": "حدث خطأ في الحذف"
-  },
-  "reports": {
-    "title": "التقارير والمصروفات",
-    "description": "إدارة التقارير والمصروفات الخاصة بالمركبات والعملاء"
-  },
-  "fleetReports": {
-    "title": "تقارير المركبات",
-    "description": "تقارير حالة المركبات والصيانة والاستخدام",
-    "statusReport": "تقرير حالة الأسطول",
-    "maintenanceReport": "تقرير الصيانة المجدولة",
-    "usageReport": "تقرير معدل الاستخدام"
-  },
-  "customerReports": {
-    "title": "تقارير العملاء",
-    "description": "تقارير نشاط العملاء والحجوزات",
-    "newCustomersReport": "تقرير العملاء الجدد",
-    "bookingsReport": "تقرير الحجوزات"
-  },
-  "financialReports": {
-    "title": "التقارير المالية",
-    "description": "تقارير الإيرادات والمصروفات والأرباح",
-    "revenueReport": "تقرير الإيرادات الشهرية",
-    "expensesReport": "تقرير المصروفات",
-    "profitLossReport": "تقرير الأرباح والخسائر"
-  },
-  "website": {
-    "aboutUsTab": "من نحن",
-    "termsTab": "الشروط والأحكام",
-    "contactUsTab": "اتصل بنا",
-    "generalInfoTab": "معلومات عامة",
-    "bookingsTab": "الحجوزات",
-    "generalInfoContent": "هنا معلومات عامة",
-    "bookingsListTitle": "قائمة الحجوزات",
-    "aboutSection": {
-      "title": "معلومات الشركة",
-      "description": "إدارة معلومات الشركة وقيمها",
-      "companyOverview": {
-        "title": "نظرة عامة عن الشركة",
-        "description": "اكتب نبذة شاملة عن شركتك وخدماتها",
-        "placeholder": "اكتب نظرة عامة عن الشركة، تاريخها، خدماتها، وما يميزها عن المنافسين...",
-        "required": "نظرة عامة مطلوبة (عربي أو إنجليزي على الأقل)"
-      },
-      "mission": {
-        "title": "رسالة الشركة",
-        "description": "ما هي رسالة شركتك؟",
-        "placeholder": "اكتب رسالة الشركة وأهدافها..."
-      },
-      "vision": {
-        "title": "رؤية الشركة",
-        "description": "ما هي رؤية شركتك للمستقبل؟",
-        "placeholder": "اكتب رؤية الشركة وطموحاتها المستقبلية..."
-      },
-      "values": {
-        "title": "قيم الشركة",
-        "description": "ما هي القيم والمبادئ التي تحكم عمل شركتك؟",
-        "placeholder": "اكتب قيم ومبادئ الشركة (يمكن فصلها بنقاط أو فقرات)..."
-      },
-      "arabicText": "النص العربي",
-      "englishText": "النص الإنجليزي",
-      "loadingError": "خطأ في التحميل",
-      "lastUpdated": "آخر تحديث",
-      "saveChanges": "حفظ التغييرات",
-      "saving": "جارٍ الحفظ...",
-      "loadingData": "جارٍ تحميل البيانات...",
-      "saveSuccess": "تم حفظ معلومات الشركة بنجاح",
-      "saveError": "فشل في الحفظ",
-      "validationError": "نظرة عامة عن الشركة مطلوبة (عربي أو إنجليزي على الأقل)"
-    },
-    "table": {
-      "id": "#",
-      "customer": "العميل",
-      "clientNumber": "رقم العميل",
-      "car": "السيارة",
-      "pickupLocation": "موقع الاستلام",
-      "days": "عدد الأيام",
-      "startDay": "تاريخ البدء",
-      "endDay": "تاريخ الانتهاء",
-      "actions": "إجراءات",
-      "show": "عرض"
-    },
-    "detailsModal": {
-      "title": "تفاصيل الحجز",
-      "customer": "العميل",
-      "clientNumber": "رقم العميل",
-      "car": "السيارة",
-      "pickupLocation": "موقع الاستلام",
-      "days": "عدد الأيام",
-      "startDay": "تاريخ البدء",
-      "endDay": "تاريخ الانتهاء",
-      "close": "إغلاق"
-    },
-    "contactSection": {
-      "title": "معلومات الاتصال",
-      "description": "إدارة معلومات الاتصال والتواصل مع العملاء",
-      "contactDescription": {
-        "title": "وصف معلومات الاتصال",
-        "description": "نص تعريفي عن كيفية التواصل مع الشركة",
-        "placeholder": "اكتب نصاً تعريفياً عن كيفية التواصل مع الشركة..."
-      },
-      "phoneNumbers": {
-        "title": "أرقام الهاتف",
-        "description": "أرقام هواتف التواصل مع الشركة",
-        "placeholder": "+971 50 123 4567",
-        "addPhone": "إضافة رقم هاتف"
-      },
-      "emailAddresses": {
-        "title": "عناوين البريد الإلكتروني",
-        "description": "عناوين البريد الإلكتروني للتواصل",
-        "placeholder": "info@company.com",
-        "addEmail": "إضافة بريد إلكتروني"
-      },
-      "addresses": {
-        "title": "العناوين",
-        "description": "عناوين مقرات الشركة",
-        "addressTitle": "عنوان المقر",
-        "addressTitlePlaceholder": "المقر الرئيسي",
-        "city": "المدينة",
-        "cityPlaceholder": "دبي",
-        "detailedAddress": "العنوان التفصيلي",
-        "detailedAddressPlaceholder": "شارع الشيخ زايد، برج...",
-        "country": "البلد",
-        "countryPlaceholder": "الإمارات العربية المتحدة",
-        "addressNumber": "العنوان",
-        "addAddress": "إضافة عنوان"
-      },
-      "workingHours": {
-        "title": "أوقات العمل",
-        "description": "أوقات عمل الشركة",
-        "dayPlaceholder": "الأحد - الخميس",
-        "hoursPlaceholder": "9:00 ص - 6:00 م",
-        "addWorkingHours": "إضافة ساعات عمل"
-      },
-      "socialMedia": {
-        "title": "روابط التواصل الاجتماعي",
-        "description": "حسابات الشركة على منصات التواصل",
-        "platform": "منصة",
-        "selectPlatform": "اختر المنصة",
-        "addSocialLink": "إضافة رابط تواصل"
-      },
-      "validation": {
-        "descriptionRequired": "وصف معلومات الاتصال مطلوب",
-        "phoneRequired": "يجب إضافة رقم هاتف واحد على الأقل",
-        "emailRequired": "يجب إضافة بريد إلكتروني واحد على الأقل"
-      },
-      "messages": {
-        "saveSuccess": "تم حفظ معلومات الاتصال بنجاح",
-        "saveError": "فشل في الحفظ",
-        "loadError": "فشل في تحميل البيانات"
-      },
-      "common": {
-        "lastUpdated": "آخر تحديث",
-        "saveChanges": "حفظ التغييرات",
-        "saving": "جارٍ الحفظ..."
-      }
-    }
+    "deleteError": "حدث خطأ في الحذف",
+    "searchPages": "ابحث عن صفحة...",
+    "noResultsFound": "لا توجد نتائج"
   },
   "navigation": {
     "dashboard": "لوحة التحكم",
     "users": "المستخدمون",
-    "inventory": "المخزون",
-    "inventoryList": "قائمة المخزون",
-    "addInventory": "إضافة عنصر جديد",
     "cashManagement": "إدارة النقد",
     "revenue": "الإيرادات",
-    "reports": "التقارير",
-    "charts": "الرسوم البيانية",
-    "expenses": "المصروفات",
-    "website": "الموقع الإلكتروني",
     "bookings": "الحجوزات",
     "payments": "المدفوعات",
     "humanResources": "الموارد البشرية",
@@ -234,6 +74,7 @@
     "approvalsCenter": "مركز الموافقات",
     "parties": "العملاء والخصوم",
     "potentialClients": "العملاء المحتملين",
+    "goaml": "GoAML",
     "settings": "الإعدادات",
     "general": "عام",
     "profile": "الملف الشخصي",
@@ -1159,7 +1000,6 @@
     "appearanceDescription": "تخصيص مظهر وشكل التطبيق",
     "notificationsDescription": "إدارة تفضيلات الإشعارات",
     "systemDescription": "تكوين الإعدادات العامة للنظام",
-    "reportsDescription": "تكوين إعدادات التقارير والتحليلات",
     "quickActions": "الإجراءات السريعة",
     "editProfile": "تعديل الملف الشخصي",
     "changePassword": "تغيير كلمة المرور",
@@ -1233,7 +1073,6 @@
     "resetToDefaults": "إعادة تعيين للافتراضي",
     "notifications": "الإشعارات",
     "system": "النظام",
-    "reports": "التقارير",
     "settingsSaved": "تم حفظ الإعدادات بنجاح",
     "workingHours": "ساعات العمل",
     "workingHoursDescription": "تكوين ساعات العمل الرسمية لتتبع الحضور",
@@ -2271,5 +2110,23 @@
     "errorFetchingAttendance": "خطأ في جلب سجلات الحضور",
     "selectCheckInDateTime": "اختر تاريخ ووقت الحضور",
     "selectCheckOutDateTime": "اختر تاريخ ووقت الانصراف"
+  },
+  "externalLinks": {
+    "title": "الروابط الخارجية",
+    "noLinks": "لا توجد روابط خارجية متاحة",
+    "addNew": "إضافة رابط جديد",
+    "addNewLink": "إضافة رابط خارجي جديد",
+    "addDescription": "إضافة رابط خارجي جديد سيكون متاحاً من الرأسية",
+    "linkTitle": "عنوان الرابط",
+    "linkUrl": "رابط URL",
+    "titlePlaceholder": "مثال: موقع الشركة",
+    "urlPlaceholder": "مثال: https://example.com",
+    "fillAllFields": "يرجى ملء جميع الحقول",
+    "createSuccess": "تم إنشاء الرابط الخارجي بنجاح",
+    "createError": "فشل في إنشاء الرابط الخارجي",
+    "deleteSuccess": "تم حذف الرابط الخارجي بنجاح",
+    "deleteError": "فشل في حذف الرابط الخارجي",
+    "confirmDelete": "حذف الرابط الخارجي",
+    "confirmDeleteMessage": "هل أنت متأكد من حذف هذا الرابط الخارجي؟ لا يمكن التراجع عن هذا الإجراء."
   }
 }

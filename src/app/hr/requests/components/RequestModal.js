@@ -45,8 +45,6 @@ const RequestModal = ({
               employeeDepartment?.includes('موارد بشرية') ||
               employeeRole?.toLowerCase() === 'hr'
   
-  // Debug logging to see actual values
-  console.log('Department:', employeeDepartment, 'Role:', employeeRole, 'isHR:', isHR)
 
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -355,10 +353,7 @@ const RequestModal = ({
                   </SelectItem>
                 </SelectContent>
               </Select>
-              {/* Debug info */}
-              <div className="text-xs text-gray-500">
-                Debug: Role: {employeeRole}, Dept: {employeeDepartment}, isHR: {isHR.toString()}, isAdmin: {isAdmin.toString()}
-              </div>
+           
             </div>
           )}
         </div>

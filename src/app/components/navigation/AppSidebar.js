@@ -42,7 +42,12 @@ import {
   CheckSquare,
   Scroll,
   CheckCircle,
-  Bell
+  Bell,
+  Phone,
+  DollarSign,
+  CreditCard,
+  Banknote,
+  Wallet
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
@@ -317,7 +322,7 @@ const AppSidebar = () => {
       icon: UserRoundPlus,
       type: 'link'
     },
-   
+  
     {
       id: 'approvals',
       label: t('navigation.approvalsCenter'),
@@ -338,6 +343,30 @@ const AppSidebar = () => {
         { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell },
         // { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
       ]
+    },
+    // {
+    //   id: 'finance',
+    //   label: 'المالية',
+    //   icon: DollarSign,
+    //   type: 'category',
+    //   submenu: [
+    //     { id: 'finance/clients', label: 'العملاء', icon: Users },
+    //     { id: 'finance/client-balances', label: 'أرصدة العملاء', icon: CreditCard },
+    //     { id: 'finance/bank-accounts', label: 'الحسابات البنكية', icon: Banknote },
+    //     { id: 'finance/cash-box', label: 'الصندوق النقدي', icon: Wallet },
+    //   ]
+    // },
+        {
+      id: 'goaml',
+      label: t('navigation.goaml'),
+      icon: Shield,
+      type: 'link'
+    },
+      {
+      id: 'call-logs',
+      label: 'سجل المكالمات',
+      icon: Phone,
+      type: 'link'
     },
  
     // {

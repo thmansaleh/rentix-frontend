@@ -45,175 +45,15 @@
     "updatedAt": "Updated At",
     "view": "View",
     "deleteSuccess": "Deleted Successfully",
-    "deleteError": "Error Deleting"
-  },
-  "reports": {
-    "title": "Reports & Expenses",
-    "description": "Manage vehicle and customer reports and expenses"
-  },
-  "fleetReports": {
-    "title": "Fleet Reports",
-    "description": "Reports on vehicle status, maintenance, and utilization",
-    "statusReport": "Fleet Status Report",
-    "maintenanceReport": "Scheduled Maintenance Report",
-    "usageReport": "Usage Rate Report"
-  },
-  "customerReports": {
-    "title": "Customer Reports",
-    "description": "Reports on customer activity and bookings",
-    "newCustomersReport": "New Customers Report",
-    "bookingsReport": "Bookings Report"
-  },
-  "financialReports": {
-    "title": "Financial Reports",
-    "description": "Reports on revenue, expenses, and profit/loss",
-    "revenueReport": "Monthly Revenue Report",
-    "expensesReport": "Expenses Report",
-    "profitLossReport": "Profit and Loss Report"
-  },
-  "website": {
-    "aboutUsTab": "About Us",
-    "termsTab": "Terms & Conditions",
-    "contactUsTab": "Contact Us",
-    "generalInfoTab": "General Information",
-    "bookingsTab": "Bookings",
-    "generalInfoContent": "Here is general information",
-    "bookingsListTitle": "Bookings List",
-    "aboutSection": {
-      "title": "Company Information",
-      "description": "Manage company information and values",
-      "companyOverview": {
-        "title": "Company Overview",
-        "description": "Write a comprehensive overview about your company and its services",
-        "placeholder": "Write a comprehensive overview about your company, its history, services, and what sets it apart from competitors...",
-        "required": "At least Arabic or English text required"
-      },
-      "mission": {
-        "title": "Company Mission",
-        "description": "What is your company's mission?",
-        "placeholder": "Write your company's mission and goals..."
-      },
-      "vision": {
-        "title": "Company Vision", 
-        "description": "What is your company's vision for the future?",
-        "placeholder": "Write your company's vision and future aspirations..."
-      },
-      "values": {
-        "title": "Company Values",
-        "description": "What are the values and principles that govern your company's work?",
-        "placeholder": "Write your company's values and principles (can be separated by bullet points or paragraphs)..."
-      },
-      "arabicText": "Arabic Text",
-      "englishText": "English Text",
-      "loadingError": "Loading Error",
-      "lastUpdated": "Last Updated",
-      "saveChanges": "Save Changes",
-      "saving": "Saving...",
-      "loadingData": "Loading data...",
-      "saveSuccess": "Company information saved successfully",
-      "saveError": "Failed to save",
-      "validationError": "Company overview required (Arabic or English at least)"
-    },
-    "table": {
-      "id": "#",
-      "customer": "Customer",
-      "clientNumber": "Client Number",
-      "car": "Car",
-      "pickupLocation": "Pickup Location",
-      "days": "Days",
-      "startDay": "Start Date",
-      "endDay": "End Date",
-      "actions": "Actions",
-      "show": "Show"
-    },
-    "detailsModal": {
-      "title": "Booking Details",
-      "customer": "Customer",
-      "clientNumber": "Client Number",
-      "car": "Car",
-      "pickupLocation": "Pickup Location",
-      "days": "Days",
-      "startDay": "Start Date",
-      "endDay": "End Date",
-      "close": "Close"
-    },
-    "contactSection": {
-      "title": "Contact Information",
-      "description": "Manage contact information and customer communication",
-      "contactDescription": {
-        "title": "Contact Description",
-        "description": "Introductory text about how to contact the company",
-        "placeholder": "Write an introductory text about how to contact the company..."
-      },
-      "phoneNumbers": {
-        "title": "Phone Numbers",
-        "description": "Company contact phone numbers",
-        "placeholder": "+971 50 123 4567",
-        "addPhone": "Add Phone Number"
-      },
-      "emailAddresses": {
-        "title": "Email Addresses",
-        "description": "Contact email addresses",
-        "placeholder": "info@company.com",
-        "addEmail": "Add Email Address"
-      },
-      "addresses": {
-        "title": "Addresses",
-        "description": "Company headquarters addresses",
-        "addressTitle": "Office Title",
-        "addressTitlePlaceholder": "Main Office",
-        "city": "City",
-        "cityPlaceholder": "Dubai",
-        "detailedAddress": "Detailed Address",
-        "detailedAddressPlaceholder": "Sheikh Zayed Road, Tower...",
-        "country": "Country",
-        "countryPlaceholder": "United Arab Emirates",
-        "addressNumber": "Address",
-        "addAddress": "Add Address"
-      },
-      "workingHours": {
-        "title": "Working Hours",
-        "description": "Company working hours",
-        "dayPlaceholder": "Sunday - Thursday",
-        "hoursPlaceholder": "9:00 AM - 6:00 PM",
-        "addWorkingHours": "Add Working Hours"
-      },
-      "socialMedia": {
-        "title": "Social Media Links",
-        "description": "Company social media accounts",
-        "platform": "Platform",
-        "selectPlatform": "Select Platform",
-        "addSocialLink": "Add Social Link"
-      },
-      "validation": {
-        "descriptionRequired": "Contact description is required",
-        "phoneRequired": "At least one phone number must be added",
-        "emailRequired": "At least one email address must be added"
-      },
-      "messages": {
-        "saveSuccess": "Contact information saved successfully",
-        "saveError": "Failed to save",
-        "loadError": "Failed to load data"
-      },
-      "common": {
-        "lastUpdated": "Last Updated",
-        "saveChanges": "Save Changes",
-        "saving": "Saving..."
-      }
-    }
+    "deleteError": "Error Deleting",
+    "searchPages": "Search for a page...",
+    "noResultsFound": "No results found"
   },
   "navigation": {
     "dashboard": "Dashboard",
     "users": "Users",
-    "inventory": "Inventory",
-    "inventoryList": "Inventory List",
-    "addInventory": "Add New Item",
     "cashManagement": "Cash Management",
     "revenue": "Revenue",
-    "reports": "Reports",
-    "charts": "Charts",
-    "expenses": "Expenses",
-    "website": "Website",
     "bookings": "Bookings",
     "payments": "Payments",
     "humanResources": "Human Resources",
@@ -234,6 +74,7 @@
     "approvalsCenter": "Approvals Center",
     "parties": "Clients & Opponents",
     "potentialClients": "Potential Clients",
+    "goaml": "GoAML",
     "settings": "Settings",
     "general": "General",
     "profile": "Profile",
@@ -1141,7 +982,6 @@
     "appearanceDescription": "Customize the look and feel of your application",
     "notificationsDescription": "Manage your notification preferences",
     "systemDescription": "Configure system-wide settings and preferences",
-    "reportsDescription": "Configure reporting and analytics settings",
     "quickActions": "Quick Actions",
     "editProfile": "Edit Profile",
     "changePassword": "Change Password",
@@ -1215,7 +1055,6 @@
     "resetToDefaults": "Reset to Defaults",
     "notifications": "Notifications",
     "system": "System",
-    "reports": "Reports",
     "settingsSaved": "Settings saved successfully",
     "workingHours": "Working Hours",
     "workingHoursDescription": "Configure office working hours for attendance tracking",
@@ -2252,5 +2091,23 @@
     "errorFetchingAttendance": "Error fetching attendance records",
     "selectCheckInDateTime": "Select check-in date and time",
     "selectCheckOutDateTime": "Select check-out date and time"
+  },
+  "externalLinks": {
+    "title": "External Links",
+    "noLinks": "No external links available",
+    "addNew": "Add New Link",
+    "addNewLink": "Add New External Link",
+    "addDescription": "Add a new external link that will be accessible from the header",
+    "linkTitle": "Link Title",
+    "linkUrl": "Link URL",
+    "titlePlaceholder": "e.g., Company Website",
+    "urlPlaceholder": "e.g., https://example.com",
+    "fillAllFields": "Please fill in all fields",
+    "createSuccess": "External link created successfully",
+    "createError": "Failed to create external link",
+    "deleteSuccess": "External link deleted successfully",
+    "deleteError": "Failed to delete external link",
+    "confirmDelete": "Delete External Link",
+    "confirmDeleteMessage": "Are you sure you want to delete this external link? This action cannot be undone."
   }
 }
