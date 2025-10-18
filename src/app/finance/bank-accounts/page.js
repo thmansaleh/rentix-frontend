@@ -251,7 +251,7 @@ function BankAccountsPage() {
                               <AlertDialogHeader>
                                 <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  هل أنت متأكد من حذف الحساب البنكي "{account.account_name}"؟ 
+                                  هل أنت متأكد من حذف الحساب البنكي {account.account_name}؟ 
                                   لا يمكن التراجع عن هذا الإجراء.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>

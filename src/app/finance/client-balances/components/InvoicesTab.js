@@ -288,7 +288,7 @@ export default function InvoicesTab({
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    هل أنت متأكد من حذف الفاتورة "{invoice.invoice_number}"؟ 
+                                    هل أنت متأكد من حذف الفاتورة {invoice.invoice_number}؟ 
                                     لا يمكن التراجع عن هذا الإجراء.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
