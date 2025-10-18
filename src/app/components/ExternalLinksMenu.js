@@ -163,8 +163,8 @@ function ExternalLinksMenu() {
         </DropdownMenuTrigger>
         
         <DropdownMenuContent 
+          dir={isArabic ? "rtl" : "ltr"}
           align={isArabic ? "start" : "end"} 
-          className="w-80"
           sideOffset={8}
         >
           <DropdownMenuLabel className="flex items-center justify-between">
@@ -191,29 +191,39 @@ function ExternalLinksMenu() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-1 p-1">
+              <div className="space-y-2 p-2">
                 {links.map((link) => (
                   <div
                     key={link.id}
-                    className="flex items-center gap-2 p-2 rounded-md hover:bg-accent cursor-pointer group"
-                    onClick={() => handleOpenLink(link.link)}
+                    className="group relative border rounded-lg overflow-hidden transition-all hover:shadow-md hover:border-primary/20"
                   >
-                    <ExternalLink className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {link.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {link.link}
-                      </p>
+                    <div 
+                      className="flex items-start gap-3 p-3 pr-12 cursor-pointer bg-card hover:bg-accent/50 transition-colors"
+                      onClick={() => handleOpenLink(link.link)}
+                    >
+                      <div className="mt-0.5 p-2 rounded-md bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                        <ExternalLink className="h-4 w-4 text-primary flex-shrink-0" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground mb-1 truncate">
+                          {link.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate flex items-center gap-1">
+                          <LinkIcon className="h-3 w-3" />
+                          {link.link}
+                        </p>
+                      </div>
                     </div>
+                    
+                    {/* Delete button - positioned absolutely */}
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                      className="absolute top-2 right-2 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"
                       onClick={(e) => openDeleteDialog(link.id, e)}
+                      title={isArabic ? "حذف" : "Delete"}
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}

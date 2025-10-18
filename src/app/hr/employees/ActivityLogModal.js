@@ -10,7 +10,7 @@ import { getEmployeeLogs } from "@/app/services/api/logs";
 // Helper to format date from ISO string
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('ar-SA', {
+  return date.toLocaleDateString('ar-AE', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
@@ -20,36 +20,61 @@ const formatDate = (dateString) => {
 // Helper to format time from ISO string
 const formatTime = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleTimeString('ar-SA', {
+  return date.toLocaleTimeString('ar-AE', {
     hour: '2-digit',
     minute: '2-digit'
   });
 };
 
 // Helper to get status badge color
-const getStatusColor = (type) => {
-  switch (type) {
+const getStatusColor = (action) => {
+  switch (action) {
     case "login":
       return "text-white bg-green-600";
     case "logout":
       return "text-white bg-blue-600";
+    case "add":
+      return "text-white bg-green-500";
+    case "update":
+      return "text-white bg-blue-500";
+    case "delete":
+      return "text-white bg-red-600";
     case "error":
     case "failed_login":
       return "text-white bg-red-500";
     case "warning":
       return "text-white bg-yellow-500";
+    case "other":
+      return "text-white bg-gray-500";
     default:
       return "text-gray-600 bg-gray-200";
   }
 };
 
-export default function ActivityLogModal({ trigger, employeeId }) {
+// Helper to translate action types
+const getActionLabel = (action) => {
+  const actionLabels = {
+    login: "تسجيل دخول",
+    logout: "تسجيل خروج",
+    add: "إضافة",
+    update: "تحديث",
+    delete: "حذف",
+    error: "خطأ",
+    failed_login: "فشل تسجيل دخول",
+    warning: "تحذير",
+    other: "آخر"
+  };
+  return actionLabels[action] || action;
+};
+
+export default function ActivityLogModal({ trigger, employee }) {
   const { t } = useTranslations();
   const [open, setOpen] = useState(false);
-  const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
-  console.log('ActivityLogModal props:', { employeeId, trigger });
+  const employeeId = employee?.id;
+
+  console.log('ActivityLogModal props:', { employee, employeeId, trigger });
 
   // Fetch employee logs using SWR with the existing service function
   // Only fetch when modal is open and employeeId exists
@@ -78,20 +103,12 @@ export default function ActivityLogModal({ trigger, employeeId }) {
   // Extract logs from API response
   const logs = data?.data || [];
 
-  // Filter and sort logs
-  const filteredLogs = logs
-    .filter((log) => {
-      if (filter === "all") return true;
-      if (filter === "login") return log.type === "login";
-      if (filter === "logout") return log.type === "logout";
-      if (filter === "error") return log.type === "error" || log.type === "failed_login";
-      return true;
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.created_at);
-      const dateB = new Date(b.created_at);
-      return sortBy === "newest" ? dateB - dateA : dateA - dateB;
-    });
+  // Sort logs
+  const filteredLogs = logs.sort((a, b) => {
+    const dateA = new Date(a.created_at);
+    const dateB = new Date(b.created_at);
+    return sortBy === "newest" ? dateB - dateA : dateA - dateB;
+  });
 
   return (
     <>
@@ -108,18 +125,6 @@ export default function ActivityLogModal({ trigger, employeeId }) {
             
             {/* Filters */}
             <div className="flex gap-2 p-4 border-b">
-              <Select dir="rtl" value={filter} onValueChange={setFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder={t('admins.filter')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">جميع السجلات</SelectItem>
-                  <SelectItem value="login">تسجيل دخول</SelectItem>
-                  <SelectItem value="logout">تسجيل خروج</SelectItem>
-                  <SelectItem value="error">أخطاء</SelectItem>
-                </SelectContent>
-              </Select>
-              
               <Select dir="rtl" value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder={t('admins.sort')} />
@@ -170,15 +175,11 @@ export default function ActivityLogModal({ trigger, employeeId }) {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-medium text-gray-900">{log.employee_name}</h4>
-                            <Badge className={getStatusColor(log.type)}>
-                              {log.type === "login" ? "تسجيل دخول" :
-                               log.type === "logout" ? "تسجيل خروج" :
-                               log.type === "error" ? "خطأ" :
-                               log.type === "failed_login" ? "فشل تسجيل دخول" :
-                               log.type}
+                            <Badge className={getStatusColor(log.action)}>
+                              {getActionLabel(log.action)}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-700 mb-2">{log.value}</p>
+                          <p className="text-sm text-gray-700 mb-2">{log.description}</p>
                         </div>
                       </div>
                       

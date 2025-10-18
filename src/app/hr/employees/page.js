@@ -4,7 +4,6 @@ import useSWR from 'swr';
 import { Search, Plus, User, MoreHorizontal, ChevronUp, Eye, Edit, Trash2, ChevronDown } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import EmployeeTableRow from './EmployeeTableRow';
@@ -15,11 +14,13 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getEmployees } from '@/app/services/api/employees';
 import { getRoles } from '@/app/services/api/roles';
+import { usePermission } from '@/hooks/useAuth';
 
 export default function EmployeeTablePage() {
   const { t } = useTranslations();
   const { language } = useLanguage();
   const isArabic = language === 'ar';
+  const {isPermission, role, department} = usePermission();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');

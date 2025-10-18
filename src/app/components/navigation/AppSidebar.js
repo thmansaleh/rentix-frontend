@@ -47,7 +47,8 @@ import {
   DollarSign,
   CreditCard,
   Banknote,
-  Wallet
+  Wallet,
+  Clock
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
@@ -344,18 +345,20 @@ const AppSidebar = () => {
         // { id: 'salaries', label: t('navigation.salaries'), icon: Receipt },
       ]
     },
-    // {
-    //   id: 'finance',
-    //   label: 'المالية',
-    //   icon: DollarSign,
-    //   type: 'category',
-    //   submenu: [
-    //     { id: 'finance/clients', label: 'العملاء', icon: Users },
-    //     { id: 'finance/client-balances', label: 'أرصدة العملاء', icon: CreditCard },
-    //     { id: 'finance/bank-accounts', label: 'الحسابات البنكية', icon: Banknote },
-    //     { id: 'finance/cash-box', label: 'الصندوق النقدي', icon: Wallet },
-    //   ]
-    // },
+    
+    {
+      id: 'finance',
+      label: 'المالية',
+      icon: DollarSign,
+      type: 'category',
+      submenu: [
+        // { id: 'finance/clients', label: 'العملاء', icon: Users },
+        // { id: 'finance/client-balances', label: 'أرصدة العملاء', icon: CreditCard },
+        { id: 'finance/bank-accounts', label: 'الحسابات البنكية', icon: Banknote },
+        // { id: 'finance/cash-box', label: 'الصندوق النقدي', icon: Wallet },
+      ]
+    },
+    
         {
       id: 'goaml',
       label: t('navigation.goaml'),
@@ -389,6 +392,12 @@ const AppSidebar = () => {
     //   badge: '5',
     //   badgeColor: 'bg-green-500'
     // },
+    {
+      id: 'logs',
+      label: t('navigation.logs'),
+      icon: Clock,
+      type: 'link'
+    },
     {
       id: 'settings',
       label: t('navigation.settings'),

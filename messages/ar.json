@@ -46,7 +46,7 @@
     "view": "عرض",
     "deleteSuccess": "تم الحذف بنجاح",
     "deleteError": "حدث خطأ في الحذف",
-    "searchPages": "ابحث عن صفحة...",
+    "searchPages": "بحث...",
     "noResultsFound": "لا توجد نتائج"
   },
   "navigation": {
@@ -64,6 +64,7 @@
     "forms": "النماذج",
     "events": "الأحداث",
     "notifications": "التنبيهات",
+    "logs": "سجل النشاط",
     "casesManagement": "إدارة القضايا",
     "cases": "القضايا",
     "sessions": "الجلسات",

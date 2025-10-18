@@ -64,7 +64,7 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
             </button>
           }
         /> */}
-        {/* <ActivityLogModal
+        <ActivityLogModal
           employee={employee}
           trigger={
             <div 
@@ -75,7 +75,7 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
               <span>{t('employees.activityLog')}</span>
             </div>
           }
-        /> */}
+        />
       </td>
       
     </tr>

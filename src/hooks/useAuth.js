@@ -46,7 +46,7 @@ export const useAuth = () => {
 export const usePermission = (permissionName) => {
   const permissions = useSelector(selectPermissions);
   const role = useSelector(s => s.auth.roleEn);
-
+const department = useSelector(s => s.auth.departmentEn);
 
 
   const hasPermission = permissions.some(
@@ -54,8 +54,11 @@ export const usePermission = (permissionName) => {
       permission.permission_ar === permissionName || 
       permission.permission_en === permissionName
   );
+  if(role === 'admin'){
+    return { hasPermission: true, role, department};
+  }
 
-  return {  hasPermission, role};
+  return {  hasPermission, role, department};
 };
 
 /**
