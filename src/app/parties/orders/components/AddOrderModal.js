@@ -34,9 +34,9 @@ const AddOrderModal = ({
   const [searchResults, setSearchResults] = useState([])
   const [formData, setFormData] = useState({
     party_id: '',
-    type: 'document_request',
+    type: '',
     date: null,
-    status: 'new',
+    status: 'pending',
     case_number: '',
     details: ''
   })
@@ -68,13 +68,21 @@ const AddOrderModal = ({
     { value: 'rejected', label: isArabic ? 'مرفوض' : 'Rejected' },
   ]
 
-  // Type options
-  const typeOptions = [
-    { value: 'document_request', label: isArabic ? 'طلب مستندات' : 'Document Request' },
-    { value: 'case_details', label: isArabic ? 'تفاصيل عن القضية' : 'Case Details' },
-    // { value: 'warrant', label: isArabic ? ' ' : 'Warrant' },
-    // { value: 'subpoena', label: isArabic ? 'أمر حضور' : 'Subpoena' },
-    { value: 'other', label: isArabic ? 'أخرى' : 'Other' }
+  // Type options - matching client-app request types
+  const typeOptions = isArabic ? [
+    { value: 'استشارة قانونية', label: 'استشارة قانونية' },
+    { value: 'طلب مستند', label: 'طلب مستند' },
+    { value: 'تحديث حالة القضية', label: 'تحديث حالة القضية' },
+    { value: 'موعد', label: 'موعد' },
+    { value: 'استفسار مالي', label: 'استفسار مالي' },
+    { value: 'أخرى', label: 'أخرى' }
+  ] : [
+    { value: 'Legal Consultation', label: 'Legal Consultation' },
+    { value: 'Document Request', label: 'Document Request' },
+    { value: 'Case Update', label: 'Case Update' },
+    { value: 'Appointment', label: 'Appointment' },
+    { value: 'Financial Inquiry', label: 'Financial Inquiry' },
+    { value: 'Other', label: 'Other' }
   ]
 
   // Reset form when modal closes

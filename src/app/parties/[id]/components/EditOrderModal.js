@@ -30,7 +30,6 @@ const EditOrderModal = ({
 
   // Validation schema
   const validationSchema = Yup.object({
-    type: Yup.string().required(t('orders.typeRequired') || (isArabic ? 'نوع الأمر مطلوب' : 'Order type is required')),
     date: Yup.date().required(t('orders.dateRequired') || (isArabic ? 'التاريخ مطلوب' : 'Date is required')).nullable(),
     status: Yup.string().required(t('orders.statusRequired') || (isArabic ? 'الحالة مطلوبة' : 'Status is required'))
   })
@@ -90,13 +89,6 @@ const EditOrderModal = ({
     { value: 'pending', label: t('orders.pending') || (isArabic ? 'قيد الانتظار' : 'Pending') },
     { value: 'approved', label: t('orders.approved') || (isArabic ? 'موافق عليه' : 'Approved') },
     { value: 'rejected', label: t('orders.rejected') || (isArabic ? 'مرفوض' : 'Rejected') },
-  ]
-
-  // Type options
-  const typeOptions = [
-    { value: 'document_request', label: t('orders.documentRequest') || (isArabic ? 'طلب مستندات' : 'Document Request') },
-    { value: 'case_details', label: t('orders.caseDetails') || (isArabic ? 'تفاصيل عن القضية' : 'Case Details') },
-    { value: 'other', label: t('orders.other') || (isArabic ? 'أخرى' : 'Other') }
   ]
 
   // Load order data into form when modal opens
@@ -180,32 +172,6 @@ const EditOrderModal = ({
             </div>
 
             <div className='flex gap-4'>
-              {/* Order Type */}
-              <div className="space-y-2 flex-1">
-                <Label htmlFor="type" className={isArabic ? 'text-right block' : ''}>
-                  {t('orders.type') || (isArabic ? 'نوع الأمر' : 'Order Type')} <span className="text-red-500">*</span>
-                </Label>
-                <Select
-                  key={`type-${formik.values.type}`}
-                  value={formik.values.type}
-                  onValueChange={(value) => formik.setFieldValue('type', value)}
-                >
-                  <SelectTrigger className={getErrorMessage('type') ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={t('orders.selectType') || (isArabic ? 'اختر نوع الأمر' : 'Select order type')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {typeOptions.map(option => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {getErrorMessage('type') && (
-                  <p className="text-sm text-red-500">{getErrorMessage('type')}</p>
-                )}
-              </div>
-
               {/* Status */}
               <div className="space-y-2 flex-1">
                 <Label htmlFor="status" className={isArabic ? 'text-right block' : ''}>

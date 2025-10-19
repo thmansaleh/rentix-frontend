@@ -31,7 +31,7 @@ const AddOrderModal = ({
 
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    type: 'document_request',
+    type: '',
     date: null,
     status: 'pending',
     case_number: '',
@@ -45,11 +45,21 @@ const AddOrderModal = ({
     { value: 'rejected', label: t('orders.rejected') || (isArabic ? 'مرفوض' : 'Rejected') },
   ]
 
-  // Type options
-  const typeOptions = [
-    { value: 'document_request', label: t('orders.documentRequest') || (isArabic ? 'طلب مستندات' : 'Document Request') },
-    { value: 'case_details', label: t('orders.caseDetails') || (isArabic ? 'تفاصيل عن القضية' : 'Case Details') },
-    { value: 'other', label: t('orders.other') || (isArabic ? 'أخرى' : 'Other') }
+  // Type options - matching client-app request types
+  const typeOptions = isArabic ? [
+    { value: 'استشارة قانونية', label: 'استشارة قانونية' },
+    { value: 'طلب مستند', label: 'طلب مستند' },
+    { value: 'تحديث حالة القضية', label: 'تحديث حالة القضية' },
+    { value: 'موعد', label: 'موعد' },
+    { value: 'استفسار مالي', label: 'استفسار مالي' },
+    { value: 'أخرى', label: 'أخرى' }
+  ] : [
+    { value: 'Legal Consultation', label: 'Legal Consultation' },
+    { value: 'Document Request', label: 'Document Request' },
+    { value: 'Case Update', label: 'Case Update' },
+    { value: 'Appointment', label: 'Appointment' },
+    { value: 'Financial Inquiry', label: 'Financial Inquiry' },
+    { value: 'Other', label: 'Other' }
   ]
 
   // Reset form when modal closes

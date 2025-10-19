@@ -30,7 +30,6 @@ const EditOrderModal = ({
 
   // Validation schema
   const validationSchema = Yup.object({
-    type: Yup.string().required(isArabic ? 'نوع الأمر مطلوب' : 'Order type is required'),
     date: Yup.date().required(isArabic ? 'التاريخ مطلوب' : 'Date is required').nullable(),
     status: Yup.string().required(isArabic ? 'الحالة مطلوبة' : 'Status is required')
   })
@@ -90,15 +89,6 @@ const EditOrderModal = ({
     { value: 'pending', label: isArabic ? 'قيد الانتظار' : 'Pending' },
     { value: 'approved', label: isArabic ? 'موافق عليه' : 'Approved' },
     { value: 'rejected', label: isArabic ? 'مرفوض' : 'Rejected' },
-  ]
-
-  // Type options
-  const typeOptions = [
-    { value: 'document_request', label: isArabic ? 'طلب مستندات' : 'Document Request' },
-    { value: 'case_details', label: isArabic ? 'تفاصيل عن القضية' : 'Case Details' },
-    // { value: 'warrant', label: isArabic ? ' ' : 'Warrant' },
-    // { value: 'subpoena', label: isArabic ? 'أمر حضور' : 'Subpoena' },
-    { value: 'other', label: isArabic ? 'أخرى' : 'Other' }
   ]
 
   // Load order data into form when modal opens
@@ -182,31 +172,7 @@ const EditOrderModal = ({
             </div>
 <div className='flex gap-4'>
 
-            {/* Order Type */}
-            <div className="space-y-2">
-              <Label htmlFor="type" className={isArabic ? 'text-right block' : ''}>
-                {isArabic ? 'نوع الأمر' : 'Order Type'} <span className="text-red-500">*</span>
-              </Label>
-              <Select
-                key={`type-${formik.values.type}`}
-                value={formik.values.type}
-                onValueChange={(value) => formik.setFieldValue('type', value)}
-              >
-                <SelectTrigger className={getErrorMessage('type') ? 'border-red-500' : ''}>
-                  <SelectValue placeholder={isArabic ? 'اختر نوع الأمر' : 'Select order type'} />
-                </SelectTrigger>
-                <SelectContent>
-                  {typeOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {getErrorMessage('type') && (
-                <p className="text-sm text-red-500">{getErrorMessage('type')}</p>
-              )}
-            </div>
+            {/* Status */}
              <div className="space-y-2">
               <Label htmlFor="status" className={isArabic ? 'text-right block' : ''}>
                 {isArabic ? 'الحالة' : 'Status'} <span className="text-red-500">*</span>
@@ -247,9 +213,6 @@ const EditOrderModal = ({
                 <p className="text-sm text-red-500">{getErrorMessage('date')}</p>
               )}
             </div>
-
-            {/* Status */}
-           
 
             {/* Case Number */}
             <div className="space-y-2">
