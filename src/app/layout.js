@@ -10,6 +10,7 @@ import AuthProvider from "@/providers/AuthProvider";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Noto_Sans_Arabic } from 'next/font/google';
+import RouteGuard from "@/components/RouteGuard";
 
 const notoSansArabic = Noto_Sans_Arabic({
   subsets: ['arabic'],
@@ -38,11 +39,13 @@ export default function RootLayout({ children }) {
             <SWRProvider>
               <ReduxProvider>
                 <AuthProvider>
-                  <DynamicLayout>
-                    <ResponsiveLayout>
-                      {children}
-                    </ResponsiveLayout>
-                  </DynamicLayout>
+                  <RouteGuard>
+                    <DynamicLayout>
+                      <ResponsiveLayout>
+                        {children}
+                      </ResponsiveLayout>
+                    </DynamicLayout>
+                  </RouteGuard>
                 </AuthProvider>
                 <ToastContainer
                   position="top-right"
