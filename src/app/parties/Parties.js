@@ -136,7 +136,7 @@ const Parties = () => {
 
   // Helper function to get VIP badge
   const getVipBadge = (isVip) => {
-    if (!isVip) return null;
+    if (isVip !== 1) return null;
     
     return (
       <Badge 
@@ -387,7 +387,7 @@ const Parties = () => {
                       key={party.id} 
                       className={cn(
                         "hover:bg-muted/50",
-                        party.is_vip && "bg-gradient-to-r from-amber-50/30 to-yellow-50/30 border-l-4 border-l-amber-400"
+                        party.is_vip === 1 && "bg-gradient-to-r from-amber-50/30 to-yellow-50/30 border-l-4 border-l-amber-400"
                       )}
                     >
                       <TableCell className={cn("font-medium", isRTL && "text-right")}>
@@ -396,7 +396,7 @@ const Parties = () => {
                       <TableCell className={cn(isRTL && "text-right")}>
                         <div className="flex items-center gap-2">
                           {party.name || '-'}
-                          {party.is_vip && <Crown className="w-4 h-4 text-amber-500" />}
+                          {party.is_vip === 1 && <Crown className="w-4 h-4 text-amber-500" />}
                         </div>
                       </TableCell>
                       <TableCell className={cn(isRTL && "text-right")}>

@@ -15,15 +15,26 @@ export const getRequestTypes = (isArabic) => [
     isLeave: true 
   },
   { 
-    value: 'اجازة ابوية', 
-    label: isArabic ? 'اجازة ابوية' : 'Paternity Leave', 
+    value: 'اجازة الوضع', 
+    label: isArabic ? 'اجازة الوضع' : 'Paternity Leave', 
     isLeave: true 
   },
   { 
-    value: 'اجازة امومية', 
-    label: isArabic ? 'اجازة امومية' : 'Maternity Leave', 
+    value: 'اجازة الحداد', 
+    label: isArabic ? 'اجازة الحداد' : 'Mourning Leave', 
     isLeave: true 
   },
+  { 
+    value: 'اجازة التفرغ لإداء الخدمة الوطنية', 
+    label: isArabic ? 'اجازة التفرغ لإداء الخدمة الوطنية' : 'National Service Leave', 
+    isLeave: true 
+  },
+  { 
+    value: 'اجازة الحج والعمرة', 
+    label: isArabic ? 'اجازة الحج والعمرة' : 'Hajj and Umrah Leave', 
+    isLeave: true 
+  },
+
   { 
     value: 'شهادة راتب', 
     label: isArabic ? 'شهادة راتب' : 'Salary Certificate', 
