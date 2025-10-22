@@ -107,15 +107,6 @@ const GoAmlPage = () => {
     }
   };
 
-  // Format amount
-  const formatAmount = (amount) => {
-    if (!amount || amount === 0) return '-';
-    return new Intl.NumberFormat('ar-AE', {
-      style: 'currency',
-      currency: 'AED'
-    }).format(amount);
-  };
-
   // Show error state if needed
   if (isError) {
     toast.error('فشل في جلب سجلات GoAML');
@@ -186,8 +177,8 @@ const GoAmlPage = () => {
                   <TableRow>
                     <TableHead className="text-right">الاسم</TableHead>
                     <TableHead className="text-right">رقم الهاتف</TableHead>
+                    <TableHead className="text-right">النوع</TableHead>
                     <TableHead className="text-right">الحالة</TableHead>
-                    <TableHead className="text-right">المبلغ</TableHead>
                     <TableHead className="text-right">ملاحظة</TableHead>
                     <TableHead className="text-right">تاريخ الإنشاء</TableHead>
                     <TableHead className="text-right">أُنشئ بواسطة</TableHead>
@@ -199,10 +190,8 @@ const GoAmlPage = () => {
                     <TableRow key={record.id}>
                       <TableCell className="font-medium">{record.name}</TableCell>
                       <TableCell className="font-mono">{record.phone || '-'}</TableCell>
+                      <TableCell>{record.type || '-'}</TableCell>
                       <TableCell>{getStatusBadge(record.status)}</TableCell>
-                      <TableCell className="font-semibold">
-                        {formatAmount(record.amount)}
-                      </TableCell>
                       <TableCell className="max-w-48 truncate">
                         {record.note || '-'}
                       </TableCell>

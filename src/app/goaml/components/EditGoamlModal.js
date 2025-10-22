@@ -16,8 +16,8 @@ const EditGoamlModal = ({ record, isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    type: 'فرد',
     status: 'under_review',
-    amount: '',
     note: ''
   });
 
@@ -29,8 +29,8 @@ const EditGoamlModal = ({ record, isOpen, onClose, onSuccess }) => {
       setFormData({
         name: record.name || '',
         phone: record.phone || '',
+        type: record.type || 'فرد',
         status: record.status || 'under_review',
-        amount: record.amount ? record.amount.toString() : '',
         note: record.note || ''
       });
     }
@@ -58,10 +58,6 @@ const EditGoamlModal = ({ record, isOpen, onClose, onSuccess }) => {
       newErrors.name = 'الاسم مطلوب';
     }
 
-    if (formData.amount && isNaN(parseFloat(formData.amount))) {
-      newErrors.amount = 'المبلغ يجب أن يكون رقم صحيح';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -80,8 +76,8 @@ const EditGoamlModal = ({ record, isOpen, onClose, onSuccess }) => {
       const submitData = {
         name: formData.name,
         phone: formData.phone || null,
+        type: formData.type,
         status: formData.status,
-        amount: formData.amount ? parseFloat(formData.amount) : 0,
         note: formData.note || null
       };
 
@@ -147,6 +143,25 @@ const EditGoamlModal = ({ record, isOpen, onClose, onSuccess }) => {
               )}
             </div>
 
+            {/* Type */}
+            <div className="space-y-2">
+              <Label htmlFor="edit-type">النوع *</Label>
+              <Select value={formData.type} onValueChange={(value) => handleChange('type', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر النوع" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="فرد">فرد</SelectItem>
+                  <SelectItem value="شركة">شركة</SelectItem>
+                  <SelectItem value="كيان">كيان</SelectItem>
+                  <SelectItem value="منظمة">منظمة</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.type && (
+                <p className="text-sm text-red-500">{errors.type}</p>
+              )}
+            </div>
+
             {/* Status */}
             <div className="space-y-2">
               <Label htmlFor="edit-status">الحالة *</Label>
@@ -162,23 +177,6 @@ const EditGoamlModal = ({ record, isOpen, onClose, onSuccess }) => {
               </Select>
               {errors.status && (
                 <p className="text-sm text-red-500">{errors.status}</p>
-              )}
-            </div>
-
-            {/* Amount */}
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="edit-amount">المبلغ</Label>
-              <Input
-                id="edit-amount"
-                type="number"
-                step="0.01"
-                value={formData.amount}
-                onChange={(e) => handleChange('amount', e.target.value)}
-                placeholder="أدخل المبلغ"
-                className={errors.amount ? 'border-red-500' : ''}
-              />
-              {errors.amount && (
-                <p className="text-sm text-red-500">{errors.amount}</p>
               )}
             </div>
 
