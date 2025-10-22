@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
-import { Eye, Edit, Trash2, MoreHorizontal, Phone, User, Scale, IdCard, FileText } from 'lucide-react';
+import { Eye, Edit, Trash2, MoreHorizontal, Phone, User, Scale, IdCard, FileText, Crown } from 'lucide-react';
 import { getAllParties } from '@/app/services/api/parties';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -130,6 +130,21 @@ const Parties = () => {
     return (
       <Badge variant="outline" className={color}>
         {text}
+      </Badge>
+    );
+  };
+
+  // Helper function to get VIP badge
+  const getVipBadge = (isVip) => {
+    if (!isVip) return null;
+    
+    return (
+      <Badge 
+        variant="outline" 
+        className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white hover:from-yellow-500 hover:to-amber-600 border-0 animate-pulse"
+      >
+        <Crown className="w-3 h-3 mr-1" />
+        {language === 'ar' ? 'VIP' : 'VIP'}
       </Badge>
     );
   };
@@ -350,6 +365,9 @@ const Parties = () => {
                       {t('partiesPage.partyType')}
                     </TableHead>
                     <TableHead className={cn("font-bold", isRTL && "text-right")}>
+                      {t('partiesPage.vipStatus') || 'VIP'}
+                    </TableHead>
+                    <TableHead className={cn("font-bold", isRTL && "text-right")}>
                       {t('partiesPage.idNumber')}
                     </TableHead>
                     <TableHead className={cn("font-bold", isRTL && "text-right")}>
@@ -365,12 +383,21 @@ const Parties = () => {
                 </TableHeader>
                 <TableBody>
                   {parties.map((party) => (
-                    <TableRow key={party.id} className="hover:bg-muted/50">
+                    <TableRow 
+                      key={party.id} 
+                      className={cn(
+                        "hover:bg-muted/50",
+                        party.is_vip && "bg-gradient-to-r from-amber-50/30 to-yellow-50/30 border-l-4 border-l-amber-400"
+                      )}
+                    >
                       <TableCell className={cn("font-medium", isRTL && "text-right")}>
                         {party.id}
                       </TableCell>
                       <TableCell className={cn(isRTL && "text-right")}>
-                        {party.name || '-'}
+                        <div className="flex items-center gap-2">
+                          {party.name || '-'}
+                          {party.is_vip && <Crown className="w-4 h-4 text-amber-500" />}
+                        </div>
                       </TableCell>
                       <TableCell className={cn(isRTL && "text-right")}>
                         <div className="flex items-center gap-2">
@@ -380,6 +407,9 @@ const Parties = () => {
                       </TableCell>
                       <TableCell className={cn(isRTL && "text-right")}>
                         {getPartyTypeBadge(party.party_type)}
+                      </TableCell>
+                      <TableCell className={cn(isRTL && "text-right")}>
+                        {getVipBadge(party.is_vip)}
                       </TableCell>
                       <TableCell className={cn(isRTL && "text-right")}>
                         <div className="flex items-center gap-2">
@@ -401,10 +431,10 @@ const Parties = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align={isRTL ? "start" : "end"}>
-                            {/* <DropdownMenuItem onClick={() => handleView(party.id)}>
+                            <DropdownMenuItem onClick={() => handleView(party.id)}>
                               <Eye className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
                               {t('buttons.view')}
-                            </DropdownMenuItem> */}
+                            </DropdownMenuItem>
                             <EditPartyModal 
                               partyId={party.id} 
                               onPartyUpdated={() => mutate()}

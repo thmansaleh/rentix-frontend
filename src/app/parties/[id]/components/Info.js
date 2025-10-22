@@ -1,22 +1,30 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import useSWR from 'swr'
 import { getPartyById } from '@/app/services/api/parties'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { useTranslations } from '@/hooks/useTranslations'
-import { User, Phone, Mail, MapPin, Calendar, FileText, Building, Globe } from 'lucide-react'
+import { User, Phone, Mail, MapPin, Calendar, FileText, Building, Globe, Crown, Edit } from 'lucide-react'
+import EditPartyModal from '@/app/parties/EditPartyModal'
+import { is } from 'date-fns/locale'
 
 function Info({ partyId }) {
   const { t } = useTranslations()
   
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     partyId ? [`/parties/${partyId}`] : null,
     () => getPartyById(partyId),
     {
       revalidateOnFocus: false,
     }
   )
+
+  const handlePartyUpdated = () => {
+    // Refresh the party data after update
+    mutate()
+  }
 
   if (isLoading) {
     return (
@@ -79,206 +87,133 @@ function Info({ partyId }) {
     })
   }
 
+  const InfoItem = ({ icon: Icon, label, value }) => (
+    <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent/50 transition-colors">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+        <Icon className="h-4 w-4 text-primary" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
+        <p className="text-sm font-medium truncate">{value || '-'}</p>
+      </div>
+    </div>
+  )
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
-            {t('partyTabs.basicInfo') || 'المعلومات الأساسية'}
-          </CardTitle>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <User className="h-4 w-4 text-primary" />
+              </div>
+              {t('partyTabs.basicInfo') || 'المعلومات الأساسية'}
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <EditPartyModal partyId={partyId} onPartyUpdated={handlePartyUpdated}>
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4 mr-1" />
+                  {t('common.edit') || 'تعديل'}
+                </Button>
+              </EditPartyModal>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            {party.is_vip === 1 && (
+              <Badge className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white border-0">
+                <Crown className="h-3 w-3 mr-1" />
+                VIP
+              </Badge>
+            )}
+            {getPartyTypeBadge(party.party_type)}
+            {getCategoryBadge(party.category)}
+            <Badge className={party.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+              {party.status === 'active' ? (t('common.active') || 'نشط') : (t('common.inactive') || 'غير نشط')}
+            </Badge>
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                {t('parties.partyName') || 'اسم الطرف'}
-              </label>
-              <p className="text-lg font-semibold">{party.name || '-'}</p>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                {t('parties.partyType') || 'نوع الطرف'}
-              </label>
-              <div>{getPartyTypeBadge(party.party_type)}</div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                {t('parties.category') || 'التصنيف'}
-              </label>
-              <div>{getCategoryBadge(party.category)}</div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                {t('parties.status') || 'الحالة'}
-              </label>
-              <div>
-                <Badge className={party.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                  {party.status === 'active' ? (t('common.active') || 'نشط') : (t('common.inactive') || 'غير نشط')}
-                </Badge>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('parties.phone') || 'الهاتف'}
-                </label>
-                <p className="font-medium">{party.phone || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('parties.email') || 'البريد الإلكتروني'}
-                </label>
-                <p className="font-medium">{party.email || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <Globe className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('parties.nationality') || 'الجنسية'}
-                </label>
-                <p className="font-medium">{party.nationality || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('parties.eId') || 'رقم الهوية'}
-                </label>
-                <p className="font-medium">{party.e_id || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('parties.passport') || 'رقم الجواز'}
-                </label>
-                <p className="font-medium">{party.passport || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('parties.username') || 'اسم المستخدم'}
-                </label>
-                <p className="font-medium">{party.username || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('parties.password') || 'كلمة المرور'}
-                </label>
-                <p className="font-medium">{party.password || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                {t('parties.consultationType') || 'نوع الاستشارة'}
-              </label>
-              <p className="font-medium">{party.consultation_type || '-'}</p>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                {t('parties.source') || 'المصدر'}
-              </label>
-              <p className="font-medium">{party.source || '-'}</p>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              <div className="col-span-full">
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('parties.address') || 'العنوان'}
-                </label>
-                <p className="font-medium">{party.address || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('common.createdBy') || 'أنشئ بواسطة'}
-                </label>
-                <p className="font-medium">{party.created_by_name || '-'}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('common.createdAt') || 'تاريخ الإنشاء'}
-                </label>
-                <p className="font-medium">{formatDate(party.created_at)}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  {t('common.updatedAt') || 'تاريخ التحديث'}
-                </label>
-                <p className="font-medium">{formatDate(party.updated_at)}</p>
-              </div>
-            </div>
+        <CardContent className="pt-0">
+          <div className="mb-4 pb-4 border-b">
+            <h3 className="text-base font-semibold">{party.name || '-'}</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <InfoItem 
+              icon={Phone} 
+              label={t('parties.phone') || 'الهاتف'} 
+              value={party.phone} 
+            />
+            <InfoItem 
+              icon={Mail} 
+              label={t('parties.email') || 'البريد الإلكتروني'} 
+              value={party.email} 
+            />
+            <InfoItem 
+              icon={Globe} 
+              label={t('parties.nationality') || 'الجنسية'} 
+              value={party.nationality} 
+            />
+            <InfoItem 
+              icon={FileText} 
+              label={t('parties.eId') || 'رقم الهوية'} 
+              value={party.e_id} 
+            />
+            <InfoItem 
+              icon={FileText} 
+              label={t('parties.passport') || 'رقم الجواز'} 
+              value={party.passport} 
+            />
+            <InfoItem 
+              icon={Building} 
+              label={t('parties.branch') || 'الفرع'} 
+              value={ party.branch_name_ar} 
+            />
+            <InfoItem 
+              icon={User} 
+              label={t('parties.username') || 'اسم المستخدم'} 
+              value={party.username} 
+            />
+            <InfoItem 
+              icon={FileText} 
+              label={t('parties.password') || 'كلمة المرور'} 
+              value={party.password} 
+            />
+            <InfoItem 
+              icon={Building} 
+              label={t('parties.consultationType') || 'نوع الاستشارة'} 
+              value={party.consultation_type} 
+            />
+            <InfoItem 
+              icon={FileText} 
+              label={t('parties.source') || 'المصدر'} 
+              value={party.source} 
+            />
+            <InfoItem 
+              icon={MapPin} 
+              label={t('parties.address') || 'العنوان'} 
+              value={party.address} 
+            />
+            <InfoItem 
+              icon={User} 
+              label={t('common.createdBy') || 'أنشئ بواسطة'} 
+              value={party.created_by_name} 
+            />
+            <InfoItem 
+              icon={Calendar} 
+              label={t('common.createdAt') || 'تاريخ الإنشاء'} 
+              value={formatDate(party.created_at)} 
+            />
+            <InfoItem 
+              icon={Calendar} 
+              label={t('common.updatedAt') || 'تاريخ التحديث'} 
+              value={formatDate(party.updated_at)} 
+            />
           </div>
         </CardContent>
       </Card>
 
-      {party.documents && party.documents.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              {t('common.documents') || 'المستندات'} ({party.documents.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {party.documents.map((doc, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">{doc.document_name || doc.file_name}</p>
-                      {doc.description && <p className="text-sm text-muted-foreground">{doc.description}</p>}
-                    </div>
-                  </div>
-                  {doc.document_url && (
-                    <a href={doc.document_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      {t('common.view') || 'عرض'}
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      
     </div>
   )
 }

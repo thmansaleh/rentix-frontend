@@ -40,10 +40,14 @@ const OtherLeaveModal = ({
 
   // Leave reason options
   const leaveReasonOptions = [
-    { value: 'maternity', label: isArabic ? 'إجازة أمومة' : 'Maternity' },
-    { value: 'paternity', label: isArabic ? 'إجازة أبوة' : 'Paternity' },
-    { value: 'study', label: isArabic ? 'إجازة دراسية' : 'Study' },
-    { value: 'emergency', label: isArabic ? 'إجازة طارئة' : 'Emergency' }
+  
+
+    { value: 'maternity', label: isArabic ? 'اجازة تفرغ لإداء الخدمة الوطنية' : 'National Service Leave' },
+    { value: 'paternity', label: isArabic ? 'اجازة الحداد' : 'Paternity Leave' },
+    { value: 'study', label: isArabic ? 'إجازة دراسية' : 'Study Leave' },
+    { value: 'emergency', label: isArabic ? 'اجازة الوضع' : 'Paternity Leave' },
+    { value: 'emergency', label: isArabic ? 'اجازة الحج والعمرة' : 'Hajj and Umrah Leave' },
+    { value: 'others', label: isArabic ? 'أخرى' : 'Others' }
   ]
 
   // Leave type options

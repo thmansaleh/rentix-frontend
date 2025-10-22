@@ -24,10 +24,22 @@ import {
   Calendar,
   Heart,
   UserCheck,
-  Plus
+  Plus,
+  Trash2
 } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { getForms, downloadForm } from '@/app/services/api/forms'
+import { getForms, downloadForm, deleteForm } from '@/app/services/api/forms'
+import AddFormModal from './AddFormModal'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 // Icon mapping for different form types
 const getFormIcon = (documentFor) => {
@@ -45,7 +57,8 @@ const getFormIcon = (documentFor) => {
     'sickness self certificate': <Heart className="w-6 h-6" />,
     'short absent': <Clock className="w-6 h-6" />,
     'salary advance': <CreditCard className="w-6 h-6" />,
-    'new starter': <UserCheck className="w-6 h-6" />
+    'new starter': <UserCheck className="w-6 h-6" />,
+    'others': <FileText className="w-6 h-6" />
   }
   
   return iconMap[documentFor] || <FileText className="w-6 h-6" />
@@ -82,6 +95,9 @@ export default function FormsPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedType, setSelectedType] = useState('')
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [formToDelete, setFormToDelete] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Fetch forms data
   const fetchForms = async () => {
@@ -114,6 +130,44 @@ export default function FormsPage() {
       console.error('Error downloading form:', error)
       toast.error(isArabic ? 'خطأ في تحميل النموذج' : 'Error downloading form')
     }
+  }
+
+  // Handle delete click
+  const handleDeleteClick = (form, e) => {
+    e.stopPropagation()
+    setFormToDelete(form)
+    setDeleteDialogOpen(true)
+  }
+
+  // Handle delete confirm
+  const handleDeleteConfirm = async () => {
+    if (!formToDelete) return
+
+    setIsDeleting(true)
+    try {
+      const response = await deleteForm(formToDelete.id)
+      
+      if (response.success) {
+        toast.success(isArabic ? 'تم حذف النموذج بنجاح' : 'Form deleted successfully')
+        setDeleteDialogOpen(false)
+        setFormToDelete(null)
+        // Refresh the forms list
+        await fetchForms()
+      } else {
+        throw new Error(response.message || 'Failed to delete form')
+      }
+    } catch (error) {
+      console.error('Error deleting form:', error)
+      toast.error(isArabic ? 'خطأ في حذف النموذج' : 'Error deleting form')
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  // Handle delete cancel
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false)
+    setFormToDelete(null)
   }
 
   // Filter forms based on search and type
@@ -162,9 +216,12 @@ export default function FormsPage() {
                 {isArabic ? 'تصفح وتحميل النماذج المطلوبة للموارد البشرية' : 'Browse and download required HR forms'}
               </p>
             </div>
-            <Badge variant="outline" className="text-sm">
-              {filteredForms.length} {isArabic ? 'نموذج' : 'forms'}
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="text-sm">
+                {filteredForms.length} {isArabic ? 'نموذج' : 'forms'}
+              </Badge>
+              <AddFormModal onFormAdded={fetchForms} />
+            </div>
           </div>
         </CardHeader>
       </Card>
@@ -220,10 +277,20 @@ export default function FormsPage() {
                 formsList.map((form) => (
                   <Card 
                     key={form.id} 
-                    className={`hover:shadow-lg transition-shadow duration-200 cursor-pointer ${getFormColor(documentFor)}`}
-                    onClick={() => handleDownload(form)}
+                    className={`hover:shadow-lg transition-shadow duration-200 relative ${getFormColor(documentFor)}`}
                   >
-                    <CardContent className="p-6">
+                    {/* Delete Button - Top Right Corner */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full z-10"
+                      onClick={(e) => handleDeleteClick(form, e)}
+                      title={isArabic ? 'حذف النموذج' : 'Delete Form'}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+
+                    <CardContent className="p-6 cursor-pointer" onClick={() => handleDownload(form)}>
                       <div className="flex flex-col items-center text-center space-y-4">
                         {/* Icon */}
                         <div className="p-3 rounded-full bg-white/50">
@@ -262,6 +329,38 @@ export default function FormsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {isArabic ? 'تأكيد الحذف' : 'Confirm Deletion'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {isArabic 
+                ? `هل أنت متأكد من حذف نموذج "${formToDelete ? t(`forms.types.${formToDelete.document_for.replace(/ /g, '_')}`) : ''}"؟ هذا الإجراء لا يمكن التراجع عنه وسيتم حذف الملف من التخزين السحابي.`
+                : `Are you sure you want to delete the "${formToDelete ? t(`forms.types.${formToDelete.document_for.replace(/ /g, '_')}`) : ''}" form? This action cannot be undone and will delete the file from cloud storage.`
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleDeleteCancel} disabled={isDeleting}>
+              {isArabic ? 'إلغاء' : 'Cancel'}
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting 
+                ? (isArabic ? 'جاري الحذف...' : 'Deleting...') 
+                : (isArabic ? 'حذف' : 'Delete')
+              }
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

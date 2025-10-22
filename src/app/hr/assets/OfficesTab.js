@@ -58,21 +58,21 @@ const OfficesTab = ({ offices, onMutate }) => {
   }
 
   const handleDeleteAsset = async (assetId) => {
-    if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا المكتب وجميع مستنداته؟' : 'Are you sure you want to delete this office and all its documents?')) {
+    if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا المستند وجميع مستنداته؟' : 'Are you sure you want to delete this document and all its files?')) {
       return
     }
 
     try {
       const response = await deleteAsset(assetId)
       if (response.success) {
-        toast.success(isArabic ? 'تم حذف المكتب بنجاح' : 'Office deleted successfully')
+        toast.success(isArabic ? 'تم حذف المستند بنجاح' : 'Document deleted successfully')
         onMutate()
       } else {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
       console.error('Error deleting asset:', error)
-      toast.error(isArabic ? 'حدث خطأ أثناء حذف المكتب' : 'Error deleting office')
+      toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
     }
   }
 
@@ -96,13 +96,13 @@ const OfficesTab = ({ offices, onMutate }) => {
       <div className="flex justify-end mb-4">
         <Button onClick={handleAddOffice}>
           <Plus className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
-          {isArabic ? 'إضافة مكتب' : 'Add Office'}
+          {isArabic ? 'إضافة مستند' : 'Add Document'}
         </Button>
       </div>
 
       {offices.length === 0 ? (
         <div className="text-center p-8 text-gray-500">
-          {isArabic ? 'لا توجد مكاتب' : 'No offices found'}
+          {isArabic ? 'لا توجد مستندات' : 'No documents found'}
         </div>
       ) : (
         <div className="overflow-x-auto">

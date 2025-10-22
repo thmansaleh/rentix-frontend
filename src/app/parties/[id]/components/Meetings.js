@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import useSWR from 'swr'
 import meetingsApi from '@/app/services/api/meetings'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,12 +13,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useTranslations } from '@/hooks/useTranslations'
-import { Calendar, Trash2, Clock, Users, FileText } from 'lucide-react'
+// import { useTranslations } from 'next-intl'
+import { Calendar, Trash2, Clock, Users, FileText, Plus, Edit, Eye, MapPin } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { useTranslations } from '@/hooks/useTranslations'
+import { AddMeetingModal } from '@/app/meetings/AddMeetingModal'
+import { EditMeetingModal } from '@/app/potential-clients/meetings/EditMeetingModal'
+import { DeleteMeetingModal } from '@/app/potential-clients/meetings/DeleteMeetingModal'
+import MeetingDocumentsModal from '@/app/meetings/MeetingDocumentsModal'
+import ViewMeetingDialog from '@/app/meetings/ViewMeetingDialog'
 
 function Meetings({ partyId }) {
   const { t } = useTranslations()
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [selectedMeetingId, setSelectedMeetingId] = useState(null)
+  const [selectedMeetingForDelete, setSelectedMeetingForDelete] = useState(null)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
+  const [selectedMeetingForView, setSelectedMeetingForView] = useState(null)
   
   const { data, error, isLoading, mutate } = useSWR(
     partyId ? [`/meetings/party/${partyId}`] : null,
@@ -28,19 +41,42 @@ function Meetings({ partyId }) {
     }
   )
 
-  const handleDelete = async (meetingId) => {
-    if (!confirm(t('common.confirmDelete') || 'هل أنت متأكد من حذف هذا الاجتماع؟')) {
-      return
-    }
+  const handleEditMeeting = (meetingId) => {
+    setSelectedMeetingId(meetingId)
+    setIsEditModalOpen(true)
+  }
 
-    try {
-      await meetingsApi.deleteMeeting(meetingId)
-      toast.success(t('common.deleteSuccess') || 'تم الحذف بنجاح')
-      mutate()
-    } catch (error) {
-      console.error('Error deleting meeting:', error)
-      toast.error(t('common.deleteError') || 'حدث خطأ في الحذف')
-    }
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
+    setSelectedMeetingId(null)
+  }
+
+  const handleEditSuccess = () => {
+    mutate()
+  }
+
+  const handleDeleteMeeting = (meeting) => {
+    setSelectedMeetingForDelete(meeting)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false)
+    setSelectedMeetingForDelete(null)
+  }
+
+  const handleDeleteSuccess = () => {
+    mutate()
+  }
+
+  const handleViewMeeting = (meetingId) => {
+    setSelectedMeetingForView(meetingId)
+    setIsViewModalOpen(true)
+  }
+
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false)
+    setSelectedMeetingForView(null)
   }
 
   if (isLoading) {
@@ -48,7 +84,7 @@ function Meetings({ partyId }) {
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">{t('common.loading') || 'جاري التحميل...'}</p>
+          <p className="mt-4 text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     )
@@ -58,7 +94,7 @@ function Meetings({ partyId }) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
-          <p className="text-destructive">{t('common.error') || 'حدث خطأ في تحميل البيانات'}</p>
+          <p className="text-destructive">{t('meetings.messages.error')}</p>
         </div>
       </div>
     )
@@ -68,7 +104,7 @@ function Meetings({ partyId }) {
 
   const formatDate = (dateString) => {
     if (!dateString) return '-'
-    return new Date(dateString).toLocaleDateString('ar-SA', {
+    return new Date(dateString).toLocaleDateString('ar-AE', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -82,10 +118,10 @@ function Meetings({ partyId }) {
 
   const getResultBadge = (result) => {
     const resultMap = {
-      'successful': { label: t('meetings.successful') || 'ناجح', color: 'bg-green-100 text-green-800' },
-      'failed': { label: t('meetings.failed') || 'فاشل', color: 'bg-red-100 text-red-800' },
-      'pending': { label: t('meetings.pending') || 'قيد الانتظار', color: 'bg-yellow-100 text-yellow-800' },
-      'cancelled': { label: t('meetings.cancelled') || 'ملغي', color: 'bg-gray-100 text-gray-800' },
+      'successful': { label: t('meetings.results.completed'), color: 'bg-green-100 text-green-800' },
+      'failed': { label: t('meetings.results.cancelled'), color: 'bg-red-100 text-red-800' },
+      'pending': { label: t('meetings.results.scheduled'), color: 'bg-yellow-100 text-yellow-800' },
+      'cancelled': { label: t('meetings.results.cancelled'), color: 'bg-gray-100 text-gray-800' },
     }
     const resultInfo = resultMap[result] || resultMap['pending']
     return <Badge className={resultInfo.color}>{resultInfo.label}</Badge>
@@ -93,42 +129,59 @@ function Meetings({ partyId }) {
 
   const getTypeBadge = (type) => {
     const typeMap = {
-      'consultation': { label: t('meetings.consultation') || 'استشارة', color: 'bg-purple-100 text-purple-800' },
-      'negotiation': { label: t('meetings.negotiation') || 'تفاوض', color: 'bg-blue-100 text-blue-800' },
-      'follow_up': { label: t('meetings.followUp') || 'متابعة', color: 'bg-cyan-100 text-cyan-800' },
-      'initial': { label: t('meetings.initial') || 'أولي', color: 'bg-indigo-100 text-indigo-800' },
-      'other': { label: t('meetings.other') || 'أخرى', color: 'bg-gray-100 text-gray-800' },
+      'consultation': { label: t('potentialClientsPage.consultationType.legal'), color: 'bg-purple-100 text-purple-800' },
+      'negotiation': { label: t('meetings.types.onsite'), color: 'bg-blue-100 text-blue-800' },
+      'follow_up': { label: t('meetings.types.online'), color: 'bg-cyan-100 text-cyan-800' },
+      'initial': { label: t('meetings.results.scheduled'), color: 'bg-indigo-100 text-indigo-800' },
+      'other': { label: t('parties.other'), color: 'bg-gray-100 text-gray-800' },
     }
     const typeInfo = typeMap[type] || typeMap['other']
     return <Badge className={typeInfo.color}>{typeInfo.label}</Badge>
   }
 
+  const handleAddSuccess = () => {
+    mutate()
+    setIsAddModalOpen(false)
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5" />
-          {t('partyTabs.meetings') || 'الاجتماعات'} ({meetings.length})
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              {t('partyTabs.meetings')} ({meetings.length})
+            </CardTitle>
+            <Button 
+              onClick={() => setIsAddModalOpen(true)}
+              size="sm"
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {t('meetings.addMeeting') || 'إضافة اجتماع'}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
         {meetings.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>{t('meetings.noMeetings') || 'لا توجد اجتماعات'}</p>
+            <p>{t('meetings.messages.noResults')}</p>
           </div>
         ) : (
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50">
-                  <TableHead className="text-right font-semibold">{t('meetings.type') || 'النوع'}</TableHead>
-                  <TableHead className="text-right font-semibold">{t('meetings.date') || 'التاريخ'}</TableHead>
-                  <TableHead className="text-right font-semibold">{t('meetings.time') || 'الوقت'}</TableHead>
-                  <TableHead className="text-right font-semibold">{t('meetings.lawyer') || 'المحامي'}</TableHead>
-                  <TableHead className="text-right font-semibold">{t('meetings.result') || 'النتيجة'}</TableHead>
-                  <TableHead className="text-right font-semibold">{t('meetings.notes') || 'الملاحظات'}</TableHead>
-                  <TableHead className="text-center font-semibold">{t('common.actions') || 'الإجراءات'}</TableHead>
+                  <TableHead className="text-right font-semibold">{t('meetings.table.type')}</TableHead>
+                  <TableHead className="text-right font-semibold">{t('meetings.table.date')}</TableHead>
+                  <TableHead className="text-right font-semibold">{t('meetings.table.time')}</TableHead>
+                  <TableHead className="text-right font-semibold">{t('meetings.table.address')}</TableHead>
+                  <TableHead className="text-right font-semibold">{t('meetings.table.attendees')}</TableHead>
+                  <TableHead className="text-right font-semibold">{t('meetings.table.status')}</TableHead>
+                  <TableHead className="text-right font-semibold">{t('meetings.table.notes')}</TableHead>
+                  <TableHead className="text-center font-semibold">{t('common.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,18 +200,62 @@ function Meetings({ partyId }) {
                         {formatTime(meeting.start_time)} - {formatTime(meeting.end_time)}
                       </div>
                     </TableCell>
-                    <TableCell>{meeting.lawyer_name || '-'}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        {meeting.address || '-'}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Badge variant="secondary">
+                          {meeting.attendees_count || 0}
+                        </Badge>
+                      </div>
+                    </TableCell>
                     <TableCell>{getResultBadge(meeting.meet_result)}</TableCell>
                     <TableCell className="max-w-xs truncate">{meeting.note || '-'}</TableCell>
                     <TableCell className="text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(meeting.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center justify-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleViewMeeting(meeting.id)}
+                          title={t('meetings.actions.view')}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <MeetingDocumentsModal 
+                          meetingId={meeting.id}
+                          meetingTitle={`${t('meetings.title')} - ${formatDate(meeting.date)}`}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            title={t('meetings.actions.documents')}
+                          >
+                            <FileText className="h-4 w-4" />
+                          </Button>
+                        </MeetingDocumentsModal>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditMeeting(meeting.id)}
+                          title={t('meetings.actions.edit')}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteMeeting(meeting)}
+                          title={t('meetings.actions.delete')}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -168,6 +265,39 @@ function Meetings({ partyId }) {
         )}
       </CardContent>
     </Card>
+
+    {/* Add Meeting Modal */}
+    <AddMeetingModal
+      isOpen={isAddModalOpen}
+      onClose={() => setIsAddModalOpen(false)}
+      onSuccess={handleAddSuccess}
+      partyId={partyId}
+    />
+
+    {/* Edit Meeting Modal */}
+    <EditMeetingModal 
+      isOpen={isEditModalOpen}
+      onClose={handleCloseEditModal}
+      meetingId={selectedMeetingId}
+      onSuccess={handleEditSuccess}
+    />
+
+    {/* Delete Meeting Modal */}
+    <DeleteMeetingModal 
+      isOpen={isDeleteModalOpen}
+      onClose={handleCloseDeleteModal}
+      meetingId={selectedMeetingForDelete?.id}
+      meetingTitle={selectedMeetingForDelete ? `${t('meetings.title')} - ${formatDate(selectedMeetingForDelete.date)}` : ''}
+      onSuccess={handleDeleteSuccess}
+    />
+
+    {/* View Meeting Dialog */}
+    <ViewMeetingDialog
+      isOpen={isViewModalOpen}
+      onClose={handleCloseViewModal}
+      meetingId={selectedMeetingForView}
+    />
+  </>
   )
 }
 

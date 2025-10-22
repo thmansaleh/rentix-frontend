@@ -163,6 +163,16 @@ function PotentialClients() {
     return typeMap[lowerType] || partyType;
   };
 
+  const getTranslatedCategory = (category) => {
+    if (!category) return "-";
+    const lowerCategory = category.toLowerCase();
+    const categoryMap = {
+      "individual": t("potentialClientsPage.category.individual"),
+      "company": t("potentialClientsPage.category.company"),
+    };
+    return categoryMap[lowerCategory] || category;
+  };
+
   // Column configuration for export
   const potentialClientsColumnConfig = {
     id: {
@@ -199,7 +209,8 @@ function PotentialClients() {
     category: {
       ar: 'الفئة',
       en: 'Category',
-      dataKey: 'category'
+      dataKey: 'category',
+      formatter: (value) => getTranslatedCategory(value)
     },
     nationality: {
       ar: 'الجنسية',
@@ -283,7 +294,7 @@ function PotentialClients() {
                       <TableCell>{client.name}</TableCell>
                       <TableCell>{client.phone || "-"}</TableCell>
                       <TableCell>{client.source || "-"}</TableCell>
-                      <TableCell>{client.category || "-"}</TableCell>
+                      <TableCell>{getTranslatedCategory(client.category)}</TableCell>
                       <TableCell>
                         <span
                           className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${

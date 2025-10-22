@@ -115,11 +115,10 @@ function Reviews({ employeeId }) {
   const getReviewTypeBadge = (type) => {
     const typeConfig = {
       annual: { color: 'bg-blue-500', label: isArabic ? 'سنوي' : 'Annual' },
-      probation: { color: 'bg-purple-500', label: isArabic ? 'فترة تجريبية' : 'Probation' },
-      'mid-year': { color: 'bg-green-500', label: isArabic ? 'منتصف العام' : 'Mid-Year' },
+      probation: { color: 'bg-purple-500', label: isArabic ? 'شهري' : 'Monthly' },
       quarterly: { color: 'bg-orange-500', label: isArabic ? 'ربع سنوي' : 'Quarterly' },
-      performance: { color: 'bg-pink-500', label: isArabic ? 'أداء' : 'Performance' },
-      disciplinary: { color: 'bg-red-500', label: isArabic ? 'تأديبي' : 'Disciplinary' }
+      'mid-year': { color: 'bg-green-500', label: isArabic ? 'ذاتي' : 'Self' },
+      performance: { color: 'bg-pink-500', label: isArabic ? 'رفع الأداء' : 'Performance' },
     }
 
     const config = typeConfig[type] || { color: 'bg-gray-500', label: type }

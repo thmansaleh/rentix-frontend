@@ -14,13 +14,15 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, User, MapPin, Monitor, Users, Search, Loader2, Eye, Edit, Trash2 } from "lucide-react";
+import { Calendar, Clock, User, MapPin, Monitor, Users, Search, Loader2, Eye, Edit, Trash2, FileText } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { EditMeetingModal } from "./EditMeetingModal";
 import { DeleteMeetingModal } from "./DeleteMeetingModal";
 import { MeetingsFilterSearch } from "./MeetingsFilterSearch";
+import MeetingDocumentsModal from "../../meetings/MeetingDocumentsModal";
+import ViewMeetingDialog from "../../meetings/ViewMeetingDialog";
 
-function Meetings() {
+function Meetings({ headerAction }) {
   const { t } = useTranslations();
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
@@ -33,6 +35,8 @@ function Meetings() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedMeetingForDelete, setSelectedMeetingForDelete] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedMeetingForView, setSelectedMeetingForView] = useState(null);
   const limit = 10;
 
   // SWR fetcher function
@@ -109,6 +113,16 @@ function Meetings() {
     mutate();
   };
 
+  const handleViewMeeting = (meetingId) => {
+    setSelectedMeetingForView(meetingId);
+    setIsViewModalOpen(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false);
+    setSelectedMeetingForView(null);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -167,10 +181,13 @@ function Meetings() {
     <div className="container mx-auto py-6 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold flex items-center gap-2">
-            <Calendar className="h-6 w-6" />
-            {t("meetings.title")}
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold flex items-center gap-2">
+              <Calendar className="h-6 w-6" />
+              {t("meetings.title")}
+            </CardTitle>
+            {headerAction && <div>{headerAction}</div>}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Filters - Now in separate component */}
@@ -197,10 +214,11 @@ function Meetings() {
                   <TableRow>
                     <TableHead>{t("meetings.table.id")}</TableHead>
                     <TableHead>{t("meetings.table.client")}</TableHead>
-                    <TableHead>{t("meetings.table.lawyer")}</TableHead>
+                    <TableHead>{t("meetings.table.address")}</TableHead>
                     <TableHead>{t("meetings.table.date")}</TableHead>
                     <TableHead>{t("meetings.table.time")}</TableHead>
                     <TableHead>{t("meetings.table.type")}</TableHead>
+                    <TableHead>{t("meetings.table.attendees")}</TableHead>
                     <TableHead>{t("meetings.table.status")}</TableHead>
                     <TableHead>{t("meetings.table.notes")}</TableHead>
                     <TableHead className="text-center">{t("meetings.table.actions")}</TableHead>
@@ -220,8 +238,8 @@ function Meetings() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          {meeting.lawyer_name || "-"}
+                          <MapPin className="h-4 w-4 text-muted-foreground" />
+                          {meeting.address || "-"}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -251,6 +269,14 @@ function Meetings() {
                         </div>
                       </TableCell>
                       <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <Badge variant="secondary">
+                            {meeting.attendees_count || 0}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         {getStatusBadge(meeting.meet_result)}
                       </TableCell>
                       <TableCell className="max-w-xs">
@@ -260,7 +286,26 @@ function Meetings() {
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">
-                        
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleViewMeeting(meeting.id)}
+                            title={t("meetings.actions.view")}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <MeetingDocumentsModal 
+                            meetingId={meeting.id}
+                            meetingTitle={`${t("meetings.title")} - ${meeting.client_name} - ${formatDate(meeting.date)}`}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              title={t("meetings.actions.documents")}
+                            >
+                              <FileText className="h-4 w-4" />
+                            </Button>
+                          </MeetingDocumentsModal>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -339,6 +384,13 @@ function Meetings() {
         meetingId={selectedMeetingForDelete?.id}
         meetingTitle={selectedMeetingForDelete ? `Meeting with ${selectedMeetingForDelete.client_name || 'Client'} on ${formatDate(selectedMeetingForDelete.date)}` : ''}
         onSuccess={handleDeleteSuccess}
+      />
+
+      {/* View Meeting Dialog */}
+      <ViewMeetingDialog
+        isOpen={isViewModalOpen}
+        onClose={handleCloseViewModal}
+        meetingId={selectedMeetingForView}
       />
     </div>
   );

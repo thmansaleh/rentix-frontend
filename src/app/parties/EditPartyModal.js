@@ -65,7 +65,8 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
     nationality: "",
     branch_id: 1,
     consultation_type: "",
-    passport: ""
+    passport: "",
+    is_vip: false
   });
 
   // Fetch branches using SWR
@@ -96,7 +97,8 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
         nationality: partyData.nationality || "",
         branch_id: partyData.branch_id || 1,
         consultation_type: partyData.consultation_type || "",
-        passport: partyData.passport || ""
+        passport: partyData.passport || "",
+        is_vip: partyData.is_vip === 1 || partyData.is_vip === true || false
       });
       
       // Set existing documents if available
@@ -206,7 +208,8 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
       party_type: "",
       status: "active",
       nationality: "",
-      branch_id: 1
+      branch_id: 1,
+      is_vip: false
     });
     setPartyFiles([]);
     setExistingDocuments([]);
@@ -463,6 +466,26 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                     {formData.status === "active" 
                       ? (t('parties.active') || 'نشط')
                       : (t('parties.inactive') || 'غير نشط')
+                    }
+                  </Label>
+                </div>
+              </div>
+
+              {/* VIP Switch */}
+              <div className="space-y-2">
+                <Label htmlFor="is_vip">{t('parties.vipStatus') || 'عميل مميز (VIP)'}</Label>
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <Switch
+                    id="is_vip"
+                    checked={formData.is_vip}
+                    onCheckedChange={(checked) => 
+                      handleInputChange("is_vip", checked)
+                    }
+                  />
+                  <Label htmlFor="is_vip" className="cursor-pointer">
+                    {formData.is_vip 
+                      ? (t('parties.vip') || 'VIP')
+                      : (t('parties.regular') || 'عادي')
                     }
                   </Label>
                 </div>

@@ -22,7 +22,8 @@ import { cn } from "@/lib/utils"
 const AddDealModal = ({ 
   isOpen, 
   onClose, 
-  onSuccess 
+  onSuccess,
+  partyId 
 }) => {
   const { t } = useTranslations()
   const { language } = useLanguage()
@@ -35,7 +36,7 @@ const AddDealModal = ({
   const [searchResults, setSearchResults] = useState([])
   const [files, setFiles] = useState([])
   const [formData, setFormData] = useState({
-    client_id: '',
+    client_id: partyId || '',
     amount: '',
     type: 'normal',
     status: 'draft',
@@ -80,7 +81,7 @@ const AddDealModal = ({
   useEffect(() => {
     if (!isOpen) {
       setFormData({
-        client_id: '',
+        client_id: partyId || '',
         amount: '',
         type: 'normal',
         status: 'draft',
@@ -91,7 +92,7 @@ const AddDealModal = ({
       setSearchResults([])
       setFiles([])
     }
-  }, [isOpen, currentUser])
+  }, [isOpen, currentUser, partyId])
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -185,23 +186,25 @@ const AddDealModal = ({
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          {/* Client Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="client_id">
-              {isArabic ? 'العميل *' : 'Client *'}
-            </Label>
-            <SearchableCombobox
-              value={formData.client_id}
-              onValueChange={(value) => handleInputChange('client_id', value)}
-              onSearch={handlePartySearch}
-              options={clientOptions}
-              placeholder={isArabic ? 'ابحث عن عميل...' : 'Search for client...'}
-              searchPlaceholder={isArabic ? 'ابحث بالاسم أو الهاتف...' : 'Search by name or phone...'}
-              emptyMessage={isArabic ? 'لم يتم العثور على نتائج' : 'No results found'}
-              disabled={isLoading}
-              minSearchLength={3}
-            />
-          </div>
+          {/* Client Selection - Hidden when partyId is provided */}
+          {!partyId && (
+            <div className="space-y-2">
+              <Label htmlFor="client_id">
+                {isArabic ? 'العميل *' : 'Client *'}
+              </Label>
+              <SearchableCombobox
+                value={formData.client_id}
+                onValueChange={(value) => handleInputChange('client_id', value)}
+                onSearch={handlePartySearch}
+                options={clientOptions}
+                placeholder={isArabic ? 'ابحث عن عميل...' : 'Search for client...'}
+                searchPlaceholder={isArabic ? 'ابحث بالاسم أو الهاتف...' : 'Search by name or phone...'}
+                emptyMessage={isArabic ? 'لم يتم العثور على نتائج' : 'No results found'}
+                disabled={isLoading}
+                minSearchLength={3}
+              />
+            </div>
+          )}
 
           {/* Amount */}
           <div className="space-y-2">

@@ -1,13 +1,47 @@
-import { User, Eye, Shield, List, Edit } from 'lucide-react';
+import { User, Eye, Shield, List, Edit, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import PermissionsDialog from './PermissionsDialog';
 import EditEmployeeDialog from './edit/EditEmployeeDialog';
 import ActivityLogModal from './ActivityLogModal';
 import { useTranslations } from '@/hooks/useTranslations';
+import { deleteEmployee } from '@/app/services/api/employees';
+import { toast } from 'react-toastify';
+import { useState } from 'react';
 
 export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEmployeeUpdate }) {
   const { t } = useTranslations();
   const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteEmployee = async () => {
+    const confirmMessage = isArabic 
+      ? `هل أنت متأكد من حذف الموظف "${employee.name}"؟ سيتم حذف جميع الوثائق المرتبطة به.`
+      : `Are you sure you want to delete employee "${employee.name}"? All related documents will be deleted.`;
+    
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      const response = await deleteEmployee(employee.id);
+      
+      if (response.success) {
+        toast.success(isArabic ? 'تم حذف الموظف بنجاح' : 'Employee deleted successfully');
+        // Refresh the employee list
+        if (onEmployeeUpdate) {
+          onEmployeeUpdate();
+        }
+      } else {
+        toast.error(response.message || (isArabic ? 'حدث خطأ أثناء حذف الموظف' : 'Error deleting employee'));
+      }
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      toast.error(isArabic ? 'حدث خطأ أثناء حذف الموظف' : 'Error deleting employee');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
   
   return (
     <tr className="hover:bg-muted/50">
@@ -76,6 +110,14 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
             </div>
           }
         />
+        <button 
+          onClick={handleDeleteEmployee}
+          disabled={isDeleting}
+          className="p-2 rounded-full hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          title={t('employees.deleteEmployee') || (isArabic ? 'حذف الموظف' : 'Delete Employee')}
+        >
+          <Trash2 className={`w-5 h-5 ${isDeleting ? 'text-gray-400' : 'text-red-500 hover:text-red-700'}`} />
+        </button>
       </td>
       
     </tr>

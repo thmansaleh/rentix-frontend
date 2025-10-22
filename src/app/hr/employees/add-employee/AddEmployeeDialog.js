@@ -88,7 +88,7 @@ export default function AddEmployeeModal({ onAdd }) {
     const requiredFields = [
       { field: 'name', message: t('validation.nameRequired') || 'Name is required' },
       { field: 'username', message: t('validation.usernameRequired') || 'Username is required' },
-      { field: 'email', message: t('validation.emailRequired') || 'Email is required' },
+      // { field: 'email', message: t('validation.emailRequired') || 'Email is required' },
       { field: 'roleId', message: t('validation.roleRequired') || 'Role is required' },
       { field: 'departmentId', message: t('validation.departmentRequired') || 'Department is required' },
       { field: 'branchId', message: t('validation.branchRequired') || 'Branch is required' },
@@ -102,12 +102,12 @@ export default function AddEmployeeModal({ onAdd }) {
       }
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(form.email)) {
-      toast.error(t('validation.emailInvalid') || 'Please enter a valid email address');
-      return false;
-    }
+    // // Email validation
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(form.email)) {
+    //   toast.error(t('validation.emailInvalid') || 'Please enter a valid email address');
+    //   return false;
+    // }
 
     return true;
   };

@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Eye, Scale, Calendar, FileText, MoreHorizontal, Edit, Trash2, CheckSquare, Gavel, FileSearch, User, Printer } from 'lucide-react'
+import { Eye, Scale, Calendar, FileText, MoreHorizontal, Edit, Trash2, CheckSquare, Gavel, FileSearch, User, Printer, FileSpreadsheet } from 'lucide-react'
 import AddSessionModal from '@/app/cases/modals/AddSessionModal'
 import AddTaskModal from '@/app/cases/modals/AddTaskModal'
 import AddCaseDegreeModal from '@/app/cases/modals/AddCaseDegreeModal'
@@ -163,6 +163,56 @@ function Cases({ partyId }) {
     router.push(`/cases/${caseId}`)
   }
 
+  // Export to Excel function
+  const handleExportToExcel = () => {
+    // Dynamically import xlsx
+    import('xlsx').then((XLSX) => {
+      // Prepare data for export
+      const exportData = cases.map((case_) => ({
+        [t('caseForm.caseNumber') || 'رقم القضية']: case_.case_number || '',
+        [t('casesTable.fileNumber') || 'رقم الملف']: maskSensitiveData(case_.file_number, case_.is_secret),
+        [t('casesTable.topic') || 'الموضوع']: maskSensitiveData(case_.topic, case_.is_secret),
+        [t('casesTable.court') || 'المحكمة']: maskSensitiveData(
+          getLocalizedText(case_.court_ar, case_.court_en),
+          case_.is_secret
+        ),
+        [t('casesTable.caseType') || 'نوع القضية']: maskSensitiveData(
+          getLocalizedText(case_.case_type_ar, case_.case_type_en),
+          case_.is_secret
+        ),
+        [t('casesTable.classification') || 'التصنيف']: maskSensitiveData(
+          getLocalizedText(case_.case_classification_ar, case_.case_classification_en),
+          case_.is_secret
+        ),
+        [t('caseForm.startDate') || 'تاريخ البداية']: maskSensitiveData(formatDate(case_.start_date), case_.is_secret),
+        [t('casesTable.clientParties') || 'الموكلين']: case_.is_secret ? '***' : (case_.clientParties?.join(', ') || '-'),
+        [t('casesTable.opponentParties') || 'الخصوم']: case_.is_secret ? '***' : (case_.opponentParties?.join(', ') || '-'),
+        [t('casesTable.status') || 'الحالة']: case_.status || '',
+        [t('casesTable.sessionCount') || 'عدد الجلسات']: case_.session_count || 0,
+        [t('casesTable.lastSessionDate') || 'آخر جلسة']: case_.last_session_date ? formatDate(case_.last_session_date) : '-',
+        [t('caseToggles.isImportant') || 'مهمة']: case_.is_important === 1 ? (language === 'ar' ? 'نعم' : 'Yes') : (language === 'ar' ? 'لا' : 'No'),
+        [t('caseToggles.isSecret') || 'سرية']: case_.is_secret === 1 ? (language === 'ar' ? 'نعم' : 'Yes') : (language === 'ar' ? 'لا' : 'No'),
+        [t('caseToggles.isArchived') || 'مؤرشفة']: case_.is_archived === 1 ? (language === 'ar' ? 'نعم' : 'Yes') : (language === 'ar' ? 'لا' : 'No'),
+      }))
+
+      // Create worksheet
+      const worksheet = XLSX.utils.json_to_sheet(exportData)
+      
+      // Create workbook
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, language === 'ar' ? 'القضايا' : 'Cases')
+      
+      // Generate filename with current date
+      const currentDate = new Date().toISOString().split('T')[0]
+      const filename = `${language === 'ar' ? 'قضايا_الطرف' : 'Party_Cases'}_${currentDate}.xlsx`
+      
+      // Save file
+      XLSX.writeFile(workbook, filename)
+    }).catch((error) => {
+      console.error('Error loading xlsx library:', error)
+    })
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -190,10 +240,23 @@ function Cases({ partyId }) {
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Scale className="h-5 w-5" />
-            {t('partyTabs.cases') || 'القضايا'} ({cases.length})
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Scale className="h-5 w-5" />
+              {t('partyTabs.cases') || 'القضايا'} ({cases.length})
+            </CardTitle>
+            {cases.length > 0 && (
+              <Button 
+                onClick={handleExportToExcel}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <FileSpreadsheet className="h-4 w-4" />
+                {language === 'ar' ? 'تصدير إلى Excel' : 'Export to Excel'}
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           {cases.length === 0 ? (

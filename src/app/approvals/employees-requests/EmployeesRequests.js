@@ -70,7 +70,7 @@ function EmployeesRequests() {
     
     if (isAdmin) {
       // Admin: show requests where manager_approval is not 'approved' or 'rejected'
-      return requests.filter(req => req.manager_approval !== 'approved' && req.manager_approval !== 'rejected' && req.hr_approval === 'approved');
+      return requests.filter(req => req.manager_approval !== 'approved' && req.manager_approval !== 'rejected' );
     } else {
       // HR Department: show requests where hr_approval is pending
       const dept = language === 'ar' ? 'الموارد البشرية' : 'Human Resources';

@@ -1,24 +1,33 @@
 'use client'
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import useSWR from 'swr'
-import { getDocumentsByPartyId, deletePartyDocument } from '@/app/services/api/partiesDocuments'
+import { getDocumentsByPartyId, deletePartyDocument, uploadPartyDocuments } from '@/app/services/api/partiesDocuments'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { useTranslations } from '@/hooks/useTranslations'
-import { FileText, Download, Trash2, File, Calendar } from 'lucide-react'
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { FileText, Download, Trash2, Upload, X, Image, File, Loader2, Plus, Eye } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { cn } from '@/lib/utils'
+import { useTranslations } from '@/hooks/useTranslations'
 
 function Files({ partyId }) {
   const { t } = useTranslations()
+  const [selectedFiles, setSelectedFiles] = useState([])
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [documentToDelete, setDocumentToDelete] = useState(null)
+  const [deletingDocId, setDeletingDocId] = useState(null)
   
   const { data, error, isLoading, mutate } = useSWR(
     partyId ? [`/parties-documents/party/${partyId}`] : null,
@@ -28,18 +37,94 @@ function Files({ partyId }) {
     }
   )
 
-  const handleDelete = async (documentId) => {
-    if (!confirm(t('common.confirmDelete') || 'هل أنت متأكد من حذف هذا الملف؟')) {
+  const handleFileSelect = useCallback((files) => {
+    const filesArray = Array.from(files)
+    setSelectedFiles(prev => [...prev, ...filesArray])
+  }, [])
+
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault()
+    setIsDragOver(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e) => {
+    e.preventDefault()
+    setIsDragOver(false)
+  }, [])
+
+  const handleDrop = useCallback((e) => {
+    e.preventDefault()
+    setIsDragOver(false)
+    const droppedFiles = e.dataTransfer.files
+    handleFileSelect(droppedFiles)
+  }, [handleFileSelect])
+
+  const handleFileInputChange = useCallback((e) => {
+    const files = e.target.files
+    if (files.length > 0) {
+      handleFileSelect(files)
+    }
+  }, [handleFileSelect])
+
+  const removeFile = useCallback((index) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index))
+  }, [])
+
+  const handleUpload = async () => {
+    if (selectedFiles.length === 0) {
+      toast.error(t('files.noFilesSelected'))
       return
     }
 
     try {
-      await deletePartyDocument(documentId)
-      toast.success(t('common.deleteSuccess') || 'تم الحذف بنجاح')
+      setUploading(true)
+      const formData = new FormData()
+      formData.append('party_id', partyId)
+      
+      selectedFiles.forEach((file) => {
+        formData.append('files', file)
+      })
+
+      const response = await uploadPartyDocuments(formData)
+      
+      // Check if the response indicates success
+      if (response && response.success === false) {
+        toast.error(response.message || t('files.uploadError'))
+        return
+      }
+      
+      toast.success(t('files.uploadSuccess'))
+      setSelectedFiles([])
+      mutate()
+    } catch (error) {
+      console.error('Error uploading documents:', error)
+      const errorMessage = error.response?.data?.message || error.message || t('files.uploadError')
+      toast.error(errorMessage)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const openDeleteDialog = (document) => {
+    setDocumentToDelete(document)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDelete = async () => {
+    if (!documentToDelete) return
+
+    try {
+      setDeletingDocId(documentToDelete.id)
+      await deletePartyDocument(documentToDelete.id)
+      toast.success(t('common.deleteSuccess'))
+      setDeleteDialogOpen(false)
+      setDocumentToDelete(null)
       mutate()
     } catch (error) {
       console.error('Error deleting document:', error)
-      toast.error(t('common.deleteError') || 'حدث خطأ في الحذف')
+      toast.error(t('common.deleteError'))
+    } finally {
+      setDeletingDocId(null)
     }
   }
 
@@ -47,12 +132,43 @@ function Files({ partyId }) {
     window.open(fileUrl, '_blank')
   }
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '-'
+    return new Date(dateString).toLocaleDateString('ar-AE', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  const getFileIcon = (fileName) => {
+    const extension = fileName?.split('.').pop()?.toLowerCase()
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+      return <Image className="h-4 w-4 text-blue-500" />
+    }
+    if (extension === 'pdf') {
+      return <FileText className="h-4 w-4 text-red-500" />
+    }
+    return <File className="h-4 w-4 text-gray-500" />
+  }
+
+  const formatFileSize = (bytes) => {
+    if (!bytes) return '-'
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">{t('common.loading') || 'جاري التحميل...'}</p>
+          <p className="mt-4 text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     )
@@ -62,7 +178,7 @@ function Files({ partyId }) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
-          <p className="text-destructive">{t('common.error') || 'حدث خطأ في تحميل البيانات'}</p>
+          <p className="text-destructive">{t('common.errorLoading')}</p>
         </div>
       </div>
     )
@@ -70,95 +186,188 @@ function Files({ partyId }) {
 
   const documents = data?.data || []
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-'
-    return new Date(dateString).toLocaleDateString('ar-SA', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    })
-  }
-
-  const getFileTypeIcon = (fileType) => {
-    if (fileType?.includes('pdf')) return '📄'
-    if (fileType?.includes('image')) return '🖼️'
-    if (fileType?.includes('word')) return '📝'
-    return '📎'
-  }
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5" />
-          {t('partyTabs.files') || 'الملفات'} ({documents.length})
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {documents.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <File className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>{t('files.noFiles') || 'لا توجد ملفات'}</p>
+    <>
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              {t('partyTabs.documents')}
+              <Badge variant="secondary" className="text-xs">{documents.length}</Badge>
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <input
+                id="file-upload-input"
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleFileInputChange}
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              />
+              <Button
+                onClick={() => document.getElementById('file-upload-input')?.click()}
+                size="sm"
+                variant="outline"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                {t('common.add')}
+              </Button>
+            </div>
           </div>
-        ) : (
-          <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="text-right font-semibold">{t('files.fileName') || 'اسم الملف'}</TableHead>
-                  <TableHead className="text-right font-semibold">{t('files.fileType') || 'نوع الملف'}</TableHead>
-                  <TableHead className="text-right font-semibold">{t('files.description') || 'الوصف'}</TableHead>
-                  <TableHead className="text-right font-semibold">{t('files.uploadDate') || 'تاريخ الرفع'}</TableHead>
-                  <TableHead className="text-center font-semibold">{t('common.actions') || 'الإجراءات'}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {documents.map((doc) => (
-                  <TableRow key={doc.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <span>{getFileTypeIcon(doc.file_type)}</span>
-                        <span>{doc.file_name || '-'}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{doc.file_type || '-'}</Badge>
-                    </TableCell>
-                    <TableCell>{doc.description || '-'}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        {formatDate(doc.created_at)}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDownload(doc.file_url, doc.file_name)}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(doc.id)}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+        </CardHeader>
+        <CardContent className="pt-0">
+          {/* Selected Files for Upload */}
+          {selectedFiles.length > 0 && (
+            <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium text-blue-900">
+                  {selectedFiles.length} {t('files.filesSelected')}
+                </p>
+                <Button 
+                  onClick={handleUpload}
+                  disabled={uploading}
+                  size="sm"
+                  className="h-7"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      {t('files.uploading')}
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-3 w-3 mr-1" />
+                      {t('files.upload')}
+                    </>
+                  )}
+                </Button>
+              </div>
+              <div className="space-y-1">
+                {selectedFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-1.5 bg-white rounded text-xs"
+                  >
+                    <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                      {getFileIcon(file.name)}
+                      <span className="truncate">{file.name}</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-5 w-5 flex-shrink-0"
+                      onClick={() => removeFile(index)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Documents List */}
+          {documents.length === 0 ? (
+            <div className="text-center py-6 text-muted-foreground">
+              <File className="h-8 w-8 mx-auto mb-2 opacity-40" />
+              <p className="text-xs">{t('files.noDocuments')}</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {documents.map((doc) => (
+                <div
+                  key={doc.id}
+                  className="flex items-center justify-between p-2 border rounded-lg hover:bg-accent/50 transition-colors"
+                >
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      {getFileIcon(doc.file_name)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-xs truncate">{doc.document_name || doc.file_name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDate(doc.created_at)}
+                        {doc.uploaded_by_name && ` • ${doc.uploaded_by_name}`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-0.5 flex-shrink-0">
+                    {doc.document_url && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        onClick={() => handleDownload(doc.document_url, doc.document_name)}
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => openDeleteDialog(doc)}
+                      disabled={deletingDocId === doc.id}
+                    >
+                      {deletingDocId === doc.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('files.deleteDocument')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('files.confirmDeleteDocument')}
+              {documentToDelete && (
+                <div className="mt-2 p-2 bg-gray-50 rounded">
+                  <div className="flex items-center gap-2">
+                    {getFileIcon(documentToDelete.document_name)}
+                    <span className="text-sm font-medium text-gray-900 truncate">
+                      {documentToDelete.document_name || documentToDelete.file_name}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingDocId !== null}>
+              {t('common.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deletingDocId !== null}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deletingDocId !== null ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {t('common.deleting')}
+                </>
+              ) : (
+                t('common.delete')
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
 

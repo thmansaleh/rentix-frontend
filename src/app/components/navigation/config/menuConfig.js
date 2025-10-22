@@ -16,7 +16,8 @@ import {
   Phone,
   DollarSign,
   Banknote,
-  Clock
+  Clock,
+  Wallet
 } from 'lucide-react';
 
 export const getMenuItems = (t, userRole = null, userDepartment = null) => {
@@ -40,6 +41,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
       icon: LayoutDashboard,
       type: 'link'
     },
+
     // Cases Management - Only visible to admin or Legal departments (Litigation, Consultation, Legal Department)
     ...(hasLegalAccess ? [{
       id: 'casesManagement',
@@ -52,19 +54,19 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
         { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
       ]
     }] : []),
-    // Parties - Only visible to admin or Legal departments
+    // Clients Management - Only visible to admin or Legal departments
     ...(hasLegalAccess ? [{
-      id: 'parties',
-      label: t('navigation.parties'),
+      id: 'clientsManagement',
+      label: 'ادارة الموكلين',
       icon: Users,
-      type: 'link'
-    }] : []),
-    // Potential Clients - Only visible to admin or Legal departments
-    ...(hasLegalAccess ? [{
-      id: 'potential-clients',
-      label: t('navigation.potentialClients'),
-      icon: UserRoundPlus,
-      type: 'link'
+      type: 'category',
+      submenu: [
+        { id: 'parties', label: t('navigation.parties'), icon: Users },
+        { id: 'potential-clients', label: t('navigation.potentialClients'), icon: UserRoundPlus },
+        { id: 'meetings', label: 'المواعيد والاجتماعات', icon: Calendar },
+        { id: 'call-logs', label: 'سجل المكالمات', icon: Phone },
+        { id: 'goaml', label: t('navigation.goaml'), icon: Shield },
+      ]
     }] : []),
     {
       id: 'approvals',
@@ -95,26 +97,8 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
       type: 'category',
       submenu: [
         { id: 'finance/bank-accounts', label: 'الحسابات البنكية', icon: Banknote },
+        { id: 'finance/wallets', label: 'ارصدة الموكلين', icon: Wallet },
       ]
-    }] : []),
-    {
-      id: 'goaml',
-      label: t('navigation.goaml'),
-      icon: Shield,
-      type: 'link'
-    },
-    {
-      id: 'call-logs',
-      label: 'سجل المكالمات',
-      icon: Phone,
-      type: 'link'
-    },
-    // Logs Section - Only visible to admin
-    ...(hasLogsAccess ? [{
-      id: 'logs',
-      label: t('navigation.logs'),
-      icon: Clock,
-      type: 'link'
     }] : []),
     {
       id: 'settings',
@@ -123,6 +107,10 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
       type: 'category',
       submenu: [
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
+        // Logs - Only visible to admin
+        ...(hasLogsAccess ? [
+          { id: 'logs', label: t('navigation.logs'), icon: Clock }
+        ] : []),
       ]
     }
   ];

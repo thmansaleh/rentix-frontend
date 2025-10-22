@@ -84,10 +84,11 @@ function OtherLeave({ employeeId }) {
 
   const getLeaveReasonBadge = (leaveReason) => {
     const reasonConfig = {
-      maternity: { color: 'bg-pink-500', label: isArabic ? 'أمومة' : 'Maternity' },
-      paternity: { color: 'bg-blue-500', label: isArabic ? 'أبوة' : 'Paternity' },
-      study: { color: 'bg-purple-500', label: isArabic ? 'دراسية' : 'Study' },
-      emergency: { color: 'bg-orange-500', label: isArabic ? 'طارئة' : 'Emergency' }
+      maternity: { color: 'bg-pink-500', label: isArabic ? 'اجازة تفرغ لإداء الخدمة الوطنية' : 'National Service Leave' },
+      study: { color: 'bg-purple-500', label: isArabic ? 'اجازة دراسية' : 'Study Leave' },
+      paternity: { color: 'bg-blue-500', label: isArabic ? 'اجازة الحداد' : 'Paternity Leave' },
+      paternity: { color: 'bg-blue-500', label: isArabic ? 'اجازة الوضع' : 'Paternity Leave' },
+      emergency: { color: 'bg-orange-500', label: isArabic ? 'اجازة الحج والعمرة' : 'Hajj and Umrah Leave' }
     }
 
     const config = reasonConfig[leaveReason] || { color: 'bg-gray-500', label: leaveReason }
@@ -123,7 +124,7 @@ function OtherLeave({ employeeId }) {
             <div>
               <CardTitle>{isArabic ? 'إجازات أخرى' : 'Other Leaves'}</CardTitle>
               <CardDescription>
-                {isArabic ? 'إدارة الإجازات الأخرى للموظف (أمومة، أبوة، دراسية، طارئة)' : 'Manage other employee leaves (Maternity, Paternity, Study, Emergency)'}
+                {isArabic ? 'إدارة الإجازات الأخرى للموظف ' : 'Manage other employee leaves (Maternity, Paternity, Study, Emergency)'}
               </CardDescription>
             </div>
             <Button onClick={handleAddOtherLeave}>

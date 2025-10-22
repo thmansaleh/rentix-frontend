@@ -111,408 +111,420 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
   const branches = branchesData?.success ? branchesData.data : [];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-      <FormField label={t('employees.name')} required>
-        <Input 
-          name="name" 
-          placeholder={t('employees.name')} 
-          value={form.name} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-            {/* Employee Number */}
-      <FormField label={t('employees.employeeNumber')}>
-        <Input 
-          name="employeeNumber" 
-          placeholder={t('employees.employeeNumber')} 
-          value={form.employeeNumber} 
-          onChange={handleChange} 
-        />
-      </FormField>
-
-      <FormField label={t('employees.username')} required>
-        <Input 
-          name="username" 
-          placeholder={t('employees.username')} 
-          value={form.username} 
-          onChange={handleChange}
-          disabled
-        />
-      </FormField>
-      
-      {/* Password - Only visible for Admin */}
-      {isAdmin && (
-        <FormField label={t('employees.password') || 'كلمة المرور'}>
-          <Input 
-            name="password" 
-            type="password"
-            placeholder={t('employees.passwordPlaceholder') || 'كلمة المرور'} 
-            value={form.password || ''} 
-            onChange={handleChange} 
-          />
-        </FormField>
-      )}
-      
-      <FormField label={t('employees.email')} required>
-        <Input 
-          name="email" 
-          placeholder={t('employees.email')} 
-          value={form.email} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* Role Selector */}
-      <FormField label={t('employees.selectRole')} required>
-        <Select dir={isRTL ? "rtl" : "ltr"} value={form.roleId} onValueChange={value => setForm(f => ({ ...f, roleId: value }))}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder={t('employees.selectRole')} />
-          </SelectTrigger>
-          <SelectContent>
-            {rolesLoading ? (
-              <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
-            ) : rolesError ? (
-              <div className="p-2 text-center text-red-500">{t('common.error')}</div>
-            ) : (
-              roles
-                .filter((role) => role.role_en?.toLowerCase() !== 'admin' && role.role_ar?.toLowerCase() !== 'admin')
-                .map((role) => (
-                  <SelectItem key={role.id} value={role.id} className="cursor-pointer">
-                    {language === 'ar' ? role.role_ar : role.role_en}
-                  </SelectItem>
-                ))
-            )}
-          </SelectContent>
-        </Select>
-      </FormField>
-      
-      {/* Department Selector */}
-      <FormField label={t('employees.selectDepartment')} required>
-        <Select dir={isRTL ? "rtl" : "ltr"} value={form.departmentId} onValueChange={value => setForm(f => ({ ...f, departmentId: value }))}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder={t('employees.selectDepartment')} />
-          </SelectTrigger>
-          <SelectContent>
-            {departmentsLoading ? (
-              <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
-            ) : departmentsError ? (
-              <div className="p-2 text-center text-red-500">{t('common.error')}</div>
-            ) : (
-              departments.map((department) => (
-                <SelectItem key={department.id} value={department.id} className="cursor-pointer">
-                  {language === 'ar' ? department.name_ar : department.name_en}
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
-      </FormField>
-      
-      {/* Branch Selector */}
-      <FormField label={t('employees.selectBranch')} required>
-        <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId} onValueChange={value => setForm(f => ({ ...f, branchId: value }))}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder={t('employees.selectBranch')} />
-          </SelectTrigger>
-          <SelectContent>
-            {branchesLoading ? (
-              <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
-            ) : branchesError ? (
-              <div className="p-2 text-center text-red-500">{t('common.error')}</div>
-            ) : (
-              branches.map((branch) => (
-                <SelectItem key={branch.id} value={branch.id} className="cursor-pointer">
-                  {language === 'ar' ? branch.name_ar : branch.name_en}
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
-      </FormField>
-      
-   
-      
-      {/* Identity Number */}
-      <FormField label={t('employees.identityNumber')}>
-        <Input 
-          name="identityNumber" 
-          placeholder={t('employees.identityNumber')} 
-          value={form.identityNumber} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* Passport Number */}
-      <FormField label={t('employees.passportNumber')}>
-        <Input 
-          name="passportNumber" 
-          placeholder={t('employees.passportNumber')} 
-          value={form.passportNumber} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-
-      
-      {/* Basic Salary */}
-      <FormField label={t('employees.basicSalary')}>
-        <Input 
-          name="basicSalary" 
-          placeholder={t('employees.basicSalary')} 
-          type="number"
-          value={form.basicSalary} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* Phone Number */}
-      <FormField label={t('employees.phoneNumber')} required>
-        <Input 
-          name="phoneNumber" 
-          placeholder={t('employees.phoneNumber')} 
-          type="tel"
-          value={form.phoneNumber} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* Direct Manager Selector */}
-      <FormField label={t('employees.selectDirectManager')}>
-        <Select dir={isRTL ? "rtl" : "ltr"} value={form.directManagerId} onValueChange={value => setForm(f => ({ ...f, directManagerId: value }))}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder={t('employees.selectDirectManager')} />
-          </SelectTrigger>
-          <SelectContent>
-            {employeesLoading ? (
-              <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
-            ) : employeesError ? (
-              <div className="p-2 text-center text-red-500">{t('common.error')}</div>
-            ) : (
-              employees.map((employee) => (
-                <SelectItem key={employee.id} value={employee.id} className="cursor-pointer">
-                  {employee.name}
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
-      </FormField>
-      
-      {/* Identity Expiry Date */}
-      <FormField label={t('employees.identityExpiryDate')}>
-        <DatePickerField
-          name="identityExpiryDate"
-          placeholder={t('employees.identityExpiryDate')}
-          value={form.identityExpiryDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Passport Expiry Date */}
-      <FormField label={t('employees.passportExpiryDate')}>
-        <DatePickerField
-          name="passportExpiryDate"
-          placeholder={t('employees.passportExpiryDate')}
-          value={form.passportExpiryDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Residence Expiry Date */}
-      <FormField label={t('employees.residenceExpiryDate')}>
-        <DatePickerField
-          name="residenceExpiryDate"
-          placeholder={t('employees.residenceExpiryDate')}
-          value={form.residenceExpiryDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Insurance Expiry Date */}
-      <FormField label={t('employees.insuranceExpiryDate')}>
-        <DatePickerField
-          name="insuranceExpiryDate"
-          placeholder={t('employees.insuranceExpiryDate')}
-          value={form.insuranceExpiryDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Contract Expiry Date */}
-      <FormField label={t('employees.contractExpiryDate')}>
-        <DatePickerField
-          name="contractExpiryDate"
-          placeholder={t('employees.contractExpiryDate')}
-          value={form.contractExpiryDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Work Permit Expiry Date */}
-      <FormField label={t('employees.workPermitExpiryDate')}>
-        <DatePickerField
-          name="workPermitExpiryDate"
-          placeholder={t('employees.workPermitExpiryDate')}
-          value={form.workPermitExpiryDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Registration Expiration Date */}
-      <FormField label="انتهاء صلاحية مخامي/مندوب">
-        <DatePickerField
-          name="registrationExpirationDate"
-          placeholder="انتهاء صلاحية مخامي/مندوب"
-          value={form.registrationExpirationDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Contract Type */}
-      <FormField label={t('employees.contractType') || 'نوع العقد'}>
-        <Select dir={isRTL ? "rtl" : "ltr"} value={form.contractType} onValueChange={value => setForm(f => ({ ...f, contractType: value }))}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder={t('employees.contractType') || 'نوع العقد'} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="كامل" className="cursor-pointer">كامل</SelectItem>
-            <SelectItem value="جزئي" className="cursor-pointer">جزئي</SelectItem>
-          </SelectContent>
-        </Select>
-      </FormField>
-      
-      {/* Pay Type */}
-      <FormField label={t('employees.payType') || 'طريقة الدفع'}>
-        <Select dir={isRTL ? "rtl" : "ltr"} value={form.payType} onValueChange={value => setForm(f => ({ ...f, payType: value }))}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder={t('employees.payType') || 'طريقة الدفع'} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="كاش" className="cursor-pointer">كاش</SelectItem>
-            <SelectItem value="تحويل بنكي" className="cursor-pointer">تحويل بنكي</SelectItem>
-            <SelectItem value="شيك" className="cursor-pointer">شيك</SelectItem>
-            <SelectItem value="wps" className="cursor-pointer">WPS</SelectItem>
-          </SelectContent>
-        </Select>
-      </FormField>
-      
-      {/* First Day of Work */}
-      <FormField label={t('employees.firstDayOfWork') || 'أول يوم عمل'}>
-        <DatePickerField
-          name="firstDayOfWork"
-          placeholder={t('employees.firstDayOfWork') || 'أول يوم عمل'}
-          value={form.firstDayOfWork}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Account Activation Date */}
-      <FormField label={t('employees.accountActivationDate') || 'تاريخ تفعيل الحساب'}>
-        <DatePickerField
-          name="accountActivationDate"
-          placeholder={t('employees.accountActivationDate') || 'تاريخ تفعيل الحساب'}
-          value={form.accountActivationDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Account Close Date */}
-      <FormField label={t('employees.accountCloseDate') || 'تاريخ إغلاق الحساب'}>
-        <DatePickerField
-          name="accountCloseDate"
-          placeholder={t('employees.accountCloseDate') || 'تاريخ إغلاق الحساب'}
-          value={form.accountCloseDate}
-          onChange={handleChange}
-          isRTL={isRTL}
-        />
-      </FormField>
-      
-      {/* Housing Allowance */}
-      <FormField label={t('employees.housingAllowance') || 'بدل السكن'}>
-        <Input 
-          name="housingAllowance" 
-          placeholder={t('employees.housingAllowance') || 'بدل السكن'} 
-          type="number"
-          value={form.housingAllowance} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* Transportation Allowance */}
-      <FormField label={t('employees.transportationAllowance') || 'بدل المواصلات'}>
-        <Input 
-          name="transportationAllowance" 
-          placeholder={t('employees.transportationAllowance') || 'بدل المواصلات'} 
-          type="number"
-          value={form.transportationAllowance} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* Another Allowance */}
-      <FormField label={t('employees.anotherAllowance') || 'بدل آخر'}>
-        <Input 
-          name="anotherAllowance" 
-          placeholder={t('employees.anotherAllowance') || 'بدل آخر'} 
-          type="number"
-          value={form.anotherAllowance} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* Bank Name */}
-      <FormField label={t('employees.bankName') || 'اسم البنك'}>
-        <Input 
-          name="bankName" 
-          placeholder={t('employees.bankName') || 'اسم البنك'} 
-          value={form.bankName} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* Account Number */}
-      <FormField label={t('employees.accountNumber') || 'رقم الحساب'}>
-        <Input 
-          name="accountNumber" 
-          placeholder={t('employees.accountNumber') || 'رقم الحساب'} 
-          value={form.accountNumber} 
-          onChange={handleChange} 
-        />
-      </FormField>
-      
-      {/* IBAN */}
-      <FormField label={t('employees.iban') || 'رقم الآيبان'}>
-        <Input 
-          name="iban" 
-          placeholder={t('employees.iban') || 'رقم الآيبان'} 
-          value={form.iban} 
-          onChange={handleChange} 
-        />
-      </FormField>
-           {/* Status Switcher - Only visible for Admin */}
-      {isAdmin && (
-        <FormField label={t('employees.status') || 'حالة الموظف'}>
-          <div className="flex items-center space-x-2 rtl:space-x-reverse h-10">
-            <Switch
-              checked={form.status === 'active'}
-              onCheckedChange={(checked) => setForm(f => ({ ...f, status: checked ? 'active' : 'inactive' }))}
+    <div className="space-y-8">
+      {/* Basic Information Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">المعلومات الأساسية</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <FormField label={t('employees.name')} required>
+            <Input 
+              name="name" 
+              placeholder={t('employees.name')} 
+              value={form.name} 
+              onChange={handleChange} 
             />
-            <Label className="text-sm">
-              {form.status === 'active' ? (t('employees.active') || 'نشط') : (t('employees.inactive') || 'غير نشط')}
-            </Label>
-          </div>
-        </FormField>
-      )}
+          </FormField>
+          
+          <FormField label={t('employees.employeeNumber')}>
+            <Input 
+              name="employeeNumber" 
+              placeholder={t('employees.employeeNumber')} 
+              value={form.employeeNumber} 
+              onChange={handleChange} 
+            />
+          </FormField>
+
+          <FormField label={t('employees.username')} required>
+            <Input 
+              name="username" 
+              placeholder={t('employees.username')} 
+              value={form.username} 
+              onChange={handleChange}
+              disabled
+            />
+          </FormField>
+          
+          {/* Password - Only visible for Admin */}
+          {isAdmin && (
+            <FormField label={t('employees.password') || 'كلمة المرور'}>
+              <Input 
+                name="password" 
+                type="password"
+                placeholder={t('employees.passwordPlaceholder') || 'كلمة المرور'} 
+                value={form.password || ''} 
+                onChange={handleChange} 
+              />
+            </FormField>
+          )}
+          
+          <FormField label={t('employees.email')} >
+            <Input 
+              name="email" 
+              placeholder={t('employees.email')} 
+              value={form.email} 
+              onChange={handleChange} 
+            />
+          </FormField>
+          
+          <FormField label={t('employees.phoneNumber')} required>
+            <Input 
+              name="phoneNumber" 
+              placeholder={t('employees.phoneNumber')} 
+              type="tel"
+              value={form.phoneNumber} 
+              onChange={handleChange} 
+            />
+          </FormField>
+        </div>
+      </div>
+
+      {/* Organizational Information Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">المعلومات التنظيمية</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <FormField label={t('employees.selectRole')} required>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.roleId} onValueChange={value => setForm(f => ({ ...f, roleId: value }))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('employees.selectRole')} />
+              </SelectTrigger>
+              <SelectContent>
+                {rolesLoading ? (
+                  <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
+                ) : rolesError ? (
+                  <div className="p-2 text-center text-red-500">{t('common.error')}</div>
+                ) : (
+                  roles
+                    .filter((role) => role.role_en?.toLowerCase() !== 'admin' && role.role_ar?.toLowerCase() !== 'admin')
+                    .map((role) => (
+                      <SelectItem key={role.id} value={role.id} className="cursor-pointer">
+                        {language === 'ar' ? role.role_ar : role.role_en}
+                      </SelectItem>
+                    ))
+                )}
+              </SelectContent>
+            </Select>
+          </FormField>
+          
+          <FormField label={t('employees.selectDepartment')} required>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.departmentId} onValueChange={value => setForm(f => ({ ...f, departmentId: value }))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('employees.selectDepartment')} />
+              </SelectTrigger>
+              <SelectContent>
+                {departmentsLoading ? (
+                  <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
+                ) : departmentsError ? (
+                  <div className="p-2 text-center text-red-500">{t('common.error')}</div>
+                ) : (
+                  departments.map((department) => (
+                    <SelectItem key={department.id} value={department.id} className="cursor-pointer">
+                      {language === 'ar' ? department.name_ar : department.name_en}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </FormField>
+          
+          <FormField label={t('employees.selectBranch')} required>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId} onValueChange={value => setForm(f => ({ ...f, branchId: value }))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('employees.selectBranch')} />
+              </SelectTrigger>
+              <SelectContent>
+                {branchesLoading ? (
+                  <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
+                ) : branchesError ? (
+                  <div className="p-2 text-center text-red-500">{t('common.error')}</div>
+                ) : (
+                  branches.map((branch) => (
+                    <SelectItem key={branch.id} value={branch.id} className="cursor-pointer">
+                      {language === 'ar' ? branch.name_ar : branch.name_en}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </FormField>
+          
+          <FormField label={t('employees.selectDirectManager')}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.directManagerId} onValueChange={value => setForm(f => ({ ...f, directManagerId: value }))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('employees.selectDirectManager')} />
+              </SelectTrigger>
+              <SelectContent>
+                {employeesLoading ? (
+                  <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
+                ) : employeesError ? (
+                  <div className="p-2 text-center text-red-500">{t('common.error')}</div>
+                ) : (
+                  employees.map((employee) => (
+                    <SelectItem key={employee.id} value={employee.id} className="cursor-pointer">
+                      {employee.name}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </FormField>
+        </div>
+      </div>
+
+      {/* Employment Details Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">تفاصيل التوظيف</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <FormField label={t('employees.contractType') || 'نوع العقد'}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.contractType} onValueChange={value => setForm(f => ({ ...f, contractType: value }))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('employees.contractType') || 'نوع العقد'} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="كامل" className="cursor-pointer">كامل</SelectItem>
+                <SelectItem value="جزئي" className="cursor-pointer">جزئي</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormField>
+          
+          <FormField label={t('employees.payType') || 'طريقة الدفع'}>
+            <Select dir={isRTL ? "rtl" : "ltr"} value={form.payType} onValueChange={value => setForm(f => ({ ...f, payType: value }))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('employees.payType') || 'طريقة الدفع'} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="كاش" className="cursor-pointer">كاش</SelectItem>
+                <SelectItem value="تحويل بنكي" className="cursor-pointer">تحويل بنكي</SelectItem>
+                <SelectItem value="شيك" className="cursor-pointer">شيك</SelectItem>
+                <SelectItem value="wps" className="cursor-pointer">WPS</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormField>
+          
+          <FormField label={t('employees.firstDayOfWork') || 'أول يوم عمل'}>
+            <DatePickerField
+              name="firstDayOfWork"
+              placeholder={t('employees.firstDayOfWork') || 'أول يوم عمل'}
+              value={form.firstDayOfWork}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+          
+          <FormField label={t('employees.accountActivationDate') || 'تاريخ تفعيل الحساب'}>
+            <DatePickerField
+              name="accountActivationDate"
+              placeholder={t('employees.accountActivationDate') || 'تاريخ تفعيل الحساب'}
+              value={form.accountActivationDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+          
+          <FormField label={t('employees.accountCloseDate') || 'تاريخ إغلاق الحساب'}>
+            <DatePickerField
+              name="accountCloseDate"
+              placeholder={t('employees.accountCloseDate') || 'تاريخ إغلاق الحساب'}
+              value={form.accountCloseDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+
+          {/* Status Switcher - Only visible for Admin */}
+          {isAdmin && (
+            <FormField label={t('employees.status') || 'حالة الموظف'}>
+              <div className="flex items-center space-x-2 rtl:space-x-reverse h-10">
+                <Switch
+                  checked={form.status === 'active'}
+                  onCheckedChange={(checked) => setForm(f => ({ ...f, status: checked ? 'active' : 'inactive' }))}
+                />
+                <Label className="text-sm">
+                  {form.status === 'active' ? (t('employees.active') || 'نشط') : (t('employees.inactive') || 'غير نشط')}
+                </Label>
+              </div>
+            </FormField>
+          )}
+        </div>
+      </div>
+
+      {/* Financial Information Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">المعلومات المالية</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <FormField label={t('employees.basicSalary')}>
+            <Input 
+              name="basicSalary" 
+              placeholder={t('employees.basicSalary')} 
+              type="number"
+              value={form.basicSalary} 
+              onChange={handleChange} 
+            />
+          </FormField>
+          
+          <FormField label={t('employees.housingAllowance') || 'بدل السكن'}>
+            <Input 
+              name="housingAllowance" 
+              placeholder={t('employees.housingAllowance') || 'بدل السكن'} 
+              type="number"
+              value={form.housingAllowance} 
+              onChange={handleChange} 
+            />
+          </FormField>
+          
+          <FormField label={t('employees.transportationAllowance') || 'بدل المواصلات'}>
+            <Input 
+              name="transportationAllowance" 
+              placeholder={t('employees.transportationAllowance') || 'بدل المواصلات'} 
+              type="number"
+              value={form.transportationAllowance} 
+              onChange={handleChange} 
+            />
+          </FormField>
+          
+          <FormField label={t('employees.anotherAllowance') || 'بدل آخر'}>
+            <Input 
+              name="anotherAllowance" 
+              placeholder={t('employees.anotherAllowance') || 'بدل آخر'} 
+              type="number"
+              value={form.anotherAllowance} 
+              onChange={handleChange} 
+            />
+          </FormField>
+        </div>
+      </div>
+
+      {/* Bank Information Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">المعلومات البنكية</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <FormField label={t('employees.bankName') || 'اسم البنك'}>
+            <Input 
+              name="bankName" 
+              placeholder={t('employees.bankName') || 'اسم البنك'} 
+              value={form.bankName} 
+              onChange={handleChange} 
+            />
+          </FormField>
+          
+          <FormField label={t('employees.accountNumber') || 'رقم الحساب'}>
+            <Input 
+              name="accountNumber" 
+              placeholder={t('employees.accountNumber') || 'رقم الحساب'} 
+              value={form.accountNumber} 
+              onChange={handleChange} 
+            />
+          </FormField>
+          
+          <FormField label={t('employees.iban') || 'رقم الآيبان'}>
+            <Input 
+              name="iban" 
+              placeholder={t('employees.iban') || 'رقم الآيبان'} 
+              value={form.iban} 
+              onChange={handleChange} 
+            />
+          </FormField>
+        </div>
+      </div>
+
+      {/* Document Information Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">معلومات الوثائق</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <FormField label={t('employees.identityNumber')}>
+            <Input 
+              name="identityNumber" 
+              placeholder={t('employees.identityNumber')} 
+              value={form.identityNumber} 
+              onChange={handleChange} 
+            />
+          </FormField>
+          
+          <FormField label={t('employees.passportNumber')}>
+            <Input 
+              name="passportNumber" 
+              placeholder={t('employees.passportNumber')} 
+              value={form.passportNumber} 
+              onChange={handleChange} 
+            />
+          </FormField>
+        </div>
+      </div>
+
+      {/* Expiry Dates Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">تواريخ انتهاء الصلاحية</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <FormField label={t('employees.identityExpiryDate')}>
+            <DatePickerField
+              name="identityExpiryDate"
+              placeholder={t('employees.identityExpiryDate')}
+              value={form.identityExpiryDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+          
+          <FormField label={t('employees.passportExpiryDate')}>
+            <DatePickerField
+              name="passportExpiryDate"
+              placeholder={t('employees.passportExpiryDate')}
+              value={form.passportExpiryDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+          
+          <FormField label={t('employees.residenceExpiryDate')}>
+            <DatePickerField
+              name="residenceExpiryDate"
+              placeholder={t('employees.residenceExpiryDate')}
+              value={form.residenceExpiryDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+          
+          <FormField label={t('employees.insuranceExpiryDate')}>
+            <DatePickerField
+              name="insuranceExpiryDate"
+              placeholder={t('employees.insuranceExpiryDate')}
+              value={form.insuranceExpiryDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+          
+          <FormField label={t('employees.contractExpiryDate')}>
+            <DatePickerField
+              name="contractExpiryDate"
+              placeholder={t('employees.contractExpiryDate')}
+              value={form.contractExpiryDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+          
+          <FormField label={t('employees.workPermitExpiryDate')}>
+            <DatePickerField
+              name="workPermitExpiryDate"
+              placeholder={t('employees.workPermitExpiryDate')}
+              value={form.workPermitExpiryDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+
+          <FormField label="انتهاء صلاحية محامي/مندوب">
+            <DatePickerField
+              name="registrationExpirationDate"
+              placeholder="انتهاء صلاحية محامي/مندوب"
+              value={form.registrationExpirationDate}
+              onChange={handleChange}
+              isRTL={isRTL}
+            />
+          </FormField>
+        </div>
+      </div>
     </div>
   );
 }

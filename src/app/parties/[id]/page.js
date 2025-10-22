@@ -20,7 +20,7 @@ function PartyDetailsPage() {
   const tabs = [
     { label: t('partyTabs.info') || t('common.info') || 'معلومات', value: "info", Component: <Info partyId={id} /> },
     { label: t('partyTabs.cases') || t('common.cases') || 'القضايا', value: "cases", Component: <Cases partyId={id} /> },
-    { label: t('partyTabs.files') || t('common.files') || 'الملفات', value: "files", Component: <Files partyId={id} /> },
+    { label: t('partyTabs.documents') || t('common.documents') || 'المستندات', value: "files", Component: <Files partyId={id} /> },
     { label: t('partyTabs.orders') || t('common.orders') || 'الطلبات', value: "orders", Component: <Orders partyId={id} /> },
     { label: t('partyTabs.meetings') || t('common.meetings') || 'الاجتماعات', value: "meetings", Component: <Meetings partyId={id} /> },
     { label: t('partyTabs.deals') || t('common.deals') || 'الصفقات', value: "deals", Component: <Deals partyId={id} /> },

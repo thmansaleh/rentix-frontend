@@ -38,14 +38,13 @@ const ReviewModal = ({
   const [selectedFiles, setSelectedFiles] = useState([])
   const [existingDocuments, setExistingDocuments] = useState([])
 
-  // Review type options
+
   const reviewTypeOptions = [
     { value: 'annual', label: isArabic ? 'سنوي' : 'Annual' },
-    { value: 'probation', label: isArabic ? 'فترة تجريبية' : 'Probation' },
-    { value: 'mid-year', label: isArabic ? 'منتصف العام' : 'Mid-Year' },
+    { value: 'probation', label: isArabic ? 'شهري' : 'Monthly' },
     { value: 'quarterly', label: isArabic ? 'ربع سنوي' : 'Quarterly' },
-    { value: 'performance', label: isArabic ? 'أداء' : 'Performance' },
-    { value: 'disciplinary', label: isArabic ? 'تأديبي' : 'Disciplinary' }
+    { value: 'performance', label: isArabic ? 'رفع الأداء' : 'Performance' },
+    { value: 'disciplinary', label: isArabic ? 'ذاتي' : 'Self' }
   ]
 
   // Populate form when editing

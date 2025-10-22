@@ -30,11 +30,30 @@ const deleteMeeting = async (meetingId) => {
   return response.data;
 };
 
+// Meeting Documents API
+const getMeetingDocuments = async (meetingId) => {
+  const response = await api.get(`/meetings/${meetingId}/documents`);
+  return response.data;
+};
+
+const addMeetingDocuments = async (meetingId, documents) => {
+  const response = await api.post(`/meetings/${meetingId}/documents`, { documents });
+  return response.data;
+};
+
+const deleteMeetingDocument = async (documentId) => {
+  const response = await api.delete(`/meetings/documents/${documentId}`);
+  return response.data;
+};
+
 export default {
   getMeetings,
   getMeetingById,
   getMeetingsByPartyId,
   createMeeting,
   updateMeeting,
-  deleteMeeting
+  deleteMeeting,
+  getMeetingDocuments,
+  addMeetingDocuments,
+  deleteMeetingDocument
 };
