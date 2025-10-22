@@ -90,16 +90,16 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
       ]
     }] : []),
     // Finance Section - Only visible to admin or Accountant
-    ...(hasFinanceAccess ? [{
-      id: 'finance',
-      label: 'المالية',
-      icon: DollarSign,
-      type: 'category',
-      submenu: [
-        { id: 'finance/bank-accounts', label: 'الحسابات البنكية', icon: Banknote },
-        { id: 'finance/wallets', label: 'ارصدة الموكلين', icon: Wallet },
-      ]
-    }] : []),
+    // ...(hasFinanceAccess ? [{
+    //   id: 'finance',
+    //   label: 'المالية',
+    //   icon: DollarSign,
+    //   type: 'category',
+    //   submenu: [
+    //     { id: 'finance/bank-accounts', label: 'الحسابات البنكية', icon: Banknote },
+    //     { id: 'finance/wallets', label: 'ارصدة الموكلين', icon: Wallet },
+    //   ]
+    // }] : []),
     {
       id: 'settings',
       label: t('navigation.settings'),
