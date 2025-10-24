@@ -20,10 +20,11 @@ import {
   Wallet,
   List,
   BarChartIcon,
-  Users2
+  Users2,
+  Building2
 } from 'lucide-react';
 
-export const getMenuItems = (t, userRole = null, userDepartment = null) => {
+export const getMenuItems = (t, userRole = null, userDepartment = null, permissions = []) => {
   // Check if user has access to HR section (admin or HR Officer)
   const hasHRAccess = userRole === 'admin' || userRole === 'HR Officer';
   
@@ -36,6 +37,16 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
   // Check if user has access to Legal sections (admin or specific departments)
   const legalDepartments = ['Litigation', 'Consultation', 'Legal Department'];
   const hasLegalAccess = userRole === 'admin' || legalDepartments.includes(userDepartment);
+  
+  // Helper function to check permissions
+  const hasPermission = (permissionName) => {
+    if (userRole === 'admin') return true;
+    return permissions.some(
+      permission => 
+        permission.permission_ar === permissionName || 
+        permission.permission_en === permissionName
+    );
+  };
 
   const menuItems = [
     {
@@ -53,7 +64,9 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
       type: 'category',
       submenu: [
         { id: 'cases', label: t('navigation.cases'), icon: Scale },
-        { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus },
+        ...(hasPermission('Add Case') ? [
+          { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus }
+        ] : []),
         { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
       ]
     }] : []),
@@ -114,6 +127,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
       type: 'category',
       submenu: [
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
+        { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
         // Logs - Only visible to admin
         ...(hasLogsAccess ? [
           { id: 'logs', label: t('navigation.logs'), icon: Clock }

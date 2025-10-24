@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { usePermission } from '@/hooks/usePermission';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,10 @@ import useSWR from 'swr';
 
 function InvoicesPage() {
   const { isRTL, language } = useLanguage();
+  const { hasPermission: canAdd } = usePermission('Add Invoice');
+  const { hasPermission: canEdit } = usePermission('Edit Invoice');
+  const { hasPermission: canDelete } = usePermission('Delete Invoice');
+  const { hasPermission: canView } = usePermission('View Invoice');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -158,13 +163,15 @@ function InvoicesPage() {
                   exportName="invoices"
                   sheetName={language === 'ar' ? 'الفواتير' : 'Invoices'}
                 />
-                <Button 
-                  onClick={() => setShowAddModal(true)}
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  إضافة فاتورة جديدة
-                </Button>
+                {canAdd && (
+                  <Button 
+                    onClick={() => setShowAddModal(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    إضافة فاتورة جديدة
+                  </Button>
+                )}
               </div>
             </div>
           </CardHeader>
@@ -177,9 +184,11 @@ function InvoicesPage() {
             ) : invoices.length === 0 ? (
               <div className="text-center p-8">
                 <p className="text-gray-500 mb-4">لا توجد فواتير مضافة</p>
-                <Button onClick={() => setShowAddModal(true)}>
-                  إضافة فاتورة جديدة
-                </Button>
+                {canAdd && (
+                  <Button onClick={() => setShowAddModal(true)}>
+                    إضافة فاتورة جديدة
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -226,14 +235,16 @@ function InvoicesPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleView(invoice.id)}
-                              title="عرض"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
+                            {canView && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleView(invoice.id)}
+                                title="عرض"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="outline"
                               size="sm"
@@ -242,22 +253,26 @@ function InvoicesPage() {
                             >
                               <Printer className="h-4 w-4 text-blue-600" />
                             </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(invoice.id)}
-                              title="تعديل"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDelete(invoice.id)}
-                              title="حذف"
-                            >
-                              <Trash2 className="h-4 w-4 text-red-600" />
-                            </Button>
+                            {canEdit && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEdit(invoice.id)}
+                                title="تعديل"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {canDelete && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDelete(invoice.id)}
+                                title="حذف"
+                              >
+                                <Trash2 className="h-4 w-4 text-red-600" />
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>

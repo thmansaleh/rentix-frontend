@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePermission } from "@/hooks/useAuth";
 import useSWR from "swr";
 import { getAllSessions } from "@/app/services/api/sessions";
 import {
@@ -32,6 +33,8 @@ export default function SessionsPage() {
   const { t } = useTranslations();
   const { language } = useLanguage();
   const isRtl = language === "ar";
+  const { hasPermission: canEditSession } = usePermission('Edit Session');
+  const { hasPermission: canDeleteSession } = usePermission('Delete Session');
   
   // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -289,20 +292,24 @@ export default function SessionsPage() {
                               <Eye className="mr-2 h-4 w-4" />
                               <span>{isRtl ? "عرض" : "View"}</span>
                             </DropdownMenuItem> */}
-                            <DropdownMenuItem
-                              onClick={() => handleEdit(session)}
-                              className="cursor-pointer"
-                            >
-                              <Edit className="mr-2 h-4 w-4" />
-                              <span>{isRtl ? "تعديل" : "Edit"}</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDelete(session)}
-                              className="cursor-pointer text-red-600"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              <span>{isRtl ? "حذف" : "Delete"}</span>
-                            </DropdownMenuItem>
+                            {canEditSession && (
+                              <DropdownMenuItem
+                                onClick={() => handleEdit(session)}
+                                className="cursor-pointer"
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>{isRtl ? "تعديل" : "Edit"}</span>
+                              </DropdownMenuItem>
+                            )}
+                            {canDeleteSession && (
+                              <DropdownMenuItem
+                                onClick={() => handleDelete(session)}
+                                className="cursor-pointer text-red-600"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                <span>{isRtl ? "حذف" : "Delete"}</span>
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

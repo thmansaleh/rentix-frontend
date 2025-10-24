@@ -58,7 +58,7 @@ const department = useSelector(s => s.auth.departmentEn);
     return { hasPermission: true, role, department};
   }
 
-  return {  hasPermission, role, department};
+  return {  permissions, hasPermission, role, department};
 };
 
 /**

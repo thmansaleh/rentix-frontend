@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import useSWR from 'swr'
 import { getCaseSessions, deleteSession } from '@/app/services/api/sessions'
 import { useTranslations } from '@/hooks/useTranslations'
+import { usePermission } from '@/hooks/useAuth'
 import { format } from 'date-fns'
 import {
   Table,
@@ -22,6 +23,10 @@ import DeleteSessionDialog from '@/app/cases/sessions/DeleteSessionDialog'
 
 function Sessions({ caseId }) {
   const { t } = useTranslations()
+  const { hasPermission: canAddSession } = usePermission('Add Session')
+  const { hasPermission: canEditSession } = usePermission('Edit Session')
+  const { hasPermission: canDeleteSession } = usePermission('Delete Session')
+  
   const [isAddSessionModalOpen, setIsAddSessionModalOpen] = useState(false)
   const [editingSessionId, setEditingSessionId] = useState(null)
   const [deletingSession, setDeletingSession] = useState(null)
@@ -103,10 +108,12 @@ function Sessions({ caseId }) {
             <Calendar className="h-5 w-5" />
             <CardTitle>{t('sessions.caseSessions')}</CardTitle>
           </div>
-          <Button size="sm" className="gap-2" onClick={() => setIsAddSessionModalOpen(true)}>
-            <Plus className="h-4 w-4" />
-            {t('sessions.addSession')}
-          </Button>
+          {canAddSession && (
+            <Button size="sm" className="gap-2" onClick={() => setIsAddSessionModalOpen(true)}>
+              <Plus className="h-4 w-4" />
+              {t('sessions.addSession')}
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -119,10 +126,12 @@ function Sessions({ caseId }) {
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-gray-500">{t('sessions.noSessions')}</p>
-            <Button variant="outline" className="mt-4 gap-2" onClick={() => setIsAddSessionModalOpen(true)}>
-              <Plus className="h-4 w-4" />
-              {t('sessions.addFirstSession')}
-            </Button>
+            {canAddSession && (
+              <Button variant="outline" className="mt-4 gap-2" onClick={() => setIsAddSessionModalOpen(true)}>
+                <Plus className="h-4 w-4" />
+                {t('sessions.addFirstSession')}
+              </Button>
+            )}
           </div>
         ) : (
           <Table>
@@ -184,17 +193,21 @@ function Sessions({ caseId }) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => setEditingSessionId(session.id)}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => setDeletingSession(session)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {canEditSession && (
+                        <Button variant="ghost" size="sm" onClick={() => setEditingSessionId(session.id)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {canDeleteSession && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setDeletingSession(session)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

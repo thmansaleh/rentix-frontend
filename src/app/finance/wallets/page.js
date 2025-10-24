@@ -3,6 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { getWallets, deleteWallet } from "../../services/api/wallets";
+import { usePermission } from "@/hooks/usePermission";
 
 import { WalletsFilterNew } from "./WalletsFilterNew";
 import {
@@ -46,6 +47,10 @@ import {
 function WalletsPage() {
   const { t } = useTranslations();
   const { language } = useLanguage();
+  const { hasPermission: canAdd } = usePermission('Add Payment');
+  const { hasPermission: canEdit } = usePermission('Edit Wallet');
+  const { hasPermission: canDelete } = usePermission('Delete Wallet');
+  const { hasPermission: canView } = usePermission('View Wallet');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState(null);
@@ -205,10 +210,12 @@ function WalletsPage() {
                 {t('wallets.title')}
               </CardTitle>
             </div>
-            <Button onClick={handleAddNew} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              {t('wallets.addNewWallet')}
-            </Button>
+            {canAdd && (
+              <Button onClick={handleAddNew} className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                {t('wallets.addNewWallet')}
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -273,10 +280,12 @@ function WalletsPage() {
                 <Wallet className="h-12 w-12 mb-4 opacity-50" />
                 <p className="text-lg font-medium">{t('wallets.noWalletsFound')}</p>
                 <p className="text-sm">{t('wallets.createFirstWallet')}</p>
-                <Button onClick={handleAddNew} className="mt-4 flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  {t('wallets.addFirstWallet')}
-                </Button>
+                {canAdd && (
+                  <Button onClick={handleAddNew} className="mt-4 flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    {t('wallets.addFirstWallet')}
+                  </Button>
+                )}
               </div>
             ) : (
               <Table>
@@ -314,41 +323,49 @@ function WalletsPage() {
                       <TableCell>{wallet.created_by_name || "-"}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewHistory(wallet)}
-                            title={t('walletDeposits.viewHistory')}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDepositClick(wallet)}
-                            title={t('wallets.deposit')}
-                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                          >
-                            <Wallet2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEdit(wallet)}
-                            title={t('common.edit')}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteClick(wallet)}
-                            className="text-destructive hover:text-destructive"
-                            title={t('common.delete')}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          {canView && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleViewHistory(wallet)}
+                              title={t('walletDeposits.viewHistory')}
+                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {canAdd && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDepositClick(wallet)}
+                              title={t('wallets.deposit')}
+                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                            >
+                              <Wallet2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {canEdit && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(wallet)}
+                              title={t('common.edit')}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {canDelete && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteClick(wallet)}
+                              className="text-destructive hover:text-destructive"
+                              title={t('common.delete')}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>

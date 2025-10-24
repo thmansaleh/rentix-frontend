@@ -8,7 +8,7 @@ import { deleteEmployee } from '@/app/services/api/employees';
 import { toast } from 'react-toastify';
 import { useState } from 'react';
 
-export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEmployeeUpdate }) {
+export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEmployeeUpdate, canView, canEdit, canDelete }) {
   const { t } = useTranslations();
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -66,13 +66,15 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
         {employee.lastLogin || '-'}
       </td> */}
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2 items-center">
-        <button 
-          onClick={() => router.push(`./employees/${employee?.id}`)}
-          className="p-2 rounded-full hover:bg-muted transition-colors"
-          title={t('employees.viewDetails')}
-        >
-          <Eye className="w-5 h-5 text-muted-foreground hover:text-foreground" />
-        </button>
+        {canView && (
+          <button 
+            onClick={() => router.push(`./employees/${employee?.id}`)}
+            className="p-2 rounded-full hover:bg-muted transition-colors"
+            title={t('employees.viewDetails')}
+          >
+            <Eye className="w-5 h-5 text-muted-foreground hover:text-foreground" />
+          </button>
+        )}
         {/* <EditEmployeeDialog
           employeeId={employee?.id}
           onSuccess={onEmployeeUpdate}
@@ -98,26 +100,30 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
             </button>
           }
         /> */}
-        <ActivityLogModal
-          employee={employee}
-          trigger={
-            <div 
-              className="flex items-center gap-2 px-2 py-1 hover:bg-muted rounded text-right cursor-pointer"
-              title={t('employees.activityLog')}
-            >
-              <List className="w-4 h-4 text-muted-foreground" />
-              <span>{t('employees.activityLog')}</span>
-            </div>
-          }
-        />
-        <button 
-          onClick={handleDeleteEmployee}
-          disabled={isDeleting}
-          className="p-2 rounded-full hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          title={t('employees.deleteEmployee') || (isArabic ? 'حذف الموظف' : 'Delete Employee')}
-        >
-          <Trash2 className={`w-5 h-5 ${isDeleting ? 'text-gray-400' : 'text-red-500 hover:text-red-700'}`} />
-        </button>
+        {canView && (
+          <ActivityLogModal
+            employee={employee}
+            trigger={
+              <div 
+                className="flex items-center gap-2 px-2 py-1 hover:bg-muted rounded text-right cursor-pointer"
+                title={t('employees.activityLog')}
+              >
+                <List className="w-4 h-4 text-muted-foreground" />
+                <span>{t('employees.activityLog')}</span>
+              </div>
+            }
+          />
+        )}
+        {canDelete && (
+          <button 
+            onClick={handleDeleteEmployee}
+            disabled={isDeleting}
+            className="p-2 rounded-full hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title={t('employees.deleteEmployee') || (isArabic ? 'حذف الموظف' : 'Delete Employee')}
+          >
+            <Trash2 className={`w-5 h-5 ${isDeleting ? 'text-gray-400' : 'text-red-500 hover:text-red-700'}`} />
+          </button>
+        )}
       </td>
       
     </tr>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { getEmployees } from "@/app/services/api/employees";
+import { usePermission } from "@/hooks/usePermission";
 import { EmployeeAccountStatementModal } from "./EmployeeAccountStatementModal";
 import {
   Table,
@@ -19,10 +20,12 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Eye, Users, Search } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { is } from "date-fns/locale";
 
 function EmployeesFinancePage() {
   const { t } = useTranslations();
   const { language } = useLanguage();
+  const { hasPermission: canView } = usePermission('View Employee');
   const [isStatementModalOpen, setIsStatementModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -155,7 +158,6 @@ function EmployeesFinancePage() {
                   <TableRow>
                     <TableHead>{language === 'ar' ? 'الرقم الوظيفي' : 'Employee ID'}</TableHead>
                     <TableHead>{language === 'ar' ? 'الاسم' : 'Name'}</TableHead>
-                    <TableHead>{language === 'ar' ? 'البريد الإلكتروني' : 'Email'}</TableHead>
                     <TableHead>{language === 'ar' ? 'القسم' : 'Department'}</TableHead>
                     <TableHead>{language === 'ar' ? 'الوظيفة' : 'Job Title'}</TableHead>
                     <TableHead>{language === 'ar' ? 'الحالة' : 'Status'}</TableHead>
@@ -167,22 +169,23 @@ function EmployeesFinancePage() {
                     <TableRow key={employee.id}>
                       <TableCell className="font-medium">#{employee.id}</TableCell>
                       <TableCell className="font-medium">{employee.name}</TableCell>
-                      <TableCell>{employee.email || "-"}</TableCell>
-                      <TableCell>{employee.department || "-"}</TableCell>
-                      <TableCell>{employee.job_title || "-"}</TableCell>
+                      <TableCell>{ employee.department_ar || employee.department_en || "-"}</TableCell>
+                      <TableCell>{employee.role_ar || employee.role_en || "-"}</TableCell>
                       <TableCell>
                         {getStatusBadge(employee.status)}
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleViewStatement(employee)}
-                          title={language === 'ar' ? 'عرض كشف الحساب' : 'View Account Statement'}
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        {canView && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleViewStatement(employee)}
+                            title={language === 'ar' ? 'عرض كشف الحساب' : 'View Account Statement'}
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}

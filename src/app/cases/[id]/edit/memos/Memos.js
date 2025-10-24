@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Loader2, Plus, Pen, Trash2 } from "lucide-react"
+import { usePermission } from "@/hooks/useAuth"
 import { useCaseMemos } from "./hooks/useCaseMemos"
 import AddMemoModal from "./AddMemoModal"
 import EditMemoModal from "./EditMemoModal"
@@ -56,6 +57,11 @@ function Memos({ caseId }) {
   
   // Get employee role from Redux
   const employeeRole = useSelector((state) => state.auth.roleEn)
+
+  // Permission checks
+  const { hasPermission: canAddMemo } = usePermission('Add Memo')
+  const { hasPermission: canEditMemo } = usePermission('Edit Memo')
+  const { hasPermission: canDeleteMemo } = usePermission('Delete Memo')
 
   const handleMemoAdded = () => {
     // Refresh the memos list after successful addition
@@ -116,10 +122,12 @@ function Memos({ caseId }) {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>المذكرات</CardTitle>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              إضافة مذكرة
-            </Button>
+            {canAddMemo && (
+              <Button onClick={() => setIsAddDialogOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                إضافة مذكرة
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -184,24 +192,28 @@ function Memos({ caseId }) {
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex justify-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEditClick(memo.id)}
-                            className="h-8 w-8 p-0"
-                            title="تعديل"
-                          >
-                            <Pen className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteClick(memo.id, memo.title)}
-                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            title="حذف"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          {canEditMemo && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditClick(memo.id)}
+                              className="h-8 w-8 p-0"
+                              title="تعديل"
+                            >
+                              <Pen className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {canDeleteMemo && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteClick(memo.id, memo.title)}
+                              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              title="حذف"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import useSWR from 'swr'
 import { toast } from 'react-toastify'
 import { useTranslations } from '@/hooks/useTranslations'
+import { usePermission } from '@/hooks/useAuth'
 import { getCasePetitionsByCaseId, createCasePetition, updateCasePetition, deleteCasePetition } from '@/app/services/api/CasePetitions' 
 import {
   Table,
@@ -19,6 +20,10 @@ import DeletePetitionModal from './DeletePetitionModal'
 
 function Petitions({ caseId }) {
   const { t, language } = useTranslations()
+  const { hasPermission: canAddPetition } = usePermission('Add Petition')
+  const { hasPermission: canEditPetition } = usePermission('Edit Petition')
+  const { hasPermission: canDeletePetition } = usePermission('Delete Petition')
+  
   const [showModal, setShowModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -203,14 +208,16 @@ function Petitions({ caseId }) {
           <span className="text-sm text-muted-foreground">
             {t('petitions.petitionsFound', { count: petitions.length })}
           </span>
-          <Button 
-            onClick={() => setShowModal(true)}
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            {t('petitions.addPetition')}
-          </Button>
+          {canAddPetition && (
+            <Button 
+              onClick={() => setShowModal(true)}
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {t('petitions.addPetition')}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -253,24 +260,28 @@ function Petitions({ caseId }) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditPetition(petition)}
-                        className="flex items-center gap-2 h-8 px-3"
-                      >
-                        <Edit className="h-4 w-4" />
-                        {t('petitions.edit')}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeletePetition(petition)}
-                        className="flex items-center gap-2 h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        {t('common.delete')}
-                      </Button>
+                      {canEditPetition && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditPetition(petition)}
+                          className="flex items-center gap-2 h-8 px-3"
+                        >
+                          <Edit className="h-4 w-4" />
+                          {t('petitions.edit')}
+                        </Button>
+                      )}
+                      {canDeletePetition && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeletePetition(petition)}
+                          className="flex items-center gap-2 h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          {t('common.delete')}
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { usePermission } from '@/hooks/usePermission';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +16,9 @@ import { toast } from 'react-toastify';
 
 function BankAccountsPage() {
   const { isRTL } = useLanguage();
+  const { hasPermission: canAdd } = usePermission('Add Bank Account');
+  const { hasPermission: canEdit } = usePermission('Edit Bank Account');
+  const { hasPermission: canDelete } = usePermission('Delete Bank Account');
   const [bankAccounts, setBankAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -94,13 +98,15 @@ function BankAccountsPage() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>قائمة الحسابات البنكية</CardTitle>
-              <Button 
-                onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                إضافة حساب جديد
-              </Button>
+              {canAdd && (
+                <Button 
+                  onClick={() => setShowAddModal(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  إضافة حساب جديد
+                </Button>
+              )}
             </div>
           </CardHeader>
           <CardContent>
@@ -112,9 +118,11 @@ function BankAccountsPage() {
             ) : bankAccounts.length === 0 ? (
               <div className="text-center p-8">
                 <p className="text-gray-500 mb-4">لا توجد حسابات بنكية مضافة</p>
-                <Button onClick={() => setShowAddModal(true)}>
-                  إضافة حساب جديد
-                </Button>
+                {canAdd && (
+                  <Button onClick={() => setShowAddModal(true)}>
+                    إضافة حساب جديد
+                  </Button>
+                )}
               </div>
             ) : (
               <Table>
@@ -162,43 +170,47 @@ function BankAccountsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(account.id)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
+                          {canEdit && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(account.id)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          )}
                           
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                disabled={deleteLoading}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  هل أنت متأكد من حذف الحساب البنكي {account.account_name}؟ 
-                                  لا يمكن التراجع عن هذا الإجراء.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>إلغاء</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(account.id)}
-                                  className="bg-red-600 hover:bg-red-700"
+                          {canDelete && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled={deleteLoading}
                                 >
-                                  حذف
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    هل أنت متأكد من حذف الحساب البنكي {account.account_name}؟ 
+                                    لا يمكن التراجع عن هذا الإجراء.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(account.id)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    حذف
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>

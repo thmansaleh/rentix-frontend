@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { usePermission } from '@/hooks/useAuth';
 import { getCourts, createCourt } from '@/app/services/api/courts';
 import { getPoliceStations, createPoliceStation } from '@/app/services/api/policeStaions';
 import { getPublicProsecutions, createPublicProsecution } from '@/app/services/api/PublicProsecutions';

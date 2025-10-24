@@ -5,6 +5,7 @@ import React from 'react';
 import { getAllCaseDetails } from '@/app/services/api/cases';
 import useSWR from 'swr';
 import { useTranslations } from '@/hooks/useTranslations';
+import { usePermission } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -14,6 +15,7 @@ import { Button } from '@/components/ui/button';
 function CaseDetailsPage({ params }) {
   const { id } = React.use(params);
   const { t } = useTranslations();
+  const { hasPermission: canViewCase } = usePermission('View Case');
 
   const { data: caseData, error, isLoading } = useSWR(
     `case-details-${id}`,
@@ -23,6 +25,22 @@ function CaseDetailsPage({ params }) {
       revalidateOnReconnect: true,
     }
   );
+
+  // Check permission first
+  if (!canViewCase) {
+    return (
+      <div className="min-h-screen bg-white p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="border border-red-200 bg-red-50 p-4 rounded">
+            <div className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="h-5 w-5" />
+              <span>ليس لديك صلاحية لعرض تفاصيل القضية</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

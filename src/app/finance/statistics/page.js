@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { usePermission } from '@/hooks/usePermission';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LastTransactions from './components/LastTransactions';
 import BankAccountsOverview from './components/BankAccountsOverview';
@@ -12,6 +13,23 @@ import LastInvoices from './components/LastInvoices';
 
 const FinanceStatisticsPage = () => {
   const { isRTL, language } = useLanguage();
+  const { hasPermission: canView } = usePermission('View Financial Reports');
+
+  if (!canView) {
+    return (
+      <div className="container mx-auto py-6">
+        <Card>
+          <CardContent className="p-12 text-center">
+            <p className="text-lg text-muted-foreground">
+              {language === 'ar' 
+                ? 'ليس لديك صلاحية لعرض التقارير المالية'
+                : 'You do not have permission to view financial reports'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-6 space-y-6">

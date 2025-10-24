@@ -7,6 +7,7 @@ import { Eye, Edit, Trash2, MoreHorizontal, Phone, User, Scale, IdCard, FileText
 import { getAllParties } from '@/app/services/api/parties';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import { usePermission } from '@/hooks/usePermission';
 import { cn } from '@/lib/utils';
 import ExportButtons from '@/components/ui/export-buttons';
 import PartiesSearchForm from '@/app/parties/PartiesSearchForm';
@@ -46,6 +47,10 @@ const Parties = () => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
   const router = useRouter();
+  const { hasPermission: canAdd } = usePermission('Add Client');
+  const { hasPermission: canEdit } = usePermission('Edit Client');
+  const { hasPermission: canDelete } = usePermission('Delete Client');
+  const { hasPermission: canView } = usePermission('View Client');
   
   // Pagination and search state
   const [currentPage, setCurrentPage] = useState(1);
@@ -303,7 +308,7 @@ const Parties = () => {
             {t('partiesPage.description')}
           </p>
         </div>
-        <AddPartyModal onPartyAdded={() => mutate()} />
+        {canAdd && <AddPartyModal onPartyAdded={() => mutate()} />}
       </div>
 
       {/* Search Form */}
@@ -431,42 +436,50 @@ const Parties = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align={isRTL ? "start" : "end"}>
-                            <DropdownMenuItem onClick={() => handleView(party.id)}>
-                              <Eye className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-                              {t('buttons.view')}
-                            </DropdownMenuItem>
-                            <EditPartyModal 
-                              partyId={party.id} 
-                              onPartyUpdated={() => mutate()}
-                            >
-                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                <Edit className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-                                {t('buttons.edit')}
+                            {canView && (
+                              <DropdownMenuItem onClick={() => handleView(party.id)}>
+                                <Eye className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                                {t('buttons.view')}
                               </DropdownMenuItem>
-                            </EditPartyModal>
-                            <CreateClientDealModal 
-                              clientId={party.id}
-                              onDealCreated={() => mutate()}
-                            >
-                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                <FileText className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-                                {language === 'ar' ? 'اضافة اتفاقية جديدة' : 'Add New Deal'}
-                              </DropdownMenuItem>
-                            </CreateClientDealModal>
-                            <DropdownMenuSeparator />
-                            <DeletePartyModal 
-                              partyId={party.id}
-                              partyName={party.name}
-                              onPartyDeleted={() => mutate()}
-                            >
-                              <DropdownMenuItem 
-                                onSelect={(e) => e.preventDefault()}
-                                className="text-destructive focus:text-destructive"
+                            )}
+                            {canEdit && (
+                              <EditPartyModal 
+                                partyId={party.id} 
+                                onPartyUpdated={() => mutate()}
                               >
-                                <Trash2 className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-                                {t('buttons.delete')}
-                              </DropdownMenuItem>
-                            </DeletePartyModal>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                  <Edit className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                                  {t('buttons.edit')}
+                                </DropdownMenuItem>
+                              </EditPartyModal>
+                            )}
+                            {canAdd && (
+                              <CreateClientDealModal 
+                                clientId={party.id}
+                                onDealCreated={() => mutate()}
+                              >
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                  <FileText className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                                  {language === 'ar' ? 'اضافة اتفاقية جديدة' : 'Add New Deal'}
+                                </DropdownMenuItem>
+                              </CreateClientDealModal>
+                            )}
+                            {(canEdit || canDelete) && <DropdownMenuSeparator />}
+                            {canDelete && (
+                              <DeletePartyModal 
+                                partyId={party.id}
+                                partyName={party.name}
+                                onPartyDeleted={() => mutate()}
+                              >
+                                <DropdownMenuItem 
+                                  onSelect={(e) => e.preventDefault()}
+                                  className="text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                                  {t('buttons.delete')}
+                                </DropdownMenuItem>
+                              </DeletePartyModal>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

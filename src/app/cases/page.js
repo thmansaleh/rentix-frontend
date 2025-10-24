@@ -7,6 +7,7 @@ import { Eye, Edit, Trash2, MoreHorizontal, FileText, Calendar, CheckSquare, Gav
 import { getCases } from '@/app/services/api/cases';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import { usePermission } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import AddSessionModal from '@/app/cases/modals/AddSessionModal';
 import AddTaskModal from '@/app/cases/modals/AddTaskModal';
@@ -47,6 +48,15 @@ const CasesPage = () => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
   const router = useRouter();
+  
+  // Permission checks
+  const { hasPermission: canEditCase } = usePermission('Edit Case');
+  const { hasPermission: canAddMemo } = usePermission('Add Memo');
+  const { hasPermission: canAddSession } = usePermission('Add Session');
+  const { hasPermission: canAddTask } = usePermission('Add Task');
+  const { hasPermission: canAddExecution } = usePermission('Add Execution');
+  const { hasPermission: canAddCaseStage } = usePermission('Add Case Stage');
+  const { hasPermission: canAddPetition } = usePermission('Add Petition');
   
   // Modal state
   const [isAddSessionModalOpen, setIsAddSessionModalOpen] = useState(false);
@@ -501,39 +511,53 @@ const CasesPage = () => {
                               <Eye className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {t('casesTable.view')}
                             </DropdownMenuItem> */}
-                            <DropdownMenuItem onClick={() => handleEdit(case_.id)}>
-                              <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.edit')}
-                            </DropdownMenuItem>
+                            {canEditCase && (
+                              <DropdownMenuItem onClick={() => handleEdit(case_.id)}>
+                                <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                {t('casesTable.edit')}
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem onClick={() => handlePrint(case_.id)}>
                               <Printer className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                               {language === 'ar' ? 'طباعة الملف' : 'Print Case'}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
-                              <FileText className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addNote')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddSession(case_.id)}>
-                              <Calendar className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addSession')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddTask(case_.id)}>
-                              <CheckSquare className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addTask')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAddExecution(case_.id)}>
-                              <Gavel className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addExecution')}
-                            </DropdownMenuItem>
-                            {/* <DropdownMenuItem onClick={() => handleAddPetition(case_.id)}>
-                              <FileSearch className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.addPetition')}
-                            </DropdownMenuItem> */}
-                            <DropdownMenuItem onClick={() => handleAddCourtLevel(case_.id)}>
-                              <Scale className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {language === 'ar' ? 'اضافة درجة تقاضي' : 'Add Court Level'}
-                            </DropdownMenuItem>
+                            {canAddMemo && (
+                              <DropdownMenuItem onClick={() => handleAddNote(case_.id)}>
+                                <FileText className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                {t('casesTable.addNote')}
+                              </DropdownMenuItem>
+                            )}
+                            {canAddSession && (
+                              <DropdownMenuItem onClick={() => handleAddSession(case_.id)}>
+                                <Calendar className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                {t('casesTable.addSession')}
+                              </DropdownMenuItem>
+                            )}
+                            {canAddTask && (
+                              <DropdownMenuItem onClick={() => handleAddTask(case_.id)}>
+                                <CheckSquare className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                {t('casesTable.addTask')}
+                              </DropdownMenuItem>
+                            )}
+                            {canAddExecution && (
+                              <DropdownMenuItem onClick={() => handleAddExecution(case_.id)}>
+                                <Gavel className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                {t('casesTable.addExecution')}
+                              </DropdownMenuItem>
+                            )}
+                            {canAddPetition && (
+                              <DropdownMenuItem onClick={() => handleAddPetition(case_.id)}>
+                                <FileSearch className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                {t('casesTable.addPetition')}
+                              </DropdownMenuItem>
+                            )}
+                            {canAddCaseStage && (
+                              <DropdownMenuItem onClick={() => handleAddCourtLevel(case_.id)}>
+                                <Scale className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                {language === 'ar' ? 'اضافة درجة تقاضي' : 'Add Court Level'}
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               onClick={() => handleDelete(case_.id)}

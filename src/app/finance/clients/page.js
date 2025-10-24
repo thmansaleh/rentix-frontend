@@ -6,6 +6,7 @@ import { Eye, Search } from 'lucide-react';
 import { getAllParties } from '@/app/services/api/parties';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import { usePermission } from '@/hooks/usePermission';
 import { ClientInfoModal } from '@/app/finance/clients/ClientInfoModal';
 import {
   Table,
@@ -30,6 +31,7 @@ import {
 const FinanceClientsPage = () => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
+  const { hasPermission: canView } = usePermission('View Client');
   
   // State
   const [currentPage, setCurrentPage] = useState(1);
@@ -211,15 +213,17 @@ const FinanceClientsPage = () => {
                             {client.nationality || '-'}
                           </TableCell>
                           <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleViewWallet(client)}
-                              className="gap-2"
-                            >
-                              <Eye className="h-4 w-4" />
-                              {language === 'ar' ? 'عرض' : 'View'}
-                            </Button>
+                            {canView && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleViewWallet(client)}
+                                className="gap-2"
+                              >
+                                <Eye className="h-4 w-4" />
+                                {language === 'ar' ? 'عرض' : 'View'}
+                              </Button>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))

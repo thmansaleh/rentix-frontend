@@ -82,13 +82,13 @@ export const checkAuthStatus = () => async (dispatch) => {
     dispatch({ type: 'auth/loginStart' });
     const response = await getProfile();
     
-    // Check if the response has the expected structure: { success: true, data: { user object } }
+    // Check if the response has the expected structure: { success: true, data: { user object }, permissions: [...] }
     if (response && response.success && response.data) {
       dispatch({
         type: 'auth/restoreAuth',
         payload: {
           user: response.data,
-          permissions: [] // Set empty array since permissions aren't included in getProfile response
+          permissions: response.permissions || [] // Use permissions from response
         }
       });
       return { success: true, user: response.data };

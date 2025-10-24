@@ -113,7 +113,7 @@ export default function Page() {
              <div className="mx-auto  ">
             <Image height='60' width='60' src="/log_in_card_logo.png" alt="Law Office Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-bold  text-center mb-1">
+          <h1 className="text-2xl font-bold text-white text-center mb-1">
             LEXORA
           </h1>
           </CardHeader>
@@ -128,7 +128,7 @@ export default function Page() {
                 )}
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                  <Label htmlFor="email" className="text-sm font-medium text-white">
                     اسم المستخدم
                   </Label>
                   <Input
@@ -148,7 +148,7 @@ export default function Page() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium text-slate-700">
+                  <Label htmlFor="password" className="text-sm font-medium text-white">
                     كلمة المرور
                   </Label>
                   <div className="relative">
@@ -166,7 +166,7 @@ export default function Page() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white "
                       disabled={authLoading}
                       tabIndex={-1}
                     >
@@ -187,7 +187,7 @@ export default function Page() {
                   />
                   <Label 
                     htmlFor="rememberMe" 
-                    className="text-sm mx-2 text-slate-600 cursor-pointer select-none"
+                    className="text-sm mx-2 text-white cursor-pointer select-none"
                   >
                     تذكرني
                   </Label>
@@ -211,7 +211,7 @@ export default function Page() {
             </form>
           </CardContent>
           <CardFooter>
-          <p className="text-slate-500 text-xs">
+          <p className="text-white text-xs">
            نظام LEXORA لإدارة مكاتب المحاماة
           </p>
 

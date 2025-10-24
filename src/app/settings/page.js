@@ -11,7 +11,8 @@ import {
   Bell,
   Database,
   FileText,
-  Globe
+  Globe,
+  Building2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const SettingsPage = () => {
   const t = useTranslations();
-  const { isRTL } = useLanguage();
+  const { isRTL, language } = useLanguage();
   const router = useRouter();
 
   const settingsCategories = [
@@ -70,6 +71,15 @@ const SettingsPage = () => {
       href: '/settings/system',
       color: 'text-red-600',
       bgColor: 'bg-red-50 dark:bg-red-950'
+    },
+    {
+      id: 'branches',
+      title: language === 'ar' ? 'الفروع' : 'Branches',
+      description: language === 'ar' ? 'إدارة فروع الشركة' : 'Manage company branches',
+      icon: Building2,
+      href: '/settings/branches',
+      color: 'text-teal-600',
+      bgColor: 'bg-teal-50 dark:bg-teal-950'
     },
     {
       id: 'reports',

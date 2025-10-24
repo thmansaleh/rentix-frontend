@@ -27,11 +27,11 @@ const AppSidebar = () => {
   const isMobile = useIsMobile();
   const { isRTL } = useLanguage();
   const { t } = useTranslations();
-  const { user, roleEn, departmentEn } = useAuth();
+  const { user, roleEn, departmentEn, permissions } = useAuth();
   const userRole = useUserRole(isRTL ? 'ar' : 'en');
 
   // Memoized menu items configuration with user role and department for permission-based filtering
-  const menuItems = useMemo(() => getMenuItems(t, roleEn, departmentEn), [t, roleEn, departmentEn]);
+  const menuItems = useMemo(() => getMenuItems(t, roleEn, departmentEn, permissions), [t, roleEn, departmentEn, permissions]);
 
   // Memoized callbacks
   const toggleSubmenu = useCallback((menuId) => {

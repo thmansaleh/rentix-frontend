@@ -14,9 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Save, Settings, FileText, Download, Trash2,Plus, CircleX } from "lucide-react";
 
 // Helper function to format date for MySQL
@@ -45,6 +43,7 @@ const EditSessionModal = ({
   const [deletingDocumentId, setDeletingDocumentId] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+
 
   // Fetch session data using SWR - only when modal is open
   const { data: sessionData, error: sessionError, isLoading: sessionLoading, mutate: refreshSession } = useSWR(
