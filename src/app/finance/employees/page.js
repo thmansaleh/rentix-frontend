@@ -3,7 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { getEmployees } from "@/app/services/api/employees";
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/hooks/useAuth";
 import { EmployeeAccountStatementModal } from "./EmployeeAccountStatementModal";
 import {
   Table,
