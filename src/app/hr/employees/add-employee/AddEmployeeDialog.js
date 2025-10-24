@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, CircleX, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
-import { createEmployee } from '@/app/services/api/employees';
+import { createEmployee, checkDuplicateEmployee } from '@/app/services/api/employees';
 import { toast } from 'react-toastify';
 import EmployeeInfoTab from './EmployeeInfoTab';
 import EmployeePermissionsTab from './EmployeePermissionsTab';
@@ -123,6 +123,36 @@ export default function AddEmployeeModal({ onAdd }) {
     setIsSaving(true);
     
     try {
+      // Check for duplicates
+      const duplicateCheck = await checkDuplicateEmployee(form.name, form.phoneNumber, form.email);
+      
+      if (duplicateCheck.success && duplicateCheck.isDuplicate) {
+        const duplicate = duplicateCheck.duplicate;
+        let duplicateMessage;
+        
+        if (duplicate.name === form.name && duplicate.phone === form.phoneNumber) {
+          duplicateMessage = t('employees.duplicateEmployeeExists') || (isRTL 
+            ? 'موظف بنفس الاسم ورقم الهاتف موجود بالفعل'
+            : 'An employee with the same name and phone number already exists');
+        } else if (duplicate.name === form.name) {
+          duplicateMessage = t('employees.duplicateNameExists') || (isRTL 
+            ? 'موظف بنفس الاسم موجود بالفعل'
+            : 'An employee with the same name already exists');
+        } else if (duplicate.phone === form.phoneNumber) {
+          duplicateMessage = t('employees.duplicatePhoneExists') || (isRTL 
+            ? 'موظف بنفس رقم الهاتف موجود بالفعل'
+            : 'An employee with the same phone number already exists');
+        } else if (duplicate.email === form.email) {
+          duplicateMessage = t('employees.duplicateEmailExists') || (isRTL 
+            ? 'موظف بنفس البريد الإلكتروني موجود بالفعل'
+            : 'An employee with the same email already exists');
+        }
+        
+        toast.error(duplicateMessage);
+        setIsSaving(false);
+        return;
+      }
+
       const response = await createEmployee(form);
       
       if (response.success) {

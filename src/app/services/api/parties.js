@@ -143,3 +143,17 @@ export const searchParties = async (query) => {
     throw error;
   }
 };
+
+export const checkDuplicateParty = async (name, phone, excludeId = null) => {
+  try {
+    const params = new URLSearchParams();
+    if (name) params.append('name', name);
+    if (phone) params.append('phone', phone);
+    if (excludeId) params.append('excludeId', excludeId);
+    
+    const response = await api.get(`/parties/check-duplicate?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

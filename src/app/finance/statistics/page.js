@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { usePermission } from '@/hooks/usePermission';
+import { usePermission } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LastTransactions from './components/LastTransactions';
 import BankAccountsOverview from './components/BankAccountsOverview';

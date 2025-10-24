@@ -6,7 +6,7 @@ import { Eye, Search } from 'lucide-react';
 import { getAllParties } from '@/app/services/api/parties';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import { usePermission } from '@/hooks/usePermission';
+import { usePermission } from '@/hooks/useAuth';
 import { ClientInfoModal } from '@/app/finance/clients/ClientInfoModal';
 import {
   Table,

@@ -22,7 +22,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Plus, Save, Loader2, Upload, X, FileText, Image, FileIcon } from "lucide-react";
-import { createParty } from "@/app/services/api/parties";
+import { createParty, checkDuplicateParty } from "@/app/services/api/parties";
 import { getBranches } from "@/app/services/api/branches";
 import { toast } from "react-toastify";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -141,6 +141,31 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
       // Basic validation - only name and party_type are required
       if (!formData.name || !formData.party_type) {
         toast.error(t('parties.fillRequiredFields') || "يرجى ملء الحقول المطلوبة");
+        return;
+      }
+
+      // Check for duplicates
+      const duplicateCheck = await checkDuplicateParty(formData.name, formData.phone);
+      
+      if (duplicateCheck.success && duplicateCheck.isDuplicate) {
+        const duplicate = duplicateCheck.duplicate;
+        let duplicateMessage;
+        
+        if (duplicate.name === formData.name && duplicate.phone === formData.phone) {
+          duplicateMessage = t('parties.duplicatePartyExists') || (isRTL 
+            ? 'طرف بنفس الاسم ورقم الهاتف موجود بالفعل'
+            : 'A party with the same name and phone number already exists');
+        } else if (duplicate.name === formData.name) {
+          duplicateMessage = t('parties.duplicateNameExists') || (isRTL 
+            ? 'طرف بنفس الاسم موجود بالفعل'
+            : 'A party with the same name already exists');
+        } else {
+          duplicateMessage = t('parties.duplicatePhoneExists') || (isRTL 
+            ? 'طرف بنفس رقم الهاتف موجود بالفعل'
+            : 'A party with the same phone number already exists');
+        }
+        
+        toast.error(duplicateMessage);
         return;
       }
 

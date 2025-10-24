@@ -3,7 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { getWallets, deleteWallet } from "../../services/api/wallets";
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/hooks/useAuth";
 
 import { WalletsFilterNew } from "./WalletsFilterNew";
 import {

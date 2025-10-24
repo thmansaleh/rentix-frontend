@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import useSWR from 'swr'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useTranslations } from '@/hooks/useTranslations'
-import { usePermission } from '@/hooks/usePermission'
+import { usePermission } from '@/hooks/useAuth'
 import AddTaskModal from './AddTaskModal'
 import EditTaskModal from './EditTaskModal'
 import {

@@ -7,7 +7,7 @@ import { Eye, Edit, Trash2, MoreHorizontal, Phone, User, Scale, IdCard, FileText
 import { getAllParties } from '@/app/services/api/parties';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import { usePermission } from '@/hooks/usePermission';
+import { usePermission } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import ExportButtons from '@/components/ui/export-buttons';
 import PartiesSearchForm from '@/app/parties/PartiesSearchForm';

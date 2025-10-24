@@ -74,3 +74,18 @@ export const deleteEmployeeDocument = async (documentId) => {
   const response = await api.delete(`/employee-documents/${documentId}`);
   return response.data;
 };
+
+export const checkDuplicateEmployee = async (name, phone, email, excludeId = null) => {
+  try {
+    const params = new URLSearchParams();
+    if (name) params.append('name', name);
+    if (phone) params.append('phone', phone);
+    if (email) params.append('email', email);
+    if (excludeId) params.append('excludeId', excludeId);
+    
+    const response = await api.get(`/employees/check-duplicate?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
