@@ -140,6 +140,13 @@ export const appLinks = [
     keywords: { ar: ['بنك', 'حساب', 'بنكي', 'bank'], en: ['bank', 'accounts', 'banking'] }
   },
   {
+    id: 'invoices',
+    label: { ar: 'الفواتير العامة', en: 'General Invoices' },
+    route: '/finance/invoices',
+    category: { ar: 'المالية', en: 'Finance' },
+    keywords: { ar: ['فواتير', 'فاتورة', 'invoices'], en: ['invoices', 'bills', 'billing'] }
+  },
+  {
     id: 'cash-box',
     label: { ar: 'الصندوق النقدي', en: 'Cash Box' },
     route: '/finance/cash-box',

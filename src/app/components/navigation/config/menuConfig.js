@@ -17,7 +17,10 @@ import {
   DollarSign,
   Banknote,
   Clock,
-  Wallet
+  Wallet,
+  List,
+  BarChartIcon,
+  Users2
 } from 'lucide-react';
 
 export const getMenuItems = (t, userRole = null, userDepartment = null) => {
@@ -57,14 +60,14 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
     // Clients Management - Only visible to admin or Legal departments
     ...(hasLegalAccess ? [{
       id: 'clientsManagement',
-      label: 'ادارة الموكلين',
+      label: t('navigation.clientsManagement'),
       icon: Users,
       type: 'category',
       submenu: [
         { id: 'parties', label: t('navigation.parties'), icon: Users },
         { id: 'potential-clients', label: t('navigation.potentialClients'), icon: UserRoundPlus },
-        { id: 'meetings', label: 'المواعيد والاجتماعات', icon: Calendar },
-        { id: 'call-logs', label: 'سجل المكالمات', icon: Phone },
+        { id: 'meetings', label: t('navigation.meetings'), icon: Calendar },
+        { id: 'call-logs', label: t('navigation.callLogs'), icon: Phone },
         { id: 'goaml', label: t('navigation.goaml'), icon: Shield },
       ]
     }] : []),
@@ -92,12 +95,16 @@ export const getMenuItems = (t, userRole = null, userDepartment = null) => {
     // Finance Section - Only visible to admin or Accountant
     ...(hasFinanceAccess ? [{
       id: 'finance',
-      label: 'المالية',
+      label: t('navigation.finance'),
       icon: DollarSign,
       type: 'category',
       submenu: [
-        { id: 'finance/bank-accounts', label: 'الحسابات البنكية', icon: Banknote },
-        { id: 'finance/wallets', label: 'ارصدة الموكلين', icon: Wallet },
+        { id: 'finance/clients', label: t('navigation.financeClients'), icon: Users },
+        { id: 'finance/wallets', label: t('navigation.clientBalances'), icon: Wallet },
+        { id: 'finance/invoices', label: t('navigation.invoices'), icon: List },
+        { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote },
+        { id: 'finance/statistics', label: t('navigation.statistics'), icon: BarChartIcon },
+        { id: 'finance/employees', label: t('navigation.employeesStatements'), icon: Users2     },
       ]
     }] : []),
     {

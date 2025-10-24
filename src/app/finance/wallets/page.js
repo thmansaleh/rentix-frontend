@@ -2,10 +2,21 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { getAllWallets, deleteWallet } from "../../services/api/wallets";
+import { getWallets, deleteWallet } from "../../services/api/wallets";
+
+import { WalletsFilterNew } from "./WalletsFilterNew";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { AddWalletModal } from "@/app/finance/wallets/AddWalletModal";
 import { WalletDepositModal } from "@/app/finance/wallets/WalletDepositModal";
-import { WalletDepositsHistoryModal } from "@/app/finance/wallets/WalletDepositsHistoryModal";
+import { WalletInfoModal } from "@/app/finance/wallets/info/WalletInfoModal";
 import {
   Table,
   TableBody,
@@ -47,10 +58,20 @@ function WalletsPage() {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [historyWallet, setHistoryWallet] = useState(null);
 
-  // SWR fetcher function
+  // Pagination and filtering state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+
+  // SWR fetcher function with params
   const { data, error, isLoading, mutate } = useSWR(
-    '/wallets',
-    getAllWallets,
+    ['/wallets', currentPage, searchQuery, selectedStatus],
+    () => getWallets({
+      page: currentPage,
+      limit: 10,
+      search: searchQuery,
+      status: selectedStatus === 'all' ? undefined : selectedStatus,
+    }),
     {
       revalidateOnFocus: false,
       keepPreviousData: true,
@@ -191,8 +212,16 @@ function WalletsPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Search and Filters */}
+          <WalletsFilterNew
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
+          />
+
           {/* Stats Cards */}
-          {data?.data && data.data.length > 0 && (
+          {data?.stats && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <Card>
                 <CardContent className="p-4">
@@ -200,7 +229,7 @@ function WalletsPage() {
                     <Wallet className="h-4 w-4 text-blue-600" />
                     <span className="text-sm font-medium">{t('wallets.totalWallets')}</span>
                   </div>
-                  <p className="text-2xl font-bold">{data.data.length}</p>
+                  <p className="text-2xl font-bold">{data.stats.total_wallets}</p>
                 </CardContent>
               </Card>
               <Card>
@@ -210,7 +239,7 @@ function WalletsPage() {
                     <span className="text-sm font-medium">{t('wallets.activeWallets')}</span>
                   </div>
                   <p className="text-2xl font-bold">
-                    {data.data.filter(wallet => wallet.status === 'active').length}
+                    {data.stats.active_wallets}
                   </p>
                 </CardContent>
               </Card>
@@ -221,10 +250,7 @@ function WalletsPage() {
                     <span className="text-sm font-medium">{t('wallets.totalBalanceAED')}</span>
                   </div>
                   <p className="text-2xl font-bold">
-                    {data.data
-                      .filter(wallet => wallet.currency === 'AED')
-                      .reduce((sum, wallet) => sum + parseFloat(wallet.balance || 0), 0)
-                      .toLocaleString()}
+                    {parseFloat(data.stats.total_balance_aed || 0).toLocaleString()}
                   </p>
                 </CardContent>
               </Card>
@@ -233,7 +259,7 @@ function WalletsPage() {
 
           {/* Table */}
           <div className="rounded-md border">
-            {isLoading ? (
+              {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                 <span className="ml-2">{t('wallets.loadingWallets')}</span>
@@ -258,7 +284,7 @@ function WalletsPage() {
                   <TableRow>
                     <TableHead>{t('wallets.walletId')}</TableHead>
                     <TableHead>{t('wallets.clientId')}</TableHead>
-                    <TableHead>{t('wallets.clientName')}</TableHead>
+                    {/* <TableHead>{t('wallets.clientName')}</TableHead> */}
                     <TableHead>{t('wallets.balance')}</TableHead>
                     <TableHead>{t('wallets.currency')}</TableHead>
                     <TableHead>{t('wallets.status')}</TableHead>
@@ -271,7 +297,7 @@ function WalletsPage() {
                   {data.data.map((wallet) => (
                     <TableRow key={wallet.id}>
                       <TableCell className="font-medium">{wallet.id}</TableCell>
-                      <TableCell className="font-medium">{wallet.client_id}</TableCell>
+                      {/* <TableCell className="font-medium">{wallet.client_id}</TableCell> */}
                       <TableCell>
                         {wallet.client_name || "-"}
                       </TableCell>
@@ -332,10 +358,58 @@ function WalletsPage() {
             )}
           </div>
 
+          {/* Pagination */}
+          {data?.pagination && data.pagination.totalPages > 1 && (
+            <div className="mt-4 flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationPrevious 
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                  />
+                  
+                  {[...Array(data.pagination.totalPages)].map((_, index) => {
+                    const pageNumber = index + 1;
+                    const isCurrentPage = pageNumber === currentPage;
+                    const isFirstPage = pageNumber === 1;
+                    const isLastPage = pageNumber === data.pagination.totalPages;
+                    const isWithinRange = Math.abs(pageNumber - currentPage) <= 1;
+
+                    if (!isWithinRange && !isFirstPage && !isLastPage) {
+                      if (pageNumber === 2 || pageNumber === data.pagination.totalPages - 1) {
+                        return <PaginationEllipsis key={`ellipsis-${pageNumber}`} />;
+                      }
+                      return null;
+                    }
+
+                    return (
+                      <PaginationLink
+                        key={pageNumber}
+                        isActive={isCurrentPage}
+                        onClick={() => setCurrentPage(pageNumber)}
+                      >
+                        {pageNumber}
+                      </PaginationLink>
+                    );
+                  })}
+
+                  <PaginationNext 
+                    onClick={() => setCurrentPage(prev => Math.min(data.pagination.totalPages, prev + 1))}
+                    disabled={currentPage === data.pagination.totalPages}
+                  />
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+
           {/* Results info */}
-          {data?.data && data.data.length > 0 && (
-            <div className="text-sm text-muted-foreground text-center">
-              {t('wallets.showingResults', { count: data.data.length })}
+          {data?.pagination && (
+            <div className="text-sm text-muted-foreground text-center mt-2">
+              {t('wallets.showingResults', { 
+                start: ((currentPage - 1) * data.pagination.limit) + 1,
+                end: Math.min(currentPage * data.pagination.limit, data.pagination.total),
+                total: data.pagination.total 
+              })}
             </div>
           )}
         </CardContent>
@@ -367,7 +441,7 @@ function WalletsPage() {
       />
 
       {/* Deposits History Modal */}
-      <WalletDepositsHistoryModal
+      <WalletInfoModal
         isOpen={isHistoryModalOpen}
         onClose={handleCloseHistoryModal}
         walletId={historyWallet?.id}

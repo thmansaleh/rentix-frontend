@@ -7,11 +7,12 @@ import { Eye, EyeOff, Lock, User, Loader2, Scale } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import { loginWithRedux } from '../services/api/auth';
 import { selectAuthLoading, selectAuthError, clearError } from '@/redux/slices/authSlice';
+import Image from 'next/image';
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -102,26 +103,19 @@ export default function Page() {
   };
 
   return (
-    <div className="bg-slate-50 py-8 px-4" dir="rtl">
+    <div className="min-h-screen py-8 px-4 bg-cover bg-center bg-no-repeat bg-fixed w-full" style={{ backgroundImage: "url('/background.jpg')", backgroundSize: 'cover' }} dir="rtl">
       <div className="w-full max-w-md mx-auto">
-        {/* Header Section */}
-        <div className="text-center flex items-center flex-col mb-6">
-          <div className="mx-auto w-14 h-14 bg-gray-600 rounded-lg flex items-center justify-center mb-3 shadow-md">
-            <Scale className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">
-            محمد بني هاشم
-          </h1>
-          {/* <p className="text-slate-600 text-center text-sm">مكتب المحاماة</p> */}
-        </div>
+       
 
         {/* Login Card */}
-        <Card className="shadow-lg">
-          {/* <div className="text-gray-600 flex items-center p-4">
-            <h2 className="text-xl font-bold  text-gray-900 text-center ">تسجيل الدخول</h2>
-          </div> */}
-          <CardHeader className=" p-4">
-            <h2 className="text-xl font-bold text-gray-900   text-center">تسجيل الدخول</h2>
+        <Card className="shadow-lg bg-white/10 backdrop-blur-sm">
+        <CardHeader className="flex items-center flex-col ">
+             <div className="mx-auto  ">
+            <Image height='60' width='60' src="/log_in_card_logo.png" alt="Law Office Logo" className="w-full h-full object-contain" />
+          </div>
+          <h1 className="text-2xl font-bold  text-center mb-1">
+            LEXORA
+          </h1>
           </CardHeader>
           
           <CardContent className="p-6">
@@ -216,14 +210,15 @@ export default function Page() {
               </div>
             </form>
           </CardContent>
+          <CardFooter>
+          <p className="text-slate-500 text-xs">
+           نظام LEXORA لإدارة مكاتب المحاماة
+          </p>
+
+          </CardFooter>
         </Card>
 
-        {/* Footer */}
-        <div className="mt-4 text-center">
-          <p className="text-slate-500 text-xs">
-            © 2025 مكتب محاماة محمد بني هاشم
-          </p>
-        </div>
+   
       </div>
     </div>
   );

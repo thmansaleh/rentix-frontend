@@ -6,13 +6,10 @@ import useSWR from "swr";
 import { createWallet, updateWallet } from "@/app/services/api/wallets";
 import { getAllParties, searchParties } from "@/app/services/api/parties";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  CustomModal,
+  CustomModalBody,
+  CustomModalFooter,
+} from "@/components/ui/custom-modal";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -158,9 +155,9 @@ export function AddWalletModal({ isOpen, onClose, onSuccess, wallet = null, isEd
 
   const currencyOptions = [
     { value: "AED", label: "AED - UAE Dirham" },
-    { value: "USD", label: "USD - US Dollar" },
-    { value: "EUR", label: "EUR - Euro" },
-    { value: "SAR", label: "SAR - Saudi Riyal" },
+    // { value: "USD", label: "USD - US Dollar" },
+    // { value: "EUR", label: "EUR - Euro" },
+    // { value: "SAR", label: "SAR - Saudi Riyal" },
   ];
 
   const statusOptions = [
@@ -175,20 +172,16 @@ export function AddWalletModal({ isOpen, onClose, onSuccess, wallet = null, isEd
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold flex items-center gap-2">
-            <Wallet className="h-5 w-5" />
-            {isEdit ? t('wallets.editWallet') : t('wallets.addNewWallet')}
-          </DialogTitle>
-          <DialogDescription>
-            {isEdit 
-              ? t('wallets.pageDescription')
-              : t('wallets.createFirstWallet')
-            }
-          </DialogDescription>
-        </DialogHeader>
+    <CustomModal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={isEdit ? t('wallets.editWallet') : t('wallets.addNewWallet')}
+      size="sm"
+    >
+      <CustomModalBody>
+        <div className="text-sm text-muted-foreground mb-2">
+          {isEdit ? t('wallets.pageDescription') : t('wallets.createFirstWallet')}
+        </div>
 
         <div className="space-y-4">
           {/* Client Selection */}
@@ -254,7 +247,7 @@ export function AddWalletModal({ isOpen, onClose, onSuccess, wallet = null, isEd
           </div>
         </div>
 
-        <DialogFooter className="flex justify-end space-x-2 space-x-reverse">
+        <CustomModalFooter className="flex justify-end space-x-2 space-x-reverse">
           <Button 
             variant="outline" 
             onClick={handleClose}
@@ -278,8 +271,8 @@ export function AddWalletModal({ isOpen, onClose, onSuccess, wallet = null, isEd
               </>
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </CustomModalFooter>
+      </CustomModalBody>
+    </CustomModal>
   );
 }

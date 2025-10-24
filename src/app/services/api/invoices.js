@@ -1,0 +1,37 @@
+import api from "./axiosInstance";
+
+// Get all invoices
+export const getAllInvoices = async () => {
+  const response = await api.get('/invoices');
+  return response.data;
+};
+
+// Get invoice by ID
+export const getInvoiceById = async (id) => {
+  const response = await api.get(`/invoices/${id}`);
+  return response.data;
+};
+
+// Get invoices by client ID
+export const getInvoicesByClientId = async (clientId) => {
+  const response = await api.get(`/invoices/client/${clientId}`);
+  return response.data;
+};
+
+// Create new invoice
+export const createInvoice = async (invoiceData) => {
+  const response = await api.post('/invoices', invoiceData);
+  return response.data;
+};
+
+// Update invoice
+export const updateInvoice = async (id, invoiceData) => {
+  const response = await api.put(`/invoices/${id}`, invoiceData);
+  return response.data;
+};
+
+// Delete invoice
+export const deleteInvoice = async (id) => {
+  const response = await api.delete(`/invoices/${id}`);
+  return response.data;
+};

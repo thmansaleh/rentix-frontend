@@ -14,7 +14,6 @@ function Header() {
       className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm"
     >
       <div className="flex items-center justify-between gap-4 px-4 py-3">
-        {/* Left/Right Side: Action Icons (position depends on language) */}
         <div className="flex items-center gap-3">
           <ThemeSwitcher />
           <LanguageSwitcher />

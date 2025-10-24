@@ -1,8 +1,33 @@
 import api from "./axiosInstance";
 
-// Get all wallets
-export const getAllWallets = async () => {
-  const response = await api.get('/wallets');
+// Get wallets with pagination, filtering and search
+export const getWalletStats = async () => {
+  const response = await api.get('/wallets/stats');
+  return response.data;
+};
+
+export const getWallets = async (params) => {
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    status,
+    currency,
+    sortBy = "created_at",
+    sortOrder = "desc"
+  } = params;
+
+  // Build query string
+  const queryParams = new URLSearchParams();
+  queryParams.append("page", page);
+  queryParams.append("limit", limit);
+  if (search) queryParams.append("search", search);
+  if (status) queryParams.append("status", status);
+  if (currency) queryParams.append("currency", currency);
+  if (sortBy) queryParams.append("sortBy", sortBy);
+  if (sortOrder) queryParams.append("sortOrder", sortOrder);
+
+  const response = await api.get(`/wallets?${queryParams.toString()}`);
   return response.data;
 };
 
@@ -39,5 +64,15 @@ export const deleteWallet = async (id) => {
 // Update wallet balance
 export const updateWalletBalance = async (id, amount, operation) => {
   const response = await api.patch(`/wallets/${id}/balance`, { amount, operation });
+  return response.data;
+};
+
+// Get account statement (deposits and expenses) for a wallet with date range
+export const getAccountStatement = async (walletId, fromDate, toDate) => {
+  const queryParams = new URLSearchParams();
+  if (fromDate) queryParams.append("from", fromDate);
+  if (toDate) queryParams.append("to", toDate);
+  
+  const response = await api.get(`/wallets/${walletId}/statement?${queryParams.toString()}`);
   return response.data;
 };
