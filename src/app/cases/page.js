@@ -14,6 +14,7 @@ import AddTaskModal from '@/app/cases/modals/AddTaskModal';
 import AddCaseDegreeModal from '@/app/cases/modals/AddCaseDegreeModal';
 import AddExecutionModal from '@/app/cases/[id]/edit/executions/AddExecutionModal';
 import AddMemoModal from '@/app/cases/[id]/edit/memos/AddMemoModal';
+import DeleteCaseModal from '@/app/cases/modals/DeleteCaseModal';
 import CasesSearchForm from '@/app/cases/CasesSearchForm';
 import ExportButtons from '@/app/cases/ExportButtons';
 import {
@@ -51,6 +52,7 @@ const CasesPage = () => {
   
   // Permission checks
   const { hasPermission: canEditCase } = usePermission('Edit Case');
+  const { hasPermission: canDeleteCase } = usePermission('Delete case');
   const { hasPermission: canAddMemo } = usePermission('Add Memo');
   const { hasPermission: canAddSession } = usePermission('Add Session');
   const { hasPermission: canAddTask } = usePermission('Add Task');
@@ -64,7 +66,9 @@ const CasesPage = () => {
   const [isAddCaseDegreeModalOpen, setIsAddCaseDegreeModalOpen] = useState(false);
   const [isAddExecutionModalOpen, setIsAddExecutionModalOpen] = useState(false);
   const [isAddMemoModalOpen, setIsAddMemoModalOpen] = useState(false);
+  const [isDeleteCaseModalOpen, setIsDeleteCaseModalOpen] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState(null);
+  const [selectedCaseForDelete, setSelectedCaseForDelete] = useState(null);
   
   // Pagination and search state
   const [currentPage, setCurrentPage] = useState(1);
@@ -211,7 +215,6 @@ const CasesPage = () => {
 
   // Action handlers
   const handleView = (caseId) => {
-    console.log('View case:', caseId);
     // TODO: Implement view functionality
   };
 
@@ -219,9 +222,14 @@ const CasesPage = () => {
     router.push(`/cases/${caseId}/edit`);
   };
 
-  const handleDelete = (caseId) => {
-    console.log('Delete case:', caseId);
-    // TODO: Implement delete functionality
+  const handleDelete = (case_) => {
+    setSelectedCaseForDelete(case_);
+    setIsDeleteCaseModalOpen(true);
+  };
+
+  const handleDeleteSuccess = () => {
+    // Refresh the cases data after successful deletion
+    mutate();
   };
 
   const handleAddNote = (caseId) => {
@@ -255,7 +263,6 @@ const CasesPage = () => {
   };
 
   const handleAddPetition = (caseId) => {
-    console.log('Add petition to case:', caseId);
     // TODO: Implement add petition functionality
   };
 
@@ -558,14 +565,18 @@ const CasesPage = () => {
                                 {language === 'ar' ? 'اضافة درجة تقاضي' : 'Add Court Level'}
                               </DropdownMenuItem>
                             )}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem 
-                              onClick={() => handleDelete(case_.id)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                              {t('casesTable.delete')}
-                            </DropdownMenuItem>
+                            {canDeleteCase && (
+                              <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem 
+                                  onClick={() => handleDelete(case_)}
+                                  className="text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                  {t('casesTable.delete')}
+                                </DropdownMenuItem>
+                              </>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -670,6 +681,14 @@ const CasesPage = () => {
         onClose={() => setIsAddMemoModalOpen(false)}
         caseId={selectedCaseId}
         onSuccess={handleMemoAdded}
+      />
+
+      {/* Delete Case Modal */}
+      <DeleteCaseModal
+        isOpen={isDeleteCaseModalOpen}
+        onClose={() => setIsDeleteCaseModalOpen(false)}
+        caseData={selectedCaseForDelete}
+        onSuccess={handleDeleteSuccess}
       />
     </div>
   );

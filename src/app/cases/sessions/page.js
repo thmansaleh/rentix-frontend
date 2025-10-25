@@ -57,7 +57,6 @@ export default function SessionsPage() {
 
   const handleView = (session) => {
     // TODO: Implement view functionality
-    console.log("View session:", session);
   };
 
   const handleEdit = (session) => {
@@ -83,7 +82,6 @@ export default function SessionsPage() {
       setSessionToDelete(null);
       
       // TODO: Show success toast/notification
-      console.log("Session deleted successfully");
     } catch (error) {
       console.error("Error deleting session:", error);
       // TODO: Show error toast/notification

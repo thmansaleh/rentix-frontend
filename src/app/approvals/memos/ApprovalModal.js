@@ -55,9 +55,6 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, memoTitle, isLoading, curre
   const { language } = useLanguage();
   const { t } = useTranslations();
 
-  // Debug logging
-  console.log('ApprovalModal - currentStatus:', currentStatus);
-
   const initialValues = {
     status: currentStatus || 'Pending Approval'
   };
@@ -73,7 +70,6 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, memoTitle, isLoading, curre
 
   // Get all available statuses including current one
   const availableStatuses = getAllStatuses(currentStatus);
-  console.log('ApprovalModal - availableStatuses:', availableStatuses);
 
   return (
     <Formik

@@ -114,7 +114,6 @@ function Cases({ partyId }) {
   }
 
   const handleDelete = (caseId) => {
-    console.log('Delete case:', caseId)
     // TODO: Implement delete functionality
   }
 

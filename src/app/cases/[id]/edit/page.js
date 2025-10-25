@@ -40,11 +40,9 @@ function Page() {
                 setError(null);
                 
                 const response = await getCaseById(id);
-                console.log('🔍 API Response:', response);
                 
                 if (response.success && response.data) {
                     setCaseData(response.data);
-                    console.log('📝 Case Data from API:', response.data);
                 } else {
                     setError('Failed to fetch case data');
                 }

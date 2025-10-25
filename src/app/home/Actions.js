@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { Edit } from 'lucide-react'
 import EditSessionModal from '../cases/sessions/EditSessionModal'
+import { usePermission } from '@/hooks/useAuth'
 
 function Actions({ theme = 'blue', onEdit, sessionId }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { hasPermission: canEditSession } = usePermission('Edit Session')
 
   const themeColors = {
     blue: 'hover:text-blue-600',
@@ -29,10 +31,12 @@ function Actions({ theme = 'blue', onEdit, sessionId }) {
   return (
     <>
       <div className="flex justify-end gap-2 pt-2">
-        <Edit 
-          className={`w-4 h-4 text-gray-400 ${hoverColor} cursor-pointer transition-colors`}
-          onClick={handleEditClick}
-        />
+        {canEditSession && (
+          <Edit 
+            className={`w-4 h-4 text-gray-400 ${hoverColor} cursor-pointer transition-colors`}
+            onClick={handleEditClick}
+          />
+        )}
         {/* Future actions can be added here */}
       </div>
 

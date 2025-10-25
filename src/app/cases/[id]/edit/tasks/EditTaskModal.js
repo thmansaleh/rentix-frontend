@@ -138,8 +138,6 @@ function EditTaskModal({
     if (!taskId || !taskData) return
 
     if (formData.title && formData.description && formData.assignedTo && formData.dueDate && formData.priority && formData.status) {
-      console.log("🔥 EDIT MODAL - Updating task:", taskId, formData)
-      
       setIsSubmitting(true)
       const loadingToast = toast.loading(t('tasks.updatingTask') || 'جاري تحديث المهمة...')
       
@@ -163,7 +161,6 @@ function EditTaskModal({
         // Close modal on success
         onOpenChange(false)
         
-        console.log("✅ EDIT MODAL - Task updated successfully")
       } catch (error) {
         console.error("Error updating task:", error)
         

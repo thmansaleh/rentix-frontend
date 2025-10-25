@@ -125,7 +125,6 @@ const SecuritySettingsPage = () => {
   const handleTerminateSession = (sessionId) => {
     if (confirm(t('settings.confirmTerminateSession'))) {
       // Handle session termination
-      console.log('Terminating session:', sessionId);
     }
   };
 

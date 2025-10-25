@@ -90,7 +90,6 @@ function Tasks() {
       })
       setIsDialogOpen(false)
       
-      console.log("✅ TASKS - Task added successfully to Formik state");
     }
   }
 
@@ -179,8 +178,6 @@ function Tasks() {
 
   const handleUpdateTask = async () => {
     if (formData.title && formData.description && formData.taskType && formData.assignedTo && formData.dueDate && formData.priority && editingTaskIndex !== null) {
-      console.log("🔥 TASKS - Updating task in Formik state:", editingTaskIndex);
-      
       const updatedTask = {
         ...tasks[editingTaskIndex],
         title: formData.title,
@@ -211,7 +208,6 @@ function Tasks() {
       setEditingTaskIndex(null)
       setIsEditDialogOpen(false)
       
-      console.log("✅ TASKS - Task updated successfully in Formik state");
     }
   }
 

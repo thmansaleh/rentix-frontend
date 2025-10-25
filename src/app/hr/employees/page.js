@@ -55,9 +55,7 @@ export default function EmployeeTablePage() {
   
   // Extract roles data from API response
   const roles = rolesResponse?.success ? rolesResponse.data : [];
-if (employeesResponse ) {
-  console.log(employeesResponse);
-}
+
   // Filter and sort data
   const filteredAndSortedData = useMemo(() => {
     if (!employees || employees.length === 0) return [];
@@ -273,7 +271,6 @@ if (employeesResponse ) {
               {canAdd && (
                 <AddEmployeeDialog onAdd={(newEmployee) => {
                   // You can handle adding the new employee here (e.g., update state or send to backend)
-                  console.log("New employee:", newEmployee);
                   // Optionally revalidate the SWR data
                   mutate();
                 }} />

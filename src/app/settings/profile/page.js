@@ -71,7 +71,6 @@ const ProfileSettingsPage = () => {
       setIsEditing(false);
       
       // Show success message (you can integrate with your notification system)
-      console.log('Profile updated successfully');
     } catch (error) {
       console.error('Failed to update profile:', error);
     } finally {

@@ -138,7 +138,6 @@ const addCaseSlice = createSlice({
 			state.caseFiles = action.payload;
 		},
 		addCaseFile: (state, action) => {
-			console.log("🚨 REDUX - addCaseFile action called (should ONLY be called from INFO section)", action.payload);
 			const { file, fileName, fileType } = action.payload;
 			state.caseFiles.files.push(file);
 			state.caseFiles.filesNames.push({ fileName, fileType });
@@ -156,11 +155,9 @@ const addCaseSlice = createSlice({
 			state.partiesFiles = action.payload;
 		},
 		addPartiesFile: (state, action) => {
-			console.log("🔥 REDUX - addPartiesFile action called", action.payload);
 			const { file, fileName, fileType, fileSize, uploadedAt } = action.payload;
 			state.partiesFiles.files.push(file);
 			state.partiesFiles.filesNames.push({ fileName, fileType, fileSize, uploadedAt });
-			console.log("✅ REDUX - File added to partiesFiles state", state.partiesFiles);
 		},
 		removePartiesFile: (state, action) => {
 			const index = action.payload;
@@ -220,7 +217,6 @@ const addCaseSlice = createSlice({
 			state.employeeFiles = action.payload;
 		},
 		addEmployeeFile: (state, action) => {
-			console.log("👥 REDUX - addEmployeeFile action called (should ONLY be called from EMPLOYEES section)", action.payload);
 			const { file, fileName, fileType } = action.payload;
 			state.employeeFiles.files.push(file);
 			state.employeeFiles.filesNames.push({ fileName, fileType });
@@ -236,7 +232,6 @@ const addCaseSlice = createSlice({
 		},
 		// Court file management
 		addCourtFile: (state, action) => {
-			console.log("🏛️ REDUX - addCourtFile action called (should ONLY be called from COURT section)", action.payload);
 			const { file, fileName, fileType } = action.payload;
 			state.courtFiles.files.push(file);
 			state.courtFiles.filesNames.push({

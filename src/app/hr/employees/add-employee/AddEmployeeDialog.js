@@ -156,8 +156,6 @@ export default function AddEmployeeModal({ onAdd }) {
       const response = await createEmployee(form);
       
       if (response.success) {
-        console.log('Employee created successfully:', response);
-        
         toast.success(t('messages.employeeCreatedSuccessfully') || 'Employee created successfully!');
         
         if (onAdd) onAdd(response);

@@ -31,7 +31,6 @@ const Memos = () => {
   
   // Get employee role from Redux
   const employeeRole = useSelector((state) => state.auth.roleEn);
-  console.log("Employee Role:", employeeRole);
   
   // Modal state
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
@@ -138,7 +137,6 @@ const Memos = () => {
 
   // Handle approval confirmation
   const handleApprovalConfirm = async (isApproved) => {
-    console.log(selectedMemo.id, employeeRole, isApproved);
     // return null
     if (!selectedMemo || !employeeRole) {
       toast.error(

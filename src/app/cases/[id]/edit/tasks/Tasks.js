@@ -93,7 +93,6 @@ function Tasks({ caseId }) {
       // Refresh tasks list
       mutate()
       
-      console.log("✅ TASKS - Task deleted successfully:", taskToDelete)
     } catch (error) {
       console.error("Error deleting task:", error)
       

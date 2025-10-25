@@ -112,7 +112,6 @@ export default function PermissionsModal({ trigger,id }) {
         
         try {
             const result = await assignPermissionsToEmployee(id, updatedPermissions);
-            console.log('Saved permissions:', updatedPermissions);
             
             toast.success(t('messages.permissionsSavedSuccessfully') || 'Permissions saved successfully!');
             setOpen(false);

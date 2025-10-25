@@ -4,7 +4,6 @@ import api from "./axiosInstance";
 export const createExecution = async (executionData) => {
     const files = executionData.files || [];
     const uploadedFiles = await uploadFiles(files)
-    console.log('files from uploadFiles:', uploadedFiles);
     executionData.files = uploadedFiles;
   const response = await api.post("/executions", executionData);
   return response.data;

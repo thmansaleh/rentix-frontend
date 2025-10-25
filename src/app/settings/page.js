@@ -12,7 +12,8 @@ import {
   Database,
   FileText,
   Globe,
-  Building2
+  Building2,
+  Gauge
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -80,6 +81,15 @@ const SettingsPage = () => {
       href: '/settings/branches',
       color: 'text-teal-600',
       bgColor: 'bg-teal-50 dark:bg-teal-950'
+    },
+    {
+      id: 'performance',
+      title: language === 'ar' ? 'الأداء' : 'Performance',
+      description: language === 'ar' ? 'إدارة البيانات وتحسين الأداء' : 'Manage data and optimize performance',
+      icon: Gauge,
+      href: '/settings/performance',
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-50 dark:bg-pink-950'
     },
     {
       id: 'reports',

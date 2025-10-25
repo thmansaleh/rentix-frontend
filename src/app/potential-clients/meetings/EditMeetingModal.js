@@ -109,10 +109,6 @@ export function EditMeetingModal({ isOpen, onClose, meetingId, onSuccess }) {
     if (meetingData?.data && formikRef.current) {
       const parsedDate = parseDateFromAPI(meetingData.data.date);
       
-      console.log("Meeting data received:", meetingData.data);
-      console.log("Original date:", meetingData.data.date);
-      console.log("Parsed date:", parsedDate);
-      
       // Extract employee IDs from attendees
       const employeeIds = meetingData.data.attendees?.map(att => att.employee_id) || [];
       

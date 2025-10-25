@@ -185,8 +185,6 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
       const response = await updateEmployee(employeeId, form);
       
       if (response.success) {
-        console.log('Employee updated successfully:', response);
-        
         toast.success(t('messages.employeeUpdatedSuccessfully') || 'Employee updated successfully!');
         
         // Revalidate the employee data in the parent component

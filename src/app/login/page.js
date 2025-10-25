@@ -79,7 +79,6 @@ export default function Page() {
           localStorage.removeItem('rememberedEmail');
           localStorage.removeItem('rememberedPassword');
         }
-        console.log('Login successful');
       }
     } catch (err) {
       console.error('Login error:', err);

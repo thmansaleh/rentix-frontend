@@ -3,7 +3,6 @@ import api from "./axiosInstance";
 
 export const createJudicialOrder = async (data) => {
     const files = data.files || [];
-    console.log('Files to upload:', files);
   try {
     if (files.length > 0) {
       const uploadedFiles = await uploadFiles(files);
@@ -21,7 +20,6 @@ export const createJudicialOrder = async (data) => {
 
 export const updateJudicialOrder = async (id, data) => {
   const files = data.files || [];
-  console.log('Files to upload:', files);
 
   try {
     if (files.length > 0) {

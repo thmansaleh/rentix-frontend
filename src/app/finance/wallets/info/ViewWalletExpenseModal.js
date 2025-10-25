@@ -33,11 +33,6 @@ export function ViewWalletExpenseModal({ isOpen, onClose, expenseId }) {
 
   const expense = data?.data;
 
-  // Log for debugging
-  console.log('ViewWalletExpenseModal - expenseId:', expenseId);
-  console.log('ViewWalletExpenseModal - data:', data);
-  console.log('ViewWalletExpenseModal - error:', error);
-
   // Handle escape key to close modal
   useEffect(() => {
     const handleEscape = (e) => {

@@ -44,10 +44,7 @@ function Branch({ formikProps }) {
   // Debug logging to see what value we have and what options are available
   useEffect(() => {
     if (data?.data && values.branch_id) {
-      console.log('🏢 Branch - Current value:', values.branch_id, 'Type:', typeof values.branch_id);
-      console.log('🏢 Branch - Available options:', data.data.map(b => ({ id: b.id, type: typeof b.id })));
       const match = data.data.find(b => b.id.toString() === values.branch_id);
-      console.log('🏢 Branch - Match found:', match);
     }
   }, [values.branch_id, data]);
 

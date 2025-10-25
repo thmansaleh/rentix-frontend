@@ -1,7 +1,8 @@
 import React from 'react';
-import { Menu, CircleX, Scale } from 'lucide-react';
+import { Menu, CircleX } from 'lucide-react';
 import NavigationMenu from './NavigationMenu';
 import SidebarFooter from './SidebarFooter';
+import SidebarHeader from './SidebarHeader';
 
 /**
  * Mobile Sidebar Component
@@ -28,11 +29,11 @@ const MobileSidebar = ({
       <div className="fixed top-0 left-0 right-0 z-50 bg-sidebar border-b border-sidebar-border shadow-lg">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-sidebar-primary to-sidebar-primary/80 rounded-lg flex items-center justify-center shadow-lg">
-              <Scale className="w-4 h-4 text-sidebar-primary-foreground" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+              <img src="/log_in_card_logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-sidebar-foreground font-bold text-lg">
-              {isRTL ? 'لوحة الإدارة' : 'Admin Panel'}
+              LEXORA
             </h1>
           </div>
           <button
@@ -63,28 +64,7 @@ const MobileSidebar = ({
             ref={sidebarRef}
           >
             {/* Mobile Sidebar Header */}
-            <div className="flex items-center justify-between p-6 border-b border-sidebar-border">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-sidebar-primary to-sidebar-primary/80 rounded-xl flex items-center justify-center shadow-lg">
-                  <Scale className="w-5 h-5 text-sidebar-primary-foreground" />
-                </div>
-                <div>
-                  <h1 className="text-sidebar-foreground font-bold text-xl">
-                    {isRTL ? 'محمد بني هاشم' : 'Mohammed Bani Hashem'}
-                  </h1>
-                  <p className="text-sidebar-foreground/70 text-sm">
-                    {isRTL ? 'مكتب محاماة' : 'Law Office'}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-lg text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
-                aria-label={isRTL ? "إغلاق القائمة" : "Close Menu"}
-              >
-                <CircleX className="w-5 h-5" />
-              </button>
-            </div>
+            <SidebarHeader isRTL={isRTL} isMobile={true} onClose={onClose} />
 
             {/* Mobile Navigation Menu */}
             <NavigationMenu 

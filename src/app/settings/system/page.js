@@ -57,7 +57,6 @@ const SystemSettingsPage = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('System settings saved:', systemSettings);
       alert(t('settings.settingsSaved'));
     } catch (error) {
       console.error('Failed to save settings:', error);

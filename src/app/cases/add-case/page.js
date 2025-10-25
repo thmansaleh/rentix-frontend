@@ -38,8 +38,6 @@ function AddCasePage() {
 
   // Handle form submission
   const handleSubmit = async(values, { setSubmitting, setStatus, setFieldError, resetForm }) => {
-    console.log('Submitting form with values:', values);
-    
     // Clear any previous error status
     setStatus(null);
     setSubmitting(true);
@@ -80,7 +78,6 @@ function AddCasePage() {
       const employeesFiles = values.caseFiles || [];
       const courtFiles = values.courtFiles || [];
       const createdCase = await createCase(caseData, values.caseFiles, employeesFiles, courtFiles);
-      console.log('Case created successfully:', createdCase);
       const caseId = createdCase.caseId;
 
     
@@ -407,7 +404,6 @@ function AddCasePage() {
               {/* Sticky Save Button */}
               <SaveCaseButton 
                 onClick={() => {
-                  console.log('Save case clicked with values:', values);
                 }}
                 onSubmitForm={submitForm}
                 validateForm={validateForm}

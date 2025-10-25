@@ -24,10 +24,6 @@ function Parties() {
   const selectedParties = values.selectedParties || [];
   const { t } = useTranslations();
 
-  // Debug logging
-  console.log("Parties component - Current Formik values:", values);
-  console.log("Parties component - selectedParties:", selectedParties);
-
   // Use custom hook for parties data
   const { mutate } = useParties(1);
 

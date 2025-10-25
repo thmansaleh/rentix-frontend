@@ -23,23 +23,16 @@ function Files() {
   const handleFileSelect = useCallback((selectedFiles) => {
     const filesArray = Array.from(selectedFiles);
     
-    console.log("🟡 PARTIES FILES COMPONENT: File selection triggered");
-    console.log("🟡 PARTIES FILES: Number of files selected:", filesArray.length);
-    console.log("🟡 PARTIES FILES: Current partiesFiles state:", partiesFiles);
-    
     // Store files directly without base64 conversion
     const currentFiles = [...(partiesFiles.files || [])];
     
     // Add new files directly to the files array
     currentFiles.push(...filesArray);
     
-    console.log("🔥 PARTIES FILES - Updating partiesFiles with direct File objects");
-
     setFieldValue('partiesFiles', {
       files: currentFiles
     });
     
-    console.log("✅ PARTIES FILES - Files added successfully to partiesFiles via Formik");
   }, [partiesFiles, setFieldValue]);
 
   // Handle drag events

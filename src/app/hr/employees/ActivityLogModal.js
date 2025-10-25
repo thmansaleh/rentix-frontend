@@ -74,14 +74,11 @@ export default function ActivityLogModal({ trigger, employee }) {
 
   const employeeId = employee?.id;
 
-  console.log('ActivityLogModal props:', { employee, employeeId, trigger });
-
   // Fetch employee logs using SWR with the existing service function
   // Only fetch when modal is open and employeeId exists
   const { data, error, isLoading, mutate } = useSWR(
     open && employeeId ? `employee-logs-${employeeId}` : null,
     () => {
-      console.log('Calling getEmployeeLogs with employeeId:', employeeId);
       return getEmployeeLogs(employeeId);
     },
     {
@@ -92,8 +89,6 @@ export default function ActivityLogModal({ trigger, employee }) {
       errorRetryInterval: 1000,
     }
   );
-
-  console.log('SWR state:', { data, error, isLoading, employeeId, open });
 
   // Show warning if employeeId is missing
   if (open && !employeeId) {

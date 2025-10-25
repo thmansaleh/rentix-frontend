@@ -200,7 +200,6 @@ function AddTaskModal({
         onTaskCreated()
       }
       
-      console.log("✅ TASKS - Task added successfully");
     } catch (error) {
       console.error("Error creating task:", error)
       

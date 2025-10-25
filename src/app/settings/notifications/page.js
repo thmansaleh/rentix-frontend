@@ -59,7 +59,6 @@ const NotificationsSettingsPage = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Notification settings saved:', notificationSettings);
       alert(t('settings.settingsSaved'));
     } catch (error) {
       console.error('Failed to save settings:', error);

@@ -9,7 +9,6 @@ export const updateCasePetition = async (id, casePetitionData) => {
   const documents = casePetitionData.files || [];
 if (documents.length > 0) {
   const uploadedFiles = await uploadFiles(documents)
-  console.log('files from uploadFiles:', uploadedFiles);
   casePetitionData.files = uploadedFiles;
 }
   const response = await api.put(`/case-petitions/${id}`, { ...casePetitionData });
@@ -25,7 +24,6 @@ export const getCasePetitionsByCaseId = async (caseId) => {
 }
 export const createCasePetition = async (casePetitionData) => {
   const files= await uploadFiles(casePetitionData.files)
-  console.log('files from uploadFiles:', files);
 
   const response = await api.post("/case-petitions", { ...casePetitionData, files });
   return response.data;

@@ -35,7 +35,6 @@ const SaveCaseButton = ({
     e.preventDefault();
     e.stopPropagation();
     const now = Date.now();
-    console.log(formValues);
     // Prevent rapid successive clicks (debouncing)
     if (now - lastSubmissionTime.current < DEBOUNCE_DELAY) {
       // console.log('Submission blocked: too soon after last submission');
@@ -44,7 +43,6 @@ const SaveCaseButton = ({
     
     // Prevent submission if already submitting
     if (isSubmitting || isLoading) {
-      console.log('Submission blocked: already in progress');
       return;
     }
     
@@ -62,8 +60,6 @@ const SaveCaseButton = ({
       
       // Check if there are validation errors
       if (Object.keys(errors).length > 0) {
-        console.log('Form validation failed:', errors);
-        
         // Mark all fields as touched so errors are displayed
         const touchedFields = {};
         const markAllTouched = (obj, prefix = '') => {

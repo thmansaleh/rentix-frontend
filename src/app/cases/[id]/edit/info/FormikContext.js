@@ -56,8 +56,6 @@ export const FormikProvider = ({ children, caseId, caseData }) => {
       };
     }
 
-    console.log('📝 Processing Case Data:', caseData);
-
     return {
       case_number: caseData.case_number || '',
       counter_file_number: caseData.counter_file_number || '',
@@ -118,7 +116,6 @@ export const FormikProvider = ({ children, caseId, caseData }) => {
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    console.log('📋 calling api:', values);
     //  return null
     // Log specific sections
     const caseData = {

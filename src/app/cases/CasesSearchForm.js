@@ -62,9 +62,6 @@ const CasesSearchForm = ({ onSearch }) => {
       branchId: selectedBranch
     };
     
-    // For now, just log the search params since no action is required
-    console.log('Search parameters:', searchParams);
-    
     // Call the onSearch callback if provided
     if (onSearch) {
       onSearch(searchParams);

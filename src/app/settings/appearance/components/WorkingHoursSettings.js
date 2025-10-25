@@ -25,14 +25,12 @@ const WorkingHoursSettings = () => {
     try {
       setIsLoadingWorkHours(true);
       const response = await getWorkingHours();
-      console.log('Fetched working hours response:', response);
       
       if (response.success && response.data) {
         const formattedData = {
           start_time: formatTime(response.data.start_time) || '09:00',
           end_time: formatTime(response.data.end_time) || '17:00'
         };
-        console.log('Setting formatted working hours:', formattedData);
         setWorkingHours(formattedData);
       }
     } catch (error) {
@@ -69,13 +67,9 @@ const WorkingHoursSettings = () => {
         end_time: formatTime(workingHours.end_time)
       };
       
-      console.log('Original working hours data:', workingHours);
-      console.log('Formatted working hours data:', formattedData);
-      
       const response = await updateWorkingHours(formattedData);
       if (response.success) {
         // Show success message (you might want to add a toast notification here)
-        console.log(t('settings.workingHoursUpdated'));
         alert(t('settings.workingHoursUpdated'));
       }
     } catch (error) {

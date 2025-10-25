@@ -104,9 +104,6 @@ const EditPartyModal = ({ children, party }) => {
         p.id === party.id ? updatedParty : p
       );
       
-      console.log("EditPartyModal - Updating party with files:", updatedParty);
-      console.log("EditPartyModal - Updated parties array:", updatedParties);
-      
       // Update the form state directly using Formik
       setFieldValue('selectedParties', updatedParties);
       

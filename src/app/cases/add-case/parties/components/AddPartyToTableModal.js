@@ -113,9 +113,6 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
   }, []);
 
   const handleAddParty = () => {
-    console.log("Selected Party ID:", selectedParty); // Debug log
-    console.log("Selected Party Data:", selectedPartyData); // Debug log
-    
     if (selectedParty && selectedPartyData) {
       // Add files to the party data
       const partyWithFiles = {

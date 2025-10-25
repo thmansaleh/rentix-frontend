@@ -54,9 +54,7 @@ export const getEmployeeDocumentCounts = async (employeeId) => {
 
 export const uploadEmployeeDocument = async (employeeId, documentType, file) => {
   // First upload file to get URL
-  console.log('File to upload:', file);
   const uploadedFile = await uploadFile(file);
-  console.log('Uploaded file info:', uploadedFile);
   // Then create document record
 
   // return null
