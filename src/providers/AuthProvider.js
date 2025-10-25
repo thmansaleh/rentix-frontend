@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { selectIsAuth, selectAuthLoading } from '@/redux/slices/authSlice';
 import { checkAuthStatus } from '@/app/services/api/auth';
 import { Loader2 } from 'lucide-react';
@@ -11,6 +11,7 @@ import LoginPage from '@/app/login/page';
 
 const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const isAuth = useSelector(selectIsAuth);
   const authLoading = useSelector(selectAuthLoading);
   const pathname = usePathname();
@@ -22,6 +23,8 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check authentication status by calling the API on app load
     if (!isAuth) {
+      const token = localStorage.getItem('authToken');
+      console.log('AuthProvider: Checking auth status, token exists:', !!token);
       dispatch(checkAuthStatus());
     }
   }, [dispatch, isAuth]);
@@ -45,9 +48,8 @@ const AuthProvider = ({ children }) => {
 
   // If user is authenticated and trying to access login page, redirect to dashboard
   if (isAuth && pathname === '/login') {
-    // In a real app, you might want to redirect to dashboard or home page
-    // For now, we'll just show the children (which would be the main app)
-    window.location.href = '/';
+    // Use Next.js router for client-side navigation instead of window.location
+    router.push('/');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
