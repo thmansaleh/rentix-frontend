@@ -15,7 +15,7 @@ const SidebarHeader = ({ isRTL, isMobile, onClose }) => {
         </div>
         <div className="flex-1 transition-opacity duration-300">
           <h1 className="text-sidebar-foreground font-bold text-xl">
-            {isRTL ? 'LEXORA' : 'LEXORA'}
+            {isRTL ? 'LEXCORA' : 'LEXCORA'}
           </h1>
           
         </div>

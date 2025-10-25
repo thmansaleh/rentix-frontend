@@ -33,7 +33,7 @@ const MobileSidebar = ({
               <img src="/log_in_card_logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-sidebar-foreground font-bold text-lg">
-              LEXORA
+              LEXCORA
             </h1>
           </div>
           <button

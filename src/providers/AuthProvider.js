@@ -26,8 +26,8 @@ const AuthProvider = ({ children }) => {
     }
   }, [dispatch, isAuth]);
 
-  // Show loading spinner while checking auth state
-  if (authLoading) {
+  // Show loading only on protected routes, not on login page
+  if (authLoading && !isPublicRoute) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

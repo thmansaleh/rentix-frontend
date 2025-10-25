@@ -113,7 +113,7 @@ export default function Page() {
             <Image height='60' width='60' src="/log_in_card_logo.png" alt="Law Office Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-white text-center mb-1">
-            LEXORA
+            LEXCORA
           </h1>
           </CardHeader>
           
@@ -137,7 +137,7 @@ export default function Page() {
                     placeholder="أدخل اسم المستخدم"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`h-11 ${errors.email ? 'border-red-500' : ''}`}
+                    className={`h-11 text-white placeholder:text-white/70 ${errors.email ? 'border-red-500' : ''}`}
                     disabled={authLoading}
                     dir="rtl"
                   />
@@ -158,7 +158,7 @@ export default function Page() {
                       placeholder="أدخل كلمة المرور"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`h-11 pl-10 ${errors.password ? 'border-red-500' : ''}`}
+                      className={`h-11 pl-10 text-white placeholder:text-white/70 ${errors.password ? 'border-red-500' : ''}`}
                       disabled={authLoading}
                       dir="rtl"
                     />
@@ -209,11 +209,13 @@ export default function Page() {
               </div>
             </form>
           </CardContent>
-          <CardFooter>
-          <p className="text-white text-xs">
-           نظام LEXORA لإدارة مكاتب المحاماة
-          </p>
-
+          <CardFooter className="flex flex-col items-center space-y-1">
+            <p className="text-white text-xs font-medium">
+              Lexcora ERP system by Almstkshf.com
+            </p>
+            <p className="text-white text-xs">
+              For technical support: rased@almstkshf.com | Call: 05085952035
+            </p>
           </CardFooter>
         </Card>
 
