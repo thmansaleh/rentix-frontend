@@ -23,8 +23,6 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check authentication status by calling the API on app load
     if (!isAuth) {
-      const token = localStorage.getItem('authToken');
-      console.log('AuthProvider: Checking auth status, token exists:', !!token);
       dispatch(checkAuthStatus());
     }
   }, [dispatch, isAuth]);

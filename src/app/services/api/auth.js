@@ -21,15 +21,10 @@ export const loginWithRedux = (username, password) => async (dispatch) => {
     dispatch({ type: 'auth/loginStart' });
     const data = await login(username, password);
     
-    console.log('Login response:', { success: data.success, hasToken: !!data.token });
-    
     if (data.success) {
       // Store token in localStorage for production compatibility
       if (data.token && typeof window !== 'undefined') {
         localStorage.setItem('authToken', data.token);
-        console.log('Token saved to localStorage');
-      } else {
-        console.warn('No token in response data');
       }
       
       dispatch({
@@ -49,7 +44,6 @@ export const loginWithRedux = (username, password) => async (dispatch) => {
       return { success: false, error: data.message };
     }
   } catch (error) {
-    console.error('Login error:', error);
     const errorMessage = error.response?.data?.message || error.message || 'Login failed';
     dispatch({
       type: 'auth/loginFailure',
@@ -85,18 +79,14 @@ export const logoutWithRedux = () => async (dispatch) => {
 export const checkAuthStatus = () => async (dispatch) => {
   try {
     const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
-    console.log('checkAuthStatus: Token exists in localStorage:', !!token);
     
     if (!token) {
-      console.log('checkAuthStatus: No token found, logging out');
       dispatch({ type: 'auth/logout' });
       return { success: false, error: 'No token found' };
     }
     
     dispatch({ type: 'auth/loginStart' });
     const response = await getProfile();
-    
-    console.log('checkAuthStatus response:', { success: response?.success, hasUser: !!response?.data });
     
     // Check if the response has the expected structure: { success: true, data: { user object }, permissions: [...] }
     if (response && response.success && response.data) {
@@ -110,13 +100,10 @@ export const checkAuthStatus = () => async (dispatch) => {
       return { success: true, user: response.data };
     } else {
       // Handle case where API returns success: false or no user data
-      console.warn('checkAuthStatus: Invalid response, logging out');
       dispatch({ type: 'auth/logout' });
       return { success: false, error: 'Authentication failed' };
     }
   } catch (error) {
-    // Log the actual error for debugging
-    console.error('checkAuthStatus error:', error);
     dispatch({ type: 'auth/logout' });
     return { 
       success: false, 
