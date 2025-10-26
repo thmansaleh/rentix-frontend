@@ -51,12 +51,15 @@ const EditSessionModal = ({
     () => getSession(sessionId),
     {
       revalidateOnFocus: false,
-      revalidateOnReconnect: true,
+      revalidateOnReconnect: false,
+      shouldRetryOnError: true,
     }
   );
 
   // Extract session object from API response
   const session = sessionData?.success ? sessionData.data : null;
+  
+  console.log('Session Data:', session); // Debug log
 
   // Handle document deletion
   const handleDeleteDocument = async (documentId, documentName) => {
@@ -170,7 +173,7 @@ const EditSessionModal = ({
     status: Yup.boolean(),
   });
 
-  // Formik setup
+  // Formik setup - Initialize with session data when available
   const formik = useFormik({
     initialValues: {
       decision: session?.decision || "",
@@ -182,10 +185,10 @@ const EditSessionModal = ({
         : "",
       note: session?.note || "",
       link: session?.link || "",
-      is_expert_session: session?.is_expert_session || false,
-      is_judgment_reserved: session?.is_judgment_reserved || false,
-      is_judgment_deferred: session?.is_judgment_deferred || false,
-      status: session?.status === 'active' || false,
+      is_expert_session: session?.is_expert_session === 1 || session?.is_expert_session === true,
+      is_judgment_reserved: session?.is_judgment_reserved === 1 || session?.is_judgment_reserved === true,
+      is_judgment_deferred: session?.is_judgment_deferred === 1 || session?.is_judgment_deferred === true,
+      status: session?.status === 'active' || session?.status === 1,
     },
     validationSchema,
     enableReinitialize: true,

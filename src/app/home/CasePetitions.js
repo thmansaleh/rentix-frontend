@@ -11,11 +11,11 @@ function CasePetitions() {
     if (isLoading) {
         return (
             <div>
-                <div className='text-lg font-bold rounded-2xl bg-amber-200 p-3 text-center mb-4 shadow-sm'>
+                <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
                     📅 اجراءات قضايا جديدة
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="text-center text-gray-500">جاري التحميل...</div>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <div className="text-center text-gray-500 dark:text-gray-400">جاري التحميل...</div>
                 </div>
             </div>
         )
@@ -24,11 +24,11 @@ function CasePetitions() {
     if (error) {
         return (
             <div>
-                <div className='text-lg font-bold rounded-2xl bg-amber-200 p-3 text-center mb-4 shadow-sm'>
+                <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
                     📅 اجراءات قضايا جديدة
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="text-center text-red-500">خطأ في تحميل البيانات</div>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <div className="text-center text-red-500 dark:text-red-400">خطأ في تحميل البيانات</div>
                 </div>
             </div>
         )
@@ -37,12 +37,12 @@ function CasePetitions() {
     const petitions = data?.success ? data.data : []
 
     return <div>
-        <div className='text-lg font-bold rounded-2xl bg-amber-200 p-3 text-center mb-4 shadow-sm'>
+        <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
             📅 اجراءات قضايا جديدة
         </div>
-        <div className="bg-gray-50 rounded-lg space-y-3 p-4">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 p-4">
             {petitions.length === 0 ? (
-                <div className="text-center text-gray-500 py-4">لا توجد اجراءات قضايا جديدة</div>
+                <div className="text-center text-gray-500 dark:text-gray-400 py-4">لا توجد اجراءات قضايا جديدة</div>
             ) : (
                 petitions.map((petition) => (
                     <CasePetitionsItem

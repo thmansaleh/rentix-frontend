@@ -34,15 +34,15 @@ function CasePetitionsItem({ petition }) {
   }
 
   return (
-    <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 mb-1 flex items-center">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 flex items-center">
             <span className="ml-2">📋</span>
             القضية رقم: {petition.case_number}
           </h3>
-          <p className="text-gray-600 text-sm flex items-center">
-            <Folder className="w-4 h-4 text-yellow-600 ml-2" />
+          <p className="text-gray-600 dark:text-gray-400 text-sm flex items-center">
+            <Folder className="w-4 h-4 text-yellow-600 dark:text-yellow-400 ml-2" />
             رقم الملف: {petition.file_number}
           </p>
         </div>
@@ -53,39 +53,39 @@ function CasePetitionsItem({ petition }) {
 
       <div className="space-y-2 text-sm">
         <div className="flex items-center">
-          <File className="w-4 h-4 text-gray-600 ml-2" />
-          <span className="font-medium text-gray-700 ml-2">موضوع القضية:</span>
-          <span className="text-gray-600">{petition.case_topic}</span>
+          <File className="w-4 h-4 text-gray-600 dark:text-gray-400 ml-2" />
+          <span className="font-medium text-gray-700 dark:text-gray-300 ml-2">موضوع القضية:</span>
+          <span className="text-gray-600 dark:text-gray-400">{petition.case_topic}</span>
         </div>
 
         <div className="flex items-center gap-x-2">
-          <FileSpreadsheet className="w-4 h-4 text-blue-600 ml-2" />
-          <span className="font-medium text-gray-700 ml-2"> العريضة:</span>
-          <span className="text-gray-600">{petition.type}</span>
+          <FileSpreadsheet className="w-4 h-4 text-blue-600 dark:text-blue-400 ml-2" />
+          <span className="font-medium text-gray-700 dark:text-gray-300 ml-2"> العريضة:</span>
+          <span className="text-gray-600 dark:text-gray-400">{petition.type}</span>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 mt-3 pt-3 border-t border-gray-100">
+        <div className="grid grid-cols-1 gap-4 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
           <div className="flex items-center gap-x-2">
-            <Calendar1 className="w-4 h-4 text-purple-600 ml-2" />
+            <Calendar1 className="w-4 h-4 text-purple-600 dark:text-purple-400 ml-2" />
             <div>
-              <span className="block font-medium text-gray-700 text-xs">تاريخ التقديم</span>
-              <span className="text-gray-600">{formatDate(petition.date)}</span>
+              <span className="block font-medium text-gray-700 dark:text-gray-300 text-xs">تاريخ التقديم</span>
+              <span className="text-gray-600 dark:text-gray-400">{formatDate(petition.date)}</span>
             </div>
           </div>
           <div className="flex items-center gap-x-2">
             {/* <span className="ml-2">⏰</span> */}
-            <Clock className="w-4 h-4 text-blue-600 ml-2" />
+            <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400 ml-2" />
             <div>
-              <span className="block font-medium text-gray-700 text-xs">اخر موعد لاتاخذ اجراء</span>
-              <span className="text-gray-600">{formatDate(petition.appeal_date)}</span>
+              <span className="block font-medium text-gray-700 dark:text-gray-300 text-xs">اخر موعد لاتاخذ اجراء</span>
+              <span className="text-gray-600 dark:text-gray-400">{formatDate(petition.appeal_date)}</span>
             </div>
           </div>
           <div className="flex items-center gap-x-2">
-            <Clock className="w-4 h-4 animate-pulse text-red-600 ml-2" />
+            <Clock className="w-4 h-4 animate-pulse text-red-600 dark:text-red-400 ml-2" />
             <div className="flex items-center gap-2">
               <div>
-                <span className="block font-medium text-gray-700 text-xs">عدد الايام المتبقية</span>
-                <span className="text-gray-600 flex items-center gap-2">
+                <span className="block font-medium text-gray-700 dark:text-gray-300 text-xs">عدد الايام المتبقية</span>
+                <span className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
                   {(() => {
                     const daysRemaining = Math.ceil((new Date(petition.appeal_date) - new Date()) / (1000 * 60 * 60 * 24));
                     const isOverdue = daysRemaining <= 0;
@@ -119,7 +119,7 @@ function CasePetitionsItem({ petition }) {
         </div>
       </div>
       <Link href={`/cases/${petition.case_id}/edit`}>
-      <Info className="w-5 h-5 cursor-pointer text-blue-700" />
+      <Info className="w-5 h-5 cursor-pointer text-blue-700 dark:text-blue-400" />
     </Link>
     </div>
   )

@@ -128,26 +128,26 @@ function SessionsWithDecisionItem({
   }
 
   return (
-    <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] ">
+    <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] dark:bg-gray-900 dark:border-gray-700">
       <CardContent className="p-4">
-        <div className="flex items-center justify-center mb-4 p-3 bg-gradient-to-r from-red-50 to-red-100 ">
+        <div className="flex items-center justify-center mb-4 p-3 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900 dark:to-red-800">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="p-2 bg-red-200 rounded-full relative z-10">
+              <div className="p-2 bg-red-200 dark:bg-red-700 rounded-full relative z-10">
                 {deadlineInfo?.isOverdue ? (
-                  <AlertTriangle className="w-5 h-5 text-red-700" />
+                  <AlertTriangle className="w-5 h-5 text-red-700 dark:text-red-200" />
                 ) : deadlineInfo?.isUrgent ? (
-                  <Clock className="w-5 h-5 text-red-700" />
+                  <Clock className="w-5 h-5 text-red-700 dark:text-red-200" />
                 ) : (
-                  <Hash className="w-5 h-5 text-red-700" />
+                  <Hash className="w-5 h-5 text-red-700 dark:text-red-200" />
                 )}
               </div>
               {/* Expanding ring animations */}
-              <div className="absolute inset-0 rounded-full border-2 border-red-300 animate-ping opacity-75"></div>
-              <div className="absolute inset-0 rounded-full border border-red-200 animate-pulse opacity-50" style={{animationDelay: '0.5s'}}></div>
-              <div className="absolute inset-[-4px] rounded-full border border-red-100 animate-ping opacity-30" style={{animationDelay: '1s', animationDuration: '3s'}}></div>
+              <div className="absolute inset-0 rounded-full border-2 border-red-300 dark:border-red-600 animate-ping opacity-75"></div>
+              <div className="absolute inset-0 rounded-full border border-red-200 dark:border-red-500 animate-pulse opacity-50" style={{animationDelay: '0.5s'}}></div>
+              <div className="absolute inset-[-4px] rounded-full border border-red-100 dark:border-red-400 animate-ping opacity-30" style={{animationDelay: '1s', animationDuration: '3s'}}></div>
             </div>
-            <h3 className="text-lg font-bold text-red-900 text-center leading-tight">
+            <h3 className="text-lg font-bold text-red-900 dark:text-red-100 text-center leading-tight">
               {displayTopic}
               {deadlineInfo && (
                 <div className="text-sm font-medium mt-1">
@@ -159,26 +159,26 @@ function SessionsWithDecisionItem({
         </div>
         
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Clock className="w-4 h-4" />
             <span>{tSessions('labels.sessionDate')} {displayDate}</span>
-            {displayTime && <span className="text-purple-600 font-medium">• {displayTime}</span>}
+            {displayTime && <span className="text-purple-600 dark:text-purple-400 font-medium">• {displayTime}</span>}
           </div>
           
 
               {session?.file_number && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <File className="w-4 h-4" />
               <span>{tSessions('labels.fileNumber')} </span>
-              <span className="font-medium text-gray-900">{session.file_number}</span>
+              <span className="font-medium text-gray-900 dark:text-gray-100">{session.file_number}</span>
             </div>
           )}
 
           {session?.case_number && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <FileText className="w-4 h-4" />
             <span>{tSessions('labels.caseNumber')} </span>
-            <span className="font-medium text-gray-900">{displayCaseNumber}</span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">{displayCaseNumber}</span>
             {degreeInfo && (
               <Badge className={`ml-2 ${degreeInfo.color}`}>
                 {degreeInfo.label}
@@ -189,47 +189,47 @@ function SessionsWithDecisionItem({
 
       
           
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <User className="w-4 h-4" />
             <span>{tSessions('labels.client')} </span>
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-gray-900 dark:text-gray-100">
               {displayClientParties.length > 0 ? displayClientParties.join('، ') : t('common.notSpecified')}
             </span>
           </div>
 
           {displayOpponentParties.length > 0 && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <User className="w-4 h-4" />
               <span>{tSessions('labels.opponent')} </span>
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-gray-900 dark:text-gray-100">
                 {displayOpponentParties.join('، ')}
               </span>
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Calendar className="w-4 h-4" />
             <span>{tSessions('labels.caseType')} </span>
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-gray-900 dark:text-gray-100">
               {displayCaseTypeTranslated}          
             </span>
           </div>
 
           {/* Decision Field */}
           {session?.decision && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <FileText className="w-4 h-4 text-green-600" />
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <FileText className="w-4 h-4 text-green-600 dark:text-green-400" />
               <span>{tSessions('labels.decision')} </span>
-              <span className="font-medium text-green-900">
+              <span className="font-medium text-green-900 dark:text-green-300">
                 {session.decision}
               </span>
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Calendar className="w-4 h-4 animate-pulse text-purple-600" />
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <Calendar className="w-4 h-4 animate-pulse text-purple-600 dark:text-purple-400" />
             <span>{tSessions('labels.deadline')} </span>
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-gray-900 dark:text-gray-100">
               {deadlineInfo ? ` (${deadlineInfo.deadlineDate})` : tSessions('labels.notCalculated')}
             </span>
           </div>
@@ -237,10 +237,10 @@ function SessionsWithDecisionItem({
           {deadlineInfo && (
             <div className={`flex items-center gap-2 text-sm font-medium ${
               deadlineInfo.isOverdue 
-                ? 'text-red-600' 
+                ? 'text-red-600 dark:text-red-400' 
                 : deadlineInfo.isUrgent 
-                  ? 'text-orange-600' 
-                  : 'text-green-600'
+                  ? 'text-orange-600 dark:text-orange-400' 
+                  : 'text-green-600 dark:text-green-400'
             }`}>
               {deadlineInfo.isOverdue ? (
                 <AlertTriangle className="w-4 h-4 animate-bounce" />

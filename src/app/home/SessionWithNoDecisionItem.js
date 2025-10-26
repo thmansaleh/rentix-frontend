@@ -65,30 +65,30 @@ function SessionWithNoDecisionItem({
   const degreeInfo = getDegreeBadge(displayDegree)
 
   return (
-    <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] ">
+    <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] dark:bg-gray-900 dark:border-gray-700">
       <CardContent className="p-4">
-        <div className="flex items-center justify-center mb-4 p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg ">
+        <div className="flex items-center justify-center mb-4 p-3 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800 rounded-lg ">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-200 rounded-full">
-              <Hash className="w-5 h-5 text-orange-700" />
+            <div className="p-2 bg-orange-200 dark:bg-orange-700 rounded-full">
+              <Hash className="w-5 h-5 text-orange-700 dark:text-orange-200" />
             </div>
-            <h3 className="text-xl font-bold text-orange-900 text-center">
+            <h3 className="text-xl font-bold text-orange-900 dark:text-orange-100 text-center">
               رقم الملف : {displayFileNumber || 'غير محدد'}
             </h3>
           </div>
         </div>
         
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Clock className="w-4 h-4" />
             <span>تاريخ الجلسة: {displayDate}</span>
-            {displayTime && <span className="text-orange-600 font-medium">• {displayTime}</span>}
+            {displayTime && <span className="text-orange-600 dark:text-orange-400 font-medium">• {displayTime}</span>}
           </div>
           
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <FileText className="w-4 h-4" />
             <span>رقم القضية: </span>
-            <span className="font-medium text-gray-900">{displayCaseNumber}</span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">{displayCaseNumber}</span>
             {degreeInfo && (
               <Badge className={`ml-2 ${degreeInfo.color}`}>
                 {degreeInfo.label}
@@ -96,14 +96,14 @@ function SessionWithNoDecisionItem({
             )}
           </div>
           
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <User className="w-4 h-4" />
             <span>العميل: </span>
-            <span className="font-medium text-gray-900">{displayClientName}</span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">{displayClientName}</span>
           </div>
           
           
-          <div className="flex items-center gap-2 text-sm text-orange-600">
+          <div className="flex items-center gap-2 text-sm text-orange-600 dark:text-orange-400">
             <span className="font-semibold">  {session.is_judgment_deferred ? "مدد الحكم": session.is_judgment_reserved ? "حجز الحكم" : "لايوجد قرار بعد"}</span>
           </div>
           

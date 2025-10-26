@@ -2342,5 +2342,17 @@
     "paid": "Paid",
     "cancelled": "Cancelled",
     "noWallets": "No wallets found"
+  },
+  "home": {
+    "newCasePetitions": "New Case Petitions",
+    "weekSessions": "Week's Sessions",
+    "appealAndCassationSessions": "Appeal & Cassation Sessions",
+    "delayedDecisions": "Delayed Decisions",
+    "loading": "Loading...",
+    "errorLoadingData": "Error loading data",
+    "noNewCasePetitions": "No new case petitions",
+    "noSessionsThisWeek": "No sessions this week",
+    "noAppealOrCassationSessions": "No appeal or cassation sessions",
+    "noDelayedDecisions": "No delayed decisions"
   }
 }

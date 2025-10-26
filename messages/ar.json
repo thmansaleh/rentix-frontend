@@ -1943,5 +1943,17 @@
     "paid": "مدفوع",
     "cancelled": "ملغي",
     "noWallets": "لا توجد محافظ"
+  },
+  "home": {
+    "newCasePetitions": "اجراءات قضايا جديدة",
+    "weekSessions": "جلسات الأسبوع",
+    "appealAndCassationSessions": "جلسات الاستئناف والطعن",
+    "delayedDecisions": "القرارات المتاخرة",
+    "loading": "جاري التحميل...",
+    "errorLoadingData": "خطأ في تحميل البيانات",
+    "noNewCasePetitions": "لا توجد اجراءات قضايا جديدة",
+    "noSessionsThisWeek": "لا توجد جلسات هذا الأسبوع",
+    "noAppealOrCassationSessions": "لا توجد جلسات استئناف أو طعن",
+    "noDelayedDecisions": "لا توجد قرارات متاخرة"
   }
 }

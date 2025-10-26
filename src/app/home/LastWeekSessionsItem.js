@@ -80,30 +80,30 @@ function LastWeekSessionsItem({
   const degreeInfo = getDegreeBadge(displayDegree)
 
   return (
-    <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] ">
+    <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] dark:bg-gray-900 dark:border-gray-700">
       <CardContent className="p-4">
-        <div className="flex items-center justify-center mb-4 p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg ">
+        <div className="flex items-center justify-center mb-4 p-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 rounded-lg ">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-200 rounded-full">
-              <Hash className="w-5 h-5 text-blue-700" />
+            <div className="p-2 bg-blue-200 dark:bg-blue-700 rounded-full">
+              <Hash className="w-5 h-5 text-blue-700 dark:text-blue-200" />
             </div>
-            <h3 className="text-xl font-bold text-blue-900 text-center">
+            <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 text-center">
               {displayTitle}
             </h3>
           </div>
         </div>
         
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Clock className="w-4 h-4" />
             <span>تاريخ الجلسة: {displayDate}</span>
-            {displayTime && <span className="text-blue-600 font-medium">• {displayTime}</span>}
+            {displayTime && <span className="text-blue-600 dark:text-blue-400 font-medium">• {displayTime}</span>}
           </div>
           
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <FileText className="w-4 h-4" />
             <span>رقم القضية: </span>
-            <span className="font-medium text-gray-900">{displayCaseNumber}</span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">{displayCaseNumber}</span>
             {degreeInfo && (
               <Badge className={`ml-2 ${degreeInfo.color}`}>
                 {degreeInfo.label}
@@ -111,10 +111,10 @@ function LastWeekSessionsItem({
             )}
           </div>
           
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <User className="w-4 h-4" />
             <span>العميل: </span>
-            <span className="font-medium text-gray-900">{displayClientName}</span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">{displayClientName}</span>
           </div>
           
           <Actions theme="blue" sessionId={session?.id} />
