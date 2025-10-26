@@ -1,8 +1,7 @@
 import axios from "axios";
-
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://law-backend-woad.vercel.app/api";
 const api = axios.create({
-  // baseURL: "http://localhost:8080/api",
-  baseURL: "https://law-backend-woad.vercel.app/api",
+  baseURL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
