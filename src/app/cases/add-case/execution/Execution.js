@@ -189,7 +189,7 @@ onClick={() => setIsDialogOpen(true)} size="sm">
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
-                        {execution.amount ? new Intl.NumberFormat('ar-SA', { 
+                        {execution.amount ? new Intl.NumberFormat('ar-AE', { 
                           style: 'currency', 
                           currency: 'AED' 
                         }).format(execution.amount) : t('executions.notSpecified')}

@@ -106,7 +106,7 @@ function CourtFiles() {
 
   const formatUploadDate = () => {
     try {
-      return new Date().toLocaleDateString('ar-SA', {
+      return new Date().toLocaleDateString('ar-AE', {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
@@ -198,9 +198,9 @@ function CourtFiles() {
                         </p>
                         <div className="flex items-center space-x-2 text-xs text-gray-500">
                           <span>{formatFileSize(file)}</span>
-                          <span>•</span>
+                          <span>â€¢</span>
                           <span>{formatUploadDate()}</span>
-                          <span>•</span>
+                          <span>â€¢</span>
                           <span className="bg-gray-200 px-1 rounded">
                             {getFileType(file)}
                           </span>

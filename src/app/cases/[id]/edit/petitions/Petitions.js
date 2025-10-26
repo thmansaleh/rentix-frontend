@@ -160,7 +160,7 @@ function Petitions({ caseId }) {
 
   const formatDate = (dateString) => {
     if (!dateString) return t('petitions.notAvailable')
-    const locale = language === 'ar' ? 'ar-SA' : 'en-US'
+    const locale = language === 'ar' ? 'ar-AE' : 'en-US'
     return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',

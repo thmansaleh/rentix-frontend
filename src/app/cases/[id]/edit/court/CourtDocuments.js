@@ -72,7 +72,7 @@ function CourtDocuments({ caseId }) {
       minute: '2-digit'
     };
     
-    return date.toLocaleDateString(isArabic ? 'ar-SA' : 'en-US', options);
+    return date.toLocaleDateString(isArabic ? 'ar-AE' : 'en-US', options);
   };
 
   // Handle document deletion

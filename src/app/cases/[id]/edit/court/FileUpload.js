@@ -195,7 +195,7 @@ function FileUpload({
                       </p>
                       <p className="text-xs text-gray-500">
                         {formatFileSize(file.size)} • {new Date().toLocaleDateString(
-                          isArabic ? 'ar-SA' : 'en-US'
+                          isArabic ? 'ar-AE' : 'en-US'
                         )}
                       </p>
                     </div>
