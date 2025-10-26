@@ -54,7 +54,6 @@ function Requests({ employeeId }) {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting request:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف الطلب' : 'Error deleting request')
     }
   }

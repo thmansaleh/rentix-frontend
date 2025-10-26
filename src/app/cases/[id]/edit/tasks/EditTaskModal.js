@@ -162,7 +162,6 @@ function EditTaskModal({
         onOpenChange(false)
         
       } catch (error) {
-        console.error("Error updating task:", error)
         
         toast.dismiss(loadingToast)
         const errorMessage = error?.response?.data?.message || error?.message || t('tasks.errorUpdatingTask') || 'حدث خطأ أثناء تحديث المهمة'

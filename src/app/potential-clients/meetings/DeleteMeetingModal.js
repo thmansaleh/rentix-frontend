@@ -27,7 +27,7 @@ export function DeleteMeetingModal({ isOpen, onClose, meetingId, meetingTitle, o
       onSuccess?.();
       onClose();
     } catch (error) {
-      console.error("Error deleting meeting:", error);
+
       // You can add toast notification here if you have a toast system
     } finally {
       setIsDeleting(false);

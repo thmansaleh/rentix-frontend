@@ -183,7 +183,6 @@ function Deals() {
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف الاتفاقية' : 'Error deleting deal'))
       }
     } catch (error) {
-      console.error('Error deleting deal:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف الاتفاقية' : 'Error deleting deal')
     } finally {
       setDeleteModal(prev => ({ ...prev, isDeleting: false }))

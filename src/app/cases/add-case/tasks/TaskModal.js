@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { format } from "date-fns"
 import { ar } from "date-fns/locale"

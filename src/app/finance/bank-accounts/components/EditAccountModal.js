@@ -59,7 +59,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
           toast.error(response.message || 'حدث خطأ في تحديث الحساب');
         }
       } catch (error) {
-        console.error('Error updating bank account:', error);
+
         toast.error('حدث خطأ في تحديث الحساب البنكي');
       } finally {
         setIsLoading(false);
@@ -76,7 +76,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
           setBranches(response.data);
         }
       } catch (error) {
-        console.error('Error fetching branches:', error);
+
       }
     };
     
@@ -109,7 +109,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
           toast.error('حدث خطأ في تحميل بيانات الحساب');
         }
       } catch (error) {
-        console.error('Error fetching account data:', error);
+
         toast.error('حدث خطأ في تحميل بيانات الحساب');
       } finally {
         setIsLoadingData(false);

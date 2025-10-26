@@ -127,7 +127,6 @@ const EditExecutionModal = ({
         existingDocuments: execution.documents || []
       })
     } catch (error) {
-      console.error('Error fetching execution:', error)
       toast.error(tc('errorLoading'))
     } finally {
       setIsLoading(false)
@@ -189,7 +188,6 @@ const EditExecutionModal = ({
       // Close modal
       onClose()
     } catch (error) {
-      console.error('Error updating execution:', error)
       toast.error(t('updateError'))
     } finally {
       setIsSubmitting(false)
@@ -217,7 +215,6 @@ const EditExecutionModal = ({
         setIsDeleteDocDialogOpen(false)
         setDeleteDocumentId(null)
       } catch (error) {
-        console.error('Error deleting document:', error)
         toast.error(t('documentDeleteError'))
       } finally {
         setIsDeletingDoc(false)

@@ -103,7 +103,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
         toast.error(t('sessions.addError'));
       }
     } catch (error) {
-      console.error('Error creating session:', error);
+
       toast.error(t('sessions.addError'));
     } finally {
       setIsSubmitting(false);

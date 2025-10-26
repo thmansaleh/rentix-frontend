@@ -153,7 +153,6 @@ const RequestModal = ({
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error saving request:', error)
       toast.error(
         error.response?.data?.message || 
         (isArabic ? 'حدث خطأ أثناء حفظ البيانات' : 'Error saving request')

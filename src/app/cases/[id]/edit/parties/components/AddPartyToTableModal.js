@@ -140,7 +140,6 @@ const AddPartyToTableModal = ({ children, caseId, onPartyAdded }) => {
           toast.error(t('parties.errorAddingParty') || 'حدث خطأ أثناء إضافة الطرف للقضية');
         }
       } catch (error) {
-        console.error('Error adding party to case:', error);
         toast.error(t('parties.errorAddingParty') || 'حدث خطأ أثناء إضافة الطرف للقضية');
       } finally {
         setLoading(false);

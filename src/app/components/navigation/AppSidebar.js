@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -62,7 +62,7 @@ const AppSidebar = () => {
       await dispatch(logoutWithRedux());
       router.push('/login');
     } catch (error) {
-      console.error('Logout error:', error);
+
     }
   }, [dispatch, router]);
 

@@ -83,7 +83,6 @@ function Court({ caseId }) {
       setPoliceFormData({ name_ar: '', name_en: '' });
       setIsPoliceDialogOpen(false);
     } catch (error) {
-      console.error('Error creating police station:', error);
       toast.error(isArabic ? 'حدث خطأ أثناء إنشاء مركز الشرطة' : 'Error creating police station');
     } finally {
       setIsSubmitting(false);
@@ -109,7 +108,6 @@ function Court({ caseId }) {
       setProsecutionFormData({ name_ar: '', name_en: '' });
       setIsProsecutionDialogOpen(false);
     } catch (error) {
-      console.error('Error creating public prosecution:', error);
       toast.error(isArabic ? 'حدث خطأ أثناء إنشاء النيابة العامة' : 'Error creating public prosecution');
     } finally {
       setIsSubmitting(false);
@@ -135,7 +133,6 @@ function Court({ caseId }) {
       setCourtFormData({ court_ar: '', court_en: '' });
       setIsCourtDialogOpen(false);
     } catch (error) {
-      console.error('Error creating court:', error);
       toast.error(isArabic ? 'حدث خطأ أثناء إنشاء المحكمة' : 'Error creating court');
     } finally {
       setIsSubmitting(false);

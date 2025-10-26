@@ -78,7 +78,7 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
         throw new Error(result.message || 'فشل في إضافة السجل');
       }
     } catch (error) {
-      console.error('Error creating GoAML record:', error);
+
       toast.error(error.response?.data?.message || 'فشل في إضافة السجل');
     } finally {
       setLoading(false);

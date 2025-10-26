@@ -150,7 +150,6 @@ export const FormikProvider = ({ children, caseId, caseData }) => {
       // Show success toast
       toast.success('تم تحديث القضية بنجاح');
     } catch (error) {
-      console.error('Error logging file sections:', error);
       // Show error toast
       toast.error('حدث خطأ أثناء تحديث القضية');
     } finally {

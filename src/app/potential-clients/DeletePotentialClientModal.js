@@ -48,7 +48,7 @@ const DeletePotentialClientModal = ({ clientId, clientName, onClientDeleted, chi
         );
       }
     } catch (error) {
-      console.error("Error deleting potential client:", error);
+
       toast.error(
         language === 'ar' 
           ? "حدث خطأ أثناء حذف العميل المحتمل" 

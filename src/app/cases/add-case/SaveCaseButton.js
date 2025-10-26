@@ -100,7 +100,7 @@ const SaveCaseButton = ({
       await onSubmitForm();
       
     } catch (error) {
-      console.error('Submission error:', error);
+
     } finally {
       // Reset submitting state after a delay to prevent rapid resubmissions
       submissionTimeout.current = setTimeout(() => {

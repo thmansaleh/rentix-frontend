@@ -5,7 +5,7 @@ export const getCaseDegrees = async () => {
     const response = await api.get("/case-degrees");
     return response.data;
   } catch (error) {
-    console.error("Error fetching case degrees:", error);
+
     throw error;
   }
 };
@@ -18,7 +18,7 @@ export const getCaseDegreeByCaseId = async (id) => {
     const response = await api.get(`/case-degrees/case/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching case degree by case ID:", error);
+
     throw error;
   }
 };

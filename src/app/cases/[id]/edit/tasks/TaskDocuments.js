@@ -36,7 +36,6 @@ function TaskDocuments({ documents = [], onDocumentsChange, isEditable = true, t
       toast.dismiss(loadingToast)
       toast.success(t('documents.documentDeletedSuccessfully') || 'تم حذف المستند بنجاح')
     } catch (error) {
-      console.error('Error deleting document:', error)
       toast.dismiss(loadingToast)
       const errorMessage = error?.response?.data?.message || error?.message || t('documents.errorDeletingDocument') || 'حدث خطأ أثناء حذف المستند'
       toast.error(errorMessage)

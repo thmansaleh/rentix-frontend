@@ -71,7 +71,6 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
         throw new Error(response.message || "فشل في إضافة المذكرة")
       }
     } catch (error) {
-      console.error("Error creating memo:", error)
       toast.error(error.message || "حدث خطأ أثناء إضافة المذكرة")
     } finally {
       setIsSubmitting(false)

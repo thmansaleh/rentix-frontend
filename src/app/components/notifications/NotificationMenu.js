@@ -114,7 +114,7 @@ function NotificationMenu() {
       mutate()
       mutateUnreadCount()
     } catch (error) {
-      console.error('Error marking notification as read:', error)
+
     }
   }
 
@@ -124,7 +124,7 @@ function NotificationMenu() {
       mutate()
       mutateUnreadCount()
     } catch (error) {
-      console.error('Error marking all as read:', error)
+
     }
   }
 
@@ -134,7 +134,7 @@ function NotificationMenu() {
       mutate()
       mutateUnreadCount()
     } catch (error) {
-      console.error('Error deleting notification:', error)
+
     }
   }
 

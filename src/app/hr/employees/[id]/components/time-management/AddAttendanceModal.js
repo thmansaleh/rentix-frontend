@@ -130,7 +130,6 @@ export default function AddAttendanceModal({
         toast.error(data.message || t("attendance.failedToAddAttendance"));
       }
     } catch (error) {
-      console.error("Error adding attendance:", error);
       toast.error(t("attendance.errorAddingAttendance"));
     } finally {
       setIsSaving(false);

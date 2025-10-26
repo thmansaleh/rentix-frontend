@@ -71,7 +71,7 @@ function CaseType() {
       setIsDialogOpen(false)
     } catch (error) {
       toast.error(t('caseTypes.failedToCreateCaseType'))
-      console.error('Error creating case type:', error)
+
     } finally {
       setIsSubmitting(false)
     }

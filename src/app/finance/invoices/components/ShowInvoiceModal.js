@@ -32,7 +32,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
         onClose();
       }
     } catch (error) {
-      console.error("Error loading invoice:", error);
+
       toast.error("فشل في تحميل بيانات الفاتورة");
       onClose();
     } finally {

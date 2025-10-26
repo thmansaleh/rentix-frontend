@@ -219,7 +219,7 @@ function Orders() {
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف الأمر' : 'Error deleting order'))
       }
     } catch (error) {
-      console.error('Error deleting order:', error)
+
       toast.error(isArabic ? 'حدث خطأ أثناء حذف الأمر' : 'Error deleting order')
     } finally {
       setDeleteModal(prev => ({ ...prev, isDeleting: false }))

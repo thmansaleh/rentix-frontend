@@ -37,7 +37,7 @@ const GeneralSettingsPage = () => {
       // console.log('Saved', { company, terms });
       alert('تم الحفظ');
     } catch (e) {
-      console.error(e);
+
     } finally {
       setSaving(false);
     }

@@ -34,7 +34,7 @@ const WorkingHoursSettings = () => {
         setWorkingHours(formattedData);
       }
     } catch (error) {
-      console.error('Error fetching working hours:', error);
+
       // Keep default values on error
     } finally {
       setIsLoadingWorkHours(false);
@@ -73,8 +73,8 @@ const WorkingHoursSettings = () => {
         alert(t('settings.workingHoursUpdated'));
       }
     } catch (error) {
-      console.error('Error updating working hours:', error);
-      console.error('Error response:', error.response?.data);
+
+
       // Show error message
       alert(error.response?.data?.message || 'Error updating working hours');
     } finally {

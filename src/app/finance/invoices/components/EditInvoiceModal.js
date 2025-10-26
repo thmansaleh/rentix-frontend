@@ -88,7 +88,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         onClose();
       }
     } catch (error) {
-      console.error("Error loading invoice:", error);
+
       toast.error("فشل في تحميل بيانات الفاتورة");
       onClose();
     } finally {
@@ -175,7 +175,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         toast.error(response.error || "فشل في تعديل الفاتورة");
       }
     } catch (error) {
-      console.error("Error updating invoice:", error);
+
       toast.error(error.response?.data?.error || "فشل في تعديل الفاتورة");
     } finally {
       setIsSubmitting(false);

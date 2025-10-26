@@ -200,7 +200,7 @@ const MyTasks = () => {
       setIsDeleteDialogOpen(false);
       setTaskToDelete(null);
     } catch (error) {
-      console.error('Error deleting task:', error);
+
       // You can add a toast notification here if available
     } finally {
       setIsDeleting(false);

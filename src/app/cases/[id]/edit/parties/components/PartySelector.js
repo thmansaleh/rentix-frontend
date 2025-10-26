@@ -29,7 +29,6 @@ const PartySelector = ({
         setSearchResults(response.data);
       }
     } catch (error) {
-      console.error('Error searching parties:', error);
     }
   }, []);
 

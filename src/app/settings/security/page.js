@@ -116,7 +116,7 @@ const SecuritySettingsPage = () => {
       
       alert(t('settings.passwordChanged'));
     } catch (error) {
-      console.error('Failed to change password:', error);
+
     } finally {
       setIsChangingPassword(false);
     }

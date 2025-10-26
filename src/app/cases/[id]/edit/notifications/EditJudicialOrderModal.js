@@ -197,7 +197,6 @@ function EditJudicialOrderModal({ isOpen, onClose, caseId, orderId }) {
         setIsDeleteDocDialogOpen(false)
         setDeleteDocumentId(null)
       } catch (error) {
-        console.error('Error deleting document:', error)
         // You might want to show a toast notification here
       } finally {
         setIsDeletingDoc(false)
@@ -227,7 +226,6 @@ function EditJudicialOrderModal({ isOpen, onClose, caseId, orderId }) {
         
         onClose()
       } catch (error) {
-        console.error('Error updating judicial order:', error)
         // You might want to show a toast notification here
       } finally {
         setIsSubmitting(false)

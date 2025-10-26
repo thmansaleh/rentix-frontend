@@ -95,7 +95,7 @@ export function AddMeetingModal({ isOpen, onClose, clientId, onSuccess }) {
         onSuccess();
       }
     } catch (error) {
-      console.error("Error creating meeting:", error);
+
       toast.error(error.message || t("meetings.messages.createError"));
     } finally {
       setSubmitting(false);

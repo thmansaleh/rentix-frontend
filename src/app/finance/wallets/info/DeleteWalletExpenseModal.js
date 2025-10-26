@@ -19,7 +19,7 @@ export function DeleteWalletExpenseModal({ isOpen, onClose, onSuccess, expense }
       toast.success("تم حذف المصروف بنجاح");
       onSuccess();
     } catch (error) {
-      console.error("Error deleting expense:", error);
+
       toast.error(error.response?.data?.message || "فشل في حذف المصروف");
     } finally {
       setIsDeleting(false);

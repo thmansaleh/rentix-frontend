@@ -94,7 +94,7 @@ const CreateClientDealModal = ({ children, clientId, onDealCreated }) => {
         }
       }
     } catch (error) {
-      console.error('Error creating client deal:', error);
+
       toast.error(language === 'ar' ? 'حدث خطأ أثناء إنشاء الاتفاقية' : 'Failed to create deal');
     } finally {
       setIsLoading(false);

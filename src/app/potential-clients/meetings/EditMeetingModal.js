@@ -85,7 +85,7 @@ export function EditMeetingModal({ isOpen, onClose, meetingId, onSuccess }) {
       
       return date;
     } catch (error) {
-      console.error("Error parsing date:", error);
+
       return null;
     }
   };
@@ -99,7 +99,7 @@ export function EditMeetingModal({ isOpen, onClose, meetingId, onSuccess }) {
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     } catch (error) {
-      console.error("Error formatting date for API:", error);
+
       return "";
     }
   };
@@ -181,7 +181,7 @@ export function EditMeetingModal({ isOpen, onClose, meetingId, onSuccess }) {
         onSuccess();
       }
     } catch (error) {
-      console.error("Error updating meeting:", error);
+
       toast.error(error.message || t("meetings.messages.updateError"));
     } finally {
       setSubmitting(false);

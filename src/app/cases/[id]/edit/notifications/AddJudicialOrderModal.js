@@ -146,7 +146,6 @@ function AddJudicialOrderModal({ isOpen, onClose, caseId }) {
         
         onClose()
       } catch (error) {
-        console.error('Error creating judicial order:', error)
         // You might want to show a toast notification here
       } finally {
         setIsSubmitting(false)

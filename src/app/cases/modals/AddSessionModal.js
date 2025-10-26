@@ -131,7 +131,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
               isRtl ? "فشل في رفع الملفات" : "Failed to upload files",
               { position: "top-right", autoClose: 3000 }
             );
-            console.error("File upload error:", uploadError);
+
             // Continue with form submission even if file upload fails
             uploadedFiles = [];
           }
@@ -187,7 +187,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
             autoClose: 3000,
           }
         );
-        console.error("Error creating session:", error);
+
       } finally {
         setIsLoading(false);
         setIsUploading(false);

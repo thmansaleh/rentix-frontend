@@ -172,7 +172,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
         toast.error(t("potentialClientsPage.messages.createError") || "حدث خطأ أثناء إضافة العميل المحتمل");
       }
     } catch (error) {
-      console.error("Error creating client:", error);
+
       toast.error(t("potentialClientsPage.messages.createError") || "حدث خطأ أثناء إضافة العميل المحتمل");
     } finally {
       setLoading(false);

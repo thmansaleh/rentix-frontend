@@ -72,7 +72,6 @@ function OtherLeave({ employeeId }) {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting other leave:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف الإجازة' : 'Error deleting leave')
     }
   }

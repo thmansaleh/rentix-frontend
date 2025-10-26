@@ -16,6 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { getPerformanceStats, clearSystemLogs, clearNotifications } from '@/app/services/api/performance';
 
 const PerformanceSettingsPage = () => {
   const t = useTranslations();
@@ -32,20 +33,10 @@ const PerformanceSettingsPage = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/performance/stats`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-      }
+      const data = await getPerformanceStats();
+      setStats(data);
     } catch (error) {
-      console.error('Error fetching performance stats:', error);
+
     } finally {
       setLoading(false);
     }
@@ -63,27 +54,17 @@ const PerformanceSettingsPage = () => {
   const handleConfirmDelete = async () => {
     try {
       setDeleting(true);
-      const token = localStorage.getItem('token');
       
-      const endpoint = deleteType === 'logs' 
-        ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/performance/clear-logs`
-        : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/performance/clear-notifications`;
-
-      const response = await fetch(endpoint, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        // Refresh stats after deletion
-        await fetchStats();
+      if (deleteType === 'logs') {
+        await clearSystemLogs();
       } else {
-        console.error('Error deleting data');
+        await clearNotifications();
       }
+
+      // Refresh stats after deletion
+      await fetchStats();
     } catch (error) {
-      console.error('Error deleting data:', error);
+
     } finally {
       setDeleting(false);
       setDeleteDialogOpen(false);

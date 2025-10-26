@@ -122,7 +122,7 @@ const BranchesSettingsPage = () => {
       mutate();
       handleCloseDialog();
     } catch (error) {
-      console.error('Error saving branch:', error);
+
       toast.error(language === 'ar' ? 'حدث خطأ أثناء حفظ الفرع' : 'Error saving branch');
     } finally {
       setIsSubmitting(false);
@@ -139,7 +139,7 @@ const BranchesSettingsPage = () => {
       toast.success(language === 'ar' ? 'تم حذف الفرع بنجاح' : 'Branch deleted successfully');
       mutate();
     } catch (error) {
-      console.error('Error deleting branch:', error);
+
       toast.error(language === 'ar' ? 'حدث خطأ أثناء حذف الفرع' : 'Error deleting branch');
     }
   };

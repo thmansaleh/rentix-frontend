@@ -52,7 +52,6 @@ function Orders({ partyId }) {
       setIsDeleteModalOpen(false)
       setSelectedOrderId(null)
     } catch (error) {
-      console.error('Error deleting order:', error)
       toast.error(t('orders.deleteError') || 'حدث خطأ أثناء حذف الطلب')
     } finally {
       setIsDeleting(false)

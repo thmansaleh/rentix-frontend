@@ -114,7 +114,7 @@ export const searchCasesForAddNewCasePage = async (term) => {
     const response = await api.get(`/cases/search`, { params: { searchTerm: term } });
     return response.data;
   } catch (error) {
-    console.error('Error searching cases:', error);
+
     throw error;
   } 
 }

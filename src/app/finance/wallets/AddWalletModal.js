@@ -72,7 +72,7 @@ export function AddWalletModal({ isOpen, onClose, onSuccess, wallet = null, isEd
         setSearchResults(response.data);
       }
     } catch (error) {
-      console.error('Error searching clients:', error);
+
       setSearchResults([]);
     }
   }, []);
@@ -146,7 +146,7 @@ export function AddWalletModal({ isOpen, onClose, onSuccess, wallet = null, isEd
         toast.error(response.message || "Failed to create wallet");
       }
     } catch (error) {
-      console.error("Error creating wallet:", error);
+
       toast.error("An error occurred while creating the wallet");
     } finally {
       setLoading(false);

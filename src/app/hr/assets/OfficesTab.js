@@ -37,7 +37,7 @@ const OfficesTab = ({ offices, onMutate }) => {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error fetching asset details:', error)
+
       toast.error(isArabic ? 'حدث خطأ أثناء جلب بيانات الأصل' : 'Error fetching asset details')
     }
   }
@@ -52,7 +52,7 @@ const OfficesTab = ({ offices, onMutate }) => {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error fetching asset details:', error)
+
       toast.error(isArabic ? 'حدث خطأ أثناء جلب بيانات الأصل' : 'Error fetching asset details')
     }
   }
@@ -71,7 +71,7 @@ const OfficesTab = ({ offices, onMutate }) => {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting asset:', error)
+
       toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
     }
   }

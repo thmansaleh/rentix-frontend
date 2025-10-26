@@ -61,7 +61,7 @@ const CallLogsPage = () => {
         throw new Error(result.message || 'فشل في حذف المكالمة');
       }
     } catch (error) {
-      console.error('Error deleting call log:', error);
+
       toast.error('فشل في حذف المكالمة');
     }
   };

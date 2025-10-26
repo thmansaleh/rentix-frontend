@@ -60,7 +60,7 @@ function PoliceStation() {
       setFormData({ name_ar: '', name_en: '' });
       setIsDialogOpen(false);
     } catch (error) {
-      console.error('Error creating police station:', error);
+
       toast.error(language === 'ar' ? 'حدث خطأ أثناء إنشاء مركز الشرطة' : 'Error creating police station');
     } finally {
       setIsSubmitting(false);

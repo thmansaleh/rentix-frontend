@@ -27,7 +27,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
           setBranches(response.data);
         }
       } catch (error) {
-        console.error('Error fetching branches:', error);
+
       }
     };
     
@@ -77,7 +77,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
           toast.error(response.message || 'حدث خطأ في إضافة الحساب');
         }
       } catch (error) {
-        console.error('Error creating bank account:', error);
+
         toast.error('حدث خطأ في إضافة الحساب البنكي');
       } finally {
         setIsLoading(false);

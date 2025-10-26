@@ -178,7 +178,7 @@ const requests = filterRequestsByRole(data?.data || []);
       setSelectedRequest(null);
       setApprovalStatus('');
     } catch (error) {
-      console.error('Error updating approval status:', error);
+
       toast.error(language === 'ar' ? 'حدث خطأ أثناء تحديث الحالة' : 'Error updating status');
     } finally {
       setIsSubmitting(false);

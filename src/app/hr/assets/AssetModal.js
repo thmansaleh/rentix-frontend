@@ -123,7 +123,7 @@ const AssetModal = ({
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting document:', error)
+
       toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
     }
   }
@@ -158,7 +158,7 @@ const AssetModal = ({
         try {
           uploadedDocuments = await uploadFiles(selectedFiles, 'assets')
         } catch (uploadError) {
-          console.error('Error uploading files:', uploadError)
+
           toast.error(isArabic ? 'حدث خطأ أثناء رفع الملفات' : 'Error uploading files')
           setIsLoading(false)
           setIsUploading(false)
@@ -196,7 +196,7 @@ const AssetModal = ({
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error saving asset:', error)
+
       toast.error(isArabic ? 'حدث خطأ أثناء الحفظ' : 'Error saving asset')
     } finally {
       setIsLoading(false)

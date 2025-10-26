@@ -67,7 +67,7 @@ const EditOrderModal = ({
           toast.error(response.error || (isArabic ? 'حدث خطأ أثناء تحديث الأمر' : 'Error updating order'))
         }
       } catch (error) {
-        console.error('Error updating order:', error)
+
         toast.error(isArabic ? 'حدث خطأ أثناء تحديث الأمر' : 'Error updating order')
       } finally {
         setSubmitting(false)

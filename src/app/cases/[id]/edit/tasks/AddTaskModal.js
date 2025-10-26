@@ -125,7 +125,6 @@ function AddTaskModal({
 
         processedFiles.push(newFile)
       } catch (error) {
-        console.error("Error converting file to base64:", error);
         toast.error(`Error processing file: ${file.name}`)
       }
     }
@@ -201,7 +200,6 @@ function AddTaskModal({
       }
       
     } catch (error) {
-      console.error("Error creating task:", error)
       
       // Dismiss loading toast and show error
       toast.dismiss(loadingToast)

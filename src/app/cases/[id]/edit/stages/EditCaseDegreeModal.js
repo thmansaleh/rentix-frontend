@@ -87,7 +87,6 @@ const EditCaseDegreeModal = ({ isOpen, onClose, degreeData, onSuccess }) => {
       onSuccess && onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error updating case degree:', error);
     } finally {
       setIsLoading(false);
     }

@@ -10,7 +10,7 @@ export const deletePartyDocument = async (documentId) => {
     const response = await axiosInstance.delete(`/parties-documents/${documentId}`);
     return response.data;
   } catch (error) {
-    console.error('Error deleting party document:', error);
+
     throw error;
   }
 };
@@ -25,7 +25,7 @@ export const getDocumentsByPartyId = async (partyId) => {
     const response = await axiosInstance.get(`/parties-documents/party/${partyId}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching party documents:', error);
+
     throw error;
   }
 };
@@ -44,7 +44,7 @@ export const uploadPartyDocuments = async (formData) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error uploading party documents:', error);
+
     throw error;
   }
 };

@@ -173,7 +173,7 @@ export function EditWalletDepositModal({ isOpen, onClose, onSuccess, depositId }
         toast.error(response.message || t('walletDeposits.failedToUpdateDeposit'));
       }
     } catch (error) {
-      console.error("Error updating wallet deposit:", error);
+
       toast.error(t('walletDeposits.errorUpdatingDeposit'));
     } finally {
       setLoading(false);

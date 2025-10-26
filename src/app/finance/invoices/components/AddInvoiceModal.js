@@ -149,7 +149,7 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
         toast.error(response.error || "فشل في إضافة الفاتورة");
       }
     } catch (error) {
-      console.error("Error creating invoice:", error);
+
       toast.error(error.response?.data?.error || "فشل في إضافة الفاتورة");
     } finally {
       setIsSubmitting(false);

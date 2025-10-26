@@ -128,7 +128,6 @@ const PermissionsTab = ({ employeeId }) => {
       // Revalidate the permissions data
       mutate(`/permissions/employee/${employeeId}`);
     } catch (error) {
-      console.error('Error updating permissions:', error);
       toast.error(isRTL ? 'حدث خطأ أثناء تحديث الصلاحيات. يرجى المحاولة مرة أخرى.' : 'Error updating permissions. Please try again.');
     } finally {
       setIsSaving(false);

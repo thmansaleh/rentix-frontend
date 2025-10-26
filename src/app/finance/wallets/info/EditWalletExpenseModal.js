@@ -69,7 +69,7 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
         setItems(expense.items);
       }
     } catch (error) {
-      console.error("Error loading expense:", error);
+
       toast.error("فشل في تحميل بيانات المصروف");
     } finally {
       setIsLoading(false);
@@ -161,7 +161,7 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
 
       onSuccess();
     } catch (error) {
-      console.error("Error updating expense:", error);
+
       toast.error(error.response?.data?.message || "فشل في تحديث المصروف");
     } finally {
       setIsSubmitting(false);

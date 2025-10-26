@@ -50,7 +50,7 @@ function RelatedCases() {
         setAvailableCases([]);
       }
     } catch (error) {
-      console.error('Error searching cases:', error);
+
       setAvailableCases([]);
     } finally {
       setLoading(false);

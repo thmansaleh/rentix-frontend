@@ -83,7 +83,6 @@ function Stages({ caseId }) {
       setIsDeleteModalOpen(false)
       setDegreeToDelete(null)
     } catch (error) {
-      console.error('Error deleting case degree:', error)
       alert(t('initiationProceeding.deleteError'))
     } finally {
       setIsDeleting(false)

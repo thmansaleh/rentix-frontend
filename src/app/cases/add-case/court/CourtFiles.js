@@ -1,4 +1,4 @@
-ï»¿"use client"
+"use client"
 
 import { useState } from "react"
 import { useFormikContext } from '../FormikContext'
@@ -74,7 +74,7 @@ function CourtFiles() {
         document.body.removeChild(link)
         URL.revokeObjectURL(url)
       } catch (error) {
-        console.error('Error downloading file:', error)
+
       }
     }
   }
@@ -198,9 +198,9 @@ function CourtFiles() {
                         </p>
                         <div className="flex items-center space-x-2 text-xs text-gray-500">
                           <span>{formatFileSize(file)}</span>
-                          <span>â€¢</span>
+                          <span>•</span>
                           <span>{formatUploadDate()}</span>
-                          <span>â€¢</span>
+                          <span>•</span>
                           <span className="bg-gray-200 px-1 rounded">
                             {getFileType(file)}
                           </span>

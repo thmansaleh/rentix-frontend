@@ -44,7 +44,6 @@ function TaskComments({ comments = [], onCommentsChange, isEditable = true, task
       toast.dismiss(loadingToast)
       toast.success(t('comments.commentAddedSuccessfully') || 'تم إضافة التعليق بنجاح')
     } catch (error) {
-      console.error('Error adding comment:', error)
       toast.dismiss(loadingToast)
       const errorMessage = error?.response?.data?.message || error?.message || t('comments.errorAddingComment') || 'حدث خطأ أثناء إضافة التعليق'
       toast.error(errorMessage)
@@ -81,7 +80,6 @@ function TaskComments({ comments = [], onCommentsChange, isEditable = true, task
       toast.dismiss(loadingToast)
       toast.success(t('comments.commentDeletedSuccessfully') || 'تم حذف التعليق بنجاح')
     } catch (error) {
-      console.error('Error deleting comment:', error)
       toast.dismiss(loadingToast)
       const errorMessage = error?.response?.data?.message || error?.message || t('comments.errorDeletingComment') || 'حدث خطأ أثناء حذف التعليق'
       toast.error(errorMessage)

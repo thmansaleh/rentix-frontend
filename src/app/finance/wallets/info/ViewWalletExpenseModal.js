@@ -26,7 +26,7 @@ export function ViewWalletExpenseModal({ isOpen, onClose, expenseId }) {
     {
       revalidateOnFocus: false,
       onError: (err) => {
-        console.error('Error fetching expense for view:', err);
+
       }
     }
   );
@@ -99,7 +99,7 @@ export function ViewWalletExpenseModal({ isOpen, onClose, expenseId }) {
       toast.success("تم التحقق من المصروف بنجاح");
       mutate(); // Refresh data
     } catch (error) {
-      console.error("Error approving expense:", error);
+
       toast.error(error.response?.data?.error || "فشل في التحقق من المصروف");
     } finally {
       setIsApproving(false);
@@ -118,7 +118,7 @@ export function ViewWalletExpenseModal({ isOpen, onClose, expenseId }) {
       toast.success("تم رفض المصروف وإعادة المبلغ");
       mutate(); // Refresh data
     } catch (error) {
-      console.error("Error rejecting expense:", error);
+
       toast.error(error.response?.data?.error || "فشل في رفض المصروف");
     } finally {
       setIsRejecting(false);

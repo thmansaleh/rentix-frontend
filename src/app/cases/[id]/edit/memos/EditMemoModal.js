@@ -105,7 +105,6 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
         throw new Error(response.message || "فشل في تحديث المذكرة")
       }
     } catch (error) {
-      console.error("Error updating memo:", error)
       toast.error(error.message || "حدث خطأ أثناء تحديث المذكرة")
     } finally {
       setIsSubmitting(false)

@@ -127,7 +127,7 @@ const AddFormModal = ({ onFormAdded }) => {
         throw new Error(result.message || 'Failed to add form')
       }
     } catch (error) {
-      console.error('Error adding form:', error)
+
       toast.error(isArabic ? 'خطأ في إضافة النموذج' : 'Error adding form')
     } finally {
       setIsSubmitting(false)

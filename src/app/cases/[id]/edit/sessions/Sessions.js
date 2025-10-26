@@ -80,7 +80,6 @@ function Sessions({ caseId }) {
       mutate() // Refresh the sessions list
       setDeletingSession(null)
     } catch (error) {
-      console.error('Failed to delete session:', error)
       // You might want to show an error toast here
     } finally {
       setIsDeleting(false)

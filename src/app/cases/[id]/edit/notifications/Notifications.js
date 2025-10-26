@@ -146,7 +146,6 @@ function Notifications({ caseId }) {
         setIsDeleteDialogOpen(false);
         setDeleteOrderId(null);
       } catch (error) {
-        console.error('Error deleting judicial order:', error);
         // You might want to show a toast notification here
       } finally {
         setIsDeleting(false);

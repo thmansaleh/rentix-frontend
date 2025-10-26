@@ -73,7 +73,6 @@ function Attendance({ employeeId }) {
         toast.error(result.message || t("attendance.failedToDeleteAttendance"));
       }
     } catch (error) {
-      console.error("Error deleting attendance:", error);
       toast.error(t("attendance.errorDeletingAttendance"));
     }
   };

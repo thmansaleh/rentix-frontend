@@ -94,7 +94,6 @@ function Tasks({ caseId }) {
       mutate()
       
     } catch (error) {
-      console.error("Error deleting task:", error)
       
       toast.dismiss(loadingToast)
       const errorMessage = error?.response?.data?.message || error?.message || t('tasks.errorDeletingTask') || 'حدث خطأ أثناء حذف المهمة'
@@ -139,7 +138,6 @@ function Tasks({ caseId }) {
           attachedFiles: [...prev.attachedFiles, newFile]
         }));
       } catch (error) {
-        console.error("Error converting file to base64:", error);
       }
     }
   }, []);

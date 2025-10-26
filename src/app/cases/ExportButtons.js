@@ -111,7 +111,7 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
       // Save file
       XLSX.writeFile(wb, filename)
     } catch (error) {
-      console.error('Error exporting to Excel:', error)
+
       alert(language === 'ar' ? 'حدث خطأ أثناء التصدير' : 'Error during export')
     }
   }
@@ -197,7 +197,7 @@ const ExportButtons = ({ data = [], t, language = 'ar' }) => {
       // Save PDF
       doc.save(filename)
     } catch (error) {
-      console.error('Error exporting to PDF:', error)
+
       alert(language === 'ar' ? 'حدث خطأ أثناء التصدير إلى PDF' : 'Error during PDF export')
     }
   }

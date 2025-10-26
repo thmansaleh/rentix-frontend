@@ -74,7 +74,6 @@ function CaseClassifications({ formikProps }) {
       setIsDialogOpen(false)
     } catch (error) {
       toast.error(t('caseClassifications.failedToCreateCaseClassification'))
-      console.error('Error creating case classification:', error)
     } finally {
       setIsSubmitting(false)
     }

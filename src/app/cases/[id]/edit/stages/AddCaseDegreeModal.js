@@ -83,7 +83,6 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
       onSuccess && onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error creating case degree:', error);
     } finally {
       setIsLoading(false);
     }

@@ -208,7 +208,6 @@ function Cases({ partyId }) {
       // Save file
       XLSX.writeFile(workbook, filename)
     }).catch((error) => {
-      console.error('Error loading xlsx library:', error)
     })
   }
 

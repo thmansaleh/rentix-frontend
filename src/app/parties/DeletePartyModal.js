@@ -48,7 +48,7 @@ const DeletePartyModal = ({ partyId, partyName, onPartyDeleted, children }) => {
         );
       }
     } catch (error) {
-      console.error("Error deleting party:", error);
+
       toast.error(
         language === 'ar' 
           ? "حدث خطأ أثناء حذف الطرف" 

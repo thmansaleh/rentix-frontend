@@ -47,7 +47,6 @@ const DeletePartyModal = ({
         toast.error(t('parties.errorRemovingParty') || 'Error occurred while removing party from case');
       }
     } catch (error) {
-      console.error('Error removing party from case:', error);
       toast.error(t('parties.errorRemovingParty') || 'Error occurred while removing party from case');
     } finally {
       setLoading(false);

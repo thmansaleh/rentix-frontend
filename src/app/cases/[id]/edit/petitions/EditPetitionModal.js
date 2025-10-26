@@ -59,7 +59,6 @@ function EditPetitionModal({
           setFetchError('Invalid response from server')
         }
       } catch (error) {
-        console.error('Error fetching petition:', error)
         setFetchError(error.message || 'Failed to fetch petition data')
       } finally {
         setIsFetching(false)
@@ -153,7 +152,6 @@ function EditPetitionModal({
         // You might want to show a success toast here
       }
     } catch (error) {
-      console.error('Error deleting document:', error);
       // You might want to show an error toast here
       alert(t('petitions.errorDeletingDocument') || 'Failed to delete document');
     } finally {

@@ -57,7 +57,7 @@ export const uploadFilesToFirebase = async (files, folder = 'sessions') => {
       files: uploadResults
     };
   } catch (error) {
-    console.error('Error uploading files to Firebase:', error);
+
     return {
       success: false,
       files: [],
@@ -93,7 +93,7 @@ export const uploadFileToFirebase = async (file, folder = 'sessions') => {
       };
     }
   } catch (error) {
-    console.error('Error uploading file to Firebase:', error);
+
     return {
       success: false,
       error: error.message || 'Upload failed'
@@ -121,7 +121,7 @@ export const deleteFilesFromFirebase = async (filePaths) => {
     
     return { success: true };
   } catch (error) {
-    console.error('Error deleting files from Firebase:', error);
+
     return {
       success: false,
       error: error.message || 'Delete failed'

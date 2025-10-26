@@ -33,7 +33,7 @@ export function UploadReceiptsModal({ isOpen, onClose, expenseId, onSuccess }) {
       onSuccess();
       onClose();
     } catch (error) {
-      console.error("Error uploading receipts:", error);
+
       toast.error(error.response?.data?.error || "فشل في رفع الإيصالات");
     } finally {
       setIsUploading(false);

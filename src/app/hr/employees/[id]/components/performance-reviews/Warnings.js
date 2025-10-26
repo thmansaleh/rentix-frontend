@@ -52,7 +52,6 @@ function Warnings({ employeeId }) {
         setSelectedWarning(warning)
       }
     } catch (error) {
-      console.error('Error fetching warning documents:', error)
       setSelectedWarning(warning)
     }
     setIsModalOpen(true)
@@ -72,7 +71,6 @@ function Warnings({ employeeId }) {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting warning:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف الانذار' : 'Error deleting warning')
     }
   }
@@ -92,7 +90,6 @@ function Warnings({ employeeId }) {
         setIsDocumentsDialogOpen(false)
       }
     } catch (error) {
-      console.error('Error fetching documents:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء جلب المستندات' : 'Error fetching documents')
       setIsDocumentsDialogOpen(false)
     } finally {

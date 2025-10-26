@@ -152,7 +152,6 @@ export default function UpdateAttendanceModal({
         toast.error(data.message || t("attendance.failedToUpdateAttendance"));
       }
     } catch (error) {
-      console.error("Error updating attendance:", error);
       toast.error(t("attendance.errorUpdatingAttendance"));
     } finally {
       setIsSaving(false);

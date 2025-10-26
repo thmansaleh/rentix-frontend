@@ -83,7 +83,7 @@ export default function SessionsPage() {
       
       // TODO: Show success toast/notification
     } catch (error) {
-      console.error("Error deleting session:", error);
+
       // TODO: Show error toast/notification
     } finally {
       setIsDeleting(false);

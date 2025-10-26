@@ -71,7 +71,6 @@ export const uploadFiles = async (files, folder = 'documents') => {
     // Return the array of {document_name, document_url}
     return result.files;
   } catch (error) {
-    console.error('Error uploading files:', error);
     throw new Error(error.message || 'Failed to upload files');
   }
 };
@@ -96,7 +95,6 @@ export const uploadFile = async (file, folder = 'documents') => {
 
     return result[0];
   } catch (error) {
-    console.error('Error uploading file:', error);
     throw new Error(error.message || 'Failed to upload file');
   }
 };

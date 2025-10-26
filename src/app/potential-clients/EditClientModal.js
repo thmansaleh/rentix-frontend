@@ -134,7 +134,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
       setSelectedFiles([]);
       onClose();
     } catch (error) {
-      console.error("Error updating client:", error);
+
       toast.error(t("potentialClientsPage.messages.updateError"));
     } finally {
       setSubmitting(false);

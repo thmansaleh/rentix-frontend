@@ -106,7 +106,7 @@ export default function RouteGuard({ children }) {
       const userHasAccess = hasAccess(pathname, roleEn, departmentEn);
       
       if (!userHasAccess) {
-        console.warn(`Access denied to ${pathname} for role: ${roleEn}, department: ${departmentEn}`);
+
         // Redirect to home page if no access
         router.push('/');
       }

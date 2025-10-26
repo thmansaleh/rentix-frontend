@@ -54,7 +54,7 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
         );
       }
     } catch (error) {
-      console.error('Error deleting case:', error);
+
       toast.error(
         error.response?.data?.message || 
         error.message || 

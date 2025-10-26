@@ -100,7 +100,6 @@ function CaseDocuments({ caseId }) {
         documentName: ''
       });
     } catch (error) {
-      console.error('Error deleting document:', error);
       toast.error(
         isArabic 
           ? 'فشل في حذف المستند' 

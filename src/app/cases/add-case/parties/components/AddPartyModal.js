@@ -103,7 +103,7 @@ const { isRTL } = useLanguage();
         toast.error("حدث خطأ أثناء إضافة الطرف");
       }
     } catch (error) {
-      console.error("Error creating party:", error);
+
       toast.error("حدث خطأ أثناء إضافة الطرف");
     } finally {
       setLoading(false);

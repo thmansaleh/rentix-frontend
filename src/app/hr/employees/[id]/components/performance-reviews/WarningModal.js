@@ -109,7 +109,6 @@ const WarningModal = ({
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting document:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
     }
   }
@@ -178,7 +177,6 @@ const WarningModal = ({
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error saving warning:', error)
       toast.error(
         error.response?.data?.message || 
         (isArabic ? 'حدث خطأ أثناء حفظ البيانات' : 'Error saving warning')

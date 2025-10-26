@@ -90,7 +90,6 @@ function Executions({ caseId }) {
         setIsDeleteDialogOpen(false)
         setDeletingExecutionId(null)
       } catch (error) {
-        console.error('Error deleting execution:', error)
         toast.error(t('deleteExecutionError') || 'Error deleting execution')
       } finally {
         setIsSubmitting(false)

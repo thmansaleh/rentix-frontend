@@ -81,7 +81,7 @@ export default function Page() {
         }
       }
     } catch (err) {
-      console.error('Login error:', err);
+
     }
   };
 

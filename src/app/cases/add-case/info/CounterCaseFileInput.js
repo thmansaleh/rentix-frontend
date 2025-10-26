@@ -53,7 +53,7 @@ function CounterCaseFileInput() {
         setCases([])
       }
     } catch (error) {
-      console.error('Error searching cases:', error)
+
       setCases([])
     } finally {
       setIsLoading(false)

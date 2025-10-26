@@ -61,7 +61,7 @@ function Court() {
       setFormData({ court_ar: '', court_en: '' });
       setIsDialogOpen(false);
     } catch (error) {
-      console.error('Error creating court:', error);
+
       toast.error(language === 'ar' ? 'حدث خطأ أثناء إنشاء المحكمة' : 'Error creating court');
     } finally {
       setIsSubmitting(false);

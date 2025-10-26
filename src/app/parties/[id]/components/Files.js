@@ -97,7 +97,6 @@ function Files({ partyId }) {
       setSelectedFiles([])
       mutate()
     } catch (error) {
-      console.error('Error uploading documents:', error)
       const errorMessage = error.response?.data?.message || error.message || t('files.uploadError')
       toast.error(errorMessage)
     } finally {
@@ -121,7 +120,6 @@ function Files({ partyId }) {
       setDocumentToDelete(null)
       mutate()
     } catch (error) {
-      console.error('Error deleting document:', error)
       toast.error(t('common.deleteError'))
     } finally {
       setDeletingDocId(null)

@@ -11,7 +11,7 @@ const swrConfig = {
   errorRetryInterval: 5000,
   fetcher: (url) => fetch(url).then((res) => res.json()),
   onError: (error, key) => {
-    console.error('SWR Error:', error, 'Key:', key);
+
   },
 };
 

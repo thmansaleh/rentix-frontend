@@ -195,11 +195,9 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         // Close modal on success
         setIsOpen(false);
       } else {
-        console.error('Failed to update employee:', response);
         toast.error(t('messages.errorUpdatingEmployee') || 'Error updating employee. Please try again.');
       }
     } catch (error) {
-      console.error('Error updating employee:', error);
       toast.error(t('messages.errorUpdatingEmployee') || 'Error updating employee. Please try again.');
     } finally {
       setIsSaving(false);

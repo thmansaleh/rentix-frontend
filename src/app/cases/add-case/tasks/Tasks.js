@@ -130,7 +130,7 @@ function Tasks() {
           attachedFiles: [...prev.attachedFiles, newFile]
         }));
       } catch (error) {
-        console.error("Error converting file to base64:", error);
+
       }
     }
   }, []);

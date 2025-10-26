@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   Dialog,
@@ -37,11 +37,11 @@ export default function DeleteSessionDialog({
           </div>
           <div className="text-center space-y-2">
             <DialogTitle className="text-xl font-semibold">
-              {isRtl ? "حذف الجلسة" : "Delete Session"}
+              {isRtl ? "??? ??????" : "Delete Session"}
             </DialogTitle>
             <DialogDescription className="text-base">
               {isRtl 
-                ? "هل أنت متأكد من أنك تريد حذف هذه الجلسة؟ هذا الإجراء لا يمكن التراجع عنه."
+                ? "?? ??? ????? ?? ??? ???? ??? ??? ??????? ??? ??????? ?? ???? ??????? ???."
                 : "Are you sure you want to delete this session? This action cannot be undone."
               }
             </DialogDescription>
@@ -53,19 +53,19 @@ export default function DeleteSessionDialog({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">
-                  {isRtl ? "رقم القضية:" : "Case Number:"}
+                  {isRtl ? "??? ??????:" : "Case Number:"}
                 </span>
                 <span className="font-semibold">{session.case_number}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">
-                  {isRtl ? "الموضوع:" : "Topic:"}
+                  {isRtl ? "???????:" : "Topic:"}
                 </span>
                 <span className="font-semibold">{session.case_topic}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">
-                  {isRtl ? "تاريخ الجلسة:" : "Session Date:"}
+                  {isRtl ? "????? ??????:" : "Session Date:"}
                 </span>
                 <span className="font-semibold">
                   {new Date(session.session_date).toLocaleDateString(
@@ -90,7 +90,7 @@ export default function DeleteSessionDialog({
             className="flex items-center mx-3 gap-2"
           >
             <CircleX className="w-4 h-4" />
-            {isRtl ? "إلغاء" : "Cancel"}
+            {isRtl ? "?????" : "Cancel"}
           </Button>
           <Button
             variant="destructive"
@@ -100,8 +100,8 @@ export default function DeleteSessionDialog({
           >
             <Trash2 className="w-4 h-4" />
             {isDeleting 
-              ? (isRtl ? "جاري الحذف..." : "Deleting...") 
-              : (isRtl ? "حذف" : "Delete")
+              ? (isRtl ? "???? ?????..." : "Deleting...") 
+              : (isRtl ? "???" : "Delete")
             }
           </Button>
         </DialogFooter>

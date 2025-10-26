@@ -30,7 +30,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
         onClose();
       }
     } catch (error) {
-      console.error("Error loading invoice:", error);
+
       toast.error("فشل في تحميل بيانات الفاتورة");
       onClose();
     } finally {
@@ -51,7 +51,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
         toast.error(response.error || "فشل في حذف الفاتورة");
       }
     } catch (error) {
-      console.error("Error deleting invoice:", error);
+
       toast.error(error.response?.data?.error || "فشل في حذف الفاتورة");
     } finally {
       setDeleting(false);

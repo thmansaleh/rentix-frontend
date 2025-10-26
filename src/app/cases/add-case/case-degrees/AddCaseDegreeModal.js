@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { Save, CircleX } from 'lucide-react';
@@ -58,9 +58,9 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
   }, [editData]);
 
   const degreeOptions = [
-    { value: 'first_instance', label: language === 'ar' ? 'ابتدائي' : 'First Instance' },
-    { value: 'appeal', label: language === 'ar' ? 'الاستئناف' : 'Appeal' },
-    { value: 'cassation', label: language === 'ar' ? 'النقض' : 'Cassation' },
+    { value: 'first_instance', label: language === 'ar' ? '???????' : 'First Instance' },
+    { value: 'appeal', label: language === 'ar' ? '?????????' : 'Appeal' },
+    { value: 'cassation', label: language === 'ar' ? '?????' : 'Cassation' },
   ];
 
   const handleInputChange = (field, value) => {
@@ -112,7 +112,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
       
       onClose();
     } catch (error) {
-      console.error('Error with case degree:', error);
+
     } finally {
       setIsLoading(false);
     }
@@ -136,14 +136,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
         <DialogHeader>
           <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
             {editData 
-              ? (language === 'ar' ? 'تعديل درجة التقاضي' : 'Edit Case Degree')
-              : (language === 'ar' ? 'إضافة درجة تقاضي' : 'Add Case Degree')
+              ? (language === 'ar' ? '????? ???? ???????' : 'Edit Case Degree')
+              : (language === 'ar' ? '????? ???? ?????' : 'Add Case Degree')
             }
           </DialogTitle>
           <DialogDescription className={isRTL ? 'text-right' : 'text-left'}>
             {editData
-              ? (language === 'ar' ? 'تعديل درجة التقاضي للقضية' : 'Edit the case degree for the case')
-              : (language === 'ar' ? 'أضف درجة تقاضي جديدة للقضية' : 'Add a new case degree to the case')
+              ? (language === 'ar' ? '????? ???? ??????? ??????' : 'Edit the case degree for the case')
+              : (language === 'ar' ? '??? ???? ????? ????? ??????' : 'Add a new case degree to the case')
             }
           </DialogDescription>
         </DialogHeader>
@@ -152,7 +152,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
           {/* Degree Select */}
           <div className="space-y-2">
             <Label htmlFor="degree" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'درجة التقاضي' : 'Degree'} *
+              {language === 'ar' ? '???? ???????' : 'Degree'} *
             </Label>
             <Select
               value={formData.degree}
@@ -160,7 +160,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
               dir={isRTL ? 'rtl' : 'ltr'}
             >
               <SelectTrigger>
-                <SelectValue placeholder={language === 'ar' ? 'اختر درجة التقاضي' : 'Select degree'} />
+                <SelectValue placeholder={language === 'ar' ? '???? ???? ???????' : 'Select degree'} />
               </SelectTrigger>
               <SelectContent>
                 {degreeOptions.map((option) => (
@@ -175,14 +175,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
           {/* Case Number Input */}
           <div className="space-y-2">
             <Label htmlFor="case_number" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'رقم القضية' : 'Case Number'} *
+              {language === 'ar' ? '??? ??????' : 'Case Number'} *
             </Label>
             <Input
               id="case_number"
               type="text"
               value={formData.case_number}
               onChange={(e) => handleInputChange('case_number', e.target.value)}
-              placeholder={language === 'ar' ? 'أدخل رقم القضية' : 'Enter case number'}
+              placeholder={language === 'ar' ? '???? ??? ??????' : 'Enter case number'}
               className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>
@@ -190,14 +190,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
           {/* Year Input */}
           <div className="space-y-2">
             <Label htmlFor="year" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'السنة' : 'Year'} *
+              {language === 'ar' ? '?????' : 'Year'} *
             </Label>
             <Input
               id="year"
               type="number"
               value={formData.year}
               onChange={(e) => handleInputChange('year', e.target.value)}
-              placeholder={language === 'ar' ? 'أدخل السنة' : 'Enter year'}
+              placeholder={language === 'ar' ? '???? ?????' : 'Enter year'}
               min="1900"
               max="2099"
               className={isRTL ? 'text-right' : 'text-left'}
@@ -207,7 +207,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
           {/* Referral Date Input */}
           <div className="space-y-2">
             <Label htmlFor="referral_date" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'تاريخ الإحالة' : 'Referral Date'} *
+              {language === 'ar' ? '????? ???????' : 'Referral Date'} *
             </Label>
             <Input
               id="referral_date"
@@ -229,15 +229,15 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
               className={`${isRTL ? 'ml-auto' : 'mr-auto'}`}
             >
               <CircleX className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-              {language === 'ar' ? 'إلغاء' : 'Cancel'}
+              {language === 'ar' ? '?????' : 'Cancel'}
             </Button>
             <Button type="button" disabled={isLoading} onClick={handleSubmit}>
               <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
               {isLoading 
-                ? (language === 'ar' ? 'جاري الحفظ...' : 'Saving...') 
+                ? (language === 'ar' ? '???? ?????...' : 'Saving...') 
                 : (editData 
-                    ? (language === 'ar' ? 'تحديث' : 'Update')
-                    : (language === 'ar' ? 'حفظ' : 'Save')
+                    ? (language === 'ar' ? '?????' : 'Update')
+                    : (language === 'ar' ? '???' : 'Save')
                   )
               }
             </Button>

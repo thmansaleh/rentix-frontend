@@ -28,7 +28,6 @@ export default function DeleteMemoModal({ isOpen, onClose, memoId, memoTitle, on
       onSuccess?.()
       onClose()
     } catch (error) {
-      console.error("Error deleting memo:", error)
       toast.error(error.message || "حدث خطأ أثناء حذف المذكرة")
     } finally {
       setIsDeleting(false)

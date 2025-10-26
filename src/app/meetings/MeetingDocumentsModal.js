@@ -84,7 +84,7 @@ function MeetingDocumentsModal({ children, meetingId, meetingTitle }) {
       setDeleteDialogOpen(false);
       setDocumentToDelete(null);
     } catch (error) {
-      console.error('Error deleting document:', error);
+
       toast.error(
         t('documents.deleteError') || 'Failed to delete document'
       );
@@ -145,7 +145,7 @@ function MeetingDocumentsModal({ children, meetingId, meetingTitle }) {
         t('documents.uploadSuccess') || 'Documents uploaded successfully'
       );
     } catch (error) {
-      console.error('Error uploading files:', error);
+
       toast.error(
         t('documents.uploadError') || 'Failed to upload documents'
       );

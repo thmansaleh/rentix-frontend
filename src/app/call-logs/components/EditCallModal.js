@@ -113,7 +113,7 @@ const EditCallModal = ({ isOpen, onClose, callId, onSuccess }) => {
         throw new Error(result.message || 'فشل في تحديث المكالمة');
       }
     } catch (error) {
-      console.error('Error updating call log:', error);
+
       toast.error('فشل في تحديث المكالمة');
     } finally {
       setLoading(false);

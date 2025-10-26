@@ -69,7 +69,6 @@ function Reviews({ employeeId }) {
         setIsModalOpen(true)
       }
     } catch (error) {
-      console.error('Error fetching review details:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء تحميل البيانات' : 'Error loading review details')
     }
   }
@@ -82,7 +81,6 @@ function Reviews({ employeeId }) {
         setIsDocumentsDialogOpen(true)
       }
     } catch (error) {
-      console.error('Error fetching documents:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء تحميل المستندات' : 'Error loading documents')
     }
   }
@@ -102,7 +100,6 @@ function Reviews({ employeeId }) {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting review:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف التقييم' : 'Error deleting review')
     }
   }

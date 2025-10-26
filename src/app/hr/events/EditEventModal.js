@@ -128,7 +128,7 @@ const EditEventModal = ({
       onSuccess?.()
       onClose()
     } catch (error) {
-      console.error('Error updating event:', error)
+
       toast.error(
         isArabic 
           ? error.response?.data?.message || 'حدث خطأ أثناء تحديث الحدث'

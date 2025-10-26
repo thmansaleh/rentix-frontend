@@ -47,7 +47,6 @@ function Page() {
                     setError('Failed to fetch case data');
                 }
             } catch (err) {
-                console.error('Error fetching case data:', err);
                 setError(err.message || 'Failed to fetch case data');
             } finally {
                 setIsLoading(false);

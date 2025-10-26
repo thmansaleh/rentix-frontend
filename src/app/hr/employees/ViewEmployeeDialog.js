@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from 'react';
 import useSWR from 'swr';
@@ -40,7 +40,7 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       onError: (error) => {
-        console.error('Error fetching employee:', error);
+
       }
     }
   );
@@ -112,7 +112,7 @@ const ViewEmployeeDialog = ({ employeeId, trigger }) => {
       {/* Trigger */}
       <div onClick={() => {
         if (!employeeId) {
-          console.error('Cannot open modal: employeeId is missing');
+
           return;
         }
         setOpen(true);

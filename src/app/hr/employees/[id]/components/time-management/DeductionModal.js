@@ -132,7 +132,6 @@ const DeductionModal = ({
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error saving deduction:', error)
       toast.error(
         error.response?.data?.message || 
         (isArabic ? 'حدث خطأ أثناء حفظ البيانات' : 'Error saving deduction')

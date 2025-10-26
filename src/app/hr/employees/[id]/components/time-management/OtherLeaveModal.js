@@ -199,7 +199,6 @@ const OtherLeaveModal = ({
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error saving other leave:', error)
       toast.error(
         error.response?.data?.message || 
         (isArabic ? 'حدث خطأ أثناء حفظ البيانات' : 'Error saving leave')

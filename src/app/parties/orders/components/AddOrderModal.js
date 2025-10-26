@@ -49,7 +49,7 @@ const AddOrderModal = ({
         setSearchResults(response.data)
       }
     } catch (error) {
-      console.error('Error searching parties:', error)
+
     }
   }, [])
 
@@ -148,7 +148,7 @@ const AddOrderModal = ({
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الأمر' : 'Error creating order'))
       }
     } catch (error) {
-      console.error('Error creating order:', error)
+
       toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الأمر' : 'Error creating order')
     } finally {
       setIsLoading(false)

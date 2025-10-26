@@ -208,7 +208,7 @@ const AddTaskModal = ({ isOpen, onClose, caseId, onTaskAdded }) => {
         throw new Error(result.message || 'Failed to create task');
       }
     } catch (error) {
-      console.error('Error creating task:', error);
+
       toast.error(error.message || t('tasks.createTaskError'));
     } finally {
       setIsSubmitting(false);

@@ -144,7 +144,7 @@ export function AddWalletExpenseModal({ isOpen, onClose, onSuccess, walletId, cl
 
       onSuccess();
     } catch (error) {
-      console.error("Error creating expense:", error);
+
       toast.error(error.response?.data?.message || "فشل في إضافة المصروف");
     } finally {
       setIsSubmitting(false);

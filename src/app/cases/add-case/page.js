@@ -216,7 +216,7 @@ function AddCasePage() {
       });
 
     } catch(error){
-      console.error('Error creating case:', error);
+
       toast.dismiss(loadingToast); // Dismiss loading toast first
       
       // Set general error status

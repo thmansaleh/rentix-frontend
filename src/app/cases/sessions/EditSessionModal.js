@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -59,12 +59,11 @@ const EditSessionModal = ({
   // Extract session object from API response
   const session = sessionData?.success ? sessionData.data : null;
   
-  console.log('Session Data:', session); // Debug log
 
   // Handle document deletion
   const handleDeleteDocument = async (documentId, documentName) => {
     const confirmMessage = isRtl 
-      ? `هل أنت متأكد من حذف الوثيقة "${documentName}"؟`
+      ? `?? ??? ????? ?? ??? ??????? "${documentName}"?`
       : `Are you sure you want to delete the document "${documentName}"?`;
     
     if (!window.confirm(confirmMessage)) {
@@ -76,7 +75,7 @@ const EditSessionModal = ({
       await deleteSessionDocument(sessionId, documentId);
       
       toast.success(
-        isRtl ? "تم حذف الوثيقة بنجاح" : "Document deleted successfully",
+        isRtl ? "?? ??? ??????? ?????" : "Document deleted successfully",
         {
           position: "top-right",
           autoClose: 3000,
@@ -91,7 +90,7 @@ const EditSessionModal = ({
       refreshSession();
     } catch (error) {
       toast.error(
-        isRtl ? "فشل في حذف الوثيقة" : "Failed to delete document",
+        isRtl ? "??? ?? ??? ???????" : "Failed to delete document",
         {
           position: "top-right",
           autoClose: 3000,
@@ -101,7 +100,7 @@ const EditSessionModal = ({
           draggable: true,
         }
       );
-      console.error("Error deleting document:", error);
+
     } finally {
       setDeletingDocumentId(null);
     }
@@ -114,7 +113,7 @@ const EditSessionModal = ({
     
     if (file.size > maxSize) {
       toast.error(
-        isRtl ? `الملف "${file.name}" كبير جداً. الحد الأقصى 10MB` : `File "${file.name}" is too large. Maximum size is 10MB`,
+        isRtl ? `????? "${file.name}" ???? ????. ???? ?????? 10MB` : `File "${file.name}" is too large. Maximum size is 10MB`,
         { position: "top-right", autoClose: 3000 }
       );
       return false;
@@ -122,7 +121,7 @@ const EditSessionModal = ({
     
     if (!allowedTypes.includes(file.type)) {
       toast.error(
-        isRtl ? `نوع الملف "${file.name}" غير مدعوم` : `File type of "${file.name}" is not supported`,
+        isRtl ? `??? ????? "${file.name}" ??? ?????` : `File type of "${file.name}" is not supported`,
         { position: "top-right", autoClose: 3000 }
       );
       return false;
@@ -162,11 +161,11 @@ const EditSessionModal = ({
   const validationSchema = Yup.object({
     decision: Yup.string().trim(),
     session_date: Yup.date()
-      .required(isRtl ? "تاريخ الجلسة مطلوب" : "Session date is required"),
+      .required(isRtl ? "????? ?????? ?????" : "Session date is required"),
     session_time: Yup.string()
-      .required(isRtl ? "وقت الجلسة مطلوب" : "Session time is required"),
+      .required(isRtl ? "??? ?????? ?????" : "Session time is required"),
     note: Yup.string().trim(),
-    // link: Yup.string().url(isRtl ? "رابط غير صحيح" : "Invalid URL").trim(),
+    // link: Yup.string().url(isRtl ? "???? ??? ????" : "Invalid URL").trim(),
     is_expert_session: Yup.boolean(),
     is_judgment_reserved: Yup.boolean(),
     is_judgment_deferred: Yup.boolean(),
@@ -202,15 +201,15 @@ const EditSessionModal = ({
           try {
             uploadedFiles = await uploadFiles(selectedFiles, 'sessions');
             toast.success(
-              isRtl ? `تم رفع ${uploadedFiles.length} ملف بنجاح` : `Successfully uploaded ${uploadedFiles.length} files`,
+              isRtl ? `?? ??? ${uploadedFiles.length} ??? ?????` : `Successfully uploaded ${uploadedFiles.length} files`,
               { position: "top-right", autoClose: 2000 }
             );
           } catch (uploadError) {
             toast.error(
-              isRtl ? "فشل في رفع الملفات" : "Failed to upload files",
+              isRtl ? "??? ?? ??? ???????" : "Failed to upload files",
               { position: "top-right", autoClose: 3000 }
             );
-            console.error("File upload error:", uploadError);
+
             // Continue with form submission even if file upload fails
             uploadedFiles = [];
           }
@@ -235,7 +234,7 @@ const EditSessionModal = ({
         await updateSession(sessionId, updateData);
         
         toast.success(
-          isRtl ? "تم تحديث الجلسة بنجاح" : "Session updated successfully",
+          isRtl ? "?? ????? ?????? ?????" : "Session updated successfully",
           {
             position: "top-right",
             autoClose: 3000,
@@ -261,7 +260,7 @@ const EditSessionModal = ({
       } catch (error) {
         toast.error(
           isRtl 
-            ? "فشل في تحديث الجلسة" 
+            ? "??? ?? ????? ??????" 
             : "Failed to update session",
           {
             position: "top-right",
@@ -272,7 +271,7 @@ const EditSessionModal = ({
             draggable: true,
           }
         );
-        console.error("Error updating session:", error);
+
       } finally {
         setIsLoading(false);
         setIsUploading(false);
@@ -297,7 +296,7 @@ const EditSessionModal = ({
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             <span className="ml-3 text-gray-600">
-              {isRtl ? "جار تحميل بيانات الجلسة..." : "Loading session data..."}
+              {isRtl ? "??? ????? ?????? ??????..." : "Loading session data..."}
             </span>
           </div>
         </div>
@@ -323,16 +322,16 @@ const EditSessionModal = ({
               <Calendar className="h-8 w-8 mx-auto" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {isRtl ? "فشل في تحميل بيانات الجلسة" : "Failed to load session data"}
+              {isRtl ? "??? ?? ????? ?????? ??????" : "Failed to load session data"}
             </h3>
             <p className="text-gray-500 mb-6">
               {isRtl 
-                ? "حدث خطأ أثناء تحميل بيانات الجلسة. يرجى المحاولة مرة أخرى."
+                ? "??? ??? ????? ????? ?????? ??????. ???? ???????? ??? ????."
                 : "An error occurred while loading session data. Please try again."
               }
             </p>
             <Button onClick={onClose}>
-              {isRtl ? "إغلاق" : "Close"}
+              {isRtl ? "?????" : "Close"}
             </Button>
           </div>
         </div>
@@ -360,11 +359,11 @@ const EditSessionModal = ({
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {isRtl ? "تعديل الجلسة" : "Edit Session"}
+                  {isRtl ? "????? ??????" : "Edit Session"}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
                   {isRtl 
-                    ? "قم بتحديث معلومات الجلسة أدناه"
+                    ? "?? ?????? ??????? ?????? ?????"
                     : "Update the session information below"}
                 </p>
               </div>
@@ -391,14 +390,14 @@ const EditSessionModal = ({
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                   <Calendar className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
-                    {isRtl ? "المعلومات الأساسية" : "Basic Information"}
+                    {isRtl ? "????????? ????????" : "Basic Information"}
                   </h3>
                 </div>
 
                 {/* Decision Field */}
                 <div className="space-y-2">
                   <Label htmlFor="decision" className="text-sm font-medium text-gray-700">
-                    {isRtl ? "القرار" : "Decision"}
+                    {isRtl ? "??????" : "Decision"}
                   </Label>
                   <Input
                     id="decision"
@@ -406,7 +405,7 @@ const EditSessionModal = ({
                     value={formik.values.decision}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder={isRtl ? "أدخل القرار" : "Enter decision"}
+                    placeholder={isRtl ? "???? ??????" : "Enter decision"}
                     className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
                   />
                   {formik.touched.decision && formik.errors.decision && (
@@ -421,7 +420,7 @@ const EditSessionModal = ({
                   {/* Session Date Field */}
                   <div className="space-y-2">
                     <Label htmlFor="session_date" className="text-sm font-medium text-gray-700">
-                      {isRtl ? "تاريخ الجلسة" : "Session Date"} *
+                      {isRtl ? "????? ??????" : "Session Date"} *
                     </Label>
                     <Input
                       id="session_date"
@@ -442,7 +441,7 @@ const EditSessionModal = ({
                   {/* Session Time Field */}
                   <div className="space-y-2">
                     <Label htmlFor="session_time" className="text-sm font-medium text-gray-700">
-                      {isRtl ? "وقت الجلسة" : "Session Time"} *
+                      {isRtl ? "??? ??????" : "Session Time"} *
                     </Label>
                     <Input
                       id="session_time"
@@ -464,7 +463,7 @@ const EditSessionModal = ({
                 {/* Note Field */}
                 <div className="space-y-2">
                   <Label htmlFor="note" className="text-sm font-medium text-gray-700">
-                    {isRtl ? "ملاحظات" : "Notes"}
+                    {isRtl ? "???????" : "Notes"}
                   </Label>
                   <Textarea
                     id="note"
@@ -472,7 +471,7 @@ const EditSessionModal = ({
                     value={formik.values.note}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder={isRtl ? "أدخل الملاحظات" : "Enter notes"}
+                    placeholder={isRtl ? "???? ?????????" : "Enter notes"}
                     className={`min-h-[100px] resize-none ${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
                   />
                   {formik.touched.note && formik.errors.note && (
@@ -485,7 +484,7 @@ const EditSessionModal = ({
                 {/* Link Field */}
                 <div className="space-y-2">
                   <Label htmlFor="link" className="text-sm font-medium text-gray-700">
-                    {isRtl ? "الرابط" : "Link"}
+                    {isRtl ? "??????" : "Link"}
                   </Label>
                   <Input
                     id="link"
@@ -494,7 +493,7 @@ const EditSessionModal = ({
                     value={formik.values.link}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder={isRtl ? "أدخل الرابط" : "Enter link"}
+                    placeholder={isRtl ? "???? ??????" : "Enter link"}
                     className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
                   />
                   {formik.touched.link && formik.errors.link && (
@@ -510,7 +509,7 @@ const EditSessionModal = ({
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                   <Settings className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
-                    {isRtl ? "إعدادات الجلسة" : "Session Settings"}
+                    {isRtl ? "??????? ??????" : "Session Settings"}
                   </h3>
                 </div>
 
@@ -522,12 +521,12 @@ const EditSessionModal = ({
                         htmlFor="status" 
                         className="text-sm font-medium text-gray-700"
                       >
-                        {isRtl ? "حالة الجلسة" : "Session Status"}
+                        {isRtl ? "???? ??????" : "Session Status"}
                       </Label>
                       <p className="text-xs text-gray-500">
                         {formik.values.status 
-                          ? (isRtl ? "الجلسة نشطة" : "Session is active")
-                          : (isRtl ? "الجلسة غير نشطة" : "Session is inactive")
+                          ? (isRtl ? "?????? ????" : "Session is active")
+                          : (isRtl ? "?????? ??? ????" : "Session is inactive")
                         }
                       </p>
                     </div>
@@ -551,12 +550,12 @@ const EditSessionModal = ({
                           htmlFor="is_expert_session" 
                           className="text-sm font-medium text-gray-700"
                         >
-                          {isRtl ? "جلسة خبير" : "Expert Session"}
+                          {isRtl ? "???? ????" : "Expert Session"}
                         </Label>
                         <p className="text-xs text-gray-500">
                           {formik.values.is_expert_session 
-                            ? (isRtl ? "هذه جلسة خبير" : "This is an expert session")
-                            : (isRtl ? "ليست جلسة خبير" : "Not an expert session")
+                            ? (isRtl ? "??? ???? ????" : "This is an expert session")
+                            : (isRtl ? "???? ???? ????" : "Not an expert session")
                           }
                         </p>
                       </div>
@@ -578,12 +577,12 @@ const EditSessionModal = ({
                           htmlFor="is_judgment_reserved" 
                           className="text-sm font-medium text-gray-700"
                         >
-                          {isRtl ? "حجز للحكم" : "Judgment Reserved"}
+                          {isRtl ? "??? ?????" : "Judgment Reserved"}
                         </Label>
                         <p className="text-xs text-gray-500">
                           {formik.values.is_judgment_reserved 
-                            ? (isRtl ? "الحكم محجوز" : "Judgment is reserved")
-                            : (isRtl ? "الحكم غير محجوز" : "Judgment is not reserved")
+                            ? (isRtl ? "????? ?????" : "Judgment is reserved")
+                            : (isRtl ? "????? ??? ?????" : "Judgment is not reserved")
                           }
                         </p>
                       </div>
@@ -610,12 +609,12 @@ const EditSessionModal = ({
                             htmlFor="is_judgment_deferred" 
                             className="text-sm font-medium text-gray-700"
                           >
-                            {isRtl ? "تأجيل الحكم" : "Judgment Deferred"}
+                            {isRtl ? "????? ?????" : "Judgment Deferred"}
                           </Label>
                           <p className="text-xs text-gray-500">
                             {formik.values.is_judgment_deferred 
-                              ? (isRtl ? "الحكم مؤجل" : "Judgment is deferred")
-                              : (isRtl ? "الحكم غير مؤجل" : "Judgment is not deferred")
+                              ? (isRtl ? "????? ????" : "Judgment is deferred")
+                              : (isRtl ? "????? ??? ????" : "Judgment is not deferred")
                             }
                           </p>
                         </div>
@@ -637,7 +636,7 @@ const EditSessionModal = ({
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                   <Plus className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
-                    {isRtl ? "رفع الملفات" : "Upload Files"}
+                    {isRtl ? "??? ???????" : "Upload Files"}
                   </h3>
                 </div>
 
@@ -660,13 +659,13 @@ const EditSessionModal = ({
                     <Plus className="h-8 w-8 text-gray-400" />
                     <p className="text-sm text-gray-600">
                       {isRtl 
-                        ? "انقر لاختيار الملفات أو اسحبها هنا"
+                        ? "???? ??????? ??????? ?? ?????? ???"
                         : "Click to select files or drag and drop here"
                       }
                     </p>
                     <p className="text-xs text-gray-400">
                       {isRtl 
-                        ? "PDF, DOC, TXT أو صور"
+                        ? "PDF, DOC, TXT ?? ???"
                         : "PDF, DOC, TXT, or images"
                       }
                     </p>
@@ -678,7 +677,7 @@ const EditSessionModal = ({
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-sm font-medium text-gray-900">
-                        {isRtl ? "الملفات المحددة" : "Selected Files"} ({selectedFiles.length})
+                        {isRtl ? "??????? ???????" : "Selected Files"} ({selectedFiles.length})
                       </h4>
                       <Button
                         type="button"
@@ -687,7 +686,7 @@ const EditSessionModal = ({
                         onClick={clearAllFiles}
                         className="text-red-600 hover:bg-red-50"
                       >
-                        {isRtl ? "مسح الكل" : "Clear All"}
+                        {isRtl ? "??? ????" : "Clear All"}
                       </Button>
                     </div>
                     <div className="space-y-2">
@@ -726,7 +725,7 @@ const EditSessionModal = ({
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                   <FileText className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
-                    {isRtl ? "وثائق الجلسة" : "Session Documents"}
+                    {isRtl ? "????? ??????" : "Session Documents"}
                   </h3>
                 </div>
 
@@ -735,13 +734,13 @@ const EditSessionModal = ({
                     <div className="flex items-center justify-center py-6">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                       <span className="ml-2 text-sm text-gray-600">
-                        {isRtl ? "جار تحميل الوثائق..." : "Loading documents..."}
+                        {isRtl ? "??? ????? ???????..." : "Loading documents..."}
                       </span>
                     </div>
                   ) : sessionError ? (
                     <div className="text-center py-6">
                       <p className="text-sm text-red-500">
-                        {isRtl ? "فشل في تحميل الوثائق" : "Failed to load documents"}
+                        {isRtl ? "??? ?? ????? ???????" : "Failed to load documents"}
                       </p>
                     </div>
                   ) : session?.documents && session.documents.length > 0 ? (
@@ -760,14 +759,14 @@ const EditSessionModal = ({
                                 {document.document_name}
                               </h4>
                               <p className="text-xs text-gray-500">
-                                {isRtl ? "تم الرفع في:" : "Uploaded on:"} {" "}
+                                {isRtl ? "?? ????? ??:" : "Uploaded on:"} {" "}
                                 {new Date(document.created_at).toLocaleDateString(
                                   isRtl ? "ar" : "en"
                                 )}
                               </p>
                               {document.uploaded_by && (
                                 <p className="text-xs text-gray-400">
-                                  {isRtl ? "بواسطة:" : "By:"} {document.uploaded_by}
+                                  {isRtl ? "??????:" : "By:"} {document.uploaded_by}
                                 </p>
                               )}
                             </div>
@@ -781,7 +780,7 @@ const EditSessionModal = ({
                               className="flex items-center gap-2 hover:bg-blue-50 text-blue-600"
                             >
                               <Download className="h-4 w-4" />
-                              {isRtl ? "تحميل" : "Download"}
+                              {isRtl ? "?????" : "Download"}
                             </Button>
                             <Button
                               type="button"
@@ -797,8 +796,8 @@ const EditSessionModal = ({
                                 <Trash2 className="h-4 w-4" />
                               )}
                               {deletingDocumentId === document.id 
-                                ? (isRtl ? "جار الحذف..." : "Deleting...")
-                                : (isRtl ? "حذف" : "Delete")
+                                ? (isRtl ? "??? ?????..." : "Deleting...")
+                                : (isRtl ? "???" : "Delete")
                               }
                             </Button>
                           </div>
@@ -809,7 +808,7 @@ const EditSessionModal = ({
                     <div className="text-center py-6">
                       <FileText className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                       <p className="text-sm text-gray-500">
-                        {isRtl ? "لا توجد وثائق لهذه الجلسة" : "No documents found for this session"}
+                        {isRtl ? "?? ???? ????? ???? ??????" : "No documents found for this session"}
                       </p>
                     </div>
                   )}
@@ -829,7 +828,7 @@ const EditSessionModal = ({
                   className="flex items-center gap-2 px-6"
                 >
                   <CircleX className="h-4 w-4" />
-                  {isRtl ? "إلغاء" : "Cancel"}
+                  {isRtl ? "?????" : "Cancel"}
                 </Button>
                 <Button
                   type="submit"
@@ -838,10 +837,10 @@ const EditSessionModal = ({
                 >
                   <Save className="h-4 w-4" />
                   {isUploading
-                    ? (isRtl ? "جار رفع الملفات..." : "Uploading files...")
+                    ? (isRtl ? "??? ??? ???????..." : "Uploading files...")
                     : isLoading 
-                      ? (isRtl ? "جار التحديث..." : "Updating...") 
-                      : (isRtl ? "تحديث" : "Update")}
+                      ? (isRtl ? "??? ???????..." : "Updating...") 
+                      : (isRtl ? "?????" : "Update")}
                 </Button>
               </div>
             </div>

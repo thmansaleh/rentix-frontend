@@ -71,7 +71,7 @@ function Branch() {
       setIsDialogOpen(false)
     } catch (error) {
       toast.error(t('branches.failedToCreateBranch'))
-      console.error('Error creating branch:', error)
+
     } finally {
       setIsSubmitting(false)
     }

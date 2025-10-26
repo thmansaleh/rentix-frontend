@@ -9,7 +9,7 @@ export const createMemo = async (memoData) => {
     const response = await api.post("/memos", { ...memoData, files });
     return response.data;
   } catch (error) {
-    console.error("Error creating memo:", error);
+
     throw error;
   }
 };
@@ -19,7 +19,7 @@ export const getMemos = async () => {
     const response = await api.get("/memos");
     return response.data;
   } catch (error) {
-    console.error("Error fetching memos:", error);
+
     throw error;
   }
 };
@@ -29,7 +29,7 @@ export const getMemoById = async (memoId) => {
     const response = await api.get(`/memos/${memoId}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching memo:", error);
+
     throw error;
   }
 };
@@ -39,7 +39,7 @@ export const getCaseMemos = async (caseId) => {
     const response = await api.get(`/memos/case/${caseId}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching case memos:", error);
+
     throw error;
   }
 };
@@ -50,7 +50,7 @@ export const updateMemo = async (memoId, updatedData) => {
     const response = await api.put(`/memos/${memoId}`, { ...updatedData, files });
     return response.data;
   } catch (error) {
-    console.error("Error updating memo:", error);
+
     throw error;
   }
 };
@@ -59,7 +59,7 @@ export const getActiveEmployeeMemos = async (employeeId) => {
     const response = await api.get(`/memos/employee/${employeeId}/active`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching active employee memos:", error);
+
     throw error;
   }
 };
@@ -70,7 +70,7 @@ export const updateMemoApproval = async (id, approvalType, isApproved) => {
     const response = await api.patch(`/memos/${id}/approve`, { approvalType, isApproved });
     return response.data;
   } catch (error) {
-    console.error("Error updating memo approval:", error);
+
     throw error;
   }
 };
@@ -80,7 +80,7 @@ export const getActiveMemos = async () => {
     const response = await api.get("/memos/active");
     return response.data;
   } catch (error) {
-    console.error("Error fetching active memos:", error);
+
     throw error;
   }
 };
@@ -90,7 +90,7 @@ export const deleteMemo = async (memoId) => {
     const response = await api.delete(`/memos/${memoId}`);
     return response.data;
   } catch (error) {
-    console.error("Error deleting memo:", error);
+
     throw error;
   }
 };
@@ -99,7 +99,7 @@ export const updateEmployeeMemoStatus = async (memoId, position, status) => {
     const response = await api.patch(`/memos/${memoId}/employee-status`, { position, status });
     return response.data;
   } catch (error) {
-    console.error("Error updating employee memo status:", error);
+
     throw error;
   }
 };

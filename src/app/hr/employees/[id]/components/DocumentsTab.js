@@ -80,11 +80,9 @@ function DocumentsTab({ employeeId }) {
         // Revalidate the cache with mutate
         await mutate()
       } else {
-        console.error('Upload failed:', result.error)
         alert(t('employees.documents.uploadFailed') + ': ' + result.error)
       }
     } catch (error) {
-      console.error('Error uploading file:', error)
       alert(t('employees.documents.uploadError'))
     } finally {
       setUploading(false)
@@ -118,13 +116,11 @@ function DocumentsTab({ employeeId }) {
       } else {
         // Revert on error
         await mutate()
-        console.error('Delete failed:', result.error)
         alert(t('employees.documents.deleteFailed') + ': ' + result.error)
       }
     } catch (error) {
       // Revert on error
       await mutate()
-      console.error('Error deleting document:', error)
       alert(t('employees.documents.deleteError'))
     }
   }

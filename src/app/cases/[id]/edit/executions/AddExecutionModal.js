@@ -118,7 +118,6 @@ const AddExecutionModal = ({
     e.preventDefault()
     
     if (!caseId) {
-      console.error('Case ID is required')
       return
     }
 
@@ -142,7 +141,6 @@ const AddExecutionModal = ({
       onClose()
       
     } catch (error) {
-      console.error('Error creating execution:', error)
       toast.error(t('addError') || 'Error adding execution. Please try again.')
     } finally {
       setIsSubmitting(false)

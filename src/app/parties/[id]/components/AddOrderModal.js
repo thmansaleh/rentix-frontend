@@ -119,7 +119,6 @@ const AddOrderModal = ({
         toast.error(response.error || t('orders.createError') || (isArabic ? 'حدث خطأ أثناء إنشاء الأمر' : 'Error creating order'))
       }
     } catch (error) {
-      console.error('Error creating order:', error)
       toast.error(t('orders.createError') || (isArabic ? 'حدث خطأ أثناء إنشاء الأمر' : 'Error creating order'))
     } finally {
       setIsLoading(false)

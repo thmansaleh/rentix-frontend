@@ -192,7 +192,7 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
         toast.error(t('parties.partyAddError') || "حدث خطأ أثناء إضافة الطرف");
       }
     } catch (error) {
-      console.error("Error creating party:", error);
+
       toast.error(t('parties.partyAddError') || "حدث خطأ أثناء إضافة الطرف");
     } finally {
       setLoading(false);

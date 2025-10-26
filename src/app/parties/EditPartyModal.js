@@ -111,7 +111,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
   // Show error toast if party fetch fails
   useEffect(() => {
     if (partyError) {
-      console.error("Error fetching party details:", partyError);
+
       toast.error(t('parties.fetchError') || "فشل في جلب بيانات الطرف");
     }
   }, [partyError, t]);
@@ -176,7 +176,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
       setDeleteDialogOpen(false);
       setDocumentToDelete(null);
     } catch (error) {
-      console.error('Error deleting document:', error);
+
       toast.error(t('files.errorDeletingDocument') || 'حدث خطأ أثناء حذف المستند');
     } finally {
       setDeletingDocId(null);
@@ -247,7 +247,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
         toast.error(t('parties.partyUpdateError') || "حدث خطأ أثناء تحديث الطرف");
       }
     } catch (error) {
-      console.error("Error updating party:", error);
+
       toast.error(t('parties.partyUpdateError') || "حدث خطأ أثناء تحديث الطرف");
     } finally {
       setLoading(false);

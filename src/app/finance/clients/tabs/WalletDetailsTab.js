@@ -75,7 +75,7 @@ export function WalletDetailsTab({ client, isOpen, onWalletCreated }) {
         toast.error(result.message || (language === 'ar' ? 'فشل إنشاء المحفظة' : 'Failed to create wallet'));
       }
     } catch (error) {
-      console.error('Error creating wallet:', error);
+
       toast.error(language === 'ar' ? 'حدث خطأ أثناء إنشاء المحفظة' : 'Error creating wallet');
     } finally {
       setIsCreating(false);

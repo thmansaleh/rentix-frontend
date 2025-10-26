@@ -92,7 +92,7 @@ export default function ActivityLogModal({ trigger, employee }) {
 
   // Show warning if employeeId is missing
   if (open && !employeeId) {
-    console.warn('ActivityLogModal opened but employeeId is missing!');
+
   }
 
   // Extract logs from API response

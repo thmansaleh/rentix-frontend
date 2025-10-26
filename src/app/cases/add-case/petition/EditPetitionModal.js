@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useCallback, useEffect } from "react"
 import { format } from "date-fns"
@@ -230,13 +230,13 @@ function EditPetitionModal({
                     <div className="flex items-center space-x-3 p-3 border rounded-lg hover:border-green-300 transition-colors cursor-pointer">
                       <RadioGroupItem value="true" id="edit-approved" className="text-green-600" />
                       <Label htmlFor="edit-approved" className="text-sm font-medium cursor-pointer flex-1">
-                        {t('petitions.approved') || 'موافق'}
+                        {t('petitions.approved') || '?????'}
                       </Label>
                     </div>
                     <div className="flex items-center space-x-3 p-3 border rounded-lg hover:border-red-300 transition-colors cursor-pointer">
                       <RadioGroupItem value="false" id="edit-rejected" className="text-red-600" />
                       <Label htmlFor="edit-rejected" className="text-sm font-medium cursor-pointer flex-1">
-                        {t('petitions.rejected') || 'مرفوض'}
+                        {t('petitions.rejected') || '?????'}
                       </Label>
                     </div>
                   </RadioGroup>
@@ -301,7 +301,7 @@ function EditPetitionModal({
                       {t('files.dragAndDrop')}
                     </p>
                     <p className="text-xs text-gray-500">
-                      PDF, DOC, TXT, أو صورة
+                      PDF, DOC, TXT, ?? ????
                     </p>
                   </div>
 

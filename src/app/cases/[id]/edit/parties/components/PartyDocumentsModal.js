@@ -86,7 +86,6 @@ function PartyDocumentsModal({ children, caseId, partyId, partyName }) {
       setDeleteDialogOpen(false)
       setDocumentToDelete(null)
     } catch (error) {
-      console.error('Error deleting document:', error)
       toast.error(
         t('documents.deleteError') || 'Failed to delete document'
       )
@@ -151,7 +150,6 @@ function PartyDocumentsModal({ children, caseId, partyId, partyName }) {
         t('documents.uploadSuccess') || 'Documents uploaded successfully'
       )
     } catch (error) {
-      console.error('Error uploading documents:', error)
       setUploadError(error.message || 'Failed to upload documents')
       toast.error(
         t('documents.uploadError') || 'Failed to upload documents'

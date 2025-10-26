@@ -55,7 +55,7 @@ export function DeleteWalletDepositModal({ isOpen, onClose, onSuccess, deposit }
         toast.error(response.message || t('walletDeposits.failedToDeleteDeposit'));
       }
     } catch (error) {
-      console.error("Error deleting wallet deposit:", error);
+
       toast.error(t('walletDeposits.errorDeletingDeposit'));
     } finally {
       setLoading(false);

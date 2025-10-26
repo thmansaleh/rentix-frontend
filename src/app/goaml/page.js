@@ -62,7 +62,7 @@ const GoAmlPage = () => {
         throw new Error(result.message || 'فشل في حذف السجل');
       }
     } catch (error) {
-      console.error('Error deleting GoAML record:', error);
+
       toast.error('فشل في حذف السجل');
     }
   };

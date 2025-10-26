@@ -60,7 +60,7 @@ function PublicProsecutions() {
       setFormData({ name_ar: '', name_en: '' });
       setIsDialogOpen(false);
     } catch (error) {
-      console.error('Error creating public prosecution:', error);
+
       toast.error(language === 'ar' ? 'حدث خطأ أثناء إنشاء النيابة العامة' : 'Error creating public prosecution');
     } finally {
       setIsSubmitting(false);

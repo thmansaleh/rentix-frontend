@@ -52,7 +52,6 @@ function Training({ employeeId }) {
         setSelectedTraining(training)
       }
     } catch (error) {
-      console.error('Error fetching training documents:', error)
       setSelectedTraining(training)
     }
     setIsModalOpen(true)
@@ -72,7 +71,6 @@ function Training({ employeeId }) {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting training:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف التدريب' : 'Error deleting training')
     }
   }
@@ -92,7 +90,6 @@ function Training({ employeeId }) {
         setIsDocumentsDialogOpen(false)
       }
     } catch (error) {
-      console.error('Error fetching documents:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء جلب المستندات' : 'Error fetching documents')
       setIsDocumentsDialogOpen(false)
     } finally {

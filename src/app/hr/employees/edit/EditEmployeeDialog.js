@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from 'react';
 import useSWR from 'swr';
@@ -46,7 +46,7 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       onError: (error) => {
-        console.error('Error fetching employee:', error);
+
       }
     }
   );
@@ -116,7 +116,7 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
       setOpen(false);
       if (onSuccess) onSuccess();
     } catch (error) {
-      console.error('Error updating employee:', error);
+
       setSubmitError(error.response?.data?.message || t('employees.errorUpdating'));
     } finally {
       setIsSubmitting(false);
@@ -147,7 +147,7 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
       {/* Trigger */}
       <div onClick={() => {
         if (!employeeId) {
-          console.error('Cannot open modal: employeeId is missing');
+
           return;
         }
         setOpen(true);

@@ -100,7 +100,7 @@ function ExternalLinksMenu() {
       setDeleteDialogOpen(false)
       setSelectedLinkId(null)
     } catch (error) {
-      console.error('Error deleting external link:', error)
+
       toast.error(t('externalLinks.deleteError'))
     } finally {
       setIsSubmitting(false)
@@ -128,7 +128,7 @@ function ExternalLinksMenu() {
       setIsDialogOpen(false)
       setFormData({ title: '', link: '' })
     } catch (error) {
-      console.error('Error creating external link:', error)
+
       toast.error(t('externalLinks.createError'))
     } finally {
       setIsSubmitting(false)

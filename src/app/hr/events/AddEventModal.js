@@ -125,7 +125,7 @@ const AddEventModal = ({
       onSuccess?.()
       onClose()
     } catch (error) {
-      console.error('Error creating event:', error)
+
       toast.error(
         isArabic 
           ? error.response?.data?.message || 'حدث خطأ أثناء إنشاء الحدث'

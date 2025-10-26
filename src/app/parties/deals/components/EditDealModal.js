@@ -68,6 +68,8 @@ const EditDealModal = ({
       end_date: null
     },
     validationSchema,
+    validateOnMount: true,
+    enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
       try {
         const updateData = {
@@ -83,13 +85,19 @@ const EditDealModal = ({
         
         if (response.success) {
           toast.success(isArabic ? 'تم تحديث الاتفاقية بنجاح' : 'Deal updated successfully')
+          
+          // Mutate the deal data to refresh and show new files immediately
+          await mutateDeal()
+          
+          // Reset files state since they're now saved
+          setFiles([])
+          
           onSuccess?.()
           onClose()
         } else {
           toast.error(response.error || (isArabic ? 'حدث خطأ أثناء تحديث الاتفاقية' : 'Error updating deal'))
         }
       } catch (error) {
-        console.error('Error updating deal:', error)
         toast.error(isArabic ? 'حدث خطأ أثناء تحديث الاتفاقية' : 'Error updating deal')
       } finally {
         setSubmitting(false)
@@ -98,7 +106,7 @@ const EditDealModal = ({
   })
 
   // Fetch deal data
-  const { data: dealData, error: dealError, isLoading: dealLoading } = useSWR(
+  const { data: dealData, error: dealError, isLoading: dealLoading, mutate: mutateDeal } = useSWR(
     dealId && isOpen ? `deal-${dealId}` : null,
     () => getClientDealById(dealId),
     {
@@ -167,12 +175,16 @@ const EditDealModal = ({
       const response = await deleteDealDocument(dealId, documentId)
       if (response.success) {
         toast.success(isArabic ? 'تم حذف المستند بنجاح' : 'Document deleted successfully')
+        
+        // Update local state
         setExistingDocuments(prev => prev.filter(doc => doc.id !== documentId))
+        
+        // Also mutate to refresh data from server
+        await mutateDeal()
       } else {
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document'))
       }
     } catch (error) {
-      console.error('Error deleting document:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
     }
   }

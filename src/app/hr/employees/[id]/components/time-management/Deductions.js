@@ -71,7 +71,6 @@ function Deductions({ employeeId }) {
         toast.error(response.message || (isArabic ? 'حدث خطأ' : 'An error occurred'))
       }
     } catch (error) {
-      console.error('Error deleting deduction:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء حذف الخصم' : 'Error deleting deduction')
     }
   }

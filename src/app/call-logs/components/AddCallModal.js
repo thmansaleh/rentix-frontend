@@ -93,7 +93,7 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
         throw new Error(result.message || 'فشل في إضافة المكالمة');
       }
     } catch (error) {
-      console.error('Error creating call log:', error);
+
       toast.error('فشل في إضافة المكالمة');
     } finally {
       setLoading(false);

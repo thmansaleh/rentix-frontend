@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useCallback } from 'react';
 import { Plus, File, Minus, FileText, Image, FileIcon, Download, Eye, Trash2 } from 'lucide-react';
@@ -144,13 +144,13 @@ function Files() {
             <Plus className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-sm text-muted-foreground mb-2">
               {isArabic 
-                ? 'اسحب الملفات هنا أو انقر للاختيار'
+                ? '???? ??????? ??? ?? ???? ????????'
                 : 'Drag files here or click to select files'
               }
             </p>
             <p className="text-xs text-muted-foreground">
               {isArabic 
-                ? 'يدعم: PDF, DOC, DOCX, JPG, PNG, GIF, TXT'
+                ? '????: PDF, DOC, DOCX, JPG, PNG, GIF, TXT'
                 : 'Supports: PDF, DOC, DOCX, JPG, PNG, GIF, TXT'
               }
             </p>
@@ -161,7 +161,7 @@ function Files() {
         {partiesFiles.files.length > 0 && (
           <div className="space-y-3">
             <h4 className={cn("font-medium", isArabic ? 'text-right' : 'text-left')}>
-              {isArabic ? 'الملفات المرفوعة' : 'Uploaded Files'} ({partiesFiles.files.length})
+              {isArabic ? '??????? ????????' : 'Uploaded Files'} ({partiesFiles.files.length})
             </h4>
             
             <div className="space-y-2">
@@ -244,7 +244,7 @@ function Files() {
           <div className="text-center text-muted-foreground py-4">
             <File className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">
-              {isArabic ? 'لم يتم رفع أي ملفات بعد' : 'No files uploaded yet'}
+              {isArabic ? '?? ??? ??? ?? ????? ???' : 'No files uploaded yet'}
             </p>
           </div>
         )}

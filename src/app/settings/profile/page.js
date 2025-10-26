@@ -72,7 +72,7 @@ const ProfileSettingsPage = () => {
       
       // Show success message (you can integrate with your notification system)
     } catch (error) {
-      console.error('Failed to update profile:', error);
+
     } finally {
       setIsSaving(false);
     }

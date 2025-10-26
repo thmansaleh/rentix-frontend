@@ -91,7 +91,7 @@ const EditGoamlModal = ({ record, isOpen, onClose, onSuccess }) => {
         throw new Error(result.message || 'فشل في تحديث السجل');
       }
     } catch (error) {
-      console.error('Error updating GoAML record:', error);
+
       toast.error(error.response?.data?.message || 'فشل في تحديث السجل');
     } finally {
       setLoading(false);

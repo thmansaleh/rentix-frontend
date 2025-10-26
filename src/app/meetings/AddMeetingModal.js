@@ -53,7 +53,7 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
         setPartySearchResults(response.data);
       }
     } catch (error) {
-      console.error('Error searching parties:', error);
+
       setPartySearchResults([]);
     }
   }, []);
@@ -139,7 +139,7 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
           // Add documents to meeting
           await meetingsApi.addMeetingDocuments(meetingId, uploadedFiles);
         } catch (uploadError) {
-          console.error('Error uploading files:', uploadError);
+
           toast.warning(t("meetings.messages.meetingCreatedFilesError"));
         }
       }
@@ -153,7 +153,7 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
         onSuccess();
       }
     } catch (error) {
-      console.error("Error creating meeting:", error);
+
       toast.error(error.message || t("meetings.messages.createError"));
     } finally {
       setSubmitting(false);

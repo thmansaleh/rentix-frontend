@@ -86,7 +86,6 @@ function Deals({ partyId }) {
         toast.error(response.error || t('common.deleteError'))
       }
     } catch (error) {
-      console.error('Error deleting deal:', error)
       toast.error(t('common.deleteError'))
     } finally {
       setDeleteModal(prev => ({ ...prev, isDeleting: false }))

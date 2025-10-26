@@ -106,7 +106,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onCaseDegreeAdded }) => {
         throw new Error(response.message || 'Failed to create case degree');
       }
     } catch (error) {
-      console.error('Error creating case degree:', error);
+
       toast.error(
         language === 'ar' 
           ? 'حدث خطأ أثناء إضافة درجة التقاضي' 

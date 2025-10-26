@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -141,7 +141,7 @@ const Memos = () => {
     if (!selectedMemo || !employeeRole) {
       toast.error(
         language === 'ar' 
-          ? 'لم يتم العثور على معلومات الموظف' 
+          ? '?? ??? ?????? ??? ??????? ??????' 
           : 'Employee information not found'
       );
       return;
@@ -157,16 +157,16 @@ const Memos = () => {
       
       toast.success(
         language === 'ar' 
-          ? 'تم تحديث حالة الموافقة بنجاح' 
+          ? '?? ????? ???? ???????? ?????' 
           : 'Approval status updated successfully'
       );
       
       handleCloseApprovalModal();
     } catch (error) {
-      console.error('Error updating approval:', error);
+
       toast.error(
         language === 'ar' 
-          ? 'فشل في تحديث حالة الموافقة' 
+          ? '??? ?? ????? ???? ????????' 
           : 'Failed to update approval status'
       );
     } finally {
@@ -183,19 +183,19 @@ const Memos = () => {
     switch (status) {
       case 'Submitted to Court':
         color = 'bg-blue-100 text-blue-800 hover:bg-blue-100';
-        text = language === 'ar' ? 'مقدمة للمحكمة' : status;
+        text = language === 'ar' ? '????? ???????' : status;
         break;
       case 'Under Review':
         color = 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
-        text = language === 'ar' ? 'قيد المراجعة' : status;
+        text = language === 'ar' ? '??? ????????' : status;
         break;
       case 'Approved':
         color = 'bg-green-100 text-green-800 hover:bg-green-100';
-        text = language === 'ar' ? 'تمت الموافقة' : status;
+        text = language === 'ar' ? '??? ????????' : status;
         break;
       case 'Rejected':
         color = 'bg-red-100 text-red-800 hover:bg-red-100';
-        text = language === 'ar' ? 'مرفوضة' : status;
+        text = language === 'ar' ? '??????' : status;
         break;
       default:
         color = 'bg-gray-100 text-gray-800 hover:bg-gray-100';
@@ -210,11 +210,11 @@ const Memos = () => {
       <div className="p-6">
         <Card>
           <CardHeader>
-            <CardTitle>{language === 'ar' ? 'المذكرات التي قمت بانشائها او تحتاج موافقتك' : 'Memos Created by You or Requiring Your Approval'}</CardTitle>
+            <CardTitle>{language === 'ar' ? '???????? ???? ??? ???????? ?? ????? ???????' : 'Memos Created by You or Requiring Your Approval'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">{t('common.loading') || (language === 'ar' ? 'جاري التحميل...' : 'Loading...')}</div>
+              <div className="text-muted-foreground">{t('common.loading') || (language === 'ar' ? '???? ???????...' : 'Loading...')}</div>
             </div>
           </CardContent>
         </Card>
@@ -227,11 +227,11 @@ const Memos = () => {
       <div className="p-6">
         <Card>
           <CardHeader>
-            <CardTitle>{language === 'ar' ? 'المذكرات التي قمت بانشائها او تحتاج موافقتك' : 'Memos Created by You or Requiring Your Approval'}</CardTitle>
+            <CardTitle>{language === 'ar' ? '???????? ???? ??? ???????? ?? ????? ???????' : 'Memos Created by You or Requiring Your Approval'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-center py-8">
-              <div className="text-red-500">{t('common.errorLoading') || (language === 'ar' ? 'خطأ في تحميل البيانات' : 'Error loading data')}</div>
+              <div className="text-red-500">{t('common.errorLoading') || (language === 'ar' ? '??? ?? ????? ????????' : 'Error loading data')}</div>
             </div>
           </CardContent>
         </Card>
@@ -244,7 +244,7 @@ const Memos = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">
-          {language === 'ar' ? 'المذكرات التي قمت بانشائها او تحتاج موافقتك' : 'Memos Created by You or Requiring Your Approval'}
+          {language === 'ar' ? '???????? ???? ??? ???????? ?? ????? ???????' : 'Memos Created by You or Requiring Your Approval'}
         </h1>
       </div>
 
@@ -252,14 +252,14 @@ const Memos = () => {
       <Card>
         <CardHeader>
           <CardTitle>
-            {language === 'ar' ? 'المذكرات التي قمت بانشائها او تحتاج موافقتك' : 'Memos Created by You or Requiring Your Approval'}
+            {language === 'ar' ? '???????? ???? ??? ???????? ?? ????? ???????' : 'Memos Created by You or Requiring Your Approval'}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {memos.length === 0 ? (
             <div className="flex items-center justify-center py-8">
               <div className="text-muted-foreground">
-                {t('common.noData') || (language === 'ar' ? 'لا توجد بيانات' : 'No data available')}
+                {t('common.noData') || (language === 'ar' ? '?? ???? ??????' : 'No data available')}
               </div>
             </div>
           ) : (
@@ -271,23 +271,23 @@ const Memos = () => {
                       {language === 'ar' ? '#' : '#'}
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'العنوان' : 'Title'}
+                      {language === 'ar' ? '???????' : 'Title'}
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'تاريخ التقديم' : 'Submission Date'}
+                      {language === 'ar' ? '????? ???????' : 'Submission Date'}
                     </TableHead>
                     {/* <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'الحالة' : 'Status'}
+                      {language === 'ar' ? '??????' : 'Status'}
                     </TableHead> */}
                 
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'تم الإنشاء بواسطة' : 'Created By'}
+                      {language === 'ar' ? '?? ??????? ??????' : 'Created By'}
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'تاريخ الإنشاء' : 'Created At'}
+                      {language === 'ar' ? '????? ???????' : 'Created At'}
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? 'الإجراءات' : 'Actions'}
+                      {language === 'ar' ? '?????????' : 'Actions'}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -311,7 +311,7 @@ const Memos = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleOpenEditModal(memo)}
-                            title={language === 'ar' ? 'تعديل المذكرة' : 'Edit Memo'}
+                            title={language === 'ar' ? '????? ???????' : 'Edit Memo'}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -319,7 +319,7 @@ const Memos = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleOpenApprovalModal(memo)}
-                            title={language === 'ar' ? 'تغيير الموافقة' : 'Change Approval'}
+                            title={language === 'ar' ? '????? ????????' : 'Change Approval'}
                             className="text-green-600 hover:text-green-700 hover:bg-green-50"
                           >
                             <CheckCircle className="h-4 w-4" />

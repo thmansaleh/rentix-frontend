@@ -110,7 +110,7 @@ export default function FormsPage() {
         toast.error(response.message || t('common.errorLoading'))
       }
     } catch (error) {
-      console.error('Error fetching forms:', error)
+
       toast.error(t('common.errorLoading'))
     } finally {
       setLoading(false)
@@ -127,7 +127,7 @@ export default function FormsPage() {
       await downloadForm(form.id)
       toast.success(isArabic ? 'تم تحميل النموذج بنجاح' : 'Form downloaded successfully')
     } catch (error) {
-      console.error('Error downloading form:', error)
+
       toast.error(isArabic ? 'خطأ في تحميل النموذج' : 'Error downloading form')
     }
   }
@@ -157,7 +157,7 @@ export default function FormsPage() {
         throw new Error(response.message || 'Failed to delete form')
       }
     } catch (error) {
-      console.error('Error deleting form:', error)
+
       toast.error(isArabic ? 'خطأ في حذف النموذج' : 'Error deleting form')
     } finally {
       setIsDeleting(false)

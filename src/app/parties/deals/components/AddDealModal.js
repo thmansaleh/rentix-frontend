@@ -29,9 +29,6 @@ const AddDealModal = ({
   const { language } = useLanguage()
   const isArabic = language === 'ar'
 
-  // Get current user from Redux
-  const currentUser = useSelector((state) => state.auth.jobId)
-
   const [isLoading, setIsLoading] = useState(false)
   const [searchResults, setSearchResults] = useState([])
   const [files, setFiles] = useState([])
@@ -41,8 +38,7 @@ const AddDealModal = ({
     type: 'normal',
     status: 'draft',
     start_date: null,
-    end_date: null,
-    created_by: currentUser || null
+    end_date: null
   })
 
   // Handle party search - wrapped in useCallback to prevent infinite re-renders
@@ -53,7 +49,7 @@ const AddDealModal = ({
         setSearchResults(response.data)
       }
     } catch (error) {
-      console.error('Error searching parties:', error)
+      // Error searching parties
     }
   }, []) // Empty dependency array since searchParties is imported and stable
 
@@ -86,13 +82,12 @@ const AddDealModal = ({
         type: 'normal',
         status: 'draft',
         start_date: null,
-        end_date: null,
-        created_by: currentUser || null
+        end_date: null
       })
       setSearchResults([])
       setFiles([])
     }
-  }, [isOpen, currentUser, partyId])
+  }, [isOpen, partyId])
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -154,8 +149,7 @@ const AddDealModal = ({
         type: formData.type,
         status: formData.status,
         start_date: formData.start_date ? format(formData.start_date, 'yyyy-MM-dd') : null,
-        end_date: formData.end_date ? format(formData.end_date, 'yyyy-MM-dd') : null,
-        created_by: formData.created_by
+        end_date: formData.end_date ? format(formData.end_date, 'yyyy-MM-dd') : null
       }
 
       const response = await createClientDeal(createData, files)
@@ -168,7 +162,6 @@ const AddDealModal = ({
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الاتفاقية' : 'Error creating deal'))
       }
     } catch (error) {
-      console.error('Error creating deal:', error)
       toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الاتفاقية' : 'Error creating deal')
     } finally {
       setIsLoading(false)

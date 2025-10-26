@@ -171,7 +171,7 @@ export function WalletDepositModal({ isOpen, onClose, onSuccess, walletId, clien
         toast.error(response.message || t('walletDeposits.failedToCreateDeposit'));
       }
     } catch (error) {
-      console.error("Error creating wallet deposit:", error);
+
       toast.error(t('walletDeposits.errorCreatingDeposit'));
     } finally {
       setLoading(false);

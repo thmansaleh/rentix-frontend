@@ -1,4 +1,4 @@
-﻿
+
 "use client"
 
 import { useState } from "react"
@@ -97,7 +97,7 @@ function Sessions() {
                   <TableRow>
                     <TableHead className="text-center">{t('sessions.date')}</TableHead>
                     <TableHead className="text-center">{t('sessions.link')}</TableHead>
-                    <TableHead className="text-center">القرار</TableHead>
+                    <TableHead className="text-center">??????</TableHead>
                     <TableHead className="text-center">{t('sessions.expertSession')}</TableHead>
                     <TableHead className="text-center">{t('sessions.attachedFiles')}</TableHead>
                     <TableHead className="text-center">{t('sessions.actions')}</TableHead>
@@ -120,7 +120,7 @@ function Sessions() {
                         </a>
                       </TableCell>
                       <TableCell className="text-center">
-                        {session.decision || <span className="text-gray-400 text-sm">لا يوجد قرار</span>}
+                        {session.decision || <span className="text-gray-400 text-sm">?? ???? ????</span>}
                       </TableCell>
                       <TableCell className="flex justify-center">
                         {session.isExpertSession ? (

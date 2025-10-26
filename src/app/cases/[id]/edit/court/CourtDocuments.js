@@ -100,7 +100,6 @@ function CourtDocuments({ caseId }) {
         documentName: ''
       });
     } catch (error) {
-      console.error('Error deleting court document:', error);
       toast.error(
         isArabic 
           ? 'فشل في حذف مستند المحكمة' 

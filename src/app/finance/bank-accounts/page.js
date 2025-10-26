@@ -37,7 +37,7 @@ function BankAccountsPage() {
         toast.error('حدث خطأ في تحميل الحسابات البنكية');
       }
     } catch (error) {
-      console.error('Error fetching bank accounts:', error);
+
       toast.error('حدث خطأ في تحميل الحسابات البنكية');
     } finally {
       setLoading(false);
@@ -65,7 +65,7 @@ function BankAccountsPage() {
         toast.error('حدث خطأ في حذف الحساب');
       }
     } catch (error) {
-      console.error('Error deleting bank account:', error);
+
       toast.error('حدث خطأ في حذف الحساب');
     } finally {
       setDeleteLoading(false);

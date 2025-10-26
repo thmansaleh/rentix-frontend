@@ -112,7 +112,7 @@ export function ClientDetailsModal({ clientId, isOpen, onClose }) {
       setDeleteDialogOpen(false);
       setFileToDelete(null);
     } catch (error) {
-      console.error("Error deleting file:", error);
+
       toast.error(t("potentialClientsPage.files.deleteError") || "فشل حذف الملف");
     } finally {
       setIsDeleting(false);

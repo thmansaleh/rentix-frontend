@@ -38,7 +38,7 @@ const DeleteEventDialog = ({
       onSuccess?.()
       onClose()
     } catch (error) {
-      console.error('Error deleting event:', error)
+
       toast.error(
         isArabic 
           ? error.response?.data?.message || 'حدث خطأ أثناء حذف الحدث'

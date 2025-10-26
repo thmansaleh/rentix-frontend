@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Plus, CircleX, Loader2 } from "lucide-react";
@@ -132,19 +132,19 @@ export default function AddEmployeeModal({ onAdd }) {
         
         if (duplicate.name === form.name && duplicate.phone === form.phoneNumber) {
           duplicateMessage = t('employees.duplicateEmployeeExists') || (isRTL 
-            ? 'موظف بنفس الاسم ورقم الهاتف موجود بالفعل'
+            ? '???? ???? ????? ???? ?????? ????? ??????'
             : 'An employee with the same name and phone number already exists');
         } else if (duplicate.name === form.name) {
           duplicateMessage = t('employees.duplicateNameExists') || (isRTL 
-            ? 'موظف بنفس الاسم موجود بالفعل'
+            ? '???? ???? ????? ????? ??????'
             : 'An employee with the same name already exists');
         } else if (duplicate.phone === form.phoneNumber) {
           duplicateMessage = t('employees.duplicatePhoneExists') || (isRTL 
-            ? 'موظف بنفس رقم الهاتف موجود بالفعل'
+            ? '???? ???? ??? ?????? ????? ??????'
             : 'An employee with the same phone number already exists');
         } else if (duplicate.email === form.email) {
           duplicateMessage = t('employees.duplicateEmailExists') || (isRTL 
-            ? 'موظف بنفس البريد الإلكتروني موجود بالفعل'
+            ? '???? ???? ?????? ?????????? ????? ??????'
             : 'An employee with the same email already exists');
         }
         
@@ -199,11 +199,11 @@ export default function AddEmployeeModal({ onAdd }) {
         });
         setTab("info");
       } else {
-        console.error('Failed to create employee:', response);
+
         toast.error(t('messages.errorCreatingEmployee') || 'Error creating employee. Please try again.');
       }
     } catch (error) {
-      console.error('Error creating employee:', error);
+
       toast.error(t('messages.errorCreatingEmployee') || 'Error creating employee. Please try again.');
     } finally {
       setIsSaving(false);
@@ -243,7 +243,7 @@ export default function AddEmployeeModal({ onAdd }) {
             <TabsList className="mb-4 flex gap-2" >
               <TabsTrigger value="info" className="cursor-pointer">{t('employees.information')}</TabsTrigger>
               <TabsTrigger value="permissions" className="cursor-pointer">{t('employees.permissions')}</TabsTrigger>
-              {/* <TabsTrigger value="documents" className="cursor-pointer">{t('employees.documents') || 'الوثائق'}</TabsTrigger> */}
+              {/* <TabsTrigger value="documents" className="cursor-pointer">{t('employees.documents') || '???????'}</TabsTrigger> */}
             </TabsList>
             
             <TabsContent value="info">

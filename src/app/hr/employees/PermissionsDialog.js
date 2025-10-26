@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Shield, CircleX, Loader2 } from "lucide-react";
@@ -43,27 +43,27 @@ export default function PermissionsModal({ trigger,id }) {
     // Helper function to get translated group name
     const getGroupNameTranslation = (groupName) => {
         const translations = {
-            'case_parties': { ar: 'أطراف القضية', en: 'Case Parties' },
-            'case_stages': { ar: 'مراحل القضية', en: 'Case Stages' },
-            'case_team': { ar: 'فريق القضية', en: 'Case Team' },
-            'clients': { ar: 'العملاء', en: 'Clients' },
-            'client_requests': { ar: 'طلبات العملاء', en: 'Client Requests' },
-            'employees': { ar: 'الموظفين', en: 'Employees' },
-            'executions': { ar: 'التنفيذات', en: 'Executions' },
-            'judicial_notices': { ar: 'الإشعارات القضائية', en: 'Judicial Notices' },
-            'meetings': { ar: 'الاجتماعات', en: 'Meetings' },
-            'memos': { ar: 'المذكرات', en: 'Memos' },
-            'petitions': { ar: 'العرائض', en: 'Petitions' },
-            'police_stations': { ar: 'مراكز الشرطة', en: 'Police Stations' },
-            'sessions': { ar: 'الجلسات', en: 'Sessions' },
-            'tasks': { ar: 'المهام', en: 'Tasks' },
-            'cases': { ar: 'القضايا', en: 'Cases' },
-            'courts': { ar: 'المحاكم', en: 'Courts' },
-            'departments': { ar: 'الأقسام', en: 'Departments' },
-            'branches': { ar: 'الفروع', en: 'Branches' },
-            'roles': { ar: 'الأدوار', en: 'Roles' },
-            'permissions': { ar: 'الصلاحيات', en: 'Permissions' },
-            'public_prosecutions': { ar: 'النيابات العامة', en: 'Public Prosecutions' },
+            'case_parties': { ar: '????? ??????', en: 'Case Parties' },
+            'case_stages': { ar: '????? ??????', en: 'Case Stages' },
+            'case_team': { ar: '???? ??????', en: 'Case Team' },
+            'clients': { ar: '???????', en: 'Clients' },
+            'client_requests': { ar: '????? ???????', en: 'Client Requests' },
+            'employees': { ar: '????????', en: 'Employees' },
+            'executions': { ar: '?????????', en: 'Executions' },
+            'judicial_notices': { ar: '????????? ????????', en: 'Judicial Notices' },
+            'meetings': { ar: '??????????', en: 'Meetings' },
+            'memos': { ar: '????????', en: 'Memos' },
+            'petitions': { ar: '???????', en: 'Petitions' },
+            'police_stations': { ar: '????? ??????', en: 'Police Stations' },
+            'sessions': { ar: '???????', en: 'Sessions' },
+            'tasks': { ar: '??????', en: 'Tasks' },
+            'cases': { ar: '???????', en: 'Cases' },
+            'courts': { ar: '???????', en: 'Courts' },
+            'departments': { ar: '???????', en: 'Departments' },
+            'branches': { ar: '??????', en: 'Branches' },
+            'roles': { ar: '???????', en: 'Roles' },
+            'permissions': { ar: '?????????', en: 'Permissions' },
+            'public_prosecutions': { ar: '???????? ??????', en: 'Public Prosecutions' },
         };
 
         const translation = translations[groupName];
@@ -116,7 +116,7 @@ export default function PermissionsModal({ trigger,id }) {
             toast.success(t('messages.permissionsSavedSuccessfully') || 'Permissions saved successfully!');
             setOpen(false);
         } catch (error) {
-            console.error('Error saving permissions:', error);
+
             toast.error(t('messages.errorSavingPermissions') || 'Error saving permissions. Please try again.');
         } finally {
             setIsSaving(false);

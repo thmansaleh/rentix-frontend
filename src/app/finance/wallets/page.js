@@ -128,7 +128,7 @@ function WalletsPage() {
       setDeleteDialogOpen(false);
       setWalletToDelete(null);
     } catch (error) {
-      console.error('Error deleting wallet:', error);
+
       toast.error(t('wallets.errorDeletingWallet'));
     } finally {
       setIsDeleting(false);

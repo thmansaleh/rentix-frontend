@@ -61,7 +61,7 @@ const NotificationsSettingsPage = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       alert(t('settings.settingsSaved'));
     } catch (error) {
-      console.error('Failed to save settings:', error);
+
     }
   };
 
