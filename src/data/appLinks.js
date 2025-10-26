@@ -19,10 +19,10 @@ export const appLinks = [
   },
   {
     id: 'add-case',
-    label: { ar: 'إضافة قضية', en: 'Add Case' },
+    label: { ar: 'إضافة ملف قضية', en: 'Add Case File' },
     route: '/cases/add-case',
     category: { ar: 'إدارة القضايا', en: 'Cases Management' },
-    keywords: { ar: ['إضافة', 'قضية', 'جديد', 'add', 'new'], en: ['add', 'new', 'case', 'create'] }
+    keywords: { ar: ['إضافة', 'قضية', 'جديد', 'ملف', 'add', 'new'], en: ['add', 'new', 'case', 'file', 'create'] }
   },
   {
     id: 'sessions',
@@ -31,40 +31,45 @@ export const appLinks = [
     category: { ar: 'إدارة القضايا', en: 'Cases Management' },
     keywords: { ar: ['جلسات', 'محكمة', 'sessions'], en: ['sessions', 'hearings', 'court'] }
   },
-  {
-    id: 'my-tasks',
-    label: { ar: 'مهامي', en: 'My Tasks' },
-    route: '/cases/my-tasks',
-    category: { ar: 'إدارة القضايا', en: 'Cases Management' },
-    keywords: { ar: ['مهام', 'مهمة', 'tasks'], en: ['tasks', 'todos', 'assignments'] }
-  },
-  {
-    id: 'judgments',
-    label: { ar: 'الأحكام الصادرة', en: 'Issued Judgments' },
-    route: '/judgments',
-    category: { ar: 'إدارة القضايا', en: 'Cases Management' },
-    keywords: { ar: ['أحكام', 'حكم', 'قرار', 'judgments'], en: ['judgments', 'verdicts', 'rulings'] }
-  },
 
-  // Parties
+  // Clients Management
   {
     id: 'parties',
-    label: { ar: 'الأطراف', en: 'Parties' },
+    label: { ar: 'الموكلين والخصوم', en: 'Clients & Opponents' },
     route: '/parties',
-    category: { ar: 'العملاء', en: 'Clients' },
-    keywords: { ar: ['أطراف', 'عملاء', 'موكل', 'parties', 'clients'], en: ['parties', 'clients', 'customers'] }
+    category: { ar: 'إدارة الموكلين', en: 'Clients Management' },
+    keywords: { ar: ['أطراف', 'موكل', 'خصم', 'عملاء', 'parties'], en: ['parties', 'clients', 'opponents', 'customers'] }
   },
-
-  // Potential Clients
   {
     id: 'potential-clients',
     label: { ar: 'العملاء المحتملين', en: 'Potential Clients' },
     route: '/potential-clients',
-    category: { ar: 'العملاء', en: 'Clients' },
+    category: { ar: 'إدارة الموكلين', en: 'Clients Management' },
     keywords: { ar: ['محتمل', 'عملاء', 'جدد', 'potential'], en: ['potential', 'prospects', 'leads'] }
   },
+  {
+    id: 'meetings',
+    label: { ar: 'المواعيد والاجتماعات', en: 'Meetings & Appointments' },
+    route: '/meetings',
+    category: { ar: 'إدارة الموكلين', en: 'Clients Management' },
+    keywords: { ar: ['اجتماعات', 'مواعيد', 'لقاء', 'meetings'], en: ['meetings', 'appointments', 'consultations'] }
+  },
+  {
+    id: 'call-logs',
+    label: { ar: 'سجل المكالمات', en: 'Call Logs' },
+    route: '/call-logs',
+    category: { ar: 'إدارة الموكلين', en: 'Clients Management' },
+    keywords: { ar: ['مكالمات', 'سجل', 'اتصال', 'calls'], en: ['calls', 'logs', 'phone'] }
+  },
+  {
+    id: 'goaml',
+    label: { ar: 'GoAML', en: 'GoAML' },
+    route: '/goaml',
+    category: { ar: 'إدارة الموكلين', en: 'Clients Management' },
+    keywords: { ar: ['غسل', 'أموال', 'مكافحة', 'goaml'], en: ['goaml', 'aml', 'anti-money laundering'] }
+  },
 
-  // Approvals
+  // Approvals Center
   {
     id: 'approvals',
     label: { ar: 'مركز الموافقات', en: 'Approvals Center' },
@@ -126,11 +131,18 @@ export const appLinks = [
     keywords: { ar: ['مالية', 'عملاء', 'فواتير', 'finance'], en: ['finance', 'clients', 'billing'] }
   },
   {
-    id: 'client-balances',
-    label: { ar: 'أرصدة العملاء', en: 'Client Balances' },
-    route: '/finance/client-balances',
+    id: 'wallets',
+    label: { ar: 'أرصدة الموكلين', en: 'Client Balances' },
+    route: '/finance/wallets',
     category: { ar: 'المالية', en: 'Finance' },
-    keywords: { ar: ['أرصدة', 'رصيد', 'عملاء', 'balances'], en: ['balances', 'accounts', 'ledger'] }
+    keywords: { ar: ['أرصدة', 'رصيد', 'محافظ', 'موكلين', 'balances'], en: ['balances', 'wallets', 'accounts', 'ledger'] }
+  },
+  {
+    id: 'invoices',
+    label: { ar: 'الفواتير', en: 'Invoices' },
+    route: '/finance/invoices',
+    category: { ar: 'المالية', en: 'Finance' },
+    keywords: { ar: ['فواتير', 'فاتورة', 'invoices'], en: ['invoices', 'bills', 'billing'] }
   },
   {
     id: 'bank-accounts',
@@ -140,99 +152,47 @@ export const appLinks = [
     keywords: { ar: ['بنك', 'حساب', 'بنكي', 'bank'], en: ['bank', 'accounts', 'banking'] }
   },
   {
-    id: 'invoices',
-    label: { ar: 'الفواتير العامة', en: 'General Invoices' },
-    route: '/finance/invoices',
+    id: 'finance-statistics',
+    label: { ar: 'الإحصائيات', en: 'Statistics' },
+    route: '/finance/statistics',
     category: { ar: 'المالية', en: 'Finance' },
-    keywords: { ar: ['فواتير', 'فاتورة', 'invoices'], en: ['invoices', 'bills', 'billing'] }
+    keywords: { ar: ['إحصائيات', 'تقارير', 'statistics'], en: ['statistics', 'reports', 'analytics'] }
   },
   {
-    id: 'cash-box',
-    label: { ar: 'الصندوق النقدي', en: 'Cash Box' },
-    route: '/finance/cash-box',
+    id: 'finance-employees',
+    label: { ar: 'كشوف حسابات الموظفين', en: 'Employee Statements' },
+    route: '/finance/employees',
     category: { ar: 'المالية', en: 'Finance' },
-    keywords: { ar: ['صندوق', 'نقدي', 'كاش', 'cash'], en: ['cash', 'cashbox', 'petty cash'] }
+    keywords: { ar: ['موظفين', 'كشوف', 'حسابات', 'رواتب'], en: ['employees', 'statements', 'payroll', 'salaries'] }
   },
-
-  // GOAML
-  {
-    id: 'goaml',
-    label: { ar: 'مكافحة غسل الأموال', en: 'GOAML' },
-    route: '/goaml',
-    category: { ar: 'إدارة', en: 'Management' },
-    keywords: { ar: ['غسل', 'أموال', 'مكافحة', 'goaml'], en: ['goaml', 'aml', 'anti-money laundering'] }
-  },
-
-  // Call Logs
-  {
-    id: 'call-logs',
-    label: { ar: 'سجل المكالمات', en: 'Call Logs' },
-    route: '/call-logs',
-    category: { ar: 'إدارة', en: 'Management' },
-    keywords: { ar: ['مكالمات', 'سجل', 'اتصال', 'calls'], en: ['calls', 'logs', 'phone'] }
-  },
-
-  // Charts
-//   {
-//     id: 'charts',
-//     label: { ar: 'الرسوم البيانية', en: 'Charts' },
-//     route: '/charts',
-//     category: { ar: 'إدارة', en: 'Management' },
-//     keywords: { ar: ['رسوم', 'بيانية', 'charts'], en: ['charts', 'graphs', 'visualization'] }
-//   },
 
   // Settings
-//   {
-//     id: 'settings',
-//     label: { ar: 'الإعدادات', en: 'Settings' },
-//     route: '/settings',
-//     category: { ar: 'النظام', en: 'System' },
-//     keywords: { ar: ['إعدادات', 'إعداد', 'settings'], en: ['settings', 'preferences', 'configuration'] }
-//   },
   {
     id: 'settings-appearance',
     label: { ar: 'المظهر', en: 'Appearance' },
     route: '/settings/appearance',
-    category: { ar: 'النظام', en: 'System' },
+    category: { ar: 'الإعدادات', en: 'Settings' },
     keywords: { ar: ['مظهر', 'ثيم', 'appearance', 'theme'], en: ['appearance', 'theme', 'display'] }
   },
-//   {
-//     id: 'settings-profile',
-//     label: { ar: 'الملف الشخصي', en: 'Profile' },
-//     route: '/settings/profile',
-//     category: { ar: 'النظام', en: 'System' },
-//     keywords: { ar: ['ملف', 'شخصي', 'profile'], en: ['profile', 'account', 'user'] }
-//   },
-//   {
-//     id: 'settings-security',
-//     label: { ar: 'الأمان', en: 'Security' },
-//     route: '/settings/security',
-//     category: { ar: 'النظام', en: 'System' },
-//     keywords: { ar: ['أمان', 'حماية', 'security'], en: ['security', 'password', 'privacy'] }
-//   },
-//   {
-//     id: 'settings-general',
-//     label: { ar: 'عام', en: 'General' },
-//     route: '/settings/general',
-//     category: { ar: 'النظام', en: 'System' },
-//     keywords: { ar: ['عام', 'general'], en: ['general', 'basic', 'common'] }
-//   },
-
-  // Payments
-//   {
-//     id: 'payments',
-//     label: { ar: 'المدفوعات', en: 'Payments' },
-//     route: '/payments',
-//     category: { ar: 'المالية', en: 'Finance' },
-//     keywords: { ar: ['مدفوعات', 'دفع', 'payments'], en: ['payments', 'transactions', 'billing'] }
-//   },
-
-  // Sessions (standalone)
   {
-    id: 'sessions-page',
-    label: { ar: 'الجلسات', en: 'Sessions' },
-    route: '/sessions',
-    category: { ar: 'إدارة القضايا', en: 'Cases Management' },
-    keywords: { ar: ['جلسات', 'sessions'], en: ['sessions', 'hearings'] }
+    id: 'settings-branches',
+    label: { ar: 'الفروع', en: 'Branches' },
+    route: '/settings/branches',
+    category: { ar: 'الإعدادات', en: 'Settings' },
+    keywords: { ar: ['فروع', 'فرع', 'مكاتب', 'branches'], en: ['branches', 'offices', 'locations'] }
+  },
+  {
+    id: 'settings-performance',
+    label: { ar: 'الأداء', en: 'Performance' },
+    route: '/settings/performance',
+    category: { ar: 'الإعدادات', en: 'Settings' },
+    keywords: { ar: ['أداء', 'performance'], en: ['performance', 'speed', 'optimization'] }
+  },
+  {
+    id: 'logs',
+    label: { ar: 'سجل النشاط', en: 'Activity Logs' },
+    route: '/logs',
+    category: { ar: 'الإعدادات', en: 'Settings' },
+    keywords: { ar: ['سجل', 'نشاط', 'logs'], en: ['logs', 'activity', 'audit'] }
   },
 ];
