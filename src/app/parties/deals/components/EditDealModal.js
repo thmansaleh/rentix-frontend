@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import useSWR from 'swr'
+import { useSWRConfig } from 'swr'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useTranslations } from "@/hooks/useTranslations"
@@ -28,6 +29,7 @@ const EditDealModal = ({
   const { t } = useTranslations()
   const { language } = useLanguage()
   const isArabic = language === 'ar'
+  const { mutate: globalMutate } = useSWRConfig()
 
   const [files, setFiles] = useState([])
   const [existingDocuments, setExistingDocuments] = useState([])
@@ -86,8 +88,15 @@ const EditDealModal = ({
         if (response.success) {
           toast.success(isArabic ? 'تم تحديث الاتفاقية بنجاح' : 'Deal updated successfully')
           
-          // Mutate the deal data to refresh and show new files immediately
+          // Mutate the current deal data to refresh
           await mutateDeal()
+          
+          // Also mutate all other deal caches (list views, view modals, etc.)
+          globalMutate(key => typeof key === 'string' && (
+            key.includes('clients-deals') || 
+            key.includes(`deal-view-${dealId}`) ||
+            key.includes(`deal-${dealId}`)
+          ))
           
           // Reset files state since they're now saved
           setFiles([])

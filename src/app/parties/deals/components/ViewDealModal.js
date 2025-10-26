@@ -24,11 +24,12 @@ const ViewDealModal = ({
   const isArabic = language === 'ar'
 
   // Fetch deal data
-  const { data: dealData, error: dealError, isLoading: dealLoading } = useSWR(
+  const { data: dealData, error: dealError, isLoading: dealLoading, mutate: mutateDeal } = useSWR(
     dealId && isOpen ? `deal-view-${dealId}` : null,
     () => getClientDealById(dealId),
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
     }
   )
 

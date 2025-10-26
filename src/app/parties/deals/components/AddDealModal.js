@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useSelector } from 'react-redux'
+import { useSWRConfig } from 'swr'
 import { useTranslations } from "@/hooks/useTranslations"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -28,6 +29,7 @@ const AddDealModal = ({
   const { t } = useTranslations()
   const { language } = useLanguage()
   const isArabic = language === 'ar'
+  const { mutate } = useSWRConfig()
 
   const [isLoading, setIsLoading] = useState(false)
   const [searchResults, setSearchResults] = useState([])
@@ -156,6 +158,11 @@ const AddDealModal = ({
       
       if (response.success) {
         toast.success(isArabic ? 'تم إنشاء الاتفاقية بنجاح' : 'Deal created successfully')
+        
+        // Mutate all deals-related caches to refresh the data
+        mutate(key => typeof key === 'string' && key.includes('clients-deals'))
+        mutate(key => typeof key === 'string' && key.includes('deal-'))
+        
         onSuccess?.()
         onClose()
       } else {
