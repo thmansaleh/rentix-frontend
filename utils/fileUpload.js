@@ -13,6 +13,14 @@ export const uploadFiles = async (files, folder = 'documents') => {
       return [];
     }
 
+    // Validate file sizes (10MB limit per file)
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    const oversizedFiles = files.filter(file => file.size > maxFileSize);
+    if (oversizedFiles.length > 0) {
+      const fileNames = oversizedFiles.map(f => f.name).join(', ');
+      throw new Error(`Files exceed 10MB limit: ${fileNames}`);
+    }
+
     // Create FormData to send files
     const formData = new FormData();
     files.forEach((file) => {
@@ -38,38 +46,55 @@ export const uploadFiles = async (files, folder = 'documents') => {
       token = localStorage.getItem('authToken');
     }
 
-    // Upload files to backend API
-    const response = await fetch(`${backendUrl}/upload`, {
-      method: 'POST',
-      headers: {
-        ...(token && { 'Authorization': `Bearer ${token}` }),
-      },
-      credentials: 'include', // Include cookies
-      body: formData,
-    });
+    // Create AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = 'Upload failed';
-      try {
-        const errorJson = JSON.parse(errorText);
-        errorMessage = errorJson.error || errorMessage;
-      } catch (e) {
-        // If response is not JSON, use the text as error
-        errorMessage = errorText || errorMessage;
+    try {
+      // Upload files to backend API
+      const response = await fetch(`${backendUrl}/upload`, {
+        method: 'POST',
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+        credentials: 'include', // Include cookies
+        body: formData,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = 'Upload failed';
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.error || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use the text as error
+          errorMessage = errorText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
-      throw new Error(errorMessage);
+
+      const result = await response.json();
+
+      // Check if upload was successful
+      if (!result.success) {
+        throw new Error(result.error || 'Upload failed');
+      }
+
+      // Return the array of {document_name, document_url}
+      return result.files;
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      
+      // Handle abort/timeout errors
+      if (fetchError.name === 'AbortError') {
+        throw new Error('Upload timed out. Please try uploading smaller files or fewer files at once.');
+      }
+      throw fetchError;
     }
-
-    const result = await response.json();
-
-    // Check if upload was successful
-    if (!result.success) {
-      throw new Error(result.error || 'Upload failed');
-    }
-
-    // Return the array of {document_name, document_url}
-    return result.files;
   } catch (error) {
     throw new Error(error.message || 'Failed to upload files');
   }

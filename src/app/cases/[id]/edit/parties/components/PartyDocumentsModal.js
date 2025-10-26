@@ -119,6 +119,18 @@ function PartyDocumentsModal({ children, caseId, partyId, partyName }) {
   // Handle file selection
   const handleFileSelect = (event) => {
     const files = Array.from(event.target.files)
+    
+    // Validate file sizes (10MB limit per file)
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    const oversizedFiles = files.filter(file => file.size > maxFileSize);
+    
+    if (oversizedFiles.length > 0) {
+      const fileNames = oversizedFiles.map(f => f.name).join(', ');
+      setUploadError(`Files exceed 10MB limit: ${fileNames}`);
+      toast.error('Some files are too large. Maximum file size is 10MB.');
+      return;
+    }
+    
     setSelectedFiles(prev => [...prev, ...files])
     setUploadError(null)
   }
@@ -150,10 +162,21 @@ function PartyDocumentsModal({ children, caseId, partyId, partyName }) {
         t('documents.uploadSuccess') || 'Documents uploaded successfully'
       )
     } catch (error) {
-      setUploadError(error.message || 'Failed to upload documents')
-      toast.error(
-        t('documents.uploadError') || 'Failed to upload documents'
-      )
+      console.error('Upload error:', error);
+      
+      // Provide more specific error messages
+      let errorMessage = error.message || 'Failed to upload documents';
+      
+      if (error.message?.includes('timeout') || error.message?.includes('timed out')) {
+        errorMessage = 'Upload timed out. Please try uploading fewer or smaller files.';
+      } else if (error.message?.includes('Network Error')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      } else if (error.message?.includes('10MB')) {
+        errorMessage = error.message;
+      }
+      
+      setUploadError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsUploading(false)
     }

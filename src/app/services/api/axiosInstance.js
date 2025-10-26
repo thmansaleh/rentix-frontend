@@ -3,6 +3,7 @@ const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://law-backend-woa
 const api = axios.create({
   baseURL,
   withCredentials: true,
+  timeout: 60000, // 60 seconds timeout for file uploads
   headers: {
     "Content-Type": "application/json",
   },
