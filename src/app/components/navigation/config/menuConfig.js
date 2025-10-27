@@ -128,8 +128,11 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       type: 'category',
       submenu: [
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
-        { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
-        { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
+        // Branches and Performance - Only visible to admin
+        ...(userRole === 'admin' ? [
+          { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
+          { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
+        ] : []),
         // Logs - Only visible to admin
         ...(hasLogsAccess ? [
           { id: 'logs', label: t('navigation.logs'), icon: Clock }

@@ -148,7 +148,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
   }
 
   const handleSubmit = () => {
-    if (formData.date && formData.link && session) {
+    if (formData.date && session) {
       const formattedDate = format(formData.date, 'yyyy-MM-dd HH:mm:ss')
       
       const updatedSession = {
