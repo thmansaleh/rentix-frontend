@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import useSWR, { mutate } from "swr";
-import { getPartyById, updateParty } from "../services/api/parties";
+import { getPartyById, updateParty, checkDuplicateParty } from "../services/api/parties";
 import { getBranches } from "../services/api/branches";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -112,6 +112,42 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
+      // Check for duplicates - excluding current client
+      const duplicateCheck = await checkDuplicateParty(
+        values.name, 
+        values.phone, 
+        values.email || null,
+        clientId // Exclude current client from duplicate check
+      );
+      
+      if (duplicateCheck.success && duplicateCheck.isDuplicate) {
+        const { duplicates } = duplicateCheck;
+        const errorMessages = [];
+        
+        if (duplicates.name) {
+          errorMessages.push(t('potentialClientsPage.duplicateNameExists') || (isRTL 
+            ? 'عميل آخر بنفس الاسم موجود بالفعل'
+            : 'Another client with the same name already exists'));
+        }
+        
+        if (duplicates.phone) {
+          errorMessages.push(t('potentialClientsPage.duplicatePhoneExists') || (isRTL 
+            ? 'عميل آخر بنفس رقم الهاتف موجود بالفعل'
+            : 'Another client with the same phone number already exists'));
+        }
+        
+        if (duplicates.email) {
+          errorMessages.push(t('potentialClientsPage.duplicateEmailExists') || (isRTL 
+            ? 'عميل آخر بنفس البريد الإلكتروني موجود بالفعل'
+            : 'Another client with the same email already exists'));
+        }
+        
+        // Display all error messages
+        errorMessages.forEach(msg => toast.error(msg));
+        setSubmitting(false);
+        return;
+      }
+
       // Include files in the request data
       const requestData = {
         ...values,
@@ -257,11 +293,18 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                       {t("potentialClientsPage.table.phone")}
                     </Label>
                     <Field name="phone">
-                      {({ field }) => (
+                      {({ field, form }) => (
                         <Input
                           {...field}
                           id="phone"
                           type="tel"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Only allow numbers, +, -, spaces, and parentheses
+                            if (/^[0-9+\-\s()]*$/.test(value)) {
+                              form.setFieldValue('phone', value);
+                            }
+                          }}
                           placeholder={t("potentialClientsPage.editModal.phonePlaceholder")}
                           disabled={isSubmitting}
                         />

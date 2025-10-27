@@ -144,28 +144,39 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
         return;
       }
 
-      // Check for duplicates
-      const duplicateCheck = await checkDuplicateParty(formData.name, formData.phone);
+      
+      
+      const duplicateCheck = await checkDuplicateParty(
+        formData.name, 
+        formData.phone, 
+        formData.email || null
+      );
+      
       
       if (duplicateCheck.success && duplicateCheck.isDuplicate) {
-        const duplicate = duplicateCheck.duplicate;
-        let duplicateMessage;
+        const { duplicates } = duplicateCheck;
+        const errorMessages = [];
         
-        if (duplicate.name === formData.name && duplicate.phone === formData.phone) {
-          duplicateMessage = t('parties.duplicatePartyExists') || (isRTL 
-            ? 'طرف بنفس الاسم ورقم الهاتف موجود بالفعل'
-            : 'A party with the same name and phone number already exists');
-        } else if (duplicate.name === formData.name) {
-          duplicateMessage = t('parties.duplicateNameExists') || (isRTL 
+        if (duplicates.name) {
+          errorMessages.push(t('parties.duplicateNameExists') || (isRTL 
             ? 'طرف بنفس الاسم موجود بالفعل'
-            : 'A party with the same name already exists');
-        } else {
-          duplicateMessage = t('parties.duplicatePhoneExists') || (isRTL 
-            ? 'طرف بنفس رقم الهاتف موجود بالفعل'
-            : 'A party with the same phone number already exists');
+            : 'A party with the same name already exists'));
         }
         
-        toast.error(duplicateMessage);
+        if (duplicates.phone) {
+          errorMessages.push(t('parties.duplicatePhoneExists') || (isRTL 
+            ? 'طرف بنفس رقم الهاتف موجود بالفعل'
+            : 'A party with the same phone number already exists'));
+        }
+        
+        if (duplicates.email) {
+          errorMessages.push(t('parties.duplicateEmailExists') || (isRTL 
+            ? 'طرف بنفس البريد الإلكتروني موجود بالفعل'
+            : 'A party with the same email already exists'));
+        }
+        
+        // Display all error messages
+        errorMessages.forEach(msg => toast.error(msg));
         return;
       }
 
@@ -237,8 +248,15 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
             <Label htmlFor="phone">{t('parties.phone') || 'رقم الهاتف'} *</Label>
             <Input
               id="phone"
+              type="tel"
               value={formData.phone}
-              onChange={(e) => handleInputChange("phone", e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only allow numbers, +, -, spaces, and parentheses
+                if (/^[0-9+\-\s()]*$/.test(value)) {
+                  handleInputChange("phone", value);
+                }
+              }}
               placeholder={t('parties.phoneExample') || 'مثال: +971501234567'}
             />
           </div>

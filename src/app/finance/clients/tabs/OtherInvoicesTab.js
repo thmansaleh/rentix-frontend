@@ -269,7 +269,7 @@ export function OtherInvoicesTab({ client, isOpen }) {
                     <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
                     <TableCell className="text-xs">{formatDate(invoice.invoice_date)}</TableCell>
                     <TableCell className="font-mono font-semibold text-blue-600">
-                      {formatAmount(invoice.total_amount, 'AED')}
+                      {formatAmount(invoice.amount, 'AED')}
                     </TableCell>
                     <TableCell>{getStatusBadge(invoice.status)}</TableCell>
                     <TableCell>

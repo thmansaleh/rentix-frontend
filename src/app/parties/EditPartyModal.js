@@ -34,7 +34,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Edit, Save, Loader2, Upload, X, FileText, Image, FileIcon, Trash2 } from "lucide-react";
-import { getPartyById, updateParty } from "@/app/services/api/parties";
+import { getPartyById, updateParty, checkDuplicateParty } from "@/app/services/api/parties";
 import { getBranches } from "@/app/services/api/branches";
 import { deletePartyDocument } from "@/app/services/api/partiesDocuments";
 import { toast } from "react-toastify";
@@ -225,6 +225,41 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
         return;
       }
 
+      // Check for duplicates - excluding current party
+      const duplicateCheck = await checkDuplicateParty(
+        formData.name, 
+        formData.phone, 
+        formData.email || null,
+        partyId // Exclude current party from duplicate check
+      );
+      
+      if (duplicateCheck.success && duplicateCheck.isDuplicate) {
+        const { duplicates } = duplicateCheck;
+        const errorMessages = [];
+        
+        if (duplicates.name) {
+          errorMessages.push(t('parties.duplicateNameExists') || (isRTL 
+            ? 'طرف آخر بنفس الاسم موجود بالفعل'
+            : 'Another party with the same name already exists'));
+        }
+        
+        if (duplicates.phone) {
+          errorMessages.push(t('parties.duplicatePhoneExists') || (isRTL 
+            ? 'طرف آخر بنفس رقم الهاتف موجود بالفعل'
+            : 'Another party with the same phone number already exists'));
+        }
+        
+        if (duplicates.email) {
+          errorMessages.push(t('parties.duplicateEmailExists') || (isRTL 
+            ? 'طرف آخر بنفس البريد الإلكتروني موجود بالفعل'
+            : 'Another party with the same email already exists'));
+        }
+        
+        // Display all error messages
+        errorMessages.forEach(msg => toast.error(msg));
+        return;
+      }
+
       // Add files to formData if any new files were added
       const partyDataWithFiles = {
         ...formData,
@@ -294,8 +329,15 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                 <Label htmlFor="phone">{t('parties.phone') || 'رقم الهاتف'} *</Label>
                 <Input
                   id="phone"
+                  type="tel"
                   value={formData.phone}
-                  onChange={(e) => handleInputChange("phone", e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Only allow numbers, +, -, spaces, and parentheses
+                    if (/^[0-9+\-\s()]*$/.test(value)) {
+                      handleInputChange("phone", value);
+                    }
+                  }}
                   placeholder={t('parties.phoneExample') || 'مثال: +971501234567'}
                 />
               </div>

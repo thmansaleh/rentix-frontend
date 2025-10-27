@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 function Files() {
   const { language } = useLanguage();
-  const t = useTranslations();
+  const { t } = useTranslations();
   const { values, setFieldValue } = useFormikContext();
   const isArabic = language === 'ar';
 
@@ -220,7 +220,7 @@ function Files() {
           <div className="text-center text-muted-foreground py-4">
             <File className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">
-              {isArabic ? '?? ??? ??? ?? ????? ???' : 'No files uploaded yet'}
+              {t('files.noFilesUploaded')}
             </p>
           </div>
         )}

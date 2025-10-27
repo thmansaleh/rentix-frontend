@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { mutate } from "swr";
 import useSWR from "swr";
-import { createParty } from "../services/api/parties";
+import { createParty, checkDuplicateParty } from "../services/api/parties";
 import { getBranches } from "@/app/services/api/branches";
 import {
   Dialog,
@@ -145,6 +145,40 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
         return;
       }
 
+      // Check for duplicates - name, phone, and email (if provided)
+      const duplicateCheck = await checkDuplicateParty(
+        formData.name, 
+        formData.phone, 
+        formData.email || null
+      );
+      
+      if (duplicateCheck.success && duplicateCheck.isDuplicate) {
+        const { duplicates } = duplicateCheck;
+        const errorMessages = [];
+        
+        if (duplicates.name) {
+          errorMessages.push(t('potentialClientsPage.duplicateNameExists') || (isRTL 
+            ? 'عميل بنفس الاسم موجود بالفعل'
+            : 'A client with the same name already exists'));
+        }
+        
+        if (duplicates.phone) {
+          errorMessages.push(t('potentialClientsPage.duplicatePhoneExists') || (isRTL 
+            ? 'عميل بنفس رقم الهاتف موجود بالفعل'
+            : 'A client with the same phone number already exists'));
+        }
+        
+        if (duplicates.email) {
+          errorMessages.push(t('potentialClientsPage.duplicateEmailExists') || (isRTL 
+            ? 'عميل بنفس البريد الإلكتروني موجود بالفعل'
+            : 'A client with the same email already exists'));
+        }
+        
+        // Display all error messages
+        errorMessages.forEach(msg => toast.error(msg));
+        return;
+      }
+
       // Add files to formData
       const partyDataWithFiles = {
         ...formData,
@@ -245,8 +279,15 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
             <Label htmlFor="phone">{t('potentialClientsPage.table.phone') || 'رقم الهاتف'}</Label>
             <Input
               id="phone"
+              type="tel"
               value={formData.phone}
-              onChange={(e) => handleInputChange("phone", e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only allow numbers, +, -, spaces, and parentheses
+                if (/^[0-9+\-\s()]*$/.test(value)) {
+                  handleInputChange("phone", value);
+                }
+              }}
               placeholder={t('potentialClientsPage.addModal.phonePlaceholder') || 'مثال: +971501234567'}
             />
           </div>

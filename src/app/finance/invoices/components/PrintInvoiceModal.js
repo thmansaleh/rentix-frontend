@@ -204,8 +204,8 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
                   <div>
                     <h3 className="font-bold text-gray-700 mb-2">من:</h3>
                     <div className="text-gray-600">
-                      <p className="font-semibold text-gray-900">مكتب المحاماة</p>
-                      <p className="text-sm">Law Office</p>
+                      <p className="font-semibold text-gray-900">مكتب محمد بني هاشم  </p>
+                      {/* <p className="text-sm">محمد بني هاشم</p> */}
                     </div>
                   </div>
 
