@@ -3,8 +3,15 @@
  * Generates a printable voucher for wallet expenses
  */
 
-export function printExpenseVoucher(expense, walletInfo) {
-  const printWindow = window.open('', '', 'width=800,height=600');
+import { getExpenseById } from "@/app/services/api/walletExpenses";
+
+export async function printExpenseVoucher(expenseId, walletInfo) {
+  try {
+    // Fetch complete expense data including items
+    const response = await getExpenseById(expenseId);
+    const expense = response.data;
+
+    const printWindow = window.open('', '', 'width=800,height=600');
   
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -110,6 +117,41 @@ export function printExpenseVoucher(expense, walletInfo) {
           padding: 10px 0;
           border-bottom: 1px solid #ddd;
         }
+        .items-section {
+          margin: 30px 0;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        .items-section h3 {
+          background: #f3f4f6;
+          padding: 15px;
+          margin: 0;
+          border-bottom: 2px solid #ddd;
+        }
+        .items-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .items-table th {
+          background: #f9fafb;
+          padding: 12px;
+          text-align: right;
+          font-weight: bold;
+          border-bottom: 1px solid #ddd;
+        }
+        .items-table td {
+          padding: 12px;
+          border-bottom: 1px solid #eee;
+        }
+        .items-table tr:last-child td {
+          border-bottom: none;
+        }
+        .items-total {
+          background: #f3f4f6;
+          font-weight: bold;
+          font-size: 16px;
+        }
         .employee-section {
           background: #f9fafb;
           padding: 20px;
@@ -201,6 +243,42 @@ export function printExpenseVoucher(expense, walletInfo) {
           </div>
         </div>
 
+        ${expense.items && expense.items.length > 0 ? `
+        <div class="items-section">
+          <h3>بنود المصروف / Expense Items</h3>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">#</th>
+                <th>الوصف / Description</th>
+                <th style="width: 150px; text-align: left;">المبلغ / Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${expense.items.map((item, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${item.description || '-'}</td>
+                  <td style="text-align: left;">${formatAmount(item.amount, walletInfo?.currency)}</td>
+                </tr>
+              `).join('')}
+              <tr class="items-total">
+                <td colspan="2" style="text-align: right;">المجموع الفرعي / Subtotal:</td>
+                <td style="text-align: left;">${formatAmount(expense.items.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0), walletInfo?.currency)}</td>
+              </tr>
+              <tr class="items-total">
+                <td colspan="2" style="text-align: right;">ضريبة القيمة المضافة 5% / VAT 5%:</td>
+                <td style="text-align: left;">${formatAmount(expense.items.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0) * 0.05, walletInfo?.currency)}</td>
+              </tr>
+              <tr class="items-total" style="background: #fee; color: #c53030;">
+                <td colspan="2" style="text-align: right; font-size: 18px;">الإجمالي شامل الضريبة / Total with VAT:</td>
+                <td style="text-align: left; font-size: 18px;">${formatAmount(expense.amount, walletInfo?.currency)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        ` : ''}
+
         <div class="amount-section">
           <div class="label">المبلغ المصروف / Amount Paid</div>
           <div class="amount">${formatAmount(expense.amount, walletInfo?.currency)}</div>
@@ -251,4 +329,8 @@ export function printExpenseVoucher(expense, walletInfo) {
   printWindow.document.write(voucherHtml);
   printWindow.document.close();
   printWindow.focus();
+  } catch (error) {
+    console.error("Error loading expense data for print:", error);
+    alert("فشل في تحميل بيانات المصروف للطباعة");
+  }
 }

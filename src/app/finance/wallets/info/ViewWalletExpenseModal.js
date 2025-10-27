@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import { getExpenseById, approveExpense, rejectExpense } from "@/app/services/api/walletExpenses";
+import { getExpenseById, approveExpense, rejectExpense, deleteReceipt } from "@/app/services/api/walletExpenses";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, X, FileText, DollarSign, Calendar, User, Building2, Hash, Users, Landmark, Receipt, CheckCircle, XCircle, Clock, Image, Download, Upload } from "lucide-react";
+import { Loader2, X, FileText, DollarSign, Calendar, User, Building2, Hash, Users, Landmark, Receipt, CheckCircle, XCircle, Clock, Image, Download, Upload, Trash2 } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { toast } from "react-toastify";
 import { UploadReceiptsModal } from "./UploadReceiptsModal";
@@ -18,6 +18,7 @@ export function ViewWalletExpenseModal({ isOpen, onClose, expenseId }) {
   const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [deletingReceiptId, setDeletingReceiptId] = useState(null);
 
   // Fetch expense details
   const { data, error, isLoading, mutate } = useSWR(
@@ -129,6 +130,24 @@ export function ViewWalletExpenseModal({ isOpen, onClose, expenseId }) {
 
   const handleUploadSuccess = () => {
     mutate(); // Refresh data after upload
+  };
+
+  const handleDeleteReceipt = async (receiptId) => {
+    if (!window.confirm("هل أنت متأكد من حذف هذا الإيصال؟")) {
+      return;
+    }
+    
+    try {
+      setDeletingReceiptId(receiptId);
+      await deleteReceipt(expenseId, receiptId);
+      toast.success("تم حذف الإيصال بنجاح");
+      mutate(); // Refresh data after deletion
+    } catch (error) {
+      console.error("Error deleting receipt:", error);
+      toast.error(error.response?.data?.error || "فشل في حذف الإيصال");
+    } finally {
+      setDeletingReceiptId(null);
+    }
   };
 
   if (!isOpen) return null;
@@ -361,14 +380,29 @@ export function ViewWalletExpenseModal({ isOpen, onClose, expenseId }) {
                               )}
                             </div>
                           </div>
-                          <a
-                            href={receipt.file_path}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-shrink-0 p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                          >
-                            <Download className="h-4 w-4" />
-                          </a>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <a
+                              href={receipt.file_path}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                              title="تحميل"
+                            >
+                              <Download className="h-4 w-4" />
+                            </a>
+                            <button
+                              onClick={() => handleDeleteReceipt(receipt.id)}
+                              disabled={deletingReceiptId === receipt.id}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="حذف"
+                            >
+                              {deletingReceiptId === receipt.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4 w-4" />
+                              )}
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>

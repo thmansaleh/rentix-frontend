@@ -59,6 +59,8 @@ export function WalletDepositModal({ isOpen, onClose, onSuccess, walletId, clien
     () => getPartyCases(clientId)
   );
 
+  const clientCases = clientCasesData?.data || [];
+
   // Reset form when modal opens/closes
   useEffect(() => {
     if (isOpen) {
@@ -85,7 +87,7 @@ export function WalletDepositModal({ isOpen, onClose, onSuccess, walletId, clien
 
     // If case is selected, update selected case details
     if (field === 'case_id' && value) {
-      const caseData = clientCasesData?.data?.find(c => c.id === parseInt(value));
+      const caseData = clientCases.find(c => c.id === parseInt(value));
       setSelectedCase(caseData || null);
     } else if (field === 'case_id' && !value) {
       setSelectedCase(null);
@@ -204,7 +206,44 @@ export function WalletDepositModal({ isOpen, onClose, onSuccess, walletId, clien
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        {/* No Cases Warning */}
+        {!casesLoading && clientCases.length === 0 ? (
+          <div className="py-4">
+            <div className="p-6 bg-yellow-50 border-2 border-yellow-300 rounded-lg text-center">
+              <div className="mb-4">
+                <svg
+                  className="mx-auto h-12 w-12 text-yellow-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-yellow-900 mb-2">
+                لا توجد ملفات قضايا
+              </h3>
+              <p className="text-sm text-yellow-800 mb-4">
+                لا توجد ملفات قضايا لهذا العميل. يجب إضافة قضية أولاً قبل إضافة الإيداع.
+              </p>
+            </div>
+            <DialogFooter className="flex justify-end mt-4">
+              <Button 
+                variant="outline" 
+                onClick={handleClose}
+              >
+                {t('common.close') || 'إغلاق'}
+              </Button>
+            </DialogFooter>
+          </div>
+        ) : (
+          <>
+            <div className="space-y-4">
           {/* Case Selection */}
           <div className="space-y-2">
             <Label>{t('walletDeposits.selectCase')} *</Label>
@@ -218,7 +257,7 @@ export function WalletDepositModal({ isOpen, onClose, onSuccess, walletId, clien
                 <SelectValue placeholder={t('walletDeposits.selectCasePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                {clientCasesData?.data?.map((caseItem) => (
+                {clientCases.map((caseItem) => (
                   <SelectItem key={caseItem.id} value={caseItem.id.toString()}>
                     {caseItem.case_number} - {caseItem.file_number} - {caseItem.topic}
                   </SelectItem>
@@ -377,6 +416,8 @@ export function WalletDepositModal({ isOpen, onClose, onSuccess, walletId, clien
             )}
           </Button>
         </DialogFooter>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );

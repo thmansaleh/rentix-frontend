@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { getExpenseById, updateWalletExpense } from "@/app/services/api/walletExpenses";
 import { getEmployees } from "@/app/services/api/employees";
 import { getPartyCases } from "@/app/services/api/parties";
+import { getAllBankAccounts } from "@/app/services/api/bankAccounts";
 import useSWR from "swr";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
@@ -24,6 +25,7 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
     amount: "",
     case_id: "",
     employee_relat_id: "",
+    bank_account_id: "",
   });
   const [items, setItems] = useState([{ description: "", amount: "" }]);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +34,12 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
   const { data: employeesData } = useSWR(
     isOpen ? "/employees" : null,
     getEmployees
+  );
+
+  // Fetch bank accounts
+  const { data: bankAccountsData } = useSWR(
+    isOpen ? "/bank-accounts" : null,
+    getAllBankAccounts
   );
 
   // Fetch party cases
@@ -59,6 +67,7 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
         amount: expense.amount,
         case_id: expense.case_id ? expense.case_id.toString() : "",
         employee_relat_id: expense.employee_relat_id ? expense.employee_relat_id.toString() : "",
+        bank_account_id: expense.bank_account_id ? expense.bank_account_id.toString() : "",
       });
       
       if (expense.invoice_date) {
@@ -84,6 +93,7 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
         amount: "",
         case_id: "",
         employee_relat_id: "",
+        bank_account_id: "",
       });
       setItems([{ description: "", amount: "" }]);
     }
@@ -137,6 +147,11 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
       return;
     }
 
+    if (!formData.bank_account_id) {
+      toast.error("الرجاء اختيار الحساب البنكي");
+      return;
+    }
+
     // Filter valid items
     const validItems = items.filter(item => item.description && item.amount);
 
@@ -152,6 +167,7 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
         case_id: formData.case_id || null,
         invoice_date: format(invoiceDate, "yyyy-MM-dd"),
         employee_relat_id: formData.employee_relat_id || null,
+        bank_account_id: formData.bank_account_id,
         items: validItems,
       };
 
@@ -281,6 +297,27 @@ export function EditWalletExpenseModal({ isOpen, onClose, onSuccess, expenseId, 
                   {employeesData?.data?.map((employee) => (
                     <SelectItem key={employee.id} value={employee.id.toString()}>
                       {employee.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Bank Account Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="bank_account_id">الحساب البنكي *</Label>
+              <Select
+                value={formData.bank_account_id}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, bank_account_id: value }))}
+                disabled={isSubmitting}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="-- اختر الحساب البنكي --" />
+                </SelectTrigger>
+                <SelectContent>
+                  {bankAccountsData?.data?.map((account) => (
+                    <SelectItem key={account.id} value={account.id.toString()}>
+                      {account.bank_name} - {account.account_number} ({parseFloat(account.current_balance).toLocaleString()} AED)
                     </SelectItem>
                   ))}
                 </SelectContent>

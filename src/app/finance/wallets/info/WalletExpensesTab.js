@@ -100,7 +100,7 @@ export function WalletExpensesTab({ walletId, clientId, walletInfo }) {
   };
 
   const handlePrintExpenseVoucher = (expense) => {
-    printExpenseVoucher(expense, walletInfo);
+    printExpenseVoucher(expense.id, walletInfo);
   };
 
   const formatDate = (dateString) => {

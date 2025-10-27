@@ -118,7 +118,7 @@ export function CaseExpensesTab({ client, isOpen }) {
   };
 
   const handlePrintExpenseVoucher = (expense) => {
-    printExpenseVoucher(expense, walletInfo);
+    printExpenseVoucher(expense.id, walletInfo);
   };
 
   const formatDate = (dateString) => {
