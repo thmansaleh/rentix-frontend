@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -139,11 +139,7 @@ const Memos = () => {
   const handleApprovalConfirm = async (isApproved) => {
     // return null
     if (!selectedMemo || !employeeRole) {
-      toast.error(
-        language === 'ar' 
-          ? '?? ??? ?????? ??? ??????? ??????' 
-          : 'Employee information not found'
-      );
+      toast.error(t('memos.employeeInfoNotFound'));
       return;
     }
 
@@ -155,20 +151,12 @@ const Memos = () => {
       // Refresh the memos list
       await mutate();
       
-      toast.success(
-        language === 'ar' 
-          ? '?? ????? ???? ???????? ?????' 
-          : 'Approval status updated successfully'
-      );
+      toast.success(t('memos.approvalStatusUpdated'));
       
       handleCloseApprovalModal();
     } catch (error) {
 
-      toast.error(
-        language === 'ar' 
-          ? '??? ?? ????? ???? ????????' 
-          : 'Failed to update approval status'
-      );
+      toast.error(t('memos.failedToUpdateApproval'));
     } finally {
       setIsSubmitting(false);
     }
@@ -183,19 +171,19 @@ const Memos = () => {
     switch (status) {
       case 'Submitted to Court':
         color = 'bg-blue-100 text-blue-800 hover:bg-blue-100';
-        text = language === 'ar' ? '????? ???????' : status;
+        text = t('memos.statusSubmittedToCourt');
         break;
       case 'Under Review':
         color = 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
-        text = language === 'ar' ? '??? ????????' : status;
+        text = t('memos.statusUnderReview');
         break;
       case 'Approved':
         color = 'bg-green-100 text-green-800 hover:bg-green-100';
-        text = language === 'ar' ? '??? ????????' : status;
+        text = t('memos.statusApproved');
         break;
       case 'Rejected':
         color = 'bg-red-100 text-red-800 hover:bg-red-100';
-        text = language === 'ar' ? '??????' : status;
+        text = t('memos.statusRejected');
         break;
       default:
         color = 'bg-gray-100 text-gray-800 hover:bg-gray-100';
@@ -210,11 +198,11 @@ const Memos = () => {
       <div className="p-6">
         <Card>
           <CardHeader>
-            <CardTitle>{language === 'ar' ? '???????? ???? ??? ???????? ?? ????? ???????' : 'Memos Created by You or Requiring Your Approval'}</CardTitle>
+            <CardTitle>{t('memos.memosPageTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">{t('common.loading') || (language === 'ar' ? '???? ???????...' : 'Loading...')}</div>
+              <div className="text-muted-foreground">{t('common.loading')}</div>
             </div>
           </CardContent>
         </Card>
@@ -227,11 +215,11 @@ const Memos = () => {
       <div className="p-6">
         <Card>
           <CardHeader>
-            <CardTitle>{language === 'ar' ? '???????? ???? ??? ???????? ?? ????? ???????' : 'Memos Created by You or Requiring Your Approval'}</CardTitle>
+            <CardTitle>{t('memos.memosPageTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-center py-8">
-              <div className="text-red-500">{t('common.errorLoading') || (language === 'ar' ? '??? ?? ????? ????????' : 'Error loading data')}</div>
+              <div className="text-red-500">{t('common.errorLoading')}</div>
             </div>
           </CardContent>
         </Card>
@@ -244,7 +232,7 @@ const Memos = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">
-          {language === 'ar' ? '???????? ???? ??? ???????? ?? ????? ???????' : 'Memos Created by You or Requiring Your Approval'}
+          {t('memos.memosPageTitle')}
         </h1>
       </div>
 
@@ -252,14 +240,14 @@ const Memos = () => {
       <Card>
         <CardHeader>
           <CardTitle>
-            {language === 'ar' ? '???????? ???? ??? ???????? ?? ????? ???????' : 'Memos Created by You or Requiring Your Approval'}
+            {t('memos.memosPageTitle')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {memos.length === 0 ? (
             <div className="flex items-center justify-center py-8">
               <div className="text-muted-foreground">
-                {t('common.noData') || (language === 'ar' ? '?? ???? ??????' : 'No data available')}
+                {t('common.noData')}
               </div>
             </div>
           ) : (
@@ -268,26 +256,26 @@ const Memos = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? '#' : '#'}
+                      #
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? '???????' : 'Title'}
+                      {t('memos.memoTitle')}
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? '????? ???????' : 'Submission Date'}
+                      {t('memos.submissionDate')}
                     </TableHead>
                     {/* <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? '??????' : 'Status'}
+                      {t('memos.status')}
                     </TableHead> */}
                 
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? '?? ??????? ??????' : 'Created By'}
+                      {t('memos.createdBy')}
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? '????? ???????' : 'Created At'}
+                      {t('memos.createdAt')}
                     </TableHead>
                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                      {language === 'ar' ? '?????????' : 'Actions'}
+                      {t('memos.actions')}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -311,7 +299,7 @@ const Memos = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleOpenEditModal(memo)}
-                            title={language === 'ar' ? '????? ???????' : 'Edit Memo'}
+                            title={t('memos.editMemoAction')}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -319,7 +307,7 @@ const Memos = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleOpenApprovalModal(memo)}
-                            title={language === 'ar' ? '????? ????????' : 'Change Approval'}
+                            title={t('memos.changeApproval')}
                             className="text-green-600 hover:text-green-700 hover:bg-green-50"
                           >
                             <CheckCircle className="h-4 w-4" />

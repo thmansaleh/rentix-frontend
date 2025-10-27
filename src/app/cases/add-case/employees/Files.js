@@ -114,16 +114,10 @@ function Files() {
         <label htmlFor="employees-file-upload" className="cursor-pointer">
           <Plus className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
           <p className="text-sm text-muted-foreground mb-2">
-            {isArabic 
-              ? '???? ??????? ??? ?? ???? ????????'
-              : 'Drag files here or click to select files'
-            }
+            {t('sessions.clickOrDragFiles')}
           </p>
           <p className="text-xs text-muted-foreground">
-            {isArabic 
-              ? '????: PDF, DOC, DOCX, JPG, PNG, GIF, TXT'
-              : 'Supports: PDF, DOC, DOCX, JPG, PNG, GIF, TXT'
-            }
+            {t('sessions.pdfDocTxtImages')}
           </p>
         </label>
       </div>
@@ -133,7 +127,7 @@ function Files() {
         {employeeFiles.length > 0 ? (
           <div className="space-y-3">
             <h4 className={cn("font-medium", isArabic ? 'text-right' : 'text-left')}>
-              {isArabic ? '??????? ????????' : 'Uploaded Files'} ({employeeFiles.length})
+              {t('common.uploadedFiles')} ({employeeFiles.length})
             </h4>
             
             <div className="space-y-2">

@@ -131,21 +131,13 @@ export default function AddEmployeeModal({ onAdd }) {
         let duplicateMessage;
         
         if (duplicate.name === form.name && duplicate.phone === form.phoneNumber) {
-          duplicateMessage = t('employees.duplicateEmployeeExists') || (isRTL 
-            ? '???? ???? ????? ???? ?????? ????? ??????'
-            : 'An employee with the same name and phone number already exists');
+          duplicateMessage = t('employees.duplicateEmployeeExists');
         } else if (duplicate.name === form.name) {
-          duplicateMessage = t('employees.duplicateNameExists') || (isRTL 
-            ? '???? ???? ????? ????? ??????'
-            : 'An employee with the same name already exists');
+          duplicateMessage = t('employees.duplicateNameExists');
         } else if (duplicate.phone === form.phoneNumber) {
-          duplicateMessage = t('employees.duplicatePhoneExists') || (isRTL 
-            ? '???? ???? ??? ?????? ????? ??????'
-            : 'An employee with the same phone number already exists');
+          duplicateMessage = t('employees.duplicatePhoneExists');
         } else if (duplicate.email === form.email) {
-          duplicateMessage = t('employees.duplicateEmailExists') || (isRTL 
-            ? '???? ???? ?????? ?????????? ????? ??????'
-            : 'An employee with the same email already exists');
+          duplicateMessage = t('employees.duplicateEmailExists');
         }
         
         toast.error(duplicateMessage);

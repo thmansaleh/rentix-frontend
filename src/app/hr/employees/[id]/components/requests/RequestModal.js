@@ -39,8 +39,7 @@ const RequestModal = ({
   const requestTypes = [
     { value: 'اجازة سنوية', label: isArabic ? 'اجازة سنوية' : 'Annual Leave', isLeave: true },
     { value: 'اجازة تفرغ لإداء الخدمة الوطنية', label: isArabic ? 'اجازة تفرغ لإداء الخدمة الوطنية' : 'National Service Leave', isLeave: true },
-    { value: 'اجازة ابوية', label: isArabic ? 'اجازة ابوية' : 'Paternity Leave', isLeave: true },
-    { value: 'اجازة امومية', label: isArabic ? 'اجازة امومية' : 'Maternity Leave', isLeave: true },
+    { value: 'اجازة الوضع', label: isArabic ? 'اجازة الوضع' : 'Maternity Leave', isLeave: true },
     { value: 'شهادة راتب', label: isArabic ? 'شهادة راتب' : 'Salary Certificate', isLeave: false },
     { value: 'شهادة خبرة', label: isArabic ? 'شهادة خبرة' : 'Experience Certificate', isLeave: false },
     { value: 'شهادة لا مانع', label: isArabic ? 'شهادة لا مانع' : 'No Objection Certificate', isLeave: false },

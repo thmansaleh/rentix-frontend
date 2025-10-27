@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2, CircleX } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/hooks/useTranslations";
 
 export default function DeleteSessionDialog({ 
   isOpen, 
@@ -20,6 +21,7 @@ export default function DeleteSessionDialog({
   isDeleting = false 
 }) {
   const { language } = useLanguage();
+  const { t } = useTranslations();
   const isRtl = language === "ar";
 
   const handleConfirm = () => {
@@ -37,13 +39,10 @@ export default function DeleteSessionDialog({
           </div>
           <div className="text-center space-y-2">
             <DialogTitle className="text-xl font-semibold">
-              {isRtl ? "??? ??????" : "Delete Session"}
+              {t('sessions.deleteSession')}
             </DialogTitle>
             <DialogDescription className="text-base">
-              {isRtl 
-                ? "?? ??? ????? ?? ??? ???? ??? ??? ??????? ??? ??????? ?? ???? ??????? ???."
-                : "Are you sure you want to delete this session? This action cannot be undone."
-              }
+              {t('sessions.confirmDeleteSession')}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -53,19 +52,19 @@ export default function DeleteSessionDialog({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">
-                  {isRtl ? "??? ??????:" : "Case Number:"}
+                  {t('common.caseNumber')}:
                 </span>
                 <span className="font-semibold">{session.case_number}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">
-                  {isRtl ? "???????:" : "Topic:"}
+                  {t('sessions.topic')}:
                 </span>
                 <span className="font-semibold">{session.case_topic}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">
-                  {isRtl ? "????? ??????:" : "Session Date:"}
+                  {t('sessions.sessionDate')}:
                 </span>
                 <span className="font-semibold">
                   {new Date(session.session_date).toLocaleDateString(
@@ -90,7 +89,7 @@ export default function DeleteSessionDialog({
             className="flex items-center mx-3 gap-2"
           >
             <CircleX className="w-4 h-4" />
-            {isRtl ? "?????" : "Cancel"}
+            {t('common.cancel')}
           </Button>
           <Button
             variant="destructive"
@@ -99,10 +98,7 @@ export default function DeleteSessionDialog({
             className="flex items-center gap-2"
           >
             <Trash2 className="w-4 h-4" />
-            {isDeleting 
-              ? (isRtl ? "???? ?????..." : "Deleting...") 
-              : (isRtl ? "???" : "Delete")
-            }
+            {isDeleting ? t('sessions.deleting') : t('sessions.delete')}
           </Button>
         </DialogFooter>
       </DialogContent>

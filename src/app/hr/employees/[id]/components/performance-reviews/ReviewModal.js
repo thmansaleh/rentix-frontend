@@ -40,9 +40,9 @@ const ReviewModal = ({
 
 
   const reviewTypeOptions = [
-    { value: 'annual', label: isArabic ? 'سنوي' : 'Annual' },
     { value: 'probation', label: isArabic ? 'شهري' : 'Monthly' },
     { value: 'quarterly', label: isArabic ? 'ربع سنوي' : 'Quarterly' },
+    { value: 'annual', label: isArabic ? 'سنوي' : 'Annual' },
     { value: 'performance', label: isArabic ? 'رفع الأداء' : 'Performance' },
     { value: 'disciplinary', label: isArabic ? 'ذاتي' : 'Self' }
   ]

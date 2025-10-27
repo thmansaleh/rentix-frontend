@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -37,7 +37,7 @@ const EditSessionModal = ({
   sessionId 
 }) => {
   const { language } = useLanguage();
-  const t = useTranslations();
+  const {t} = useTranslations();
   const isRtl = language === "ar";
   const [isLoading, setIsLoading] = useState(false);
   const [deletingDocumentId, setDeletingDocumentId] = useState(null);
@@ -62,9 +62,7 @@ const EditSessionModal = ({
 
   // Handle document deletion
   const handleDeleteDocument = async (documentId, documentName) => {
-    const confirmMessage = isRtl 
-      ? `?? ??? ????? ?? ??? ??????? "${documentName}"?`
-      : `Are you sure you want to delete the document "${documentName}"?`;
+    const confirmMessage = t('sessions.confirmDeleteDocument', { name: documentName });
     
     if (!window.confirm(confirmMessage)) {
       return;
@@ -74,32 +72,26 @@ const EditSessionModal = ({
     try {
       await deleteSessionDocument(sessionId, documentId);
       
-      toast.success(
-        isRtl ? "?? ??? ??????? ?????" : "Document deleted successfully",
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        }
-      );
+      toast.success(t('sessions.documentDeletedSuccess'), {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
 
       // Refresh the documents list
       refreshSession();
     } catch (error) {
-      toast.error(
-        isRtl ? "??? ?? ??? ???????" : "Failed to delete document",
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        }
-      );
+      toast.error(t('sessions.documentDeleteFailed'), {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
 
     } finally {
       setDeletingDocumentId(null);
@@ -112,18 +104,18 @@ const EditSessionModal = ({
     const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'image/jpeg', 'image/jpg', 'image/png'];
     
     if (file.size > maxSize) {
-      toast.error(
-        isRtl ? `????? "${file.name}" ???? ????. ???? ?????? 10MB` : `File "${file.name}" is too large. Maximum size is 10MB`,
-        { position: "top-right", autoClose: 3000 }
-      );
+      toast.error(t('sessions.fileTooLarge', { name: file.name }), {
+        position: "top-right",
+        autoClose: 3000
+      });
       return false;
     }
     
     if (!allowedTypes.includes(file.type)) {
-      toast.error(
-        isRtl ? `??? ????? "${file.name}" ??? ?????` : `File type of "${file.name}" is not supported`,
-        { position: "top-right", autoClose: 3000 }
-      );
+      toast.error(t('sessions.fileTypeNotSupported', { name: file.name }), {
+        position: "top-right",
+        autoClose: 3000
+      });
       return false;
     }
     
@@ -161,34 +153,53 @@ const EditSessionModal = ({
   const validationSchema = Yup.object({
     decision: Yup.string().trim(),
     session_date: Yup.date()
-      .required(isRtl ? "????? ?????? ?????" : "Session date is required"),
+      .required(t('sessions.sessionDateRequired')),
     session_time: Yup.string()
-      .required(isRtl ? "??? ?????? ?????" : "Session time is required"),
+      .required(t('sessions.sessionTimeRequired')),
     note: Yup.string().trim(),
-    // link: Yup.string().url(isRtl ? "???? ??? ????" : "Invalid URL").trim(),
+    // link: Yup.string().url(t('sessions.invalidUrl')).trim(),
     is_expert_session: Yup.boolean(),
     is_judgment_reserved: Yup.boolean(),
     is_judgment_deferred: Yup.boolean(),
     status: Yup.boolean(),
   });
 
-  // Formik setup - Initialize with session data when available
-  const formik = useFormik({
-    initialValues: {
-      decision: session?.decision || "",
-      session_date: session?.session_date 
+  // Helper function to get initial values from session data
+  const getInitialValues = () => {
+    if (!session) {
+      return {
+        decision: "",
+        session_date: "",
+        session_time: "",
+        note: "",
+        link: "",
+        is_expert_session: false,
+        is_judgment_reserved: false,
+        is_judgment_deferred: false,
+        status: true,
+      };
+    }
+
+    return {
+      decision: session.decision || "",
+      session_date: session.session_date 
         ? new Date(session.session_date).toISOString().slice(0, 10)
         : "",
-      session_time: session?.session_date 
+      session_time: session.session_date 
         ? new Date(session.session_date).toTimeString().slice(0, 5)
         : "",
-      note: session?.note || "",
-      link: session?.link || "",
-      is_expert_session: session?.is_expert_session === 1 || session?.is_expert_session === true,
-      is_judgment_reserved: session?.is_judgment_reserved === 1 || session?.is_judgment_reserved === true,
-      is_judgment_deferred: session?.is_judgment_deferred === 1 || session?.is_judgment_deferred === true,
-      status: session?.status === 'active' || session?.status === 1,
-    },
+      note: session.note || "",
+      link: session.link || "",
+      is_expert_session: session.is_expert_session === 1 || session.is_expert_session === true,
+      is_judgment_reserved: session.is_judgment_reserved === 1 || session.is_judgment_reserved === true,
+      is_judgment_deferred: session.is_judgment_deferred === 1 || session.is_judgment_deferred === true,
+      status: session.status === 'active' || session.status === 1,
+    };
+  };
+
+  // Formik setup - Initialize with session data when available
+  const formik = useFormik({
+    initialValues: getInitialValues(),
     validationSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
@@ -200,15 +211,15 @@ const EditSessionModal = ({
           setIsUploading(true);
           try {
             uploadedFiles = await uploadFiles(selectedFiles, 'sessions');
-            toast.success(
-              isRtl ? `?? ??? ${uploadedFiles.length} ??? ?????` : `Successfully uploaded ${uploadedFiles.length} files`,
-              { position: "top-right", autoClose: 2000 }
-            );
+            toast.success(t('sessions.filesUploadedCount', { count: uploadedFiles.length }), {
+              position: "top-right",
+              autoClose: 2000
+            });
           } catch (uploadError) {
-            toast.error(
-              isRtl ? "??? ?? ??? ???????" : "Failed to upload files",
-              { position: "top-right", autoClose: 3000 }
-            );
+            toast.error(t('sessions.failedToUploadFiles'), {
+              position: "top-right",
+              autoClose: 3000
+            });
 
             // Continue with form submission even if file upload fails
             uploadedFiles = [];
@@ -233,17 +244,14 @@ const EditSessionModal = ({
 
         await updateSession(sessionId, updateData);
         
-        toast.success(
-          isRtl ? "?? ????? ?????? ?????" : "Session updated successfully",
-          {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          }
-        );
+        toast.success(t('sessions.sessionUpdatedSuccess'), {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
 
         // Refresh the session data after successful update
         refreshSession();
@@ -258,19 +266,14 @@ const EditSessionModal = ({
         setSelectedFiles([]);
         onClose();
       } catch (error) {
-        toast.error(
-          isRtl 
-            ? "??? ?? ????? ??????" 
-            : "Failed to update session",
-          {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          }
-        );
+        toast.error(t('sessions.sessionUpdateFailed'), {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
 
       } finally {
         setIsLoading(false);
@@ -296,7 +299,7 @@ const EditSessionModal = ({
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             <span className="ml-3 text-gray-600">
-              {isRtl ? "??? ????? ?????? ??????..." : "Loading session data..."}
+              {t('sessions.loadingSessionData')}
             </span>
           </div>
         </div>
@@ -322,16 +325,13 @@ const EditSessionModal = ({
               <Calendar className="h-8 w-8 mx-auto" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {isRtl ? "??? ?? ????? ?????? ??????" : "Failed to load session data"}
+              {t('sessions.failedToLoadSessionData')}
             </h3>
             <p className="text-gray-500 mb-6">
-              {isRtl 
-                ? "??? ??? ????? ????? ?????? ??????. ???? ???????? ??? ????."
-                : "An error occurred while loading session data. Please try again."
-              }
+              {t('sessions.errorLoadingSession')}
             </p>
             <Button onClick={onClose}>
-              {isRtl ? "?????" : "Close"}
+              {t('sessions.close')}
             </Button>
           </div>
         </div>
@@ -359,12 +359,10 @@ const EditSessionModal = ({
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {isRtl ? "????? ??????" : "Edit Session"}
+                  {t('sessions.editSession')}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
-                  {isRtl 
-                    ? "?? ?????? ??????? ?????? ?????"
-                    : "Update the session information below"}
+                  {t('sessions.updateSessionInfo')}
                 </p>
               </div>
             </div>
@@ -390,14 +388,14 @@ const EditSessionModal = ({
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                   <Calendar className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
-                    {isRtl ? "????????? ????????" : "Basic Information"}
+                    {t('sessions.basicInformation')}
                   </h3>
                 </div>
 
                 {/* Decision Field */}
                 <div className="space-y-2">
                   <Label htmlFor="decision" className="text-sm font-medium text-gray-700">
-                    {isRtl ? "??????" : "Decision"}
+                    {t('sessions.decision')}
                   </Label>
                   <Input
                     id="decision"
@@ -405,7 +403,7 @@ const EditSessionModal = ({
                     value={formik.values.decision}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder={isRtl ? "???? ??????" : "Enter decision"}
+                    placeholder={t('sessions.enterDecision')}
                     className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
                   />
                   {formik.touched.decision && formik.errors.decision && (
@@ -420,7 +418,7 @@ const EditSessionModal = ({
                   {/* Session Date Field */}
                   <div className="space-y-2">
                     <Label htmlFor="session_date" className="text-sm font-medium text-gray-700">
-                      {isRtl ? "????? ??????" : "Session Date"} *
+                      {t('sessions.sessionDate')} *
                     </Label>
                     <Input
                       id="session_date"
@@ -441,7 +439,7 @@ const EditSessionModal = ({
                   {/* Session Time Field */}
                   <div className="space-y-2">
                     <Label htmlFor="session_time" className="text-sm font-medium text-gray-700">
-                      {isRtl ? "??? ??????" : "Session Time"} *
+                      {t('sessions.sessionTime')} *
                     </Label>
                     <Input
                       id="session_time"
@@ -463,7 +461,7 @@ const EditSessionModal = ({
                 {/* Note Field */}
                 <div className="space-y-2">
                   <Label htmlFor="note" className="text-sm font-medium text-gray-700">
-                    {isRtl ? "???????" : "Notes"}
+                    {t('sessions.notes')}
                   </Label>
                   <Textarea
                     id="note"
@@ -471,7 +469,7 @@ const EditSessionModal = ({
                     value={formik.values.note}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder={isRtl ? "???? ?????????" : "Enter notes"}
+                    placeholder={t('sessions.enterNotes')}
                     className={`min-h-[100px] resize-none ${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
                   />
                   {formik.touched.note && formik.errors.note && (
@@ -484,7 +482,7 @@ const EditSessionModal = ({
                 {/* Link Field */}
                 <div className="space-y-2">
                   <Label htmlFor="link" className="text-sm font-medium text-gray-700">
-                    {isRtl ? "??????" : "Link"}
+                    {t('sessions.link')}
                   </Label>
                   <Input
                     id="link"
@@ -493,7 +491,7 @@ const EditSessionModal = ({
                     value={formik.values.link}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder={isRtl ? "???? ??????" : "Enter link"}
+                    placeholder={t('sessions.enterLink')}
                     className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
                   />
                   {formik.touched.link && formik.errors.link && (
@@ -509,7 +507,7 @@ const EditSessionModal = ({
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                   <Settings className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
-                    {isRtl ? "??????? ??????" : "Session Settings"}
+                    {t('sessions.sessionSettings')}
                   </h3>
                 </div>
 
@@ -521,12 +519,12 @@ const EditSessionModal = ({
                         htmlFor="status" 
                         className="text-sm font-medium text-gray-700"
                       >
-                        {isRtl ? "???? ??????" : "Session Status"}
+                        {t('sessions.sessionStatus')}
                       </Label>
                       <p className="text-xs text-gray-500">
                         {formik.values.status 
-                          ? (isRtl ? "?????? ????" : "Session is active")
-                          : (isRtl ? "?????? ??? ????" : "Session is inactive")
+                          ? t('sessions.sessionIsActive')
+                          : t('sessions.sessionIsInactive')
                         }
                       </p>
                     </div>
@@ -550,12 +548,12 @@ const EditSessionModal = ({
                           htmlFor="is_expert_session" 
                           className="text-sm font-medium text-gray-700"
                         >
-                          {isRtl ? "???? ????" : "Expert Session"}
+                          {t('sessions.expertSession')}
                         </Label>
                         <p className="text-xs text-gray-500">
                           {formik.values.is_expert_session 
-                            ? (isRtl ? "??? ???? ????" : "This is an expert session")
-                            : (isRtl ? "???? ???? ????" : "Not an expert session")
+                            ? t('sessions.thisIsExpertSession')
+                            : t('sessions.notExpertSession')
                           }
                         </p>
                       </div>
@@ -577,12 +575,12 @@ const EditSessionModal = ({
                           htmlFor="is_judgment_reserved" 
                           className="text-sm font-medium text-gray-700"
                         >
-                          {isRtl ? "??? ?????" : "Judgment Reserved"}
+                          {t('sessions.judgmentReserved')}
                         </Label>
                         <p className="text-xs text-gray-500">
                           {formik.values.is_judgment_reserved 
-                            ? (isRtl ? "????? ?????" : "Judgment is reserved")
-                            : (isRtl ? "????? ??? ?????" : "Judgment is not reserved")
+                            ? t('sessions.judgmentIsReserved')
+                            : t('sessions.judgmentNotReserved')
                           }
                         </p>
                       </div>
@@ -609,12 +607,12 @@ const EditSessionModal = ({
                             htmlFor="is_judgment_deferred" 
                             className="text-sm font-medium text-gray-700"
                           >
-                            {isRtl ? "????? ?????" : "Judgment Deferred"}
+                            {t('sessions.judgmentDeferred')}
                           </Label>
                           <p className="text-xs text-gray-500">
                             {formik.values.is_judgment_deferred 
-                              ? (isRtl ? "????? ????" : "Judgment is deferred")
-                              : (isRtl ? "????? ??? ????" : "Judgment is not deferred")
+                              ? t('sessions.judgmentIsDeferred')
+                              : t('sessions.judgmentNotDeferred')
                             }
                           </p>
                         </div>
@@ -636,7 +634,7 @@ const EditSessionModal = ({
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                   <Plus className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
-                    {isRtl ? "??? ???????" : "Upload Files"}
+                    {t('sessions.uploadFiles')}
                   </h3>
                 </div>
 
@@ -658,16 +656,10 @@ const EditSessionModal = ({
                   <div className="flex flex-col items-center gap-2">
                     <Plus className="h-8 w-8 text-gray-400" />
                     <p className="text-sm text-gray-600">
-                      {isRtl 
-                        ? "???? ??????? ??????? ?? ?????? ???"
-                        : "Click to select files or drag and drop here"
-                      }
+                      {t('sessions.clickOrDragFiles')}
                     </p>
                     <p className="text-xs text-gray-400">
-                      {isRtl 
-                        ? "PDF, DOC, TXT ?? ???"
-                        : "PDF, DOC, TXT, or images"
-                      }
+                      {t('sessions.pdfDocTxtImages')}
                     </p>
                   </div>
                 </div>
@@ -677,7 +669,7 @@ const EditSessionModal = ({
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-sm font-medium text-gray-900">
-                        {isRtl ? "??????? ???????" : "Selected Files"} ({selectedFiles.length})
+                        {t('sessions.selectedFiles')} ({selectedFiles.length})
                       </h4>
                       <Button
                         type="button"
@@ -686,7 +678,7 @@ const EditSessionModal = ({
                         onClick={clearAllFiles}
                         className="text-red-600 hover:bg-red-50"
                       >
-                        {isRtl ? "??? ????" : "Clear All"}
+                        {t('sessions.clearAll')}
                       </Button>
                     </div>
                     <div className="space-y-2">
@@ -725,7 +717,7 @@ const EditSessionModal = ({
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
                   <FileText className="h-4 w-4 text-gray-500" />
                   <h3 className="text-md font-medium text-gray-900">
-                    {isRtl ? "????? ??????" : "Session Documents"}
+                    {t('sessions.sessionDocuments')}
                   </h3>
                 </div>
 
@@ -734,13 +726,13 @@ const EditSessionModal = ({
                     <div className="flex items-center justify-center py-6">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                       <span className="ml-2 text-sm text-gray-600">
-                        {isRtl ? "??? ????? ???????..." : "Loading documents..."}
+                        {t('sessions.loadingDocuments')}
                       </span>
                     </div>
                   ) : sessionError ? (
                     <div className="text-center py-6">
                       <p className="text-sm text-red-500">
-                        {isRtl ? "??? ?? ????? ???????" : "Failed to load documents"}
+                        {t('sessions.failedToLoadDocuments')}
                       </p>
                     </div>
                   ) : session?.documents && session.documents.length > 0 ? (
@@ -759,14 +751,14 @@ const EditSessionModal = ({
                                 {document.document_name}
                               </h4>
                               <p className="text-xs text-gray-500">
-                                {isRtl ? "?? ????? ??:" : "Uploaded on:"} {" "}
+                                {t('sessions.uploadedOn')} {" "}
                                 {new Date(document.created_at).toLocaleDateString(
                                   isRtl ? "ar" : "en"
                                 )}
                               </p>
                               {document.uploaded_by && (
                                 <p className="text-xs text-gray-400">
-                                  {isRtl ? "??????:" : "By:"} {document.uploaded_by}
+                                  {t('sessions.by')} {document.uploaded_by}
                                 </p>
                               )}
                             </div>
@@ -780,7 +772,7 @@ const EditSessionModal = ({
                               className="flex items-center gap-2 hover:bg-blue-50 text-blue-600"
                             >
                               <Download className="h-4 w-4" />
-                              {isRtl ? "?????" : "Download"}
+                              {t('sessions.download')}
                             </Button>
                             <Button
                               type="button"
@@ -796,8 +788,8 @@ const EditSessionModal = ({
                                 <Trash2 className="h-4 w-4" />
                               )}
                               {deletingDocumentId === document.id 
-                                ? (isRtl ? "??? ?????..." : "Deleting...")
-                                : (isRtl ? "???" : "Delete")
+                                ? t('sessions.deleting')
+                                : t('sessions.delete')
                               }
                             </Button>
                           </div>
@@ -808,7 +800,7 @@ const EditSessionModal = ({
                     <div className="text-center py-6">
                       <FileText className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                       <p className="text-sm text-gray-500">
-                        {isRtl ? "?? ???? ????? ???? ??????" : "No documents found for this session"}
+                        {t('sessions.noDocumentsFound')}
                       </p>
                     </div>
                   )}
@@ -828,7 +820,7 @@ const EditSessionModal = ({
                   className="flex items-center gap-2 px-6"
                 >
                   <CircleX className="h-4 w-4" />
-                  {isRtl ? "?????" : "Cancel"}
+                  {t('sessions.cancel')}
                 </Button>
                 <Button
                   type="submit"
@@ -837,10 +829,10 @@ const EditSessionModal = ({
                 >
                   <Save className="h-4 w-4" />
                   {isUploading
-                    ? (isRtl ? "??? ??? ???????..." : "Uploading files...")
+                    ? t('sessions.uploadingFiles')
                     : isLoading 
-                      ? (isRtl ? "??? ???????..." : "Updating...") 
-                      : (isRtl ? "?????" : "Update")}
+                      ? t('sessions.updating')
+                      : t('sessions.update')}
                 </Button>
               </div>
             </div>

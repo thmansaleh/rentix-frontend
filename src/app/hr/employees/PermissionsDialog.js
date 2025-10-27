@@ -42,37 +42,7 @@ export default function PermissionsModal({ trigger,id }) {
 
     // Helper function to get translated group name
     const getGroupNameTranslation = (groupName) => {
-        const translations = {
-            'case_parties': { ar: '????? ??????', en: 'Case Parties' },
-            'case_stages': { ar: '????? ??????', en: 'Case Stages' },
-            'case_team': { ar: '???? ??????', en: 'Case Team' },
-            'clients': { ar: '???????', en: 'Clients' },
-            'client_requests': { ar: '????? ???????', en: 'Client Requests' },
-            'employees': { ar: '????????', en: 'Employees' },
-            'executions': { ar: '?????????', en: 'Executions' },
-            'judicial_notices': { ar: '????????? ????????', en: 'Judicial Notices' },
-            'meetings': { ar: '??????????', en: 'Meetings' },
-            'memos': { ar: '????????', en: 'Memos' },
-            'petitions': { ar: '???????', en: 'Petitions' },
-            'police_stations': { ar: '????? ??????', en: 'Police Stations' },
-            'sessions': { ar: '???????', en: 'Sessions' },
-            'tasks': { ar: '??????', en: 'Tasks' },
-            'cases': { ar: '???????', en: 'Cases' },
-            'courts': { ar: '???????', en: 'Courts' },
-            'departments': { ar: '???????', en: 'Departments' },
-            'branches': { ar: '??????', en: 'Branches' },
-            'roles': { ar: '???????', en: 'Roles' },
-            'permissions': { ar: '?????????', en: 'Permissions' },
-            'public_prosecutions': { ar: '???????? ??????', en: 'Public Prosecutions' },
-        };
-
-        const translation = translations[groupName];
-        if (translation) {
-            return isRTL ? translation.ar : translation.en;
-        }
-        
-        // Fallback to formatted name if no translation found
-        return groupName
+        return t(`permissions.${groupName}`) || groupName
             .split('_')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');

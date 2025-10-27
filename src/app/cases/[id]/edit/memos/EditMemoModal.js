@@ -16,17 +16,21 @@ import { cn } from "@/lib/utils"
 import { updateMemo } from "@/app/services/api/memos"
 import { toast } from "react-toastify"
 import { useMemoById } from "./hooks/useMemoById"
+import { useTranslations } from "@/hooks/useTranslations"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 const MEMO_STATUSES = [
-  { value: "Draft", label: "مسودة" },
-  { value: "Approved", label: "معتمد" },
-  { value: "Pending Approval", label: "في انتظار الموافقة" },
-  { value: "Submitted to Court", label: "مقدم للمحكمة" },
-  { value: "Rejected", label: "مرفوض" }
+  { value: "Draft", labelAr: "مسودة", labelEn: "Draft" },
+  { value: "Approved", labelAr: "معتمد", labelEn: "Approved" },
+  { value: "Pending Approval", labelAr: "في انتظار الموافقة", labelEn: "Pending Approval" },
+  { value: "Submitted to Court", labelAr: "مقدم للمحكمة", labelEn: "Submitted to Court" },
+  { value: "Rejected", labelAr: "مرفوض", labelEn: "Rejected" }
 ]
 
 export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, employeeRole }) {
   const { memo, isLoading, error, mutate } = useMemoById(memoId, isOpen)
+  const { t } = useTranslations()
+  const { language } = useLanguage()
   const [isSubmitting, setIsSubmitting] = useState(false)
   
   // Check if user can edit status (only admin or secretary)
@@ -61,13 +65,13 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
     
     // Validate required fields
     if (!formData.title || !formData.submission_date) {
-      toast.error("الرجاء ملء جميع الحقول المطلوبة")
+      toast.error(t('memos.fillAllRequired'))
       return
     }
     
     // Validate status only if user can edit it
     if (canEditStatus && !formData.status) {
-      toast.error("الرجاء ملء جميع الحقول المطلوبة")
+      toast.error(t('memos.fillAllRequired'))
       return
     }
 
@@ -90,7 +94,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
       const response = await updateMemo(memoId, formattedData)
       
       if (response.success) {
-        toast.success("تم تحديث المذكرة بنجاح")
+        toast.success(t('memos.memoUpdatedSuccessfully'))
         
         // Revalidate the memo data in cache
         mutate()
@@ -102,10 +106,10 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
         
         handleClose()
       } else {
-        throw new Error(response.message || "فشل في تحديث المذكرة")
+        throw new Error(response.message || t('memos.errorUpdatingMemo'))
       }
     } catch (error) {
-      toast.error(error.message || "حدث خطأ أثناء تحديث المذكرة")
+      toast.error(error.message || t('memos.errorUpdatingMemo'))
     } finally {
       setIsSubmitting(false)
     }
@@ -144,9 +148,9 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>تعديل المذكرة</DialogTitle>
+          <DialogTitle>{t('memos.editMemo')}</DialogTitle>
           <DialogDescription>
-            تعديل تفاصيل المذكرة
+            {t('memos.updateMemoDetails')}
           </DialogDescription>
         </DialogHeader>
 
@@ -156,7 +160,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
           </div>
         ) : error ? (
           <div className="text-center py-8 text-red-500">
-            حدث خطأ أثناء تحميل المذكرة
+            {t('memos.errorLoadingMemo')}
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
@@ -164,13 +168,13 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
               {/* Title */}
               <div className="space-y-2">
                 <Label htmlFor="title">
-                  العنوان <span className="text-red-500">*</span>
+                  {t('memos.memoTitle')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="title"
                   value={formData.title}
                   onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="أدخل عنوان المذكرة"
+                  placeholder={t('memos.titlePlaceholder')}
                   required
                   disabled={isSubmitting}
                 />
@@ -179,7 +183,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
               {/* Submission Date */}
               <div className="space-y-2">
                 <Label>
-                  تاريخ التقديم <span className="text-red-500">*</span>
+                  {t('memos.submissionDate')} <span className="text-red-500">*</span>
                 </Label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -194,9 +198,9 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {formData.submission_date ? (
-                        format(formData.submission_date, "PPP", { locale: ar })
+                        format(formData.submission_date, "PPP", { locale: language === 'ar' ? ar : undefined })
                       ) : (
-                        <span>اختر التاريخ</span>
+                        <span>{t('memos.selectDate')}</span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -206,7 +210,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
                       selected={formData.submission_date}
                       onSelect={(date) => setFormData(prev => ({ ...prev, submission_date: date }))}
                       initialFocus
-                      locale={ar}
+                      locale={language === 'ar' ? ar : undefined}
                     />
                   </PopoverContent>
                 </Popover>
@@ -216,7 +220,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
               {/* {canEditStatus && (
                 <div className="space-y-2">
                   <Label>
-                    الحالة <span className="text-red-500">*</span>
+                    {t('memos.status')} <span className="text-red-500">*</span>
                   </Label>
                   {memo && formData.status ? (
                     <Select
@@ -226,12 +230,12 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
                       disabled={isSubmitting}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="اختر الحالة" />
+                        <SelectValue placeholder={t('memos.selectStatus')} />
                       </SelectTrigger>
                       <SelectContent>
                         {MEMO_STATUSES.map((status) => (
                           <SelectItem key={status.value} value={status.value}>
-                            {status.label}
+                            {language === 'ar' ? status.labelAr : status.labelEn}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -246,12 +250,12 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
 
               {/* Description */}
               <div className="space-y-2">
-                <Label htmlFor="description">الوصف</Label>
+                <Label htmlFor="description">{t('memos.description')}</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="أدخل وصف المذكرة"
+                  placeholder={t('memos.descriptionPlaceholder')}
                   rows={4}
                   disabled={isSubmitting}
                 />
@@ -259,12 +263,12 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
 
               {/* Admin Note */}
               <div className="space-y-2">
-                <Label htmlFor="admin_note">ملاحظة الإدارة</Label>
+                <Label htmlFor="admin_note">{t('memos.adminNote')}</Label>
                 <Textarea
                   id="admin_note"
                   value={formData.admin_note}
                   onChange={(e) => setFormData(prev => ({ ...prev, admin_note: e.target.value }))}
-                  placeholder="أدخل ملاحظة الإدارة"
+                  placeholder={t('memos.adminNotePlaceholder')}
                   rows={3}
                   disabled={isSubmitting}
                 />
@@ -272,7 +276,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
 
               {/* File Upload */}
               <div className="space-y-2">
-                <Label>المرفقات</Label>
+                <Label>{t('memos.attachments')}</Label>
                 <div className="border-2 border-dashed rounded-lg p-4">
                   <div className="flex flex-col items-center justify-center space-y-2">
                     <Upload className="h-8 w-8 text-muted-foreground" />
@@ -283,7 +287,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
                         isSubmitting && "cursor-not-allowed opacity-50"
                       )}
                     >
-                      انقر للتحميل
+                      {t('memos.clickToUpload')}
                     </Label>
                     <Input
                       id="file-upload"
@@ -294,14 +298,14 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
                       disabled={isSubmitting}
                     />
                     <p className="text-xs text-muted-foreground">
-                      PDF, Word, Image (حتى 10MB)
+                      {t('memos.supportedFormats')}
                     </p>
                   </div>
 
                   {/* Display selected files */}
                   {formData.files.length > 0 && (
                     <div className="mt-4 space-y-2">
-                      <Label className="text-sm font-medium">الملفات المحددة:</Label>
+                      <Label className="text-sm font-medium">{t('memos.selectedFiles')}:</Label>
                       <div className="space-y-2">
                         {formData.files.map((file, index) => (
                           <div
@@ -330,16 +334,16 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
-                إلغاء
+                {t('memos.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    جاري الحفظ...
+                    {t('memos.saving')}
                   </>
                 ) : (
-                  "حفظ التغييرات"
+                  t('memos.saveChanges')
                 )}
               </Button>
             </DialogFooter>

@@ -97,7 +97,7 @@ function Sessions() {
                   <TableRow>
                     <TableHead className="text-center">{t('sessions.date')}</TableHead>
                     <TableHead className="text-center">{t('sessions.link')}</TableHead>
-                    <TableHead className="text-center">??????</TableHead>
+                    <TableHead className="text-center">{t('sessions.topic')}</TableHead>
                     <TableHead className="text-center">{t('sessions.expertSession')}</TableHead>
                     <TableHead className="text-center">{t('sessions.attachedFiles')}</TableHead>
                     <TableHead className="text-center">{t('sessions.actions')}</TableHead>

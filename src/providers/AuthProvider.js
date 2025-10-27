@@ -27,6 +27,13 @@ const AuthProvider = ({ children }) => {
     }
   }, [dispatch, isAuth]);
 
+  // Redirect authenticated users away from login page
+  useEffect(() => {
+    if (isAuth && pathname === '/login') {
+      router.push('/');
+    }
+  }, [isAuth, pathname, router]);
+
   // Show loading only on protected routes, not on login page
   if (authLoading && !isPublicRoute) {
     return (
@@ -44,10 +51,8 @@ const AuthProvider = ({ children }) => {
     return <LoginPage />;
   }
 
-  // If user is authenticated and trying to access login page, redirect to dashboard
+  // If user is authenticated and trying to access login page, show loading while redirecting
   if (isAuth && pathname === '/login') {
-    // Use Next.js router for client-side navigation instead of window.location
-    router.push('/');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
