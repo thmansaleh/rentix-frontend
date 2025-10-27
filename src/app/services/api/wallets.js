@@ -45,8 +45,16 @@ export const getWalletsByClientId = async (clientId) => {
 
 // Create new wallet
 export const createWallet = async (walletData) => {
-  const response = await api.post('/wallets', walletData);
-  return response.data;
+  try {
+    const response = await api.post('/wallets', walletData);
+    return response.data;
+  } catch (error) {
+    // If backend returns validation error (like duplicate wallet), return the error data
+    if (error.response && error.response.data) {
+      return error.response.data;
+    }
+    throw error;
+  }
 };
 
 // Update wallet

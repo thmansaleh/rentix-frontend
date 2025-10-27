@@ -1950,6 +1950,7 @@
     "walletCreatedSuccessfully": "تم إنشاء المحفظة بنجاح!",
     "walletUpdatedSuccessfully": "تم تحديث المحفظة بنجاح!",
     "walletDeletedSuccessfully": "تم حذف المحفظة بنجاح!",
+    "partyAlreadyHasWallet": "هذا الموكل لديه محفظة بالفعل. كل موكل يمكنه الحصول على محفظة واحدة فقط.",
     "errorCreatingWallet": "خطأ في إنشاء المحفظة. يرجى المحاولة مرة أخرى.",
     "errorUpdatingWallet": "خطأ في تحديث المحفظة. يرجى المحاولة مرة أخرى.",
     "errorDeletingWallet": "خطأ في حذف المحفظة. يرجى المحاولة مرة أخرى.",

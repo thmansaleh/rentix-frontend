@@ -143,11 +143,16 @@ export function AddWalletModal({ isOpen, onClose, onSuccess, wallet = null, isEd
           });
         }
       } else {
-        toast.error(response.message || "Failed to create wallet");
+        // Check if the error is about party already having a wallet
+        if (response.error === 'PARTY_ALREADY_HAS_WALLET') {
+          toast.error(t('wallets.partyAlreadyHasWallet'));
+        } else {
+          toast.error(response.message || t('wallets.errorCreatingWallet'));
+        }
       }
     } catch (error) {
-
-      toast.error("An error occurred while creating the wallet");
+      console.error('Error creating wallet:', error);
+      toast.error(t('wallets.errorCreatingWallet'));
     } finally {
       setLoading(false);
     }

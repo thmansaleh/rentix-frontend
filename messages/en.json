@@ -2345,6 +2345,7 @@
     "walletCreatedSuccessfully": "Wallet created successfully!",
     "walletUpdatedSuccessfully": "Wallet updated successfully!",
     "walletDeletedSuccessfully": "Wallet deleted successfully!",
+    "partyAlreadyHasWallet": "This party already has a wallet. Each party can only have one wallet.",
     "errorCreatingWallet": "Error creating wallet. Please try again.",
     "errorUpdatingWallet": "Error updating wallet. Please try again.",
     "errorDeletingWallet": "Error deleting wallet. Please try again.",
