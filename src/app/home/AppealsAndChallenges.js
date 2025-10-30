@@ -12,8 +12,12 @@ function AppealsAndChallenges() {
     if (isLoading) {
         return (
             <div>
-                <div className='text-lg font-bold rounded-2xl bg-purple-200 dark:bg-purple-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    {t('home.appealAndCassationSessions')}
+                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-l-4 border-purple-500'>
+                    <div className='flex-1'>
+                        <h3 className='text-base font-semibold text-purple-900 dark:text-purple-100'>
+                            {t('home.appealAndCassationSessions')}
+                        </h3>
+                    </div>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <div className="text-center text-gray-500 dark:text-gray-400">{t('home.loading')}</div>
@@ -25,8 +29,12 @@ function AppealsAndChallenges() {
     if (error) {
         return (
             <div>
-                <div className='text-lg font-bold rounded-2xl bg-purple-200 dark:bg-purple-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    {t('home.appealAndCassationSessions')}
+                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-l-4 border-purple-500'>
+                    <div className='flex-1'>
+                        <h3 className='text-base font-semibold text-purple-900 dark:text-purple-100'>
+                            {t('home.appealAndCassationSessions')}
+                        </h3>
+                    </div>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <div className="text-center text-red-500 dark:text-red-400">{t('home.errorLoadingData')}</div>
@@ -38,8 +46,18 @@ function AppealsAndChallenges() {
     const sessions = data?.success ? data.data : []
 
     return <div>
-        <div className='text-lg font-bold rounded-2xl bg-purple-200 dark:bg-purple-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-            {t('home.appealAndCassationSessions')}
+        <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-l-4 border-purple-500'>
+            <div className='flex-1'>
+                <h3 className='text-base font-semibold text-purple-900 dark:text-purple-100'>
+                    {t('home.appealAndCassationSessions')}
+                </h3>
+            </div>
+            {sessions.length > 0 && (
+                <span className='relative inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-medium bg-purple-500 text-white rounded-full'>
+                    <span className="absolute inset-0 rounded-full bg-purple-500 animate-ping opacity-75"></span>
+                    <span className="relative">{sessions.length}</span>
+                </span>
+            )}
         </div>
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 p-4">
             {sessions.length === 0 ? (

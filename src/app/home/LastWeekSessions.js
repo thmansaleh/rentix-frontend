@@ -12,8 +12,12 @@ function LastWeekSessions() {
     if (isLoading) {
         return (
             <div>
-                <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    {t('home.weekSessions')}
+                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-l-4 border-blue-500'>
+                    <div className='flex-1'>
+                        <h3 className='text-base font-semibold text-blue-900 dark:text-blue-100'>
+                            {t('home.weekSessions')}
+                        </h3>
+                    </div>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <div className="text-center text-gray-500 dark:text-gray-400">{t('home.loading')}</div>
@@ -25,8 +29,12 @@ function LastWeekSessions() {
     if (error) {
         return (
             <div>
-                <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    {t('home.weekSessions')}
+                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-l-4 border-blue-500'>
+                    <div className='flex-1'>
+                        <h3 className='text-base font-semibold text-blue-900 dark:text-blue-100'>
+                            {t('home.weekSessions')}
+                        </h3>
+                    </div>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <div className="text-center text-red-500 dark:text-red-400">{t('home.errorLoadingData')}</div>
@@ -38,8 +46,18 @@ function LastWeekSessions() {
     const sessions = data?.success ? data.data : []
 
     return <div>
-        <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-            {t('home.weekSessions')}
+        <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-l-4 border-blue-500'>
+            <div className='flex-1'>
+                <h3 className='text-base font-semibold text-blue-900 dark:text-blue-100'>
+                    {t('home.weekSessions')}
+                </h3>
+            </div>
+            {sessions.length > 0 && (
+                <span className='relative inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-medium bg-blue-500 text-white rounded-full'>
+                    <span className="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-75"></span>
+                    <span className="relative">{sessions.length}</span>
+                </span>
+            )}
         </div>
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 p-4">
             {sessions.length === 0 ? (

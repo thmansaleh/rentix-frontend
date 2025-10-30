@@ -12,8 +12,12 @@ function CasePetitions() {
     if (isLoading) {
         return (
             <div>
-                <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    {t('home.newCasePetitions')}
+                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 border-l-4 border-amber-500'>
+                    <div className='flex-1'>
+                        <h3 className='text-base font-semibold text-amber-900 dark:text-amber-100'>
+                            {t('home.newCasePetitions')}
+                        </h3>
+                    </div>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <div className="text-center text-gray-500 dark:text-gray-400">{t('home.loading')}</div>
@@ -25,8 +29,12 @@ function CasePetitions() {
     if (error) {
         return (
             <div>
-                <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    {t('home.newCasePetitions')}
+                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 border-l-4 border-amber-500'>
+                    <div className='flex-1'>
+                        <h3 className='text-base font-semibold text-amber-900 dark:text-amber-100'>
+                            {t('home.newCasePetitions')}
+                        </h3>
+                    </div>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <div className="text-center text-red-500 dark:text-red-400">{t('home.errorLoadingData')}</div>
@@ -38,8 +46,18 @@ function CasePetitions() {
     const petitions = data?.success ? data.data : []
 
     return <div>
-        <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-            {t('home.newCasePetitions')}
+        <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 border-l-4 border-amber-500'>
+            <div className='flex-1'>
+                <h3 className='text-base font-semibold text-amber-900 dark:text-amber-100'>
+                    {t('home.newCasePetitions')}
+                </h3>
+            </div>
+            {petitions.length > 0 && (
+                <span className='relative inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-medium bg-amber-500 text-white rounded-full'>
+                    <span className="absolute inset-0 rounded-full bg-amber-500 animate-ping opacity-75"></span>
+                    <span className="relative">{petitions.length}</span>
+                </span>
+            )}
         </div>
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 p-4">
             {petitions.length === 0 ? (

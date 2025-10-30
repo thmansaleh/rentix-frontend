@@ -99,12 +99,15 @@ function NotificationMenu() {
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0 min-w-5"
-            >
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </Badge>
+            <>
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0 min-w-5 animate-bounce"
+              >
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </Badge>
+              <span className="absolute -top-1 -right-1 h-5 w-5 bg-destructive rounded-full animate-ping opacity-75" />
+            </>
           )}
         </Button>
       </DropdownMenuTrigger>
