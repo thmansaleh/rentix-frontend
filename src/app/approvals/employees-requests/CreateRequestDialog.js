@@ -26,7 +26,8 @@ import { Label } from '@/components/ui/label';
 
 function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
   const { language } = useLanguage();
-  const jobId = useSelector((state) => state.auth.jobId);
+  const user = useSelector((state) => state.auth.user);
+  const employeeId = user?.id;
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -136,7 +137,7 @@ function CreateRequestDialog({ isOpen, onClose, onSuccess }) {
     
     try {
       const requestData = {
-        employee_id: jobId,
+        employee_id: employeeId,
         type: formData.type,
         from_date: formData.from_date || null,
         to_date: formData.to_date || null,
