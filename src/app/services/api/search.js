@@ -1,6 +1,5 @@
 import { searchCases } from './cases';
 import { searchParties } from './parties';
-import { searchClientsAgreements } from './clientsAgreements';
 
 /**
  * Unified search service for different entity types
@@ -21,12 +20,14 @@ export const performSearch = async (searchQuery, searchType) => {
       }
 
       case 'parties': {
-        const response = await searchParties(trimmedQuery);
+        // Search for opponents (party_type = 'opponent')
+        const response = await searchParties(trimmedQuery, 'opponent');
         return response.success ? (response.data || []).slice(0, 10) : [];
       }
 
       case 'clients': {
-        const response = await searchClientsAgreements(trimmedQuery, 10);
+        // Search for clients (party_type = 'client')
+        const response = await searchParties(trimmedQuery, 'client');
         return response.success ? (response.data || []).slice(0, 10) : [];
       }
 
@@ -40,4 +41,4 @@ export const performSearch = async (searchQuery, searchType) => {
 };
 
 // Export individual search functions as well
-export { searchCases, searchParties, searchClientsAgreements };
+export { searchCases, searchParties };

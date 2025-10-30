@@ -132,12 +132,16 @@ export const deleteParty = async (partyId) => {
   }
 };
 
-export const searchParties = async (query) => {
+export const searchParties = async (query, partyType = null) => {
   try {
     if (!query || query.trim().length < 3) {
       return { success: true, data: [] };
     }
-    const response = await api.get(`/parties/search?query=${encodeURIComponent(query.trim())}`);
+    let url = `/parties/search?query=${encodeURIComponent(query.trim())}`;
+    if (partyType) {
+      url += `&partyType=${partyType}`;
+    }
+    const response = await api.get(url);
     return response.data;
   } catch (error) {
     throw error;

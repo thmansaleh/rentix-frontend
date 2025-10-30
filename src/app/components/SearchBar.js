@@ -303,7 +303,7 @@ const SearchBar = () => {
       {/* Search Input and Radio Buttons - Inline */}
       <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
         {/* Radio Buttons */}
-        <div className={`flex gap-1.5 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex gap-1.5 z-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <label className="flex items-center gap-0.5 cursor-pointer whitespace-nowrap">
             <input
               type="radio"
@@ -342,7 +342,7 @@ const SearchBar = () => {
               className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-blue-500"
             />
             <span className="text-[10px] text-gray-700 dark:text-gray-300">
-              {isRTL ? 'خصم' : 'Party'}
+              {isRTL ? 'موكل' : 'Client'}
             </span>
           </label>
           
@@ -356,7 +356,8 @@ const SearchBar = () => {
               className="w-2.5 h-2.5 text-blue-600 border-gray-300 focus:ring-blue-500"
             />
             <span className="text-[10px] text-gray-700 dark:text-gray-300">
-              {isRTL ? 'موكل' : 'Client'}
+                            {isRTL ? 'خصم' : 'Party'}
+
             </span>
           </label>
         </div>
@@ -496,7 +497,7 @@ const SearchBar = () => {
             px-4
             py-6
             text-center
-            z-50
+            z-20
           `}
         >
           <p className="text-sm text-gray-500 dark:text-gray-400">

@@ -23,7 +23,7 @@ const SearchTypeSelector = ({ searchType, setSearchType, isRTL }) => {
     { 
       value: 'parties', 
       labelAr: 'خصم', 
-      labelEn: 'Party',
+      labelEn: 'Opponent',
       icon: Users
     },
     { 
@@ -54,7 +54,7 @@ const SearchTypeSelector = ({ searchType, setSearchType, isRTL }) => {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative z-100" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`
