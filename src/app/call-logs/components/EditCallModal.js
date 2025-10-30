@@ -224,7 +224,7 @@ const EditCallModal = ({ isOpen, onClose, callId, onSuccess }) => {
                   id="phone_number"
                   value={formData.phone_number}
                   onChange={(e) => handleChange('phone_number', e.target.value)}
-                  placeholder="أدخل رقم الهاتف"
+                  placeholder="0500000000"
                   dir="ltr"
                   className="text-left"
                 />

@@ -16,7 +16,7 @@ function Page() {
     <TabsList>
       <TabsTrigger value="parties">{t('partiesPage.title')}</TabsTrigger>
       <TabsTrigger value="deals">{t('dealsPage.title')}</TabsTrigger>
-      <TabsTrigger value="orders">طلبات العملاء</TabsTrigger>
+      <TabsTrigger value="orders">{t('navigation.clientOrders')}</TabsTrigger>
     </TabsList>
     <TabsContent value="parties">
       <Parties />

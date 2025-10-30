@@ -155,13 +155,15 @@ function Stages({ caseId }) {
               <TableHead>{t('initiationProceeding.degree')}</TableHead>
               <TableHead>{t('initiationProceeding.year')}</TableHead>
               <TableHead>{t('initiationProceeding.referralDate')}</TableHead>
+              <TableHead>{language === 'ar' ? 'صفة الموكل' : 'Client Status'}</TableHead>
+              <TableHead>{language === 'ar' ? 'صفة الخصم' : 'Opponent Status'}</TableHead>
               <TableHead className="text-right">{t('initiationProceeding.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {degrees.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                   {t('initiationProceeding.noProceedings')}
                 </TableCell>
               </TableRow>
@@ -177,6 +179,8 @@ function Stages({ caseId }) {
                       language === 'ar' ? 'ar-AE' : 'en-US'
                     )}
                   </TableCell>
+                  <TableCell>{degree.client_status || '-'}</TableCell>
+                  <TableCell>{degree.opponent_status || '-'}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Button

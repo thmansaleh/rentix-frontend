@@ -17,10 +17,9 @@ import DesktopSidebar from './components/DesktopSidebar';
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 import { getMenuItems } from './config/menuConfig';
 
-const AppSidebar = () => {
+const AppSidebar = ({ isMobileSidebarOpen, onMobileSidebarClose }) => {
   const [openSubmenus, setOpenSubmenus] = useState({});
   const [activeItem, setActiveItem] = useState('/');
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const router = useRouter();
   const sidebarRef = useRef(null);
   const dispatch = useDispatch();
@@ -52,10 +51,10 @@ const AppSidebar = () => {
     setActiveItem(itemId);
     router.push(`/${itemId === '/' ? '' : itemId}`);
     // Close mobile sidebar when navigating
-    if (isMobile) {
-      setIsMobileSidebarOpen(false);
+    if (isMobile && onMobileSidebarClose) {
+      onMobileSidebarClose();
     }
-  }, [router, isMobile, toggleSubmenu]);
+  }, [router, isMobile, toggleSubmenu, onMobileSidebarClose]);
 
   const handleLogout = useCallback(async () => {
     try {
@@ -66,13 +65,11 @@ const AppSidebar = () => {
     }
   }, [dispatch, router]);
 
-  const toggleMobileSidebar = useCallback(() => {
-    setIsMobileSidebarOpen(prev => !prev);
-  }, []);
-
   const closeMobileSidebar = useCallback(() => {
-    setIsMobileSidebarOpen(false);
-  }, []);
+    if (onMobileSidebarClose) {
+      onMobileSidebarClose();
+    }
+  }, [onMobileSidebarClose]);
 
   // Custom keyboard navigation hook
   useKeyboardNavigation(menuItems, activeItem, setActiveItem, handleNavClick);
@@ -83,14 +80,16 @@ const AppSidebar = () => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         if (window.innerWidth < 768) {
           setOpenSubmenus({});
-          setIsMobileSidebarOpen(false);
+          if (onMobileSidebarClose) {
+            onMobileSidebarClose();
+          }
         }
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [onMobileSidebarClose]);
 
   // Render mobile navigation
   if (isMobile) {
@@ -98,7 +97,6 @@ const AppSidebar = () => {
       <MobileSidebar 
         isOpen={isMobileSidebarOpen}
         onClose={closeMobileSidebar}
-        onToggle={toggleMobileSidebar}
         menuItems={menuItems}
         activeItem={activeItem}
         openSubmenus={openSubmenus}

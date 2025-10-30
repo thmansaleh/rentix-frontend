@@ -8,7 +8,13 @@ export const themes = {
   light: "light",
   dark: "dark", 
   blue: "blue",
-  orangeGold: "orange-gold"
+  blueNew: "blue-new",
+  green: "green",
+  orange: "orange",
+  orangeGold: "orange-gold",
+  violet: "violet",
+  yellow: "yellow",
+  rose: "rose"
 };
 
 export const useTheme = () => {

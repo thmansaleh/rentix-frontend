@@ -97,7 +97,7 @@ function Court() {
       {/* Court Selection Section */}
       <div className="space-y-2">
         <Label htmlFor="court-select">
-          {language === 'ar' ? 'المحكمة' : 'Court'} <span className="text-red-500">*</span>
+          {language === 'ar' ? 'المحكمة' : 'Court'}
         </Label>
         <div className="flex gap-2">
           <Select 

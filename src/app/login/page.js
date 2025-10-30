@@ -134,7 +134,7 @@ export default function Page() {
                     id="email"
                     name="email"
                     type="text"
-                    placeholder="أدخل اسم المستخدم"
+                    placeholder="مثال: admin"
                     value={formData.email}
                     onChange={handleInputChange}
                     className={`h-11 text-white placeholder:text-white/70 ${errors.email ? 'border-red-500' : ''}`}
@@ -155,7 +155,7 @@ export default function Page() {
                       id="password"
                       name="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="أدخل كلمة المرور"
+                      placeholder="مثال: ********"
                       value={formData.password}
                       onChange={handleInputChange}
                       className={`h-11 pl-10 text-white placeholder:text-white/70 ${errors.password ? 'border-red-500' : ''}`}

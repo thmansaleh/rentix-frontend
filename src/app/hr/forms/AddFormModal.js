@@ -24,8 +24,7 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useTranslations } from '@/hooks/useTranslations'
 import { toast } from 'react-toastify'
-import { uploadFile } from '../../../../utils/fileUpload' 
-// import { uploadFile } from '@/utils/fileUpload'
+import { createFormWithUpload } from '@/app/services/api/forms'
 
 const AddFormModal = ({ onFormAdded }) => {
   const { language } = useLanguage()
@@ -93,27 +92,7 @@ const AddFormModal = ({ onFormAdded }) => {
     setIsSubmitting(true)
     
     try {
-      // 1. Upload file to Cloudflare R2
-      const uploadResult = await uploadFile(selectedFile, 'forms')
-      
-      if (!uploadResult || !uploadResult.document_url) {
-        throw new Error('File upload failed')
-      }
-      
-      // 2. Create form record in database
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/forms`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          document_url: uploadResult.document_url,
-          document_for: documentFor
-        })
-      })
-      
-      const result = await response.json()
+      const result = await createFormWithUpload(selectedFile, documentFor)
       
       if (result.success) {
         toast.success(isArabic ? 'تم إضافة النموذج بنجاح' : 'Form added successfully')
@@ -127,7 +106,7 @@ const AddFormModal = ({ onFormAdded }) => {
         throw new Error(result.message || 'Failed to add form')
       }
     } catch (error) {
-
+      console.error('Error adding form:', error)
       toast.error(isArabic ? 'خطأ في إضافة النموذج' : 'Error adding form')
     } finally {
       setIsSubmitting(false)

@@ -487,6 +487,11 @@ const CasesPage = () => {
                               {t('caseToggles.isArchived')}
                             </Badge>
                           )}
+                          {case_.is_pending === 1 && (
+                            <Badge variant="outline" className="text-xs bg-orange-100 text-orange-800 border-orange-300">
+                              {t('caseToggles.isPending')}
+                            </Badge>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell className="text-center">

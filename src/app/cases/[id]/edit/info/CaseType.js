@@ -155,7 +155,7 @@ function CaseType({ formikProps }) {
               >
                 {t('buttons.cancel')}
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? t('caseTypes.creating') : t('caseTypes.createCaseType')}
               </Button>
             </DialogFooter>

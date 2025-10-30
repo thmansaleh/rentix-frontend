@@ -69,6 +69,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
           { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus }
         ] : []),
         { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
+        { id: 'cases/judicial-decisions', label: t('navigation.judicialDecisions'), icon: CheckCircle },
       ]
     }] : []),
     // Clients Management - Only visible to admin or Legal departments

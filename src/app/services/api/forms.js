@@ -1,4 +1,5 @@
 import axiosInstance from './axiosInstance';
+import { uploadFile } from '../../../../utils/fileUpload';
 
 const API_URL = '/forms';
 
@@ -36,6 +37,27 @@ export const createForm = async (formData) => {
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to create form');
+  }
+};
+
+export const createFormWithUpload = async (file, documentFor) => {
+  try {
+    // 1. Upload file to Cloudflare R2
+    const uploadResult = await uploadFile(file, 'forms');
+    
+    if (!uploadResult || !uploadResult.document_url) {
+      throw new Error('File upload failed');
+    }
+    
+    // 2. Create form record in database
+    const response = await axiosInstance.post(API_URL, {
+      document_url: uploadResult.document_url,
+      document_for: documentFor
+    });
+    
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to create form with upload');
   }
 };
 

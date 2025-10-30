@@ -94,7 +94,7 @@ function PublicProsecutions() {
   return (
     <div className={`space-y-2 ${isRTL ? 'text-right' : 'text-left'}`}>
       <Label htmlFor="prosecution-select">
-        {language === 'ar' ? 'النيابة العامة' : 'Public Prosecution'} <span className="text-red-500">*</span>
+        {language === 'ar' ? 'النيابة العامة' : 'Public Prosecution'}
       </Label>
       <div className="flex gap-2">
         <Select 

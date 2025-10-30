@@ -162,7 +162,7 @@ function Branch({ formikProps }) {
               >
                 {t('buttons.cancel')}
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? t('branches.creating') : t('branches.createBranch')}
               </Button>
             </DialogFooter>

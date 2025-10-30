@@ -1,13 +1,16 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
 import useSWR, { mutate } from "swr";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
 import { getSession, updateSession, deleteSessionDocument } from "@/app/services/api/sessions";
+import { getLegalPeriods } from "@/app/services/api/legalPeriods";
 import { uploadFiles } from "../../../../utils/fileUpload";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
@@ -15,7 +18,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Calendar, Save, Settings, FileText, Download, Trash2,Plus, CircleX } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar, Save, Settings, FileText, Download, Trash2, Plus, CircleX, CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import AddLegalPeriodModal from '@/app/cases/add-case/sessions/AddLegalPeriodModal';
 
 // Helper function to format date for MySQL
 const formatDateForMySQL = (dateString) => {
@@ -43,6 +51,26 @@ const EditSessionModal = ({
   const [deletingDocumentId, setDeletingDocumentId] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [legalPeriods, setLegalPeriods] = useState([]);
+  const [isAddLegalPeriodOpen, setIsAddLegalPeriodOpen] = useState(false);
+
+  // Fetch legal periods when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchLegalPeriods();
+    }
+  }, [isOpen]);
+
+  const fetchLegalPeriods = async () => {
+    try {
+      const data = await getLegalPeriods();
+      if (data.success) {
+        setLegalPeriods(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching legal periods:', error);
+    }
+  };
 
 
   // Fetch session data using SWR - only when modal is open
@@ -162,6 +190,22 @@ const EditSessionModal = ({
     is_judgment_reserved: Yup.boolean(),
     is_judgment_deferred: Yup.boolean(),
     status: Yup.boolean(),
+    has_ruling: Yup.boolean(),
+    ruling: Yup.string().when('has_ruling', {
+      is: true,
+      then: (schema) => schema.required(isRtl ? "منطوق الحكم مطلوب" : "Ruling text is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    ruling_date: Yup.date().when('has_ruling', {
+      is: true,
+      then: (schema) => schema.required(isRtl ? "تاريخ صدور الحكم مطلوب" : "Ruling date is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    legal_period_id: Yup.string().when('has_ruling', {
+      is: true,
+      then: (schema) => schema.required(isRtl ? "المدة القانونية مطلوبة" : "Legal period is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   });
 
   // Helper function to get initial values from session data
@@ -177,6 +221,10 @@ const EditSessionModal = ({
         is_judgment_reserved: false,
         is_judgment_deferred: false,
         status: true,
+        has_ruling: false,
+        ruling: "",
+        ruling_date: "",
+        legal_period_id: "",
       };
     }
 
@@ -194,6 +242,10 @@ const EditSessionModal = ({
       is_judgment_reserved: session.is_judgment_reserved === 1 || session.is_judgment_reserved === true,
       is_judgment_deferred: session.is_judgment_deferred === 1 || session.is_judgment_deferred === true,
       status: session.status === 'active' || session.status === 1,
+      has_ruling: session.has_ruling === 1 || session.has_ruling === true,
+      ruling: session.ruling || "",
+      ruling_date: session.ruling_date || "",
+      legal_period_id: session.legal_period_id || "",
     };
   };
 
@@ -239,6 +291,10 @@ const EditSessionModal = ({
           is_judgment_reserved: values.is_judgment_reserved,
           is_judgment_deferred: values.is_judgment_deferred,
           status: values.status ? 'active' : 'inactive',
+          has_ruling: values.has_ruling,
+          ruling: values.ruling.trim() || null,
+          ruling_date: values.ruling_date || null,
+          legal_period_id: values.legal_period_id || null,
           files: uploadedFiles, // Add uploaded files to the data
         };
 
@@ -420,15 +476,35 @@ const EditSessionModal = ({
                     <Label htmlFor="session_date" className="text-sm font-medium text-gray-700">
                       {t('sessions.sessionDate')} *
                     </Label>
-                    <Input
-                      id="session_date"
-                      name="session_date"
-                      type="date"
-                      value={formik.values.session_date}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      className={`${isRtl ? "text-right" : "text-left"} focus:ring-2 focus:ring-blue-500 border-gray-300`}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start font-normal",
+                            !formik.values.session_date && "text-muted-foreground",
+                            isRtl ? "text-right" : "text-left",
+                            formik.touched.session_date && formik.errors.session_date && "border-red-500"
+                          )}
+                        >
+                          <CalendarIcon className={cn("h-4 w-4", isRtl ? "ml-2" : "mr-2")} />
+                          {formik.values.session_date ? (
+                            format(new Date(formik.values.session_date), "PPP", { locale: isRtl ? ar : undefined })
+                          ) : (
+                            <span>{t('sessions.pickSessionDate') || (isRtl ? "اختر تاريخ الجلسة" : "Pick session date")}</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 z-[10000]" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={formik.values.session_date ? new Date(formik.values.session_date) : null}
+                          onSelect={(date) => formik.setFieldValue('session_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                     {formik.touched.session_date && formik.errors.session_date && (
                       <p className="text-sm text-red-500">
                         {formik.errors.session_date}
@@ -623,6 +699,150 @@ const EditSessionModal = ({
                             formik.setFieldValue("is_judgment_deferred", checked)
                           }
                         />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Has Ruling Switch */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label 
+                          htmlFor="has_ruling" 
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          {isRtl ? "حكم صادر" : "Has Ruling"}
+                        </Label>
+                        <p className="text-xs text-gray-500">
+                          {formik.values.has_ruling 
+                            ? (isRtl ? "يوجد حكم صادر" : "Ruling has been issued")
+                            : (isRtl ? "لا يوجد حكم" : "No ruling issued")
+                          }
+                        </p>
+                      </div>
+                      <Switch
+                        id="has_ruling"
+                        checked={formik.values.has_ruling}
+                        onCheckedChange={(checked) => 
+                          formik.setFieldValue("has_ruling", checked)
+                        }
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Ruling Text and Legal Period - Show when has_ruling is true */}
+                  {formik.values.has_ruling && (
+                    <div className="space-y-4 pl-4 border-l-4 border-blue-200">
+                      {/* Ruling Textarea */}
+                      <div className="space-y-2">
+                        <Label htmlFor="ruling" className="text-sm font-medium text-gray-700">
+                          {isRtl ? "منطوق الحكم" : "Ruling Text"} <span className="text-red-500">*</span>
+                        </Label>
+                        <Textarea
+                          id="ruling"
+                          name="ruling"
+                          value={formik.values.ruling}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          placeholder={isRtl ? "أدخل منطوق الحكم" : "Enter ruling text"}
+                          rows={3}
+                          className={cn(
+                            isRtl ? "text-right" : "text-left",
+                            "resize-none",
+                            formik.touched.ruling && formik.errors.ruling && "border-red-500"
+                          )}
+                        />
+                        {formik.touched.ruling && formik.errors.ruling && (
+                          <p className="text-sm text-red-500">{formik.errors.ruling}</p>
+                        )}
+                      </div>
+
+                      {/* Ruling Date */}
+                      <div className="space-y-2">
+                        <Label htmlFor="ruling_date" className="text-sm font-medium text-gray-700">
+                          {isRtl ? "تاريخ صدور الحكم" : "Ruling Date"} <span className="text-red-500">*</span>
+                        </Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start font-normal",
+                                !formik.values.ruling_date && "text-muted-foreground",
+                                isRtl ? "text-right" : "text-left",
+                                formik.touched.ruling_date && formik.errors.ruling_date && "border-red-500"
+                              )}
+                            >
+                              <CalendarIcon className={cn("h-4 w-4", isRtl ? "ml-2" : "mr-2")} />
+                              {formik.values.ruling_date ? (
+                                format(new Date(formik.values.ruling_date), "PPP", { locale: isRtl ? ar : undefined })
+                              ) : (
+                                <span>{isRtl ? "اختر تاريخ صدور الحكم" : "Pick ruling date"}</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0 z-[10000]" align="start">
+                            <CalendarComponent
+                              mode="single"
+                              selected={formik.values.ruling_date ? new Date(formik.values.ruling_date) : null}
+                              onSelect={(date) => formik.setFieldValue('ruling_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        {formik.touched.ruling_date && formik.errors.ruling_date && (
+                          <p className="text-sm text-red-500">{formik.errors.ruling_date}</p>
+                        )}
+                      </div>
+
+                      {/* Legal Period Select */}
+                      <div className="space-y-2">
+                        <Label htmlFor="legal_period_id" className="text-sm font-medium text-gray-700">
+                          {isRtl ? "المدة القانونية" : "Legal Period"} <span className="text-red-500">*</span>
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Select
+                            value={formik.values.legal_period_id?.toString()}
+                            onValueChange={(value) => formik.setFieldValue('legal_period_id', value)}
+                          >
+                            <SelectTrigger className={cn(
+                              "flex-1",
+                              formik.touched.legal_period_id && formik.errors.legal_period_id && "border-red-500"
+                            )}>
+                              <SelectValue placeholder={isRtl ? "اختر المدة القانونية" : "Select Legal Period"} />
+                            </SelectTrigger>
+                            <SelectContent className="z-[10001]">
+                              {legalPeriods.map((period) => (
+                                <SelectItem key={period.id} value={period.id.toString()}>
+                                  <div className="flex flex-col">
+                                    <span className="font-medium">{period.name}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {[
+                                        period.objection_days && `${isRtl ? 'التظلم' : 'Objection'}: ${period.objection_days} ${isRtl ? 'يوم' : 'days'}`,
+                                        period.appeal_days && `${isRtl ? 'الاستئناف' : 'Appeal'}: ${period.appeal_days} ${isRtl ? 'يوم' : 'days'}`,
+                                        period.cassation_days && `${isRtl ? 'الطعن' : 'Cassation'}: ${period.cassation_days} ${isRtl ? 'يوم' : 'days'}`
+                                      ].filter(Boolean).join(' - ')}
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setIsAddLegalPeriodOpen(true)}
+                            className="h-10 gap-1 shrink-0"
+                          >
+                            <Plus className="h-4 w-4" />
+                            <span className="text-sm">{isRtl ? "إضافة" : "Add"}</span>
+                          </Button>
+                        </div>
+                        {formik.touched.legal_period_id && formik.errors.legal_period_id && (
+                          <p className="text-sm text-red-500">{formik.errors.legal_period_id}</p>
+                        )}
                       </div>
                     </div>
                   )}
@@ -838,6 +1058,16 @@ const EditSessionModal = ({
             </div>
           </form>
       </div>
+      
+      {/* Add Legal Period Modal */}
+      <AddLegalPeriodModal
+        open={isAddLegalPeriodOpen}
+        onOpenChange={setIsAddLegalPeriodOpen}
+        onSuccess={() => {
+          fetchLegalPeriods();
+          setIsAddLegalPeriodOpen(false);
+        }}
+      />
     </div>,
     document.body
   );

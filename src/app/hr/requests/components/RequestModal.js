@@ -50,7 +50,6 @@ const RequestModal = ({
   const [formData, setFormData] = useState({
     employee_id: '',
     type: '',
-    date: null,
     from_date: null,
     to_date: null,
     manager_approval: 'pending',
@@ -78,7 +77,6 @@ const RequestModal = ({
       setFormData({
         employee_id: request.employee_id,
         type: request.type,
-        date: request.date ? new Date(request.date) : null,
         from_date: request.from_date ? new Date(request.from_date) : null,
         to_date: request.to_date ? new Date(request.to_date) : null,
         manager_approval: request.manager_approval || 'pending',
@@ -88,7 +86,6 @@ const RequestModal = ({
       setFormData({
         employee_id: '',
         type: '',
-        date: null,
         from_date: null,
         to_date: null,
         manager_approval: 'pending',
@@ -103,7 +100,6 @@ const RequestModal = ({
       setFormData({
         employee_id: '',
         type: '',
-        date: null,
         from_date: null,
         to_date: null,
         manager_approval: 'pending',
@@ -112,11 +108,21 @@ const RequestModal = ({
     }
   }, [isOpen])
 
+  // Get today's date for min date restriction
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }))
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value }
+      
+      // If changing from_date and to_date is before the new from_date, clear to_date
+      if (field === 'from_date' && prev.to_date && value > prev.to_date) {
+        newData.to_date = null
+      }
+      
+      return newData
+    })
   }
 
   const validateForm = () => {
@@ -126,10 +132,6 @@ const RequestModal = ({
     }
     if (!formData.type) {
       toast.error(isArabic ? 'يرجى اختيار نوع الطلب' : 'Please select request type')
-      return false
-    }
-    if (!formData.date) {
-      toast.error(isArabic ? 'يرجى اختيار تاريخ الطلب' : 'Please select request date')
       return false
     }
     
@@ -160,7 +162,6 @@ const RequestModal = ({
       const submitData = {
         employee_id: formData.employee_id,
         type: formData.type,
-        date: format(formData.date, 'yyyy-MM-dd'),
         from_date: isLeaveType && formData.from_date ? format(formData.from_date, 'yyyy-MM-dd') : null,
         to_date: isLeaveType && formData.to_date ? format(formData.to_date, 'yyyy-MM-dd') : null
       }
@@ -260,18 +261,6 @@ const RequestModal = ({
             </Select>
           </div>
 
-          {/* Request Date */}
-          <div className="space-y-2">
-            <Label htmlFor="date">
-              {isArabic ? 'تاريخ الطلب' : 'Request Date'} <span className="text-red-500">*</span>
-            </Label>
-            <DatePicker
-              date={formData.date}
-              onDateChange={(date) => handleInputChange('date', date)}
-              placeholder={isArabic ? 'اختر تاريخ الطلب' : 'Select request date'}
-            />
-          </div>
-
           {/* From Date - Only for leave types */}
           {isLeaveType && (
             <div className="space-y-2">
@@ -282,6 +271,7 @@ const RequestModal = ({
                 date={formData.from_date}
                 onDateChange={(date) => handleInputChange('from_date', date)}
                 placeholder={isArabic ? 'اختر تاريخ البداية' : 'Select from date'}
+                minDate={today}
               />
             </div>
           )}
@@ -296,6 +286,7 @@ const RequestModal = ({
                 date={formData.to_date}
                 onDateChange={(date) => handleInputChange('to_date', date)}
                 placeholder={isArabic ? 'اختر تاريخ النهاية' : 'Select to date'}
+                minDate={formData.from_date || today}
               />
             </div>
           )}

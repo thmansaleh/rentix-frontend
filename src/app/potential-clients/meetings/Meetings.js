@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, User, MapPin, Monitor, Users, Search, Loader2, Eye, Edit, Trash2, FileText } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
+import { useLanguage } from "@/contexts/LanguageContext";
+import ExportButtons from "@/components/ui/export-buttons";
 import { EditMeetingModal } from "./EditMeetingModal";
 import { DeleteMeetingModal } from "./DeleteMeetingModal";
 import { MeetingsFilterSearch } from "./MeetingsFilterSearch";
@@ -24,6 +26,7 @@ import ViewMeetingDialog from "../../meetings/ViewMeetingDialog";
 
 function Meetings({ headerAction }) {
   const { t } = useTranslations();
+  const { language } = useLanguage();
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
     searchTerm: "",
@@ -177,6 +180,77 @@ function Meetings({ headerAction }) {
     return "-";
   };
 
+  // Column configuration for export
+  const meetingsColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    client_name: {
+      ar: 'اسم العميل',
+      en: 'Client Name',
+      dataKey: 'client_name'
+    },
+    client_phone: {
+      ar: 'رقم الهاتف',
+      en: 'Phone Number',
+      dataKey: 'client_phone'
+    },
+    address: {
+      ar: 'العنوان',
+      en: 'Address',
+      dataKey: 'address'
+    },
+    date: {
+      ar: 'التاريخ',
+      en: 'Date',
+      dataKey: 'date',
+      type: 'date'
+    },
+    start_time: {
+      ar: 'وقت البداية',
+      en: 'Start Time',
+      dataKey: 'start_time',
+      formatter: (value) => value ? formatTime(value) : '-'
+    },
+    end_time: {
+      ar: 'وقت النهاية',
+      en: 'End Time',
+      dataKey: 'end_time',
+      formatter: (value) => value ? formatTime(value) : '-'
+    },
+    meeting_type: {
+      ar: 'نوع الاجتماع',
+      en: 'Meeting Type',
+      dataKey: 'meeting_type',
+      formatter: (value) => getMeetingTypeLabel(value)
+    },
+    attendees: {
+      ar: 'الحضور',
+      en: 'Attendees',
+      dataKey: 'attendees'
+    },
+    meet_result: {
+      ar: 'الحالة',
+      en: 'Status',
+      dataKey: 'meet_result',
+      type: 'status',
+      statusMap: {
+        'scheduled': { ar: 'مجدول', en: 'Scheduled' },
+        'completed': { ar: 'مكتمل', en: 'Completed' },
+        'cancelled': { ar: 'ملغي', en: 'Cancelled' },
+        'rescheduled': { ar: 'معاد جدولته', en: 'Rescheduled' },
+        'no_show': { ar: 'لم يحضر', en: 'No Show' }
+      }
+    },
+    notes: {
+      ar: 'ملاحظات',
+      en: 'Notes',
+      dataKey: 'notes'
+    }
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <Card>
@@ -192,6 +266,17 @@ function Meetings({ headerAction }) {
         <CardContent className="space-y-4">
           {/* Filters - Now in separate component */}
           <MeetingsFilterSearch onSearch={handleSearch} />
+
+          {/* Export Buttons */}
+          {data?.data && data.data.length > 0 && !isLoading && !error && (
+            <ExportButtons
+              data={data.data}
+              columnConfig={meetingsColumnConfig}
+              language={language}
+              exportName="meetings"
+              sheetName={language === 'ar' ? 'الاجتماعات' : 'Meetings'}
+            />
+          )}
 
           {/* Table */}
           <div className="rounded-md border">

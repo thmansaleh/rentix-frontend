@@ -161,7 +161,10 @@ function Orders() {
     created_by_name: {
       ar: 'أنشئ بواسطة',
       en: 'Created By',
-      dataKey: 'created_by_name'
+      dataKey: 'created_by_name',
+      formatter: (value, row) => {
+        return value || (row.party_name ? `${row.party_name} (${isArabic ? 'العميل' : 'Client'})` : '-')
+      }
     },
     created_at: {
       ar: 'تاريخ الإنشاء',
@@ -296,7 +299,7 @@ function Orders() {
                         {isArabic ? '#' : '#'}
                       </TableHead>
                       <TableHead className={isArabic ? "text-right" : ""}>
-                        {isArabic ? 'العميل' : 'Party Name'}
+                        {isArabic ? 'الموكل' : 'Party Name'}
                       </TableHead>
                       <TableHead className={isArabic ? "text-right" : ""}>
                         {isArabic ? 'نوع الطلب' : 'Order Type'}
@@ -344,7 +347,7 @@ function Orders() {
                             {order.case_number || '-'}
                           </TableCell>
                           <TableCell className={isArabic ? "text-right" : ""}>
-                            {order.created_by_name || '-'}
+                            {order.created_by_name || (order.party_name ? `${order.party_name} (${isArabic ? 'الموكل' : 'Client'})` : '-')}
                           </TableCell>
                           <TableCell>
                             <div className={cn("flex gap-2", isArabic && "flex-row-reverse")}>

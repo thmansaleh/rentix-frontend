@@ -219,9 +219,15 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
     try {
       setLoading(true);
       
-      // Basic validation - only name and party_type are required
+      // Basic validation - name, party_type, and branch_id are required
       if (!formData.name || !formData.party_type) {
         toast.error(t('parties.fillRequiredFields') || "يرجى ملء الحقول المطلوبة");
+        return;
+      }
+
+      // Branch is required
+      if (!formData.branch_id) {
+        toast.error(t('parties.branchRequired') || "الفرع مطلوب");
         return;
       }
 
@@ -320,7 +326,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder={t('parties.enterName') || 'أدخل اسم الطرف'}
+                  placeholder={t('parties.enterName') || 'مثال: أحمد محمد'}
                 />
               </div>
 
@@ -338,7 +344,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                       handleInputChange("phone", value);
                     }
                   }}
-                  placeholder={t('parties.phoneExample') || 'مثال: +971501234567'}
+                  placeholder="0500000000"
                 />
               </div>
 
@@ -350,7 +356,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="example@email.com"
+                  placeholder="مثال: example@email.com"
                 />
               </div>
 
@@ -416,7 +422,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                   id="e_id"
                   value={formData.e_id}
                   onChange={(e) => handleInputChange("e_id", e.target.value)}
-                  placeholder="784-1234-1234567-1"
+                  placeholder="مثال: 784-1234-1234567-1"
                 />
               </div>
 
@@ -427,7 +433,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                   id="nationality"
                   value={formData.nationality}
                   onChange={(e) => handleInputChange("nationality", e.target.value)}
-                  placeholder={t('parties.nationalityExample') || 'الإمارات العربية المتحدة'}
+                  placeholder={t('parties.nationalityExample') || 'مثال: الإمارات العربية المتحدة'}
                 />
               </div>
 
@@ -438,13 +444,13 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                   id="passport"
                   value={formData.passport}
                   onChange={(e) => handleInputChange("passport", e.target.value)}
-                  placeholder={t('parties.passportPlaceholder') || 'أدخل رقم جواز السفر'}
+                  placeholder={t('parties.passportPlaceholder') || 'مثال: A12345678'}
                 />
               </div>
 
               {/* Branch */}
               <div className="space-y-2">
-                <Label>{t('parties.branch') || 'الفرع'}</Label>
+                <Label>{t('parties.branch') || 'الفرع'} *</Label>
                 <Select 
                   dir={isRTL ? "rtl" : "ltr"}
                   value={formData.branch_id?.toString()} 
@@ -540,7 +546,7 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
                   id="address"
                   value={formData.address}
                   onChange={(e) => handleInputChange("address", e.target.value)}
-                  placeholder={t('parties.enterAddress') || 'أدخل العنوان التفصيلي'}
+                  placeholder={t('parties.enterAddress') || 'مثال: شارع الشيخ زايد، دبي'}
                   rows={3}
                 />
               </div>

@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -65,8 +66,9 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
       .required(t("potentialClientsPage.validation.statusRequired")),
     party_type: Yup.string()
       .required("Party type is required"),
-    category: Yup.string()
-      .required(t("potentialClientsPage.validation.categoryRequired")),
+    branch_id: Yup.number()
+      .required(t("potentialClientsPage.validation.branchRequired") || "الفرع مطلوب"),
+    category: Yup.string(),
     nationality: Yup.string(),
     address: Yup.string(),
     email: Yup.string().email("Invalid email format"),
@@ -91,6 +93,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
         passport: client.passport || "",
         source: client.source || "",
         branch_id: client.branch_id || 1,
+        is_vip: client.is_vip === 1 || client.is_vip === true || false,
       };
     }
     return {
@@ -107,6 +110,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
       passport: "",
       source: "",
       branch_id: 1,
+      is_vip: false,
     };
   };
 
@@ -305,7 +309,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                               form.setFieldValue('phone', value);
                             }
                           }}
-                          placeholder={t("potentialClientsPage.editModal.phonePlaceholder")}
+                          placeholder="0500000000"
                           disabled={isSubmitting}
                         />
                       )}
@@ -385,21 +389,6 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                     )}
                   </div>
 
-                  {/* Nationality Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="nationality">{t('potentialClientsPage.table.nationality') || 'الجنسية'}</Label>
-                    <Field name="nationality">
-                      {({ field }) => (
-                        <Input
-                          {...field}
-                          id="nationality"
-                          placeholder={t('potentialClientsPage.addModal.nationalityPlaceholder') || 'الإمارات العربية المتحدة'}
-                          disabled={isSubmitting}
-                        />
-                      )}
-                    </Field>
-                  </div>
-
                   {/* ID Number Field */}
                   <div className="space-y-2">
                     <Label htmlFor="e_id">{t('potentialClientsPage.table.emiratesId') || 'رقم الهوية الإماراتية'}</Label>
@@ -415,10 +404,59 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                     </Field>
                   </div>
 
+                  {/* Passport Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="passport">{t("potentialClientsPage.table.passport") || "رقم جواز السفر"}</Label>
+                    <Field name="passport">
+                      {({ field }) => (
+                        <Input
+                          {...field}
+                          id="passport"
+                          placeholder={t("potentialClientsPage.addModal.passportPlaceholder") || "أدخل رقم جواز السفر"}
+                          disabled={isSubmitting}
+                        />
+                      )}
+                    </Field>
+                  </div>
+
+                  {/* Nationality Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="nationality">{t('potentialClientsPage.table.nationality') || 'الجنسية'}</Label>
+                    <Field name="nationality">
+                      {({ field }) => (
+                        <Input
+                          {...field}
+                          id="nationality"
+                          placeholder={t('potentialClientsPage.addModal.nationalityPlaceholder') || 'الإمارات العربية المتحدة'}
+                          disabled={isSubmitting}
+                        />
+                      )}
+                    </Field>
+                  </div>
+
+                  {/* VIP Switch */}
+                  <div className="space-y-2">
+                    <Label htmlFor="is_vip">{t('potentialClientsPage.vipStatus') || 'عميل مميز (VIP)'}</Label>
+                    <div className="flex items-center space-x-2 space-x-reverse">
+                      <Switch
+                        id="is_vip"
+                        checked={values.is_vip}
+                        onCheckedChange={(checked) => setFieldValue("is_vip", checked)}
+                        disabled={isSubmitting}
+                      />
+                      <Label htmlFor="is_vip" className="cursor-pointer">
+                        {values.is_vip 
+                          ? (t('potentialClientsPage.vip') || 'VIP')
+                          : (t('potentialClientsPage.regular') || 'عادي')
+                        }
+                      </Label>
+                    </div>
+                  </div>
+
                   {/* Category Field */}
                   <div className="space-y-2">
                     <Label htmlFor="category">
-                      {t("potentialClientsPage.table.category")} *
+                      {t("potentialClientsPage.table.category")}
                     </Label>
                     <Select
                       value={values.category || ""}
@@ -492,7 +530,7 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                   {/* Branch Field */}
                   <div className="space-y-2">
                     <Label htmlFor="branch_id">
-                      {t('potentialClientsPage.table.branch') || 'الفرع'}
+                      {t('potentialClientsPage.table.branch') || 'الفرع'} *
                     </Label>
                     <Select
                       dir={isRTL ? "rtl" : "ltr"}
@@ -517,21 +555,6 @@ export function EditClientModal({ clientId, isOpen, onClose, onSuccess }) {
                         )}
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  {/* Passport Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="passport">{t("potentialClientsPage.table.passport") || "رقم جواز السفر"}</Label>
-                    <Field name="passport">
-                      {({ field }) => (
-                        <Input
-                          {...field}
-                          id="passport"
-                          placeholder={t("potentialClientsPage.addModal.passportPlaceholder") || "أدخل رقم جواز السفر"}
-                          disabled={isSubmitting}
-                        />
-                      )}
-                    </Field>
                   </div>
 </div>
 

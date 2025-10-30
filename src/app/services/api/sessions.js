@@ -1,9 +1,11 @@
 import { uploadFiles } from "../../../../utils/fileUpload";
 import api from "./axiosInstance";
-export const getAllSessions = async () => {
-  const response = await api.get("/sessions");
+
+export const getAllSessions = async (params = {}) => {
+  const response = await api.get("/sessions", { params });
   return response.data;
 }
+
 export const getSession = async (id) => {
   const response = await api.get(`/sessions/${id}`);
   return response.data;
@@ -22,6 +24,16 @@ export const getSessionsNoDecision = async () => {
 }
 export const getSessionsWithDecisions = async () => {
   const response = await api.get("/sessions/with-decision");
+  return response.data;
+}
+
+export const getAppealsAndChallenges = async () => {
+  const response = await api.get("/sessions/appeals-challenges");
+  return response.data;
+}
+
+export const getJudicialDecisions = async (params = {}) => {
+  const response = await api.get("/sessions/judicial-decisions", { params });
   return response.data;
 }
 

@@ -155,7 +155,7 @@ function CaseClassifications() {
               >
                 {t('buttons.cancel')}
               </Button>
-              <Button type="button" disabled={isSubmitting}>
+              <Button type="button" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? t('caseClassifications.creating') : t('caseClassifications.createCaseClassification')}
               </Button>
             </DialogFooter>

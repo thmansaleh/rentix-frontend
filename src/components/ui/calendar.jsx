@@ -24,7 +24,7 @@ function Calendar({
   const defaultClassNames = getDefaultClassNames()
 
   return (
-    (<DayPicker
+    <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
@@ -68,7 +68,7 @@ function Calendar({
           "relative has-focus:border-ring border border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] rounded-md",
           defaultClassNames.dropdown_root
         ),
-        dropdown: cn("absolute inset-0 opacity-0", defaultClassNames.dropdown),
+        dropdown: cn("absolute bg-popover inset-0 opacity-0", defaultClassNames.dropdown),
         caption_label: cn("select-none font-medium", captionLayout === "label"
           ? "text-sm"
           : "rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5", defaultClassNames.caption_label),
@@ -85,7 +85,10 @@ function Calendar({
           defaultClassNames.week_number
         ),
         day: cn(
-          "relative w-full h-full p-0 text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none",
+          "relative w-full h-full p-0 text-center [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none",
+          props.showWeekNumber
+            ? "[&:nth-child(2)[data-selected=true]_button]:rounded-l-md"
+            : "[&:first-child[data-selected=true]_button]:rounded-l-md",
           defaultClassNames.day
         ),
         range_start: cn("rounded-l-md bg-accent", defaultClassNames.range_start),
@@ -121,17 +124,17 @@ function Calendar({
         DayButton: CalendarDayButton,
         WeekNumber: ({ children, ...props }) => {
           return (
-            (<td {...props}>
+            <td {...props}>
               <div
                 className="flex size-(--cell-size) items-center justify-center text-center">
                 {children}
               </div>
-            </td>)
+            </td>
           );
         },
         ...components,
       }}
-      {...props} />)
+      {...props} />
   );
 }
 
@@ -149,7 +152,7 @@ function CalendarDayButton({
   }, [modifiers.focused])
 
   return (
-    (<Button
+    <Button
       ref={ref}
       variant="ghost"
       size="icon"
@@ -168,7 +171,7 @@ function CalendarDayButton({
         defaultClassNames.day,
         className
       )}
-      {...props} />)
+      {...props} />
   );
 }
 

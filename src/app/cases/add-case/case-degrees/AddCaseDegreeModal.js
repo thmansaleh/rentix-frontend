@@ -1,10 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Save, CircleX } from 'lucide-react';
+import { Save, CircleX, CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
 import { useFormikContext } from 'formik';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import { toast } from 'react-toastify';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +26,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
   const { isRTL, language } = useLanguage();
@@ -34,7 +40,9 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
     degree: '',
     case_number: '',
     year: '',
-    referral_date: null
+    referral_date: null,
+    client_status: '',
+    opponent_status: ''
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,14 +53,18 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
         degree: editData.degree || '',
         case_number: editData.case_number || '',
         year: editData.year || '',
-        referral_date: editData.referral_date ? new Date(editData.referral_date) : null
+        referral_date: editData.referral_date ? new Date(editData.referral_date) : null,
+        client_status: editData.client_status || '',
+        opponent_status: editData.opponent_status || ''
       });
     } else {
       setFormData({
         degree: '',
         case_number: '',
         year: '',
-        referral_date: null
+        referral_date: null,
+        client_status: '',
+        opponent_status: ''
       });
     }
   }, [editData]);
@@ -77,6 +89,11 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
     }
     
     if (!formData.degree || !formData.case_number || !formData.year || !formData.referral_date) {
+      toast.error(
+        language === 'ar' 
+          ? 'يرجى ملء جميع الحقول المطلوبة' 
+          : 'Please fill in all required fields'
+      );
       return;
     }
 
@@ -94,12 +111,20 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
         const updatedCaseDegrees = [...caseDegrees];
         updatedCaseDegrees[editIndex] = caseDegreeData;
         setFieldValue('caseDegrees', updatedCaseDegrees);
-        
+        toast.success(
+          language === 'ar' 
+            ? 'تم تحديث درجة التقاضي بنجاح' 
+            : 'Case degree updated successfully'
+        );
       } else {
         // Add new case degree
         const updatedCaseDegrees = [...caseDegrees, caseDegreeData];
         setFieldValue('caseDegrees', updatedCaseDegrees);
-        
+        toast.success(
+          language === 'ar' 
+            ? 'تم إضافة درجة التقاضي بنجاح' 
+            : 'Case degree added successfully'
+        );
       }
       
       // Reset form
@@ -107,12 +132,18 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
         degree: '',
         case_number: '',
         year: '',
-        referral_date: null
+        referral_date: null,
+        client_status: '',
+        opponent_status: ''
       });
       
       onClose();
     } catch (error) {
-
+      toast.error(
+        language === 'ar' 
+          ? 'حدث خطأ أثناء حفظ درجة التقاضي' 
+          : 'Error occurred while saving case degree'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +155,9 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
         degree: '',
         case_number: '',
         year: '',
-        referral_date: null
+        referral_date: null,
+        client_status: '',
+        opponent_status: ''
       });
       onClose();
     }
@@ -203,14 +236,63 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
             <Label htmlFor="referral_date" className={isRTL ? 'text-right block' : 'text-left block'}>
               {t('caseDegrees.referralDate')} *
             </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button type="button"
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start font-normal",
+                    !formData.referral_date && "text-muted-foreground",
+                    isRTL ? "text-right" : "text-left"
+                  )}
+                >
+                  <CalendarIcon className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+                  {formData.referral_date ? (
+                    format(formData.referral_date, "PPP", { locale: language === 'ar' ? ar : undefined })
+                  ) : (
+                    <span>{t('caseDegrees.selectReferralDate') || 'اختر تاريخ الإحالة'}</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 z-[9999]" align="start">
+                <Calendar
+                  mode="single"
+                  selected={formData.referral_date}
+                  onSelect={(date) => handleInputChange('referral_date', date)}
+                  initialFocus
+                  disabled={(date) => date > new Date()}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* Client Status Input */}
+          <div className="space-y-2">
+            <Label htmlFor="client_status" className={isRTL ? 'text-right block' : 'text-left block'}>
+              صفة الموكل
+            </Label>
             <Input
-              id="referral_date"
-              type="date"
-              value={formData.referral_date ? formData.referral_date.toISOString().split('T')[0] : ''}
-              onChange={(e) => handleInputChange('referral_date', e.target.value ? new Date(e.target.value) : null)}
+              id="client_status"
+              type="text"
+              value={formData.client_status}
+              onChange={(e) => handleInputChange('client_status', e.target.value)}
+              placeholder="أدخل صفة الموكل"
               className={isRTL ? 'text-right' : 'text-left'}
-              // max={new Date().toISOString().split('T')[0]}
-              min="1900-01-01"
+            />
+          </div>
+
+          {/* Opponent Status Input */}
+          <div className="space-y-2">
+            <Label htmlFor="opponent_status" className={isRTL ? 'text-right block' : 'text-left block'}>
+              صفة الخصم
+            </Label>
+            <Input
+              id="opponent_status"
+              type="text"
+              value={formData.opponent_status}
+              onChange={(e) => handleInputChange('opponent_status', e.target.value)}
+              placeholder="أدخل صفة الخصم"
+              className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>
 

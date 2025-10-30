@@ -45,14 +45,14 @@ function RelatedCasesDialog({ caseId, documents = [] }) {
             className="flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 bg-gray-200 text-gray-600 hover:bg-gray-300"
           >
             <Link className="h-4 w-4" />
-            <span className="text-sm font-medium">القضايا المرتبطة</span>
+            <span className="text-sm font-medium">الملفات المرتبطة</span>
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">إدارة القضايا المرتبطة</DialogTitle>
+            <DialogTitle className="text-xl font-bold">إدارة الملفات المرتبطة</DialogTitle>
             <DialogDescription>
-              يمكنك إضافة أو إزالة القضايا المرتبطة بهذه القضية
+              يمكنك إضافة أو إزالة الملفات المرتبطة بهذا الملف
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4">

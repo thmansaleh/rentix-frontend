@@ -5,6 +5,7 @@ import { Save, X } from 'lucide-react';
 import { useLanguage } from '../../../../../contexts/LanguageContext';
 import { useTranslations } from '../../../../../hooks/useTranslations';
 import { createCaseDegree } from '../../../../services/api/caseDegrees';
+import { toast } from 'react-toastify';
 import {
   Dialog,
   DialogContent,
@@ -32,7 +33,9 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
     degree: '',
     case_number: '',
     year: '',
-    referral_date: null
+    referral_date: null,
+    client_status: '',
+    opponent_status: ''
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,6 +59,11 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
     }
     
     if (!formData.degree || !formData.case_number || !formData.year || !formData.referral_date) {
+      toast.error(
+        language === 'ar' 
+          ? 'يرجى ملء جميع الحقول المطلوبة' 
+          : 'Please fill in all required fields'
+      );
       return;
     }
 
@@ -67,22 +75,38 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
         degree: formData.degree,
         case_number: formData.case_number,
         year: formData.year,
-        referral_date: formData.referral_date.toISOString().split('T')[0]
+        referral_date: formData.referral_date.toISOString().split('T')[0],
+        client_status: formData.client_status,
+        opponent_status: formData.opponent_status
       };
 
       await createCaseDegree(caseDegreeData);
+      
+      toast.success(
+        language === 'ar' 
+          ? 'تم إضافة درجة التقاضي بنجاح' 
+          : 'Case degree added successfully'
+      );
       
       // Reset form
       setFormData({
         degree: '',
         case_number: '',
         year: '',
-        referral_date: null
+        referral_date: null,
+        client_status: '',
+        opponent_status: ''
       });
       
       onSuccess && onSuccess();
       onClose();
     } catch (error) {
+      console.error('Error creating case degree:', error);
+      toast.error(
+        language === 'ar' 
+          ? 'حدث خطأ أثناء إضافة درجة التقاضي' 
+          : 'Error occurred while adding case degree'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +118,9 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
         degree: '',
         case_number: '',
         year: '',
-        referral_date: null
+        referral_date: null,
+        client_status: '',
+        opponent_status: ''
       });
       onClose();
     }
@@ -185,6 +211,36 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               }}
               max={new Date().toISOString().split('T')[0]}
               min="1900-01-01"
+              className={isRTL ? 'text-right' : 'text-left'}
+            />
+          </div>
+
+          {/* Client Status Input */}
+          <div className="space-y-2">
+            <Label htmlFor="client_status" className={isRTL ? 'text-right block' : 'text-left block'}>
+              {language === 'ar' ? 'صفة الموكل' : 'Client Status'}
+            </Label>
+            <Input
+              id="client_status"
+              type="text"
+              value={formData.client_status}
+              onChange={(e) => handleInputChange('client_status', e.target.value)}
+              placeholder={language === 'ar' ? 'أدخل صفة الموكل' : 'Enter client status'}
+              className={isRTL ? 'text-right' : 'text-left'}
+            />
+          </div>
+
+          {/* Opponent Status Input */}
+          <div className="space-y-2">
+            <Label htmlFor="opponent_status" className={isRTL ? 'text-right block' : 'text-left block'}>
+              {language === 'ar' ? 'صفة الخصم' : 'Opponent Status'}
+            </Label>
+            <Input
+              id="opponent_status"
+              type="text"
+              value={formData.opponent_status}
+              onChange={(e) => handleInputChange('opponent_status', e.target.value)}
+              placeholder={language === 'ar' ? 'أدخل صفة الخصم' : 'Enter opponent status'}
               className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>

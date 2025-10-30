@@ -12,11 +12,13 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import PageHeader from '@/components/PageHeader';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import InfoTab from './InfoTab';
 import Condiations from './Condiations';
 
 const GeneralSettingsPage = () => {
   const { isRTL } = useLanguage();
+  const t = useTranslations('navigation');
   const router = useRouter();
   const BackIcon = isRTL ? ArrowRight : ArrowLeft;
 
@@ -61,8 +63,8 @@ const GeneralSettingsPage = () => {
 
       <Tabs dir={isRTL ? 'rtl' : 'ltr'} defaultValue="info">
         <TabsList className="w-full max-w-lg">
-          <TabsTrigger value="info">معلومات عن الشركة</TabsTrigger>
-          <TabsTrigger value="condiations">الشروط والأحكام</TabsTrigger>
+          <TabsTrigger value="info">{t('companyInfo')}</TabsTrigger>
+          <TabsTrigger value="condiations">{t('termsAndConditions')}</TabsTrigger>
         </TabsList>
 <InfoTab/>
 <Condiations/>

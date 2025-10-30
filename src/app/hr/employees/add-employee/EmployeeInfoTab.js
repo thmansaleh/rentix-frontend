@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ChevronDownIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
 import { format } from "date-fns";
@@ -50,23 +50,20 @@ const DatePickerField = ({ name, placeholder, value, onChange, isRTL }) => {
         <Button
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-normal",
-            !value && "text-muted-foreground",
-            isRTL && "flex-row-reverse"
+            "w-full justify-between font-normal",
+            !value && "text-muted-foreground"
           )}
-          dir={isRTL ? "rtl" : "ltr"}
         >
-          <CalendarIcon className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
-          {value ? format(selectedDate, "PPP") : placeholder}
+          {value ? selectedDate.toLocaleDateString() : placeholder}
+          <ChevronDownIcon className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto overflow-hidden p-0" align="start">
         <Calendar
           mode="single"
           selected={selectedDate}
+          captionLayout="dropdown"
           onSelect={handleDateSelect}
-          initialFocus
-          dir={isRTL ? "rtl" : "ltr"}
         />
       </PopoverContent>
     </Popover>
@@ -119,48 +116,49 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.name')} required>
             <Input 
               name="name" 
-              placeholder={t('employees.name')} 
+              placeholder="مثال: أحمد محمد" 
               value={form.name} 
               onChange={handleChange} 
             />
           </FormField>
           
-          <FormField label={t('employees.employeeNumber')}>
+          <FormField label={t('employees.employeeNumber')} required>
             <Input 
               name="employeeNumber" 
-              placeholder={t('employees.employeeNumber')} 
+              placeholder="مثال: EMP001" 
               value={form.employeeNumber} 
               onChange={handleChange} 
+              
             />
           </FormField>
 
-          <FormField label={t('employees.username')} required>
+          {/* <FormField label={t('employees.username')} required>
             <Input 
               name="username" 
-              placeholder={t('employees.username')} 
+              placeholder="مثال: ahmed.mohamed" 
               value={form.username} 
               onChange={handleChange}
               disabled
             />
-          </FormField>
+          </FormField> */}
           
           {/* Password - Only visible for Admin */}
-          {isAdmin && (
+          {/* {isAdmin && (
             <FormField label={t('employees.password') || 'كلمة المرور'}>
               <Input 
                 name="password" 
                 type="password"
-                placeholder={t('employees.passwordPlaceholder') || 'كلمة المرور'} 
+                placeholder="مثال: ********" 
                 value={form.password || ''} 
                 onChange={handleChange} 
               />
             </FormField>
           )}
-          
+           */}
           <FormField label={t('employees.email')} >
             <Input 
               name="email" 
-              placeholder={t('employees.email')} 
+              placeholder="مثال: ahmed@example.com" 
               value={form.email} 
               onChange={handleChange} 
             />
@@ -169,7 +167,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.phoneNumber')} required>
             <Input 
               name="phoneNumber" 
-              placeholder={t('employees.phoneNumber')} 
+              placeholder="0500000000" 
               type="tel"
               value={form.phoneNumber} 
               onChange={handleChange} 
@@ -354,7 +352,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.basicSalary')}>
             <Input 
               name="basicSalary" 
-              placeholder={t('employees.basicSalary')} 
+              placeholder="مثال: 5000" 
               type="number"
               value={form.basicSalary} 
               onChange={handleChange} 
@@ -364,7 +362,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.housingAllowance') || 'بدل السكن'}>
             <Input 
               name="housingAllowance" 
-              placeholder={t('employees.housingAllowance') || 'بدل السكن'} 
+              placeholder="مثال: 1000" 
               type="number"
               value={form.housingAllowance} 
               onChange={handleChange} 
@@ -374,7 +372,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.transportationAllowance') || 'بدل المواصلات'}>
             <Input 
               name="transportationAllowance" 
-              placeholder={t('employees.transportationAllowance') || 'بدل المواصلات'} 
+              placeholder="مثال: 500" 
               type="number"
               value={form.transportationAllowance} 
               onChange={handleChange} 
@@ -384,7 +382,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.anotherAllowance') || 'بدل آخر'}>
             <Input 
               name="anotherAllowance" 
-              placeholder={t('employees.anotherAllowance') || 'بدل آخر'} 
+              placeholder="مثال: 300" 
               type="number"
               value={form.anotherAllowance} 
               onChange={handleChange} 
@@ -400,7 +398,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.bankName') || 'اسم البنك'}>
             <Input 
               name="bankName" 
-              placeholder={t('employees.bankName') || 'اسم البنك'} 
+              placeholder="مثال: بنك الإمارات دبي الوطني" 
               value={form.bankName} 
               onChange={handleChange} 
             />
@@ -409,7 +407,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.accountNumber') || 'رقم الحساب'}>
             <Input 
               name="accountNumber" 
-              placeholder={t('employees.accountNumber') || 'رقم الحساب'} 
+              placeholder="مثال: 1234567890" 
               value={form.accountNumber} 
               onChange={handleChange} 
             />
@@ -418,7 +416,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.iban') || 'رقم الآيبان'}>
             <Input 
               name="iban" 
-              placeholder={t('employees.iban') || 'رقم الآيبان'} 
+              placeholder="مثال: AE070331234567890123456" 
               value={form.iban} 
               onChange={handleChange} 
             />
@@ -433,7 +431,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.identityNumber')}>
             <Input 
               name="identityNumber" 
-              placeholder={t('employees.identityNumber')} 
+              placeholder="مثال: 784-1234-1234567-1" 
               value={form.identityNumber} 
               onChange={handleChange} 
             />
@@ -442,7 +440,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.passportNumber')}>
             <Input 
               name="passportNumber" 
-              placeholder={t('employees.passportNumber')} 
+              placeholder="مثال: A12345678" 
               value={form.passportNumber} 
               onChange={handleChange} 
             />

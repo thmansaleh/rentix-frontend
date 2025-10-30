@@ -50,7 +50,8 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
     nationality: "",
     consultation_type: "",
     passport: "",
-    branch_id: 1
+    branch_id: 1,
+    is_vip: false
   });
 
   // Fetch branches
@@ -130,7 +131,8 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
       nationality: "",
       consultation_type: "قانونية",
       passport: "",
-      branch_id: 1
+      branch_id: 1,
+      is_vip: false
     });
     setPartyFiles([]);
   };
@@ -139,9 +141,15 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
     try {
       setLoading(true);
       
-      // Basic validation - only name and party_type are required
+      // Basic validation - name, party_type, and branch_id are required
       if (!formData.name || !formData.party_type) {
         toast.error(t("potentialClientsPage.validation.nameRequired") || "يرجى ملء الحقول المطلوبة");
+        return;
+      }
+
+      // Branch is required
+      if (!formData.branch_id) {
+        toast.error(t("potentialClientsPage.validation.branchRequired") || "الفرع مطلوب");
         return;
       }
 
@@ -223,7 +231,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
     { value: "Unqualified", label: t('potentialClientsPage.status.notQualified') || "غير مؤهل" },
     { value: "Qualified", label: t('potentialClientsPage.status.qualified') || "مؤهل" },
     { value: "Contacted", label: t('potentialClientsPage.status.contacted') || "تم التواصل" },
-    { value: "client", label: t('potentialClientsPage.status.convertToClient') || "تحويل ل موكل" },
+    // { value: "client", label: t('potentialClientsPage.status.convertToClient') || "تحويل ل موكل" },
   ];
 
   const sourceOptions = [
@@ -270,7 +278,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
               id="name"
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
-              placeholder={t('potentialClientsPage.addModal.namePlaceholder') || 'أدخل اسم العميل المحتمل'}
+              placeholder={t('potentialClientsPage.addModal.namePlaceholder') || 'مثال: أحمد محمد'}
             />
           </div>
 
@@ -288,7 +296,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
                   handleInputChange("phone", value);
                 }
               }}
-              placeholder={t('potentialClientsPage.addModal.phonePlaceholder') || 'مثال: +971501234567'}
+              placeholder="0500000000"
             />
           </div>
 
@@ -300,7 +308,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              placeholder="example@email.com"
+              placeholder="مثال: example@email.com"
             />
           </div>
 
@@ -390,7 +398,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
           {/* Branch */}
           <div className="space-y-2">
-            <Label>{t('potentialClientsPage.table.branch') || 'الفرع'}</Label>
+            <Label>{t('potentialClientsPage.table.branch') || 'الفرع'} *</Label>
             <Select 
               dir={isRTL ? "rtl" : "ltr"}
               value={formData.branch_id?.toString()} 
@@ -422,18 +430,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
               id="e_id"
               value={formData.e_id}
               onChange={(e) => handleInputChange("e_id", e.target.value)}
-              placeholder="784-1234-1234567-1"
-            />
-          </div>
-
-          {/* Nationality */}
-          <div className="space-y-2">
-            <Label htmlFor="nationality">{t('potentialClientsPage.table.nationality') || 'الجنسية'}</Label>
-            <Input
-              id="nationality"
-              value={formData.nationality}
-              onChange={(e) => handleInputChange("nationality", e.target.value)}
-              placeholder={t('potentialClientsPage.addModal.nationalityPlaceholder') || 'الإمارات العربية المتحدة'}
+              placeholder="مثال: 784-1234-1234567-1"
             />
           </div>
 
@@ -444,7 +441,18 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
               id="passport"
               value={formData.passport}
               onChange={(e) => handleInputChange("passport", e.target.value)}
-              placeholder={t('potentialClientsPage.addModal.passportPlaceholder') || 'أدخل رقم جواز السفر'}
+              placeholder={t('potentialClientsPage.addModal.passportPlaceholder') || 'مثال: A12345678'}
+            />
+          </div>
+
+          {/* Nationality */}
+          <div className="space-y-2">
+            <Label htmlFor="nationality">{t('potentialClientsPage.table.nationality') || 'الجنسية'}</Label>
+            <Input
+              id="nationality"
+              value={formData.nationality}
+              onChange={(e) => handleInputChange("nationality", e.target.value)}
+              placeholder={t('potentialClientsPage.addModal.nationalityPlaceholder') || 'مثال: الإمارات العربية المتحدة'}
             />
           </div>
 
@@ -468,6 +476,26 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
             </div>
           </div>
 
+          {/* VIP Switch */}
+          <div className="space-y-2">
+            <Label htmlFor="is_vip">{t('potentialClientsPage.vipStatus') || 'عميل مميز (VIP)'}</Label>
+            <div className="flex items-center space-x-2 space-x-reverse">
+              <Switch
+                id="is_vip"
+                checked={formData.is_vip}
+                onCheckedChange={(checked) => 
+                  handleInputChange("is_vip", checked)
+                }
+              />
+              <Label htmlFor="is_vip" className="cursor-pointer">
+                {formData.is_vip 
+                  ? (t('potentialClientsPage.vip') || 'VIP')
+                  : (t('potentialClientsPage.regular') || 'عادي')
+                }
+              </Label>
+            </div>
+          </div>
+
           {/* Address */}
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="address">{t('potentialClientsPage.table.address') || 'العنوان'}</Label>
@@ -475,7 +503,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
               id="address"
               value={formData.address}
               onChange={(e) => handleInputChange("address", e.target.value)}
-              placeholder={t('potentialClientsPage.addModal.addressPlaceholder') || 'أدخل العنوان التفصيلي'}
+              placeholder={t('potentialClientsPage.addModal.addressPlaceholder') || 'مثال: شارع الشيخ زايد، دبي'}
               rows={3}
             />
           </div>

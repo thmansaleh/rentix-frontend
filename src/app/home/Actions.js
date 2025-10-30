@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Edit } from 'lucide-react'
-import EditSessionModal from '../cases/sessions/EditSessionModal'
+import AppealDecisionModal from './AppealDecisionModal'
 import { usePermission } from '@/hooks/useAuth'
 
-function Actions({ theme = 'blue', onEdit, sessionId }) {
+function Actions({ theme = 'blue', onEdit, sessionId, caseId }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { hasPermission: canEditSession } = usePermission('Edit Session')
 
@@ -19,7 +19,7 @@ function Actions({ theme = 'blue', onEdit, sessionId }) {
   const handleEditClick = () => {
     if (onEdit) {
       onEdit()
-    } else if (sessionId) {
+    } else if (caseId) {
       setIsModalOpen(true)
     }
   }
@@ -40,12 +40,18 @@ function Actions({ theme = 'blue', onEdit, sessionId }) {
         {/* Future actions can be added here */}
       </div>
 
-      {/* Edit Session Modal */}
-      {sessionId && (
-        <EditSessionModal
+      {/* Appeal Decision Modal */}
+      {caseId && (
+        <AppealDecisionModal
           isOpen={isModalOpen}
           onClose={handleModalClose}
-          sessionId={sessionId}
+          caseId={caseId}
+          onSuccess={() => {
+            // Refresh the data if needed
+            if (onEdit) {
+              onEdit()
+            }
+          }}
         />
       )}
     </>

@@ -17,11 +17,13 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Check, ChevronsUpDown, X, FileText } from 'lucide-react';
+import { Check, ChevronsUpDown, X, FileText, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 function RelatedCases({ caseId }) {
   const formikProps = useFormikContext();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [availableCases, setAvailableCases] = useState([]);
@@ -92,7 +94,7 @@ function RelatedCases({ caseId }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <label className="text-sm font-medium">القضايا المرتبطة</label>
+        <label className="text-sm font-medium">الملفات المرتبطة</label>
         
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -102,14 +104,14 @@ function RelatedCases({ caseId }) {
               aria-expanded={open}
               className="w-[300px] justify-between"
             >
-              اختر قضية مرتبطة
+              اختر ملف مرتبط
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0">
             <Command>
               <CommandInput 
-                placeholder="البحث عن قضية..." 
+                placeholder="البحث عن ملف..." 
                 value={searchTerm}
                 onValueChange={setSearchTerm}
               />
@@ -125,7 +127,7 @@ function RelatedCases({ caseId }) {
                   </div>
                 )}
                 {!loading && searchTerm.length >= 3 && availableCases.length === 0 && (
-                  <CommandEmpty>لا توجد قضايا</CommandEmpty>
+                  <CommandEmpty>لا توجد ملفات</CommandEmpty>
                 )}
                 <CommandGroup>
                   {availableCases.map((caseItem) => {
@@ -173,7 +175,7 @@ function RelatedCases({ caseId }) {
       {/* Display selected related cases */}
       {relatedCases.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">القضايا المرتبطة المختارة:</h3>
+          <h3 className="text-sm font-medium">الملفات المرتبطة المختارة:</h3>
           <div className="space-y-2">
             {relatedCases.map((caseItem) => (
               <div
@@ -194,15 +196,28 @@ function RelatedCases({ caseId }) {
                     )}
                   </div>
                 </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRemoveCase(caseItem.id)}
-                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => router.push(`/cases/${caseItem.id}/edit`)}
+                    className="h-8 w-8 p-0 text-primary hover:text-primary"
+                    title="عرض الملف"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveCase(caseItem.id)}
+                    className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                    title="إزالة"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

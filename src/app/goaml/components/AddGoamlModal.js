@@ -113,7 +113,7 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
-                placeholder="أدخل الاسم"
+                placeholder="مثال: أحمد محمد"
                 className={errors.name ? 'border-red-500' : ''}
               />
               {errors.name && (
@@ -129,7 +129,7 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleChange('phone', e.target.value)}
-                placeholder="أدخل رقم الهاتف"
+                placeholder="0500000000"
                 className={errors.phone ? 'border-red-500' : ''}
               />
               {errors.phone && (
@@ -181,7 +181,7 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
                 id="note"
                 value={formData.note}
                 onChange={(e) => handleChange('note', e.target.value)}
-                placeholder="أدخل ملاحظة (اختياري)"
+                placeholder="مثال: ملاحظات إضافية"
                 rows={3}
                 className={errors.note ? 'border-red-500' : ''}
               />

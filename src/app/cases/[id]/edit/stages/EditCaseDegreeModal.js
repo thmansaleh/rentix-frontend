@@ -5,6 +5,7 @@ import { Save, X } from 'lucide-react';
 import { useLanguage } from '../../../../../contexts/LanguageContext';
 import { useTranslations } from '../../../../../hooks/useTranslations';
 import { updateCaseDegree } from '../../../../services/api/caseDegrees';
+import { toast } from 'react-toastify';
 import {
   Dialog,
   DialogContent,
@@ -32,7 +33,9 @@ const EditCaseDegreeModal = ({ isOpen, onClose, degreeData, onSuccess }) => {
     degree: '',
     case_number: '',
     year: '',
-    referral_date: null
+    referral_date: null,
+    client_status: '',
+    opponent_status: ''
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,7 +46,9 @@ const EditCaseDegreeModal = ({ isOpen, onClose, degreeData, onSuccess }) => {
         degree: degreeData.degree || '',
         case_number: degreeData.case_number || '',
         year: degreeData.year || '',
-        referral_date: degreeData.referral_date ? new Date(degreeData.referral_date) : null
+        referral_date: degreeData.referral_date ? new Date(degreeData.referral_date) : null,
+        client_status: degreeData.client_status || '',
+        opponent_status: degreeData.opponent_status || ''
       });
     }
   }, [degreeData]);
@@ -68,6 +73,11 @@ const EditCaseDegreeModal = ({ isOpen, onClose, degreeData, onSuccess }) => {
     }
     
     if (!formData.degree || !formData.case_number || !formData.year || !formData.referral_date || !degreeData?.id) {
+      toast.error(
+        language === 'ar' 
+          ? 'يرجى ملء جميع الحقول المطلوبة' 
+          : 'Please fill in all required fields'
+      );
       return;
     }
 
@@ -79,14 +89,28 @@ const EditCaseDegreeModal = ({ isOpen, onClose, degreeData, onSuccess }) => {
         degree: formData.degree,
         case_number: formData.case_number,
         year: formData.year,
-        referral_date: formData.referral_date.toISOString().split('T')[0]
+        referral_date: formData.referral_date.toISOString().split('T')[0],
+        client_status: formData.client_status,
+        opponent_status: formData.opponent_status
       };
 
       await updateCaseDegree(degreeData.id, updatedCaseDegreeData);
       
+      toast.success(
+        language === 'ar' 
+          ? 'تم تحديث درجة التقاضي بنجاح' 
+          : 'Case degree updated successfully'
+      );
+      
       onSuccess && onSuccess();
       onClose();
     } catch (error) {
+      console.error('Error updating case degree:', error);
+      toast.error(
+        language === 'ar' 
+          ? 'حدث خطأ أثناء تحديث درجة التقاضي' 
+          : 'Error occurred while updating case degree'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -183,6 +207,36 @@ const EditCaseDegreeModal = ({ isOpen, onClose, degreeData, onSuccess }) => {
               }}
               max={new Date().toISOString().split('T')[0]}
               min="1900-01-01"
+              className={isRTL ? 'text-right' : 'text-left'}
+            />
+          </div>
+
+          {/* Client Status Input */}
+          <div className="space-y-2">
+            <Label htmlFor="client_status" className={isRTL ? 'text-right block' : 'text-left block'}>
+              {language === 'ar' ? 'صفة الموكل' : 'Client Status'}
+            </Label>
+            <Input
+              id="client_status"
+              type="text"
+              value={formData.client_status}
+              onChange={(e) => handleInputChange('client_status', e.target.value)}
+              placeholder={language === 'ar' ? 'أدخل صفة الموكل' : 'Enter client status'}
+              className={isRTL ? 'text-right' : 'text-left'}
+            />
+          </div>
+
+          {/* Opponent Status Input */}
+          <div className="space-y-2">
+            <Label htmlFor="opponent_status" className={isRTL ? 'text-right block' : 'text-left block'}>
+              {language === 'ar' ? 'صفة الخصم' : 'Opponent Status'}
+            </Label>
+            <Input
+              id="opponent_status"
+              type="text"
+              value={formData.opponent_status}
+              onChange={(e) => handleInputChange('opponent_status', e.target.value)}
+              placeholder={language === 'ar' ? 'أدخل صفة الخصم' : 'Enter opponent status'}
               className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>

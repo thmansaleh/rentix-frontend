@@ -1,21 +1,22 @@
 'use client'
 
-import LastWeekSessionsItem from "./LastWeekSessionsItem"
 import useSWR from 'swr'
 import { casePetitions } from "../services/api/CasePetitions"
 import CasePetitionsItem from "./CasePetitionsItem"
+import { useTranslations } from '@/hooks/useTranslations'
 
 function CasePetitions() {
+    const { t } = useTranslations()
     const { data, error, isLoading } = useSWR('case-petitions', casePetitions)
 
     if (isLoading) {
         return (
             <div>
                 <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    📅 اجراءات قضايا جديدة
+                    {t('home.newCasePetitions')}
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                    <div className="text-center text-gray-500 dark:text-gray-400">جاري التحميل...</div>
+                    <div className="text-center text-gray-500 dark:text-gray-400">{t('home.loading')}</div>
                 </div>
             </div>
         )
@@ -25,10 +26,10 @@ function CasePetitions() {
         return (
             <div>
                 <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-                    📅 اجراءات قضايا جديدة
+                    {t('home.newCasePetitions')}
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                    <div className="text-center text-red-500 dark:text-red-400">خطأ في تحميل البيانات</div>
+                    <div className="text-center text-red-500 dark:text-red-400">{t('home.errorLoadingData')}</div>
                 </div>
             </div>
         )
@@ -38,11 +39,11 @@ function CasePetitions() {
 
     return <div>
         <div className='text-lg font-bold rounded-2xl bg-amber-200 dark:bg-amber-700 p-3 text-center mb-4 shadow-sm dark:text-gray-100'>
-            📅 اجراءات قضايا جديدة
+            {t('home.newCasePetitions')}
         </div>
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 p-4">
             {petitions.length === 0 ? (
-                <div className="text-center text-gray-500 dark:text-gray-400 py-4">لا توجد اجراءات قضايا جديدة</div>
+                <div className="text-center text-gray-500 dark:text-gray-400 py-4">{t('home.noNewCasePetitions')}</div>
             ) : (
                 petitions.map((petition) => (
                     <CasePetitionsItem

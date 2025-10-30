@@ -7,11 +7,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CalendarIcon, Plus, Minus, File, FileText, Image, FileSpreadsheet } from "lucide-react"
 import { cn } from "@/lib/utils"
+import AddLegalPeriodModal from "./AddLegalPeriodModal"
+import { getLegalPeriods } from "@/app/services/api/legalPeriods"
 
 // Helper function to get file type icon
 const getFileIcon = (fileName) => {
@@ -67,22 +72,50 @@ const setTimeOnDate = (date, timeString) => {
 
 function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
   const [isDragOver, setIsDragOver] = useState(false)
+  const [legalPeriods, setLegalPeriods] = useState([])
+  const [isAddLegalPeriodOpen, setIsAddLegalPeriodOpen] = useState(false)
   const [formData, setFormData] = useState({
     date: null,
     link: "",
     decision: "",
     isExpertSession: false,
+    hasRuling: false,
+    ruling: "",
+    rulingDate: "",
+    legalPeriodId: "",
     files: []
   })
+
+  // Fetch legal periods
+  useEffect(() => {
+    if (open) {
+      fetchLegalPeriods()
+    }
+  }, [open])
+
+  const fetchLegalPeriods = async () => {
+    try {
+      const data = await getLegalPeriods()
+      if (data.success) {
+        setLegalPeriods(data.data || [])
+      }
+    } catch (error) {
+      console.error('Error fetching legal periods:', error)
+    }
+  }
 
   // Update form data when session changes
   useEffect(() => {
     if (session && open) {
       setFormData({
-        date: session.date ? new Date(session.date) : null,
+        date: session.session_date ? new Date(session.session_date) : null,
         link: session.link || "",
         decision: session.decision || "",
-        isExpertSession: session.isExpertSession || false,
+        isExpertSession: session.is_expert_session === 1 || session.is_expert_session === true,
+        hasRuling: session.has_ruling === 1 || session.has_ruling === true,
+        ruling: session.ruling || "",
+        rulingDate: session.ruling_date || "",
+        legalPeriodId: session.legal_period_id || "",
         files: session.files || []
       })
     }
@@ -121,6 +154,15 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
         ...prev,
         date: setTimeOnDate(prev.date || new Date(), value)
       }))
+    } else if (field === "hasRuling") {
+      setFormData(prev => ({
+        ...prev,
+        hasRuling: value,
+        // Clear ruling, ruling date and legal period if unchecked
+        ruling: value ? prev.ruling : "",
+        rulingDate: value ? prev.rulingDate : "",
+        legalPeriodId: value ? prev.legalPeriodId : ""
+      }))
     } else {
       setFormData(prev => ({
         ...prev,
@@ -153,10 +195,14 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
       
       const updatedSession = {
         ...session,
-        date: formattedDate,
+        session_date: formattedDate,
         link: formData.link,
         decision: formData.decision,
-        isExpertSession: formData.isExpertSession,
+        is_expert_session: formData.isExpertSession,
+        has_ruling: formData.hasRuling,
+        ruling: formData.ruling,
+        ruling_date: formData.rulingDate,
+        legal_period_id: formData.legalPeriodId,
         files: formData.files
       }
       
@@ -169,8 +215,20 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
     onOpenChange(false)
   }
 
+  const handleAddLegalPeriod = () => {
+    setIsAddLegalPeriodOpen(true)
+  }
+
+  const handleLegalPeriodAdded = () => {
+    fetchLegalPeriods()
+    setIsAddLegalPeriodOpen(false)
+  }
+
+  const selectedPeriod = legalPeriods.find(p => p.id === parseInt(formData.legalPeriodId))
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{t('sessions.editSession')}</DialogTitle>
@@ -198,7 +256,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 z-[9999]" align="start">
                   <Calendar
                     mode="single"
                     selected={formData.date}
@@ -255,6 +313,121 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
                 {t('sessions.expertSession')}
               </Label>
             </div>
+
+            {/* Has Ruling Switch */}
+            <div className="flex items-center justify-between space-x-2 space-x-reverse p-3 border rounded-lg">
+              <Label htmlFor="edit-hasRuling" className="cursor-pointer">
+                حكم صادر
+              </Label>
+              <Switch
+                id="edit-hasRuling"
+                checked={formData.hasRuling}
+                onCheckedChange={(checked) => handleInputChange("hasRuling", checked)}
+              />
+            </div>
+
+            {/* Ruling Input - Shows when hasRuling is true */}
+            {formData.hasRuling && (
+              <>
+                <div className="space-y-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <Label htmlFor="edit-ruling">منطوق الحكم</Label>
+                  <Textarea
+                    id="edit-ruling"
+                    placeholder="أدخل منطوق الحكم"
+                    value={formData.ruling}
+                    onChange={(e) => handleInputChange("ruling", e.target.value)}
+                    rows={3}
+                    className="resize-none"
+                  />
+                </div>
+
+                {/* Ruling Date */}
+                <div className="space-y-2">
+                  <Label htmlFor="edit-rulingDate">تاريخ صدور الحكم</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button type="button"
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.rulingDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.rulingDate ? (
+                          format(new Date(formData.rulingDate), "PPP", { locale: ar })
+                        ) : (
+                          <span>اختر تاريخ صدور الحكم</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 z-[9999]" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={formData.rulingDate ? new Date(formData.rulingDate) : null}
+                        onSelect={(date) => handleInputChange("rulingDate", date ? format(date, 'yyyy-MM-dd') : "")}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Legal Period Selection */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="edit-legalPeriod">المدة القانونية</Label>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleAddLegalPeriod}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      إضافة مدة جديدة
+                    </Button>
+                  </div>
+                  <Select 
+                    value={formData.legalPeriodId?.toString()} 
+                    onValueChange={(value) => handleInputChange("legalPeriodId", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر المدة القانونية" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {legalPeriods.map((period) => (
+                        <SelectItem key={period.id} value={period.id.toString()}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{period.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {period.objection_days && `التظلم: ${period.objection_days} يوم`}
+                              {period.objection_days && (period.appeal_days || period.cassation_days) && ' - '}
+                              {period.appeal_days && `الاستئناف: ${period.appeal_days} يوم`}
+                              {period.appeal_days && period.cassation_days && ' - '}
+                              {period.cassation_days && `الطعن: ${period.cassation_days} يوم`}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  {/* Show selected period details */}
+                  {selectedPeriod && (
+                    <div className="text-sm text-muted-foreground bg-gray-50 p-2 rounded border">
+                      {selectedPeriod.objection_days && (
+                        <div>التظلم: {selectedPeriod.objection_days} يوم</div>
+                      )}
+                      {selectedPeriod.appeal_days && (
+                        <div>الاستئناف: {selectedPeriod.appeal_days} يوم</div>
+                      )}
+                      {selectedPeriod.cassation_days && (
+                        <div>الطعن: {selectedPeriod.cassation_days} يوم</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
             
             {/* File Upload Section */}
             <div className="space-y-3">
@@ -347,6 +520,13 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
         </div>
       </DialogContent>
     </Dialog>
+
+    <AddLegalPeriodModal
+      open={isAddLegalPeriodOpen}
+      onOpenChange={setIsAddLegalPeriodOpen}
+      onSuccess={handleLegalPeriodAdded}
+    />
+  </>
   )
 }
 

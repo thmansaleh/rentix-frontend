@@ -89,7 +89,7 @@ function RelatedCases() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <label className="text-sm font-medium">القضايا المرتبطة</label>
+        <label className="text-sm font-medium">الملفات المرتبطة</label>
         
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -99,14 +99,14 @@ function RelatedCases() {
               aria-expanded={open}
               className="w-[300px] justify-between"
             >
-              اختر قضية مرتبطة
+              اختر ملف مرتبط
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0">
             <Command>
               <CommandInput 
-                placeholder="البحث عن قضية..." 
+                placeholder="البحث عن ملف..." 
                 value={searchTerm}
                 onValueChange={setSearchTerm}
               />
@@ -122,7 +122,7 @@ function RelatedCases() {
                   </div>
                 )}
                 {!loading && searchTerm.length >= 3 && availableCases.length === 0 && (
-                  <CommandEmpty>لا توجد قضايا</CommandEmpty>
+                  <CommandEmpty>لا توجد ملفات</CommandEmpty>
                 )}
                 <CommandGroup>
                   {availableCases.map((caseItem) => {
@@ -170,7 +170,7 @@ function RelatedCases() {
       {/* Display selected related cases */}
       {relatedCases.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">القضايا المرتبطة المختارة:</h3>
+          <h3 className="text-sm font-medium">الملفات المرتبطة المختارة:</h3>
           <div className="space-y-2">
             {relatedCases.map((caseItem) => (
               <div

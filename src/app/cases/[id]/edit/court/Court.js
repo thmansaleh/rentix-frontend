@@ -154,7 +154,7 @@ function Court({ caseId }) {
           {/* Police Station Selection */}
           <div className="space-y-2">
             <Label className={isArabic ? 'text-right block' : 'text-left block'}>
-              {isArabic ? 'مركز الشرطة' : 'Police Station'} <span className="text-red-500">*</span>
+              {isArabic ? 'مركز الشرطة' : 'Police Station'}
             </Label>
             <div className="flex gap-2">
               <Select 
@@ -206,7 +206,7 @@ function Court({ caseId }) {
           {/* Public Prosecution Selection */}
           <div className="space-y-2">
             <Label className={isArabic ? 'text-right block' : 'text-left block'}>
-              {isArabic ? 'النيابة العامة' : 'Public Prosecution'} <span className="text-red-500">*</span>
+              {isArabic ? 'النيابة العامة' : 'Public Prosecution'}
             </Label>
             <div className="flex gap-2">
               <Select 
@@ -269,7 +269,7 @@ function Court({ caseId }) {
           {/* Court Selection */}
           <div className="space-y-2">
             <Label className={isArabic ? 'text-right block' : 'text-left block'}>
-              {isArabic ? 'المحكمة' : 'Court'} <span className="text-red-500">*</span>
+              {isArabic ? 'المحكمة' : 'Court'}
             </Label>
             <div className="flex gap-2">
               <Select 

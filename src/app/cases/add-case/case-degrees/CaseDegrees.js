@@ -84,6 +84,8 @@ function CaseDegrees() {
                   <TableHead className="text-center">{t('initiationProceeding.caseNumber')}</TableHead>
                   <TableHead className="text-center">{t('initiationProceeding.year')}</TableHead>
                   <TableHead className="text-center">{t('initiationProceeding.referralDate')}</TableHead>
+                  <TableHead className="text-center">صفة الموكل</TableHead>
+                  <TableHead className="text-center">صفة الخصم</TableHead>
                   <TableHead className="text-center">{t('initiationProceeding.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
@@ -101,6 +103,12 @@ function CaseDegrees() {
                     </TableCell>
                     <TableCell className="text-center">
                       {degree.referral_date ? format(new Date(degree.referral_date), "PPP", { locale: ar }) : t('initiationProceeding.notSpecified')}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {degree.client_status || t('initiationProceeding.notSpecified')}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {degree.opponent_status || t('initiationProceeding.notSpecified')}
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="flex justify-center space-x-2">

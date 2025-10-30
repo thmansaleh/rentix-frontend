@@ -29,10 +29,13 @@ import {
 import { toast } from 'react-toastify';
 import { useCallLogs } from '@/hooks/useCallLogs';
 import { deleteCallLog } from '@/app/services/api/callLogs';
+import { useLanguage } from '@/contexts/LanguageContext';
+import ExportButtons from '@/components/ui/export-buttons';
 import AddCallModal from './components/AddCallModal';
 import EditCallModal from './components/EditCallModal';
 
 const CallLogsPage = () => {
+  const { language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [callTypeFilter, setCallTypeFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -138,6 +141,61 @@ const CallLogsPage = () => {
     toast.error('فشل في جلب سجل المكالمات');
   }
 
+  // Column configuration for export
+  const callLogsColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    client_name: {
+      ar: 'اسم العميل',
+      en: 'Client Name',
+      dataKey: 'client_name'
+    },
+    phone_number: {
+      ar: 'رقم الهاتف',
+      en: 'Phone Number',
+      dataKey: 'phone_number'
+    },
+    call_type: {
+      ar: 'نوع المكالمة',
+      en: 'Call Type',
+      dataKey: 'call_type',
+      type: 'status',
+      statusMap: {
+        'incoming': { ar: 'واردة', en: 'Incoming' },
+        'outgoing': { ar: 'صادرة', en: 'Outgoing' }
+      }
+    },
+    date: {
+      ar: 'التاريخ',
+      en: 'Date',
+      dataKey: 'date',
+      type: 'date'
+    },
+    time: {
+      ar: 'الوقت',
+      en: 'Time',
+      dataKey: 'time'
+    },
+    duration: {
+      ar: 'المدة (دقائق)',
+      en: 'Duration (minutes)',
+      dataKey: 'duration'
+    },
+    notes: {
+      ar: 'ملاحظات',
+      en: 'Notes',
+      dataKey: 'notes'
+    },
+    employee_name: {
+      ar: 'اسم الموظف',
+      en: 'Employee Name',
+      dataKey: 'employee_name'
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6" dir="rtl">
       {/* Header */}
@@ -192,7 +250,18 @@ const CallLogsPage = () => {
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {/* Export Buttons */}
+          {callLogs && callLogs.length > 0 && !isLoading && !isError && (
+            <ExportButtons
+              data={callLogs}
+              columnConfig={callLogsColumnConfig}
+              language={language}
+              exportName="call-logs"
+              sheetName={language === 'ar' ? 'سجل المكالمات' : 'Call Logs'}
+            />
+          )}
+
           {isLoading ? (
             <div className="flex justify-center items-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>

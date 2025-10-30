@@ -65,7 +65,7 @@ function Inputs({ formikProps }) {
       {/* Fees and Expenses Combined */}
       <div className="space-y-2">
         <Label htmlFor="fees">
-          {t('caseForm.feesAndExpenses')} <span className="text-red-500">*</span>
+          {t('caseForm.feesAndExpenses')}
         </Label>
         <Input
           id="fees"
@@ -78,54 +78,18 @@ function Inputs({ formikProps }) {
           className={`w-full ${errors.fees && touched.fees ? 'border-red-500' : ''}`}
           min="0"
           step="1"
-          required
         />
         {errors.fees && touched.fees && (
           <div className="text-red-500 text-sm">{errors.fees}</div>
         )}
       </div>
 
-      {/* Start Date */}
-      <div className="space-y-2">
-        <Label>
-          {t('caseForm.startDate')} <span className="text-red-500">*</span>
-        </Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !selectedDate && "text-muted-foreground",
-                errors.start_date && touched.start_date && "border-red-500"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {selectedDate ? (
-                format(selectedDate, "PPP")
-              ) : (
-                <span>{t('caseForm.selectDate')}</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={handleDateChange}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        {errors.start_date && touched.start_date && (
-          <div className="text-red-500 text-sm">{errors.start_date}</div>
-        )}
-      </div>
+      {/* Start Date - Removed as it's auto-generated and cannot be edited */}
 
       {/* Subject */}
       <div className="space-y-2 col-span-2">
         <Label htmlFor="topic">
-          {t('caseForm.subject')} <span className="text-red-500">*</span>
+          {t('caseForm.subject')}
         </Label>
         <Textarea
           id="topic"
@@ -136,7 +100,6 @@ function Inputs({ formikProps }) {
           placeholder={t('caseForm.enterSubject')}
           className={`w-full min-h-[100px] ${errors.topic && touched.topic ? 'border-red-500' : ''}`}
           rows={4}
-          required
         />
         {errors.topic && touched.topic && (
           <div className="text-red-500 text-sm">{errors.topic}</div>
@@ -146,7 +109,7 @@ function Inputs({ formikProps }) {
       {/* Additional Notes */}
       <div className="space-y-2">
         <Label htmlFor="additional_note">
-          {t('caseForm.additionalNotes')} <span className="text-red-500">*</span>
+          {t('caseForm.additionalNotes')}
         </Label>
         <Textarea
           id="additional_note"

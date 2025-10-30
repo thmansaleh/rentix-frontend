@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Hash, FileText, User, Clock, Calendar } from 'lucide-react'
-import Actions from './Actions'
+import { Hash, FileText, User, Clock, Calendar, Pen } from 'lucide-react'
+import { useTranslations } from '@/hooks/useTranslations'
+import EditSessionModal from '@/app/cases/sessions/EditSessionModal'
 
 function LastWeekSessionsItem({ 
   session,
@@ -13,6 +14,9 @@ function LastWeekSessionsItem({
   status,
   time
 }) {
+  const { t } = useTranslations()
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  
   // Handle both direct props (for backward compatibility) and session object
   const sessionData = session || {
     title,
@@ -29,9 +33,9 @@ function LastWeekSessionsItem({
     }
     
     const degreeConfig = {
-      appeal: { label: 'استئناف', color: 'bg-purple-100 text-purple-800 hover:bg-purple-200' },
-      first_instance: { label: 'ابتدائية', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' },
-      cassation: { label: 'نقض', color: 'bg-red-100 text-red-800 hover:bg-red-200' }
+      appeal: { label: t('home.appeal'), color: 'bg-purple-100 text-purple-800 hover:bg-purple-200' },
+      first_instance: { label: t('home.firstInstance'), color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' },
+      cassation: { label: t('home.cassation'), color: 'bg-red-100 text-red-800 hover:bg-red-200' }
     }
     
     return degreeConfig[degree] || { label: degree, color: 'bg-gray-100 text-gray-800 hover:bg-gray-200' }
@@ -70,17 +74,18 @@ function LastWeekSessionsItem({
   }
 
   // Extract data from API response or use props
-  const displayTitle = session ? (session.decision || 'بدون قرار') : sessionData.title
+  const displayTitle = session ? (session.decision || t('home.noDecision')) : sessionData.title
   const displayDate = session ? formatDate(session.session_date) : sessionData.date
   const displayTime = session ? formatTime(session.session_date) : sessionData.time
   const displayCaseNumber = session ? session.case_number : sessionData.caseNumber
-  const displayClientName = session ? (session.clientParties?.[0] || 'غير محدد') : sessionData.clientName
+  const displayClientName = session ? (session.clientParties?.[0] || t('home.notSpecified')) : sessionData.clientName
   const displayDegree = session ? session.degree : sessionData.degree
 
   const degreeInfo = getDegreeBadge(displayDegree)
 
   return (
-    <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] dark:bg-gray-900 dark:border-gray-700">
+    <>
+      <Card className="transition-all duration-200 hover:shadow-md hover:scale-[1.02] dark:bg-gray-900 dark:border-gray-700">
       <CardContent className="p-4">
         <div className="flex items-center justify-center mb-4 p-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 rounded-lg ">
           <div className="flex items-center gap-3">
@@ -96,13 +101,13 @@ function LastWeekSessionsItem({
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Clock className="w-4 h-4" />
-            <span>تاريخ الجلسة: {displayDate}</span>
+            <span>{t('home.sessionDate')}: {displayDate}</span>
             {displayTime && <span className="text-blue-600 dark:text-blue-400 font-medium">• {displayTime}</span>}
           </div>
           
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <FileText className="w-4 h-4" />
-            <span>رقم القضية: </span>
+            <span>{t('home.caseNumber')}: </span>
             <span className="font-medium text-gray-900 dark:text-gray-100">{displayCaseNumber}</span>
             {degreeInfo && (
               <Badge className={`ml-2 ${degreeInfo.color}`}>
@@ -111,16 +116,32 @@ function LastWeekSessionsItem({
             )}
           </div>
           
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <User className="w-4 h-4" />
-            <span>العميل: </span>
-            <span className="font-medium text-gray-900 dark:text-gray-100">{displayClientName}</span>
+          <div className="flex items-center justify-between gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              <span>{t('home.client')}: </span>
+              <span className="font-medium text-gray-900 dark:text-gray-100">{displayClientName}</span>
+            </div>
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="p-1 hover:bg-blue-100 dark:hover:bg-blue-800 rounded transition-colors text-blue-600 dark:text-blue-400"
+              title={t('home.editSession')}
+            >
+              <Pen className="w-4 h-4" />
+            </button>
           </div>
-          
-          <Actions theme="blue" sessionId={session?.id} />
         </div>
       </CardContent>
     </Card>
+    
+    {session?.id && (
+      <EditSessionModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        sessionId={session.id}
+      />
+    )}
+    </>
   )
 }
 

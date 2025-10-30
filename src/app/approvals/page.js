@@ -6,13 +6,18 @@ import Memos from './memos/Memos';
 import AssignedToTasks from '../cases/my-tasks/AssignedToTasks';
 import MyTasks from '../cases/my-tasks/MyTasks';
 import EmployeesRequests from './employees-requests/EmployeesRequests';
+import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ApprovalsPage() {
-  return <Tabs dir="rtl" defaultValue="memos" className="w-full">
+  const t = useTranslations('navigation');
+  const { isRTL } = useLanguage();
+
+  return <Tabs dir={isRTL ? 'rtl' : 'ltr'} defaultValue="memos" className="w-full">
     <TabsList>
-      <TabsTrigger value="memos">المذكرات</TabsTrigger>
-      <TabsTrigger value="tasks">المهام</TabsTrigger>
-      <TabsTrigger value="employees requests">طلبات الموظفين</TabsTrigger>
+      <TabsTrigger value="memos">{t('memos')}</TabsTrigger>
+      <TabsTrigger value="tasks">{t('tasks')}</TabsTrigger>
+      <TabsTrigger value="employees requests">{t('employeesRequests')}</TabsTrigger>
     </TabsList>
       <TabsContent value="memos">
         <Memos />

@@ -42,6 +42,8 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onCaseDegreeAdded }) => {
     case_number: '',
     year: '',
     referral_date: null,
+    client_status: '',
+    opponent_status: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -94,6 +96,8 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onCaseDegreeAdded }) => {
           case_number: '',
           year: '',
           referral_date: null,
+          client_status: '',
+          opponent_status: ''
         });
         
         // Call callback if provided
@@ -125,6 +129,8 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onCaseDegreeAdded }) => {
         case_number: '',
         year: '',
         referral_date: null,
+        client_status: '',
+        opponent_status: ''
       });
       onClose();
     }
@@ -245,6 +251,36 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onCaseDegreeAdded }) => {
                 />
               </PopoverContent>
             </Popover>
+          </div>
+
+          {/* Client Status Input */}
+          <div className="space-y-2">
+            <Label htmlFor="client_status" className={isRTL ? 'text-right block' : 'text-left block'}>
+              {language === 'ar' ? 'صفة الموكل' : 'Client Status'}
+            </Label>
+            <Input
+              id="client_status"
+              type="text"
+              value={formData.client_status}
+              onChange={(e) => handleInputChange('client_status', e.target.value)}
+              placeholder={language === 'ar' ? 'أدخل صفة الموكل' : 'Enter client status'}
+              className={isRTL ? 'text-right' : 'text-left'}
+            />
+          </div>
+
+          {/* Opponent Status Input */}
+          <div className="space-y-2">
+            <Label htmlFor="opponent_status" className={isRTL ? 'text-right block' : 'text-left block'}>
+              {language === 'ar' ? 'صفة الخصم' : 'Opponent Status'}
+            </Label>
+            <Input
+              id="opponent_status"
+              type="text"
+              value={formData.opponent_status}
+              onChange={(e) => handleInputChange('opponent_status', e.target.value)}
+              placeholder={language === 'ar' ? 'أدخل صفة الخصم' : 'Enter opponent status'}
+              className={isRTL ? 'text-right' : 'text-left'}
+            />
           </div>
 
           <DialogFooter className="gap-2">

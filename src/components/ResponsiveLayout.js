@@ -4,7 +4,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import AppSidebar from "@/app/components/navigation/AppSidebar";
 import Header from "@/app/components/Header";
-import { useState, useEffect } from "react";
+import MobileHeader from "@/app/components/MobileHeader";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname } from "next/navigation";
 
@@ -12,6 +13,7 @@ const ResponsiveLayout = ({ children }) => {
   const { isRTL } = useLanguage();
   const isMobile = useIsMobile();
   const [isClient, setIsClient] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const { isAuth } = useAuth();
   const pathname = usePathname();
 
@@ -24,6 +26,11 @@ const ResponsiveLayout = ({ children }) => {
 
   // Don't show sidebar and header if not authenticated or on login page
   const showLayout = isAuth && !isLoginPage;
+
+  // Handler to toggle mobile sidebar from mobile header
+  const handleMobileMenuToggle = useCallback(() => {
+    setIsMobileSidebarOpen(prev => !prev);
+  }, []);
 
   // Prevent hydration mismatch by using consistent initial render
   if (!isClient) {
@@ -44,16 +51,24 @@ const ResponsiveLayout = ({ children }) => {
   }
 
   return (
-    <div dir={isRTL ? "rtl" : "ltr"} className={`flex h-screen overflow-hidden`}>
-      {/* Sidebar - will be on right for RTL, left for LTR due to flex-row-reverse */}
-      <AppSidebar />
+    <div dir={isRTL ? "rtl" : "ltr"} className="flex h-screen overflow-hidden">
+      {/* Sidebar - will be on right for RTL, left for LTR */}
+      <AppSidebar 
+        isMobileSidebarOpen={isMobileSidebarOpen}
+        onMobileSidebarClose={() => setIsMobileSidebarOpen(false)}
+      />
       
       {/* Main content area */}
-      <main className={`flex-1 flex flex-col overflow-hidden ${isMobile ? 'pt-16' : ''}`}>
-        {/* Only show Header on desktop, mobile nav is handled by AppSidebar */}
-        {!isMobile && <Header />}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Responsive Header - Mobile header on small screens, Desktop header on larger screens */}
+        {isMobile ? (
+          <MobileHeader onMenuToggle={handleMobileMenuToggle} />
+        ) : (
+          <Header />
+        )}
         
-        <div className="flex-1 overflow-auto px-4">
+        {/* Content area with proper spacing - no overlapping */}
+        <div className="flex-1 overflow-auto px-3 md:px-4 lg:px-6 py-3 md:py-4">
           {children}
         </div>
       </main>

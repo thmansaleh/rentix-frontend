@@ -154,6 +154,29 @@ const SessionsPage = () => {
     });
   };
 
+  // Group sessions by date and sort by most recent first
+  const groupSessionsByDate = () => {
+    const grouped = {};
+    
+    filteredSessions.forEach(session => {
+      const date = session.sessionDate;
+      if (!grouped[date]) {
+        grouped[date] = [];
+      }
+      grouped[date].push(session);
+    });
+    
+    // Convert to array and sort by date (most recent first)
+    return Object.entries(grouped)
+      .sort((a, b) => new Date(b[0]) - new Date(a[0]))
+      .map(([date, sessions]) => ({
+        date,
+        sessions: sessions.sort((a, b) => a.sessionTime.localeCompare(b.sessionTime))
+      }));
+  };
+
+  const sessionsByDate = groupSessionsByDate();
+
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
@@ -262,77 +285,96 @@ const SessionsPage = () => {
           </CardHeader>
         </Card>
 
-        {/* Sessions List */}
-        <div className="grid gap-6">
-          {filteredSessions.map((session) => (
-            <Card key={session.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg mb-2">{session.caseTitle}</CardTitle>
-                    <CardDescription>{session.notes}</CardDescription>
+        {/* Sessions List grouped by date */}
+        <div className="space-y-8">
+          {sessionsByDate.map(({ date, sessions }) => (
+            <div key={date}>
+              {/* Date Header */}
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <Calendar className="w-6 h-6" />
+                  {formatDate(date)}
+                </h2>
+                <div className="h-1 bg-gradient-to-r from-blue-500 to-transparent rounded mt-2" />
+              </div>
+
+              {/* Sessions Table for this date */}
+              <Card>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-muted/50">
+                        <tr>
+                          <th className="text-right px-4 py-3 text-sm font-medium">الوقت</th>
+                          <th className="text-right px-4 py-3 text-sm font-medium">عنوان القضية</th>
+                          <th className="text-right px-4 py-3 text-sm font-medium">رقم القضية</th>
+                          <th className="text-right px-4 py-3 text-sm font-medium">القاعة</th>
+                          <th className="text-right px-4 py-3 text-sm font-medium">القاضي</th>
+                          <th className="text-right px-4 py-3 text-sm font-medium">نوع الجلسة</th>
+                          <th className="text-right px-4 py-3 text-sm font-medium">الحالة</th>
+                          <th className="text-right px-4 py-3 text-sm font-medium">الإجراءات</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        {sessions.map((session) => (
+                          <tr key={session.id} className="hover:bg-muted/30 transition-colors">
+                            <td className="px-4 py-4">
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm font-medium">{session.sessionTime}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="max-w-xs">
+                                <p className="font-medium text-sm mb-1">{session.caseTitle}</p>
+                                <p className="text-xs text-muted-foreground">{session.notes}</p>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="flex items-center gap-2">
+                                <Scale className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm">{session.caseNumber}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="flex items-center gap-2">
+                                <MapPin className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm">{session.courtRoom}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="flex items-center gap-2">
+                                <User className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm">{session.judge}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              {getSessionTypeBadge(session.sessionType)}
+                            </td>
+                            <td className="px-4 py-4">
+                              {getStatusBadge(session.status)}
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="flex gap-1">
+                                <Button variant="ghost" size="sm">
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm">
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                  <div className="flex gap-2">
-                    {getStatusBadge(session.status)}
-                    {getSessionTypeBadge(session.sessionType)}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <Scale className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">رقم القضية: {session.caseNumber}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{formatDate(session.sessionDate)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{session.sessionTime}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{session.courtRoom}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{session.judge}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{session.attendees.length} حاضر</span>
-                  </div>
-                </div>
-                
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium mb-2">الحاضرون:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {session.attendees.map((attendee, index) => (
-                      <Badge key={index} variant="outline">
-                        {attendee}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="flex gap-2 pt-4 border-t">
-                  <Button variant="outline" size="sm">
-                    <Eye className="w-4 h-4 mr-2" />
-                    عرض التفاصيل
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Edit className="w-4 h-4 mr-2" />
-                    تعديل
-                  </Button>
-                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    حذف
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           ))}
         </div>
 

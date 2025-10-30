@@ -63,13 +63,13 @@ function AddCasePage() {
         legal_researcher_id: values.legalResearcherId || null,
         counter_case_id: values.counterCaseId || null,
         fees: values.fees || 0,
-        start_date: values.caseStartDate || null,
         additional_note: values.additionalNote || null,
         topic: values.topic || null,
         branch_id: values.branchId || null,
         isImportant: values.isImportant || 0,
         is_secret: values.is_secret || 0,
         is_archived: values.is_archived || 0,
+        is_pending: values.is_pending || 0,
         related_cases: values.related_cases ? values.related_cases.map(c => c.id) : []
       };
    
@@ -103,7 +103,9 @@ function AddCasePage() {
             degree: degree.degree,
             case_number: degree.case_number,
             year: degree.year,
-            referral_date: degree.referral_date
+            referral_date: degree.referral_date,
+            client_status: degree.client_status,
+            opponent_status: degree.opponent_status
           });
         }
       }
@@ -244,7 +246,6 @@ function AddCasePage() {
     branchId: null,
     caseNumber: '',
     fees: '',
-    caseStartDate: null,
     caseTypeId: null,
     caseClassificationId: null,
     policeStationId: null,
@@ -260,6 +261,7 @@ function AddCasePage() {
     is_important: false,
     is_secret: false,
     is_archived: false,
+    is_pending: false,
     caseFiles: {
       files: [],
       filesNames: []
@@ -285,16 +287,10 @@ function AddCasePage() {
     caseTypeId: Yup.string().required(t('validation.caseTypeRequired') || 'Case type is required'),
     caseClassificationId: Yup.string().required(t('validation.caseClassificationRequired') || 'Case classification is required'),
     branchId: Yup.string().required(t('validation.branchRequired') || 'Branch is required'),
-    policeStationId: Yup.string().required(t('validation.policeStationRequired') || 'Police station is required'),
-    courtId: Yup.string().required(t('validation.courtRequired') || 'Court is required'),
-    publicProsecutionId: Yup.string().required(t('validation.publicProsecutionRequired') || 'Public prosecution is required'),
-    fees: Yup.string().required(t('validation.feesRequired') || 'Fees and expenses are required'),
-    topic: Yup.string().required(t('validation.topicRequired') || 'Subject is required'),
     lawyerId: Yup.string().required(t('validation.lawyerRequired') || 'Lawyer is required'),
     legalAdvisorId: Yup.string().required(t('validation.legalAdvisorRequired') || 'Legal advisor is required'),
     secretaryId: Yup.string().required(t('validation.secretaryRequired') || 'Secretary is required'),
     legalResearcherId: Yup.string().required(t('validation.legalResearcherRequired') || 'Legal researcher is required'),
-    caseStartDate: Yup.date().nullable().required(t('validation.caseStartDateRequired') || 'Start date is required'),
     selectedParties: Yup.array().min(1, t('validation.partiesRequired') || 'At least one party is required'),
     parties: Yup.array(),
     sessions: Yup.array(),

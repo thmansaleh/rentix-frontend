@@ -94,7 +94,7 @@ function PoliceStation() {
   return (
     <div className={`space-y-2 ${isRTL ? 'text-right' : 'text-left'}`}>
       <Label htmlFor="police-station-select">
-        {language === 'ar' ? 'مركز الشرطة' : 'Police Station'} <span className="text-red-500">*</span>
+        {language === 'ar' ? 'مركز الشرطة' : 'Police Station'}
       </Label>
       <div className="flex gap-2">
         <Select 

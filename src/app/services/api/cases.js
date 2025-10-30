@@ -118,3 +118,17 @@ export const searchCasesForAddNewCasePage = async (term) => {
     throw error;
   } 
 }
+
+export const searchCases = async (searchTerm) => {
+  try {
+    if (!searchTerm || searchTerm.trim().length === 0) {
+      return { success: true, data: [] };
+    }
+    const response = await api.get(`/cases/search`, { 
+      params: { searchTerm: searchTerm.trim() } 
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

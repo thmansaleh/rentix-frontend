@@ -155,7 +155,7 @@ function Branch() {
               >
                 {t('buttons.cancel')}
               </Button>
-              <Button type="button" disabled={isSubmitting}>
+              <Button type="button" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? t('branches.creating') : t('branches.createBranch')}
               </Button>
             </DialogFooter>

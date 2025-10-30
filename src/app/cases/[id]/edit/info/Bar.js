@@ -3,7 +3,7 @@
 import React from 'react'
 import { useTranslations } from "@/hooks/useTranslations"
 import { useLanguage } from "@/contexts/LanguageContext"
-import { Eye, Archive, Star } from "lucide-react"
+import { Eye, Archive, Star, Clock } from "lucide-react"
 import CounterCaseFileInput from './CounterCaseFileInput'
 import { Button } from '@/components/ui/button'
 import RelatedCasesDialog from './RelatedCasesDialog'
@@ -44,6 +44,15 @@ function Bar({ formikProps }) {
       onChange: (value) => handleToggleChange('isImportant', value),
       icon: Star,
       activeColor: 'bg-yellow-500 text-white',
+      inactiveColor: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+    },
+    {
+      id: 'pending',
+      label: t('caseToggles.isPending'),
+      value: values.is_pending,
+      onChange: (value) => handleToggleChange('is_pending', value),
+      icon: Clock,
+      activeColor: 'bg-orange-500 text-white',
       inactiveColor: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
     }
   ]

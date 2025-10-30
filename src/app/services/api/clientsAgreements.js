@@ -48,3 +48,20 @@ export const deleteClientAgreement = async (clientId, agreementId) => {
     throw error;
   }
 };
+
+export const searchClientsAgreements = async (name, limit = 10) => {
+  try {
+    if (!name || name.trim().length === 0) {
+      return { success: true, data: [] };
+    }
+    const response = await api.get(`/clients-agreements`, {
+      params: { 
+        name: name.trim(),
+        limit 
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

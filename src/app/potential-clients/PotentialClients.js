@@ -20,7 +20,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Crown } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -173,6 +174,20 @@ function PotentialClients() {
     return categoryMap[lowerCategory] || category;
   };
 
+  const getVipBadge = (isVip) => {
+    if (isVip !== 1) return null;
+    
+    return (
+      <Badge 
+        variant="outline" 
+        className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white hover:from-yellow-500 hover:to-amber-600 border-0 animate-pulse"
+      >
+        <Crown className="w-3 h-3 mr-1" />
+        {language === 'ar' ? 'VIP' : 'VIP'}
+      </Badge>
+    );
+  };
+
   // Column configuration for export
   const potentialClientsColumnConfig = {
     id: {
@@ -211,6 +226,12 @@ function PotentialClients() {
       en: 'Category',
       dataKey: 'category',
       formatter: (value) => getTranslatedCategory(value)
+    },
+    is_vip: {
+      ar: 'VIP',
+      en: 'VIP',
+      dataKey: 'is_vip',
+      formatter: (value) => value === 1 ? 'VIP' : ''
     },
     nationality: {
       ar: 'الجنسية',
@@ -282,6 +303,7 @@ function PotentialClients() {
                     <TableHead>{t("potentialClientsPage.table.source")}</TableHead>
                     <TableHead>{t("potentialClientsPage.table.category")}</TableHead>
                     <TableHead>{t("potentialClientsPage.table.partyType")}</TableHead>
+                    <TableHead>{t("potentialClientsPage.vipStatus") || 'VIP'}</TableHead>
                     <TableHead>{t("potentialClientsPage.table.nationality")}</TableHead>
                     <TableHead>{t("potentialClientsPage.table.createdBy")}</TableHead>
                     <TableHead className="text-center">{t("potentialClientsPage.table.actions")}</TableHead>
@@ -291,7 +313,12 @@ function PotentialClients() {
                   {data.data.map((client) => (
                     <TableRow key={client.id}>
                       <TableCell className="font-medium">{client.id}</TableCell>
-                      <TableCell>{client.name}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {client.name}
+                          {client.is_vip === 1 && <Crown className="w-4 h-4 text-amber-500" />}
+                        </div>
+                      </TableCell>
                       <TableCell>{client.phone || "-"}</TableCell>
                       <TableCell>{client.source || "-"}</TableCell>
                       <TableCell>{getTranslatedCategory(client.category)}</TableCell>
@@ -310,6 +337,7 @@ function PotentialClients() {
                           {getTranslatedPartyType(client.party_type)}
                         </span>
                       </TableCell>
+                      <TableCell>{getVipBadge(client.is_vip)}</TableCell>
                       <TableCell>{client.nationality || "-"}</TableCell>
                       <TableCell>{client.created_by_name || "-"}</TableCell>
                       <TableCell className="text-center">

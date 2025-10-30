@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarIcon, Clock, AlertCircle, RefreshCw, Search } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
+import ExportButtons from '@/components/ui/export-buttons';
 import useSWR from 'swr';
 import { getAllLogs } from '@/app/services/api/logs';
 import { Calendar } from '@/components/ui/calendar';
@@ -75,6 +77,7 @@ const getActionLabel = (action) => {
 
 export default function LogsPage() {
   const { t } = useTranslations();
+  const { language } = useLanguage();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [appliedStartDate, setAppliedStartDate] = useState('');
@@ -124,6 +127,47 @@ export default function LogsPage() {
     setAppliedStartDate('');
     setAppliedEndDate('');
     setPage(1);
+  };
+
+  // Column configuration for export
+  const logsColumnConfig = {
+    id: {
+      ar: 'المعرف',
+      en: 'ID',
+      dataKey: 'id'
+    },
+    employee_name: {
+      ar: 'اسم الموظف',
+      en: 'Employee Name',
+      dataKey: 'employee_name'
+    },
+    action: {
+      ar: 'الإجراء',
+      en: 'Action',
+      dataKey: 'action',
+      formatter: (value) => getActionLabel(value)
+    },
+    target_type: {
+      ar: 'نوع الهدف',
+      en: 'Target Type',
+      dataKey: 'target_type'
+    },
+    details: {
+      ar: 'التفاصيل',
+      en: 'Details',
+      dataKey: 'details'
+    },
+    ip_address: {
+      ar: 'عنوان IP',
+      en: 'IP Address',
+      dataKey: 'ip_address'
+    },
+    created_at: {
+      ar: 'التاريخ والوقت',
+      en: 'Date & Time',
+      dataKey: 'created_at',
+      type: 'date'
+    }
   };
 
   return (
@@ -241,7 +285,18 @@ export default function LogsPage() {
             )}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {/* Export Buttons */}
+          {filteredLogs && filteredLogs.length > 0 && !isLoading && !error && (
+            <ExportButtons
+              data={filteredLogs}
+              columnConfig={logsColumnConfig}
+              language={language}
+              exportName="system-logs"
+              sheetName={language === 'ar' ? 'سجلات النظام' : 'System Logs'}
+            />
+          )}
+
           {isLoading ? (
             <div className="flex items-center justify-center p-12">
               <div className="flex items-center gap-2">

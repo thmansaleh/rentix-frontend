@@ -110,7 +110,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.bank_name && formik.errors.bank_name ? 'border-red-500' : ''}
-              placeholder="أدخل اسم البنك"
+              placeholder="مثال: بنك الإمارات دبي الوطني"
             />
             {formik.touched.bank_name && formik.errors.bank_name && (
               <p className="text-sm text-red-500">{formik.errors.bank_name}</p>
@@ -127,7 +127,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.account_name && formik.errors.account_name ? 'border-red-500' : ''}
-              placeholder="أدخل اسم الحساب"
+              placeholder="مثال: حساب الشركة الرئيسي"
             />
             {formik.touched.account_name && formik.errors.account_name && (
               <p className="text-sm text-red-500">{formik.errors.account_name}</p>
@@ -144,7 +144,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.account_number && formik.errors.account_number ? 'border-red-500' : ''}
-              placeholder="أدخل رقم الحساب"
+              placeholder="مثال: 1234567890"
             />
             {formik.touched.account_number && formik.errors.account_number && (
               <p className="text-sm text-red-500">{formik.errors.account_number}</p>
@@ -160,7 +160,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               value={formik.values.iban}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="أدخل رقم IBAN"
+              placeholder="مثال: AE070331234567890123456"
             />
           </div>
 

@@ -7,11 +7,11 @@ import SidebarHeader from './SidebarHeader';
 /**
  * Mobile Sidebar Component
  * Handles mobile navigation with overlay and slide-in menu
+ * Header is now handled by MobileHeader component in ResponsiveLayout
  */
 const MobileSidebar = ({ 
   isOpen, 
-  onClose, 
-  onToggle,
+  onClose,
   menuItems,
   activeItem,
   openSubmenus,
@@ -25,27 +25,6 @@ const MobileSidebar = ({
 }) => {
   return (
     <div dir={isRTL ? "rtl" : "ltr"}>
-      {/* Mobile Navigation Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-sidebar border-b border-sidebar-border shadow-lg">
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center">
-              <img src="/log_in_card_logo.png" alt="Logo" className="w-full h-full object-cover" />
-            </div>
-            <h1 className="text-sidebar-foreground font-bold text-lg">
-              LEXCORA
-            </h1>
-          </div>
-          <button
-            onClick={onToggle}
-            className="p-2 rounded-lg bg-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent/80 transition-colors"
-            aria-label={isRTL ? "فتح القائمة" : "Open Menu"}
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-
       {/* Mobile Sidebar Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onClose}>
