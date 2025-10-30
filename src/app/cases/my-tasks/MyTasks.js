@@ -9,6 +9,7 @@ import { getCreatorTasks, deleteTask } from '@/app/services/api/tasks';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import EditTaskModal from '@/app/cases/[id]/edit/tasks/EditTaskModal';
+import AddTaskModal from '@/app/cases/[id]/edit/tasks/AddTaskModal';
 import {
   Table,
   TableBody,
@@ -55,6 +56,7 @@ const MyTasks = () => {
   // Modal state
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   
   // Delete confirmation state
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -212,6 +214,19 @@ const MyTasks = () => {
     setTaskToDelete(null);
   };
 
+  const handleCreateTask = () => {
+    setIsAddTaskModalOpen(true);
+  };
+
+  const handleAddTaskModalClose = (shouldRefresh = false) => {
+    setIsAddTaskModalOpen(false);
+    
+    // Mutate (refresh) the data if needed
+    if (shouldRefresh) {
+      mutate();
+    }
+  };
+
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -244,16 +259,27 @@ const MyTasks = () => {
             {t('tasks.createdTasksDescription')}
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => mutate()}
-          disabled={isLoading}
-          className="flex items-center gap-2"
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          {t('common.refresh')}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handleCreateTask}
+            className="flex items-center gap-2"
+          >
+            <PlayCircle className="h-4 w-4" />
+            {t('tasks.addTask')}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => mutate()}
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            {t('common.refresh')}
+          </Button>
+        </div>
       </div>
 
       {/* Status Filter Buttons */}
@@ -421,6 +447,23 @@ const MyTasks = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Add Task Modal */}
+      <AddTaskModal
+        isOpen={isAddTaskModalOpen}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            // Modal is closing, refresh the data
+            handleAddTaskModalClose(true);
+          } else {
+            setIsAddTaskModalOpen(isOpen);
+          }
+        }}
+        caseId={null}
+        onTaskCreated={() => {
+          mutate(); // Refresh the tasks list
+        }}
+      />
 
       {/* Edit Task Modal */}
       <EditTaskModal

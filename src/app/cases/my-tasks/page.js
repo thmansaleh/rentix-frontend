@@ -3,7 +3,7 @@ import AssignedToTasks from "./AssignedToTasks"
 import { useTranslations } from "@/hooks/useTranslations"
 import MyTasks from "./MyTasks"
 
-function page() {
+function MyTasksPage() {
     // const { isRTL } = useTranslations();
   return (
     <div>
@@ -27,4 +27,4 @@ function page() {
   )
 }
 
-export default page
+export default MyTasksPage;

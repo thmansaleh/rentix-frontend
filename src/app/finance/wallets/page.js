@@ -3,7 +3,6 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { getWallets, deleteWallet } from "../../services/api/wallets";
-import { usePermission } from "@/hooks/useAuth";
 
 import { WalletsFilterNew } from "./WalletsFilterNew";
 import {
@@ -47,10 +46,6 @@ import {
 function WalletsPage() {
   const { t } = useTranslations();
   const { language } = useLanguage();
-  const { hasPermission: canAdd } = usePermission('Add Payment');
-  const { hasPermission: canEdit } = usePermission('Edit Wallet');
-  const { hasPermission: canDelete } = usePermission('Delete Wallet');
-  const { hasPermission: canView } = usePermission('View Wallet');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState(null);

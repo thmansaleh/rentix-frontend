@@ -165,7 +165,16 @@ export default function SessionsPage() {
     
     sessions.forEach(session => {
       // Extract just the date part (YYYY-MM-DD) from session_date
-      const dateStr = session.session_date.split('T')[0];
+      // Handle different date formats and ensure consistent extraction
+      let dateStr;
+      if (session.session_date.includes('T')) {
+        dateStr = session.session_date.split('T')[0];
+      } else if (session.session_date.includes(' ')) {
+        dateStr = session.session_date.split(' ')[0];
+      } else {
+        dateStr = session.session_date.substring(0, 10);
+      }
+      
       if (!grouped[dateStr]) {
         grouped[dateStr] = [];
       }
@@ -174,10 +183,18 @@ export default function SessionsPage() {
     
     // Convert to array and sort by date (most recent first)
     return Object.entries(grouped)
-      .sort((a, b) => new Date(b[0]) - new Date(a[0]))
+      .sort((a, b) => {
+        const dateA = new Date(a[0]);
+        const dateB = new Date(b[0]);
+        return dateB - dateA; // Most recent first (descending order)
+      })
       .map(([date, sessions]) => ({
         date,
-        sessions: sessions.sort((a, b) => new Date(a.session_date) - new Date(b.session_date))
+        sessions: sessions.sort((a, b) => {
+          const timeA = new Date(a.session_date);
+          const timeB = new Date(b.session_date);
+          return timeB - timeA; // Most recent time first (descending order)
+        })
       }));
   };
 

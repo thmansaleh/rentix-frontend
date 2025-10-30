@@ -14,17 +14,11 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getEmployees } from '@/app/services/api/employees';
 import { getRoles } from '@/app/services/api/roles';
-import { usePermission as useAuthPermission } from '@/hooks/useAuth';
 
 export default function EmployeeTablePage() {
   const { t } = useTranslations();
   const { language } = useLanguage();
   const isArabic = language === 'ar';
-  // const {isPermission, role, department} = useAuthPermission();
-  const { hasPermission: canAdd } = useAuthPermission('Add Employee');
-  const { hasPermission: canEdit } = useAuthPermission('Edit Employee');
-  const { hasPermission: canDelete } = useAuthPermission('Delete Employee');
-  const { hasPermission: canView } = useAuthPermission('View Employee');
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -268,13 +262,11 @@ export default function EmployeeTablePage() {
               </div>
 
               {/* Add Button */}
-              {canAdd && (
-                <AddEmployeeDialog onAdd={(newEmployee) => {
-                  // You can handle adding the new employee here (e.g., update state or send to backend)
-                  // Optionally revalidate the SWR data
-                  mutate();
-                }} />
-              )}
+              <AddEmployeeDialog onAdd={(newEmployee) => {
+                // You can handle adding the new employee here (e.g., update state or send to backend)
+                // Optionally revalidate the SWR data
+                mutate();
+              }} />
             </div>
 
             {/* Export Buttons */}
@@ -351,9 +343,9 @@ export default function EmployeeTablePage() {
                       StatusBadge={StatusBadge} 
                       isArabic={isArabic}
                       onEmployeeUpdate={() => mutate()}
-                      canView={canView}
-                      canEdit={canEdit}
-                      canDelete={canDelete}
+                      canView={true}
+                      canEdit={true}
+                      canDelete={true}
                     />
                   ))}
                 </tbody>

@@ -22,15 +22,13 @@ import {
 } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { usePermission } from '@/hooks/useAuth';
-import { getCaseCourtDocuments, deleteCaseCourtDocument } from '@/app/services/api/cases';
+import { getCourtDocuments, deleteCourtDocument } from '@/app/services/api/cases';
 import { toast } from 'react-toastify';
 
 function CourtDocuments({ caseId }) {
   const { t } = useTranslations();
   const { language } = useLanguage();
   const isArabic = language === 'ar';
-  const { hasPermission: canEditCase } = usePermission('Edit Case');
 
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,

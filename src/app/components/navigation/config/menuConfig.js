@@ -26,29 +26,6 @@ import {
 } from 'lucide-react';
 
 export const getMenuItems = (t, userRole = null, userDepartment = null, permissions = []) => {
-  // Check if user has access to HR section (admin or HR Officer)
-  const hasHRAccess = userRole === 'admin' || userRole === 'HR Officer';
-  
-  // Check if user has access to Finance section (admin or Accountant)
-  const hasFinanceAccess = userRole === 'admin' || userRole === 'Accountant';
-  
-  // Check if user has access to Logs section (admin only)
-  const hasLogsAccess = userRole === 'admin';
-  
-  // Check if user has access to Legal sections (admin or specific departments)
-  const legalDepartments = ['Litigation', 'Consultation', 'Legal Department'];
-  const hasLegalAccess = userRole === 'admin' || legalDepartments.includes(userDepartment);
-  
-  // Helper function to check permissions
-  const hasPermission = (permissionName) => {
-    if (userRole === 'admin') return true;
-    return permissions.some(
-      permission => 
-        permission.permission_ar === permissionName || 
-        permission.permission_en === permissionName
-    );
-  };
-
   const menuItems = [
     {
       id: '/',
@@ -56,24 +33,19 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: LayoutDashboard,
       type: 'link'
     },
-
-    // Cases Management - Only visible to admin or Legal departments (Litigation, Consultation, Legal Department)
-    ...(hasLegalAccess ? [{
+    {
       id: 'casesManagement',
       label: t('navigation.casesManagement'),
       icon: Scale,
       type: 'category',
       submenu: [
         { id: 'cases', label: t('navigation.cases'), icon: Scale },
-        ...(hasPermission('Add Case') ? [
-          { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus }
-        ] : []),
+        { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus },
         { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
         { id: 'cases/judicial-decisions', label: t('navigation.judicialDecisions'), icon: CheckCircle },
       ]
-    }] : []),
-    // Clients Management - Only visible to admin or Legal departments
-    ...(hasLegalAccess ? [{
+    },
+    {
       id: 'clientsManagement',
       label: t('navigation.clientsManagement'),
       icon: Users,
@@ -85,15 +57,14 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'call-logs', label: t('navigation.callLogs'), icon: Phone },
         { id: 'goaml', label: t('navigation.goaml'), icon: Shield },
       ]
-    }] : []),
+    },
     {
       id: 'approvals',
       label: t('navigation.approvalsCenter'),
       icon: CheckCircle,
       type: 'link'
     },
-    // HR Section - Only visible to admin or HR Officer
-    ...(hasHRAccess ? [{
+    {
       id: 'humanResources',
       label: t('navigation.humanResources'),
       icon: Users,
@@ -106,9 +77,8 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'hr/events', label: t('navigation.events'), icon: Calendar },
         { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell },
       ]
-    }] : []),
-    // Finance Section - Only visible to admin or Accountant
-    ...(hasFinanceAccess ? [{
+    },
+    {
       id: 'finance',
       label: t('navigation.finance'),
       icon: DollarSign,
@@ -121,7 +91,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'finance/statistics', label: t('navigation.statistics'), icon: BarChartIcon },
         { id: 'finance/employees', label: t('navigation.employeesStatements'), icon: Users2     },
       ]
-    }] : []),
+    },
     {
       id: 'settings',
       label: t('navigation.settings'),
@@ -129,15 +99,9 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       type: 'category',
       submenu: [
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
-        // Branches and Performance - Only visible to admin
-        ...(userRole === 'admin' ? [
-          { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
-          { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
-        ] : []),
-        // Logs - Only visible to admin
-        ...(hasLogsAccess ? [
-          { id: 'logs', label: t('navigation.logs'), icon: Clock }
-        ] : []),
+        { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
+        { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
+        { id: 'logs', label: t('navigation.logs'), icon: Clock },
       ]
     }
   ];

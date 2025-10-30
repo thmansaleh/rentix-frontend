@@ -42,23 +42,15 @@ export const useAuth = () => {
  * Hook to check if user has specific permission
  * @param {string} permissionName - Permission name to check (Arabic or English)
  * @returns {boolean} Whether user has the permission
+ * NOTE: Permission checks disabled - all users have all permissions
  */
 export const usePermission = (permissionName) => {
   const permissions = useSelector(selectPermissions);
   const role = useSelector(s => s.auth.roleEn);
-const department = useSelector(s => s.auth.departmentEn);
+  const department = useSelector(s => s.auth.departmentEn);
 
-
-  const hasPermission = permissions.some(
-    permission => 
-      permission.permission_ar === permissionName || 
-      permission.permission_en === permissionName
-  );
-  if(role === 'admin'){
-    return { hasPermission: true, role, department};
-  }
-
-  return {  permissions, hasPermission, role, department};
+  // Always return true - permissions disabled for all users
+  return { permissions, hasPermission: true, role, department };
 };
 
 /**

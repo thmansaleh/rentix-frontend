@@ -588,7 +588,10 @@ const EditSessionModal = ({
                 </div>
 
                 {/* Session Status Switch */}
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className={cn(
+                  "p-4 rounded-lg",
+                  formik.values.is_judgment_reserved ? "bg-red-50 border-2 border-red-200" : "bg-gray-50"
+                )}>
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <Label 
@@ -602,6 +605,11 @@ const EditSessionModal = ({
                           ? t('sessions.sessionIsActive')
                           : t('sessions.sessionIsInactive')
                         }
+                        {formik.values.is_judgment_reserved && (
+                          <span className="block text-red-600 font-medium mt-1">
+                            {isRtl ? "تم تعطيل الجلسة تلقائياً بسبب حجز الحكم" : "Session auto-disabled due to judgment reserved"}
+                          </span>
+                        )}
                       </p>
                     </div>
                     <Switch
@@ -610,6 +618,7 @@ const EditSessionModal = ({
                       onCheckedChange={(checked) => 
                         formik.setFieldValue("status", checked)
                       }
+                      disabled={formik.values.is_judgment_reserved}
                     />
                   </div>
                 </div>
@@ -665,6 +674,10 @@ const EditSessionModal = ({
                         checked={formik.values.is_judgment_reserved}
                         onCheckedChange={(checked) => {
                           formik.setFieldValue("is_judgment_reserved", checked);
+                          // If judgment is reserved, set status to inactive
+                          if (checked) {
+                            formik.setFieldValue("status", false);
+                          }
                           // Reset is_judgment_deferred when is_judgment_reserved is unchecked
                           if (!checked) {
                             formik.setFieldValue("is_judgment_deferred", false);

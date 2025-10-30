@@ -127,6 +127,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
     // link: Yup.string().url(isRtl ? "رابط غير صحيح" : "Invalid URL").trim(),
     is_expert_session: Yup.boolean(),
     is_judgment_reserved: Yup.boolean(),
+    status: Yup.boolean(),
     has_ruling: Yup.boolean(),
     ruling: Yup.string().when('has_ruling', {
       is: true,
@@ -154,6 +155,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
       link: '',
       is_expert_session: false,
       is_judgment_reserved: false,
+      status: true,
       has_ruling: false,
       ruling: '',
       ruling_date: '',
@@ -193,6 +195,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
           link: values.link.trim() || null,
           is_expert_session: values.is_expert_session,
           is_judgment_reserved: values.is_judgment_reserved,
+          status: values.status ? 'active' : 'inactive',
           note: values.note.trim() || null,
           has_ruling: values.has_ruling,
           ruling: values.ruling.trim() || null,
@@ -422,6 +425,42 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
 
                 {/* Session Options - Using Switches */}
                 <div className="space-y-3">
+                  {/* Session Status Switch */}
+                  <div className={cn(
+                    "p-4 rounded-lg",
+                    formik.values.is_judgment_reserved ? "bg-red-50 border-2 border-red-200" : "bg-gray-50"
+                  )}>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label 
+                          htmlFor="status" 
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          {isRtl ? "حالة الجلسة" : "Session Status"}
+                        </Label>
+                        <p className="text-xs text-gray-500">
+                          {formik.values.status 
+                            ? (isRtl ? "الجلسة نشطة" : "Session is active")
+                            : (isRtl ? "الجلسة غير نشطة" : "Session is inactive")
+                          }
+                          {formik.values.is_judgment_reserved && (
+                            <span className="block text-red-600 font-medium mt-1">
+                              {isRtl ? "تم تعطيل الجلسة تلقائياً بسبب حجز الحكم" : "Session auto-disabled due to judgment reserved"}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                      <Switch
+                        id="status"
+                        checked={formik.values.status}
+                        onCheckedChange={(checked) => 
+                          formik.setFieldValue("status", checked)
+                        }
+                        disabled={formik.values.is_judgment_reserved}
+                      />
+                    </div>
+                  </div>
+
                   {/* Expert Session Switch */}
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex items-center justify-between">
@@ -469,9 +508,13 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
                       <Switch
                         id="is_judgment_reserved"
                         checked={formik.values.is_judgment_reserved}
-                        onCheckedChange={(checked) => 
-                          formik.setFieldValue("is_judgment_reserved", checked)
-                        }
+                        onCheckedChange={(checked) => {
+                          formik.setFieldValue("is_judgment_reserved", checked);
+                          // If judgment is reserved, set status to inactive
+                          if (checked) {
+                            formik.setFieldValue("status", false);
+                          }
+                        }}
                       />
                     </div>
                   </div>

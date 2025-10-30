@@ -154,11 +154,6 @@ function AddTaskModal({
       return
     }
 
-    if (!caseId) {
-      toast.error('Case ID is required')
-      return
-    }
-
     setIsSubmitting(true)
     const loadingToast = toast.loading(t('tasks.creatingTask') || 'جاري إنشاء المهمة...')
     
@@ -170,8 +165,12 @@ function AddTaskModal({
         assigned_to: formData.assignedTo,
         due_date: formData.dueDate,
         priority: formData.priority,
-        case_id: caseId,
         files: formData.attachedFiles
+      }
+      
+      // Only add case_id if it's provided
+      if (caseId) {
+        taskData.case_id = caseId
       }
       
       await createTask(taskData)

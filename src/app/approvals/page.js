@@ -3,11 +3,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import React from 'react';
 import Memos from './memos/Memos';
-import AssignedToTasks from '../cases/my-tasks/AssignedToTasks';
-import MyTasks from '../cases/my-tasks/MyTasks';
 import EmployeesRequests from './employees-requests/EmployeesRequests';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
+import MyTasksPage from '../cases/my-tasks/page';
 
 export default function ApprovalsPage() {
   const t = useTranslations('navigation');
@@ -23,7 +22,7 @@ export default function ApprovalsPage() {
         <Memos />
       </TabsContent>
       <TabsContent value="tasks">
-        <MyTasks />
+        <MyTasksPage />
       </TabsContent>
       <TabsContent value="employees requests">
         <EmployeesRequests />
