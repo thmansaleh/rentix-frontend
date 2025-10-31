@@ -234,7 +234,6 @@ const ExportButtons = ({
     <div className={`flex flex-wrap items-center gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
       <div className={`flex items-center gap-2 text-sm font-medium text-muted-foreground ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
         <Download className="h-4 w-4" />
-        <span>{language === 'ar' ? 'تصدير الملفات:' : 'Export Files:'}</span>
       </div>
       
       <Button

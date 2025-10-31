@@ -14,9 +14,42 @@ function QuickActionsBar() {
   const t = useTranslations('navigation');
   
   const quickActions = [
-    { icon: '/41.png', label: t('sessions'), path: '/cases/sessions' },
-    { icon: '/36.png', label: t('tasks'), path: '/cases/my-tasks' },
-    { icon: '/archive.png', label: t('cases'), path: '/cases' },
+    { 
+      icon: '/41.png', 
+      label: t('sessions'), 
+      path: '/cases/sessions',
+      colors: {
+        light: { from: 'rgba(99, 102, 241, 0.15)', mid: 'rgba(129, 140, 248, 0.25)', to: 'rgba(165, 180, 252, 0.25)' },
+        dark: { from: 'rgba(79, 70, 229, 0.15)', mid: 'rgba(99, 102, 241, 0.25)', to: 'rgba(129, 140, 248, 0.25)' },
+        glow: 'rgba(99, 102, 241, 0.08)',
+        glowHover: 'rgba(99, 102, 241, 0.12)',
+        shadow: 'rgba(99, 102, 241, 0.15)'
+      }
+    },
+    { 
+      icon: '/36.png', 
+      label: t('tasks'), 
+      path: '/cases/my-tasks',
+      colors: {
+        light: { from: 'rgba(16, 185, 129, 0.15)', mid: 'rgba(52, 211, 153, 0.25)', to: 'rgba(110, 231, 183, 0.25)' },
+        dark: { from: 'rgba(5, 150, 105, 0.15)', mid: 'rgba(16, 185, 129, 0.25)', to: 'rgba(52, 211, 153, 0.25)' },
+        glow: 'rgba(16, 185, 129, 0.08)',
+        glowHover: 'rgba(16, 185, 129, 0.12)',
+        shadow: 'rgba(16, 185, 129, 0.15)'
+      }
+    },
+    { 
+      icon: '/archive.png', 
+      label: t('cases'), 
+      path: '/cases',
+      colors: {
+        light: { from: 'rgba(251, 146, 60, 0.15)', mid: 'rgba(251, 191, 36, 0.25)', to: 'rgba(253, 224, 71, 0.25)' },
+        dark: { from: 'rgba(245, 158, 11, 0.15)', mid: 'rgba(251, 146, 60, 0.25)', to: 'rgba(251, 191, 36, 0.25)' },
+        glow: 'rgba(251, 146, 60, 0.08)',
+        glowHover: 'rgba(251, 146, 60, 0.12)',
+        shadow: 'rgba(251, 146, 60, 0.15)'
+      }
+    },
   ];
 
   return (
@@ -81,15 +114,6 @@ function QuickActionsBar() {
           inset: -2px;
           border-radius: 0.875rem;
           padding: 2px;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(31, 31, 31, 0.2),
-            rgba(82, 82, 82, 0.3),
-            rgba(115, 115, 115, 0.3),
-            rgba(31, 31, 31, 0.2),
-            transparent
-          );
           background-size: 200% 100%;
           animation: shimmer-flow 3s linear infinite;
           -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -109,11 +133,6 @@ function QuickActionsBar() {
           position: absolute;
           inset: 0;
           border-radius: 0.75rem;
-          background: radial-gradient(
-            circle at center,
-            rgba(31, 31, 31, 0.05),
-            transparent 70%
-          );
           opacity: 1;
           animation: glow-pulse 2s ease-in-out infinite;
           transition: opacity 0.4s ease;
@@ -121,11 +140,6 @@ function QuickActionsBar() {
         
         .action-btn:hover::after {
           opacity: 1;
-          background: radial-gradient(
-            circle at center,
-            rgba(31, 31, 31, 0.1),
-            transparent 70%
-          );
         }
         
         .icon-wrapper {
@@ -137,15 +151,6 @@ function QuickActionsBar() {
           position: absolute;
           inset: -4px;
           border-radius: 50%;
-          background: conic-gradient(
-            from 0deg,
-            transparent,
-            rgba(31, 31, 31, 0.2),
-            rgba(82, 82, 82, 0.3),
-            rgba(115, 115, 115, 0.3),
-            rgba(31, 31, 31, 0.2),
-            transparent
-          );
           opacity: 1;
           animation: gradient-rotate 3s linear infinite;
           transition: opacity 0.4s ease;
@@ -162,20 +167,266 @@ function QuickActionsBar() {
         .action-btn:active {
           transform: scale(0.95);
         }
+        
+        /* Indigo theme - Sessions */
+        .action-btn-0 {
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(165, 180, 252, 0.08));
+        }
+        
+        .dark .action-btn-0 {
+          background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(99, 102, 241, 0.18));
+        }
+        
+        .action-btn-0:hover {
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(165, 180, 252, 0.16)) !important;
+        }
+        
+        .dark .action-btn-0:hover {
+          background: linear-gradient(135deg, rgba(79, 70, 229, 0.18), rgba(99, 102, 241, 0.24)) !important;
+        }
+        
+        .action-btn-0::before {
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(99, 102, 241, 0.15),
+            rgba(129, 140, 248, 0.25),
+            rgba(165, 180, 252, 0.25),
+            rgba(99, 102, 241, 0.15),
+            transparent
+          );
+        }
+        
+        .dark .action-btn-0::before {
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(79, 70, 229, 0.15),
+            rgba(99, 102, 241, 0.25),
+            rgba(129, 140, 248, 0.25),
+            rgba(79, 70, 229, 0.15),
+            transparent
+          );
+        }
+        
+        .action-btn-0::after {
+          background: radial-gradient(
+            circle at center,
+            rgba(99, 102, 241, 0.08),
+            transparent 70%
+          );
+        }
+        
+        .action-btn-0:hover::after {
+          background: radial-gradient(
+            circle at center,
+            rgba(99, 102, 241, 0.12),
+            transparent 70%
+          );
+        }
+        
+        .icon-wrapper-0::before {
+          background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(99, 102, 241, 0.15),
+            rgba(129, 140, 248, 0.25),
+            rgba(165, 180, 252, 0.25),
+            rgba(99, 102, 241, 0.15),
+            transparent
+          );
+        }
+        
+        .dark .icon-wrapper-0::before {
+          background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(79, 70, 229, 0.15),
+            rgba(99, 102, 241, 0.25),
+            rgba(129, 140, 248, 0.25),
+            rgba(79, 70, 229, 0.15),
+            transparent
+          );
+        }
+        
+        /* Emerald theme - Tasks */
+        .action-btn-1 {
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(110, 231, 183, 0.08));
+        }
+        
+        .dark .action-btn-1 {
+          background: linear-gradient(135deg, rgba(5, 150, 105, 0.12), rgba(16, 185, 129, 0.18));
+        }
+        
+        .action-btn-1:hover {
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(110, 231, 183, 0.16)) !important;
+        }
+        
+        .dark .action-btn-1:hover {
+          background: linear-gradient(135deg, rgba(5, 150, 105, 0.18), rgba(16, 185, 129, 0.24)) !important;
+        }
+        
+        .action-btn-1::before {
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(16, 185, 129, 0.15),
+            rgba(52, 211, 153, 0.25),
+            rgba(110, 231, 183, 0.25),
+            rgba(16, 185, 129, 0.15),
+            transparent
+          );
+        }
+        
+        .dark .action-btn-1::before {
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(5, 150, 105, 0.15),
+            rgba(16, 185, 129, 0.25),
+            rgba(52, 211, 153, 0.25),
+            rgba(5, 150, 105, 0.15),
+            transparent
+          );
+        }
+        
+        .action-btn-1::after {
+          background: radial-gradient(
+            circle at center,
+            rgba(16, 185, 129, 0.08),
+            transparent 70%
+          );
+        }
+        
+        .action-btn-1:hover::after {
+          background: radial-gradient(
+            circle at center,
+            rgba(16, 185, 129, 0.12),
+            transparent 70%
+          );
+        }
+        
+        .icon-wrapper-1::before {
+          background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(16, 185, 129, 0.15),
+            rgba(52, 211, 153, 0.25),
+            rgba(110, 231, 183, 0.25),
+            rgba(16, 185, 129, 0.15),
+            transparent
+          );
+        }
+        
+        .dark .icon-wrapper-1::before {
+          background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(5, 150, 105, 0.15),
+            rgba(16, 185, 129, 0.25),
+            rgba(52, 211, 153, 0.25),
+            rgba(5, 150, 105, 0.15),
+            transparent
+          );
+        }
+        
+        /* Amber theme - Cases */
+        .action-btn-2 {
+          background: linear-gradient(135deg, rgba(251, 146, 60, 0.06), rgba(253, 224, 71, 0.08));
+        }
+        
+        .dark .action-btn-2 {
+          background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(251, 146, 60, 0.18));
+        }
+        
+        .action-btn-2:hover {
+          background: linear-gradient(135deg, rgba(251, 146, 60, 0.12), rgba(253, 224, 71, 0.16)) !important;
+        }
+        
+        .dark .action-btn-2:hover {
+          background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(251, 146, 60, 0.24)) !important;
+        }
+        
+        .action-btn-2::before {
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(251, 146, 60, 0.15),
+            rgba(251, 191, 36, 0.25),
+            rgba(253, 224, 71, 0.25),
+            rgba(251, 146, 60, 0.15),
+            transparent
+          );
+        }
+        
+        .dark .action-btn-2::before {
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(245, 158, 11, 0.15),
+            rgba(251, 146, 60, 0.25),
+            rgba(251, 191, 36, 0.25),
+            rgba(245, 158, 11, 0.15),
+            transparent
+          );
+        }
+        
+        .action-btn-2::after {
+          background: radial-gradient(
+            circle at center,
+            rgba(251, 146, 60, 0.08),
+            transparent 70%
+          );
+        }
+        
+        .action-btn-2:hover::after {
+          background: radial-gradient(
+            circle at center,
+            rgba(251, 146, 60, 0.12),
+            transparent 70%
+          );
+        }
+        
+        .icon-wrapper-2::before {
+          background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(251, 146, 60, 0.15),
+            rgba(251, 191, 36, 0.25),
+            rgba(253, 224, 71, 0.25),
+            rgba(251, 146, 60, 0.15),
+            transparent
+          );
+        }
+        
+        .dark .icon-wrapper-2::before {
+          background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(245, 158, 11, 0.15),
+            rgba(251, 146, 60, 0.25),
+            rgba(251, 191, 36, 0.25),
+            rgba(245, 158, 11, 0.15),
+            transparent
+          );
+        }
       `}</style>
-      <div className="flex items-center justify-center gap-2 px-3 md:px-6 py-2">
+      <div className="flex items-center justify-center gap-2 gap-x-4 px-2 md:px-6 py-2">
         {quickActions.map((action, index) => {
+          const btnClass = `action-btn action-btn-${index}`;
+          const iconClass = `icon-wrapper icon-wrapper-${index}`;
           return (
             <button
               key={action.path}
               onClick={() => router.push(action.path)}
-              className="action-btn relative flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 group cursor-pointer hover:shadow-lg hover:shadow-gray-500/20 hover:-translate-y-0.5"
+              className={`${btnClass} relative flex items-center justify-center gap-2.5 px-5 py-2 rounded-xl transition-all duration-300 group cursor-pointer hover:shadow-lg hover:-translate-y-0.5`}
               style={{
-                animationDelay: `${index * 0.15}s`
+                animationDelay: `${index * 0.15}s`,
+                boxShadow: `0 10px 15px -3px ${action.colors.shadow}, 0 4px 6px -4px ${action.colors.shadow}`
               }}
               title={action.label}
             >
-              <div className="icon-wrapper relative w-9 h-9 flex items-center justify-center z-10">
+              <div className={`${iconClass} relative w-7 h-7 flex items-center justify-center z-10`}>
                 <Image 
                   src={action.icon} 
                   alt={action.label}

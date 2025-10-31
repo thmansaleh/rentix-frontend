@@ -34,6 +34,7 @@ function AddTaskModal({
     assignedTo: "",
     dueDate: null,
     priority: "",
+    status: "",
     attachedFiles: []
   })
   
@@ -54,8 +55,14 @@ function AddTaskModal({
   // Static options for priorities and task types
   const priorityOptions = [
     { value: "high", label: "عالية", color: "bg-red-100 text-red-800" },
-    { value: "normal", label: "عادية", color: "bg-blue-100 text-blue-800" },
-    { value: "low", label: "منخفضة", color: "bg-green-100 text-green-800" }
+    { value: "normal", label: "عادية", color: "bg-blue-100 text-blue-800" }
+  ]
+
+  const statusOptions = [
+    { value: "pending", label: t('tasks.statusPending') || "في الانتظار", color: "bg-yellow-100 text-yellow-800" },
+    { value: "in_progress", label: t('tasks.statusInProgress') || "قيد التنفيذ", color: "bg-blue-100 text-blue-800" },
+    { value: "completed", label: t('tasks.statusCompleted') || "مكتملة", color: "bg-green-100 text-green-800" },
+    { value: "cancelled", label: t('tasks.statusCancel') || "ملغاة", color: "bg-red-100 text-red-800" }
   ]
 
   const taskTypeOptions = [
@@ -165,6 +172,7 @@ function AddTaskModal({
         assigned_to: formData.assignedTo,
         due_date: formData.dueDate,
         priority: formData.priority,
+        status: formData.status,
         files: formData.attachedFiles
       }
       
@@ -187,6 +195,7 @@ function AddTaskModal({
         assignedTo: "",
         dueDate: null,
         priority: "",
+        status: "",
         attachedFiles: []
       })
       
@@ -220,6 +229,7 @@ function AddTaskModal({
         assignedTo: "",
         dueDate: null,
         priority: "",
+        status: "",
         attachedFiles: []
       })
     }
@@ -291,6 +301,25 @@ function AddTaskModal({
                   <SelectItem key={priority.value} value={priority.value}>
                     <span className={cn("px-2 py-1 rounded-full text-xs font-medium", priority.color)}>
                       {priority.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Status */}
+          <div className="space-y-2">
+            <Label htmlFor="add-status">{t('tasks.status') || 'الحالة'}</Label>
+            <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('tasks.selectStatus') || 'اختر الحالة'} />
+              </SelectTrigger>
+              <SelectContent>
+                {statusOptions.map((status) => (
+                  <SelectItem key={status.value} value={status.value}>
+                    <span className={cn("px-2 py-1 rounded-full text-xs font-medium", status.color)}>
+                      {status.label}
                     </span>
                   </SelectItem>
                 ))}

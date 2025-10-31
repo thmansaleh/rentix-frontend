@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import ExportButtons from '@/components/ui/export-buttons';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,6 +51,26 @@ const GoAmlPage = () => {
       record.note?.toLowerCase().includes(searchLower)
     );
   });
+
+  const exportColumnConfig = {
+    name: { ar: 'الاسم', en: 'Name', dataKey: 'name' },
+    phone: { ar: 'رقم الهاتف', en: 'Phone', dataKey: 'phone' },
+    type: { ar: 'التصنيف', en: 'Type', dataKey: 'type' },
+    status: {
+      ar: 'الحالة',
+      en: 'Status',
+      dataKey: 'status',
+      type: 'status',
+      statusMap: {
+        compliant: { ar: 'مطابق', en: 'Compliant' },
+        safe: { ar: 'آمن', en: 'Safe' },
+        under_review: { ar: 'قيد المراجعة', en: 'Under Review' }
+      }
+    },
+    note: { ar: 'الملاحظات', en: 'Note', dataKey: 'note' },
+    created_at: { ar: 'تاريخ الإنشاء', en: 'Created At', dataKey: 'created_at', type: 'date' },
+    created_by_name: { ar: 'أنشئ بواسطة', en: 'Created By', dataKey: 'created_by_name' }
+  };
 
   // Delete record
   const handleDelete = async (id) => {
@@ -153,13 +174,22 @@ const GoAmlPage = () => {
 
       {/* Records Table */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+        <CardHeader className="gap-4 md:flex md:flex-row md:items-center md:justify-between">
+          <CardTitle className="flex items-center justify-between w-full md:w-auto">
             <span>قائمة السجلات</span>
             <span className="text-sm font-normal text-gray-500">
               {filteredRecords.length} سجل
             </span>
           </CardTitle>
+          {!isLoading && filteredRecords.length > 0 && (
+            <ExportButtons
+              data={filteredRecords}
+              columnConfig={exportColumnConfig}
+              exportName="goaml_records"
+              sheetName="GoAML"
+              language="ar"
+            />
+          )}
         </CardHeader>
         <CardContent>
           {isLoading ? (

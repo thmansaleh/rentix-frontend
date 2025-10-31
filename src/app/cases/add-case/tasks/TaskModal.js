@@ -24,10 +24,21 @@ function TaskModal({
   loadingEmployees, 
   employeesError,
   priorityOptions = [],
+  statusOptions = [],
   // Formik setFieldValue for direct file handling
   setFieldValue
 }) {
   const { t } = useTranslations()
+
+  // Default status options if not provided
+  const defaultStatusOptions = [
+    { value: "pending", label: t('tasks.statusPending') || "في الانتظار", color: "bg-yellow-100 text-yellow-800" },
+    { value: "in_progress", label: t('tasks.statusInProgress') || "قيد التنفيذ", color: "bg-blue-100 text-blue-800" },
+    { value: "completed", label: t('tasks.statusCompleted') || "مكتملة", color: "bg-green-100 text-green-800" },
+    { value: "cancelled", label: t('tasks.statusCancel') || "ملغاة", color: "bg-red-100 text-red-800" }
+  ]
+
+  const finalStatusOptions = statusOptions.length > 0 ? statusOptions : defaultStatusOptions
 
   // Handle file changes - use setFieldValue if available, otherwise fallback to onInputChange
   const handleFileChange = (files) => {
@@ -87,7 +98,7 @@ function TaskModal({
             />
           </div>
 
-          {/* Priority */}
+          {/* Priority and Status */}
           <div className="flex items-center gap-4">
            <div className="space-y-2">
             <Label htmlFor={`${mode}-priority`}>{t('tasks.priority')}</Label>
@@ -106,7 +117,25 @@ function TaskModal({
               </SelectContent>
             </Select>
           </div>
-         
+
+          {/* Status */}
+          <div className="space-y-2">
+            <Label htmlFor={`${mode}-status`}>{t('tasks.status') || 'الحالة'}</Label>
+            <Select value={formData.status} onValueChange={(value) => onInputChange("status", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('tasks.selectStatus') || 'اختر الحالة'} />
+              </SelectTrigger>
+              <SelectContent>
+                {finalStatusOptions.map((status) => (
+                  <SelectItem key={status.value} value={status.value}>
+                    <span className={cn("px-2 py-1 rounded-full text-xs font-medium", status.color)}>
+                      {status.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           
           {/* Assigned To */}
           <div className="space-y-2">

@@ -73,16 +73,16 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
       onClick={handleOverlayClick}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
       <div
-        className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden"
+        className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-red-100 bg-red-50">
+        <div className="flex items-center justify-between p-6 border-b border-red-100 bg-red-50 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-red-100 rounded-full">
               <AlertTriangle className="w-6 h-6 text-red-600" />
@@ -101,7 +101,7 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 overflow-y-auto flex-1">
           <p className="text-gray-700">
             {language === 'ar' 
               ? 'هل أنت متأكد من حذف هذه القضية؟ هذا الإجراء لا يمكن التراجع عنه.' 
@@ -170,7 +170,7 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
         </div>
 
         {/* Footer */}
-        <div className={`flex gap-3 p-6 border-t bg-gray-50 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+        <div className={`flex gap-3 p-6 border-t bg-gray-50 flex-shrink-0 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
           <Button
             variant="outline"
             onClick={onClose}

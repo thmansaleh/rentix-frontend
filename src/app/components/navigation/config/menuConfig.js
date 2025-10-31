@@ -56,6 +56,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'meetings', label: t('navigation.meetings'), icon: Calendar },
         { id: 'call-logs', label: t('navigation.callLogs'), icon: Phone },
         { id: 'goaml', label: t('navigation.goaml'), icon: Shield },
+        { id: 'client-forms', label: t('navigation.forms'), icon: FileText },
       ]
     },
     {

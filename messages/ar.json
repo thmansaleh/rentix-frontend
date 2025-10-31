@@ -67,6 +67,9 @@
     "salaries": "الرواتب",
     "assets": "الاصول",
     "forms": "النماذج",
+    "clientForms": "النماذج",
+    "welcomeMessages": "الرسائل الترحيبية",
+    "priceQuotes": "عروض الاسعار",
     "events": "الأحداث",
     "notifications": "التنبيهات",
     "logs": "سجل النشاط",
@@ -1409,8 +1412,30 @@
       "short_absent": "نموذج غياب ",
       "salary_advance": "طلب سلفة ",
       "new_starter": "نموذج موظف جديد",
-      "others": "أخرى"
+      "others": "أخرى",
+      "welcome_message": "رسالة ترحيبية",
+      "price_quote": "عرض سعر"
     }
+  },
+  "clientForms": {
+    "title": "نماذج الموكلين",
+    "addNewForm": "إضافة نموذج جديد",
+    "formTitle": "عنوان النموذج",
+    "formType": "نوع النموذج",
+    "selectType": "اختر نوع النموذج",
+    "uploadDocument": "رفع المستند",
+    "document": "المستند",
+    "noFormsFound": "لم يتم العثور على نماذج",
+    "deleteForm": "حذف النموذج",
+    "confirmDelete": "هل أنت متأكد من حذف هذا النموذج؟",
+    "formDeleted": "تم حذف النموذج بنجاح",
+    "formAdded": "تم إضافة النموذج بنجاح",
+    "errorDeleting": "خطأ في حذف النموذج",
+    "errorAdding": "خطأ في إضافة النموذج",
+    "createdBy": "أنشئ بواسطة",
+    "createdAt": "تاريخ الإنشاء",
+    "clickToDownload": "انقر للتحميل",
+    "browseAndDownload": "تصفح وحمل النماذج"
   },
 
   "notifications": {

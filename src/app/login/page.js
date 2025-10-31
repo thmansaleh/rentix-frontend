@@ -214,7 +214,7 @@ export default function Page() {
               Lexcora ERP system by Almstkshf.com
             </p>
             <p className="text-white text-xs">
-              For technical support: rased@almstkshf.com | Call: 05085952035
+              For technical support: rased@almstkshf.com | Call: 0585952035
             </p>
           </CardFooter>
         </Card>

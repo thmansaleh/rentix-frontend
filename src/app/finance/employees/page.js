@@ -3,7 +3,6 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { getEmployees } from "@/app/services/api/employees";
-import { usePermission } from "@/hooks/useAuth";
 import { EmployeeAccountStatementModal } from "./EmployeeAccountStatementModal";
 import {
   Table,
@@ -25,7 +24,6 @@ import { is } from "date-fns/locale";
 function EmployeesFinancePage() {
   const { t } = useTranslations();
   const { language } = useLanguage();
-  const { hasPermission: canView } = usePermission('View Employee');
   const [isStatementModalOpen, setIsStatementModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -175,17 +173,15 @@ function EmployeesFinancePage() {
                         {getStatusBadge(employee.status)}
                       </TableCell>
                       <TableCell>
-                        {canView && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewStatement(employee)}
-                            title={language === 'ar' ? 'عرض كشف الحساب' : 'View Account Statement'}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleViewStatement(employee)}
+                          title={language === 'ar' ? 'عرض كشف الحساب' : 'View Account Statement'}
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
