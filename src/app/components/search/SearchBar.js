@@ -93,7 +93,7 @@ const SearchBar = () => {
     } else if (searchType === 'parties') {
       route = `/parties/${item.id}`;
     } else if (searchType === 'clients') {
-      route = `/clients/${item.id}`;
+      route = `/parties/${item.id}`;
     }
 
     router.push(route);
