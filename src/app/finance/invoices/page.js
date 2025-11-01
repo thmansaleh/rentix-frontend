@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,7 @@ import useSWR from 'swr';
 
 function InvoicesPage() {
   const { isRTL, language } = useLanguage();
+  const t = useTranslations('invoices');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -56,10 +58,10 @@ function InvoicesPage() {
     mutate(); // Refresh the list
   };
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount, currency = 'AED') => {
     return new Intl.NumberFormat('ar-AE', {
       style: 'currency',
-      currency: 'AED'
+      currency: currency
     }).format(amount);
   };
 
@@ -69,13 +71,11 @@ function InvoicesPage() {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      draft: { label: 'مسودة', variant: 'secondary' },
-      issued: { label: 'صادرة', variant: 'default' },
-      paid: { label: 'مدفوعة', variant: 'success' },
-      cancelled: { label: 'ملغاة', variant: 'destructive' }
+      pending: { label: t('statusPending'), variant: 'secondary' },
+      approved: { label: t('statusApproved'), variant: 'success' }
     };
 
-    const config = statusConfig[status] || statusConfig.draft;
+    const config = statusConfig[status] || statusConfig.pending;
     
     return (
       <Badge variant={config.variant}>
@@ -99,22 +99,35 @@ function InvoicesPage() {
     },
     client_name: {
       en: 'Client',
-      ar: 'العميل',
+      ar: 'الموكل',
       dataKey: 'client_name'
     },
-    bank_info: {
+    branch_name: {
+      en: 'Branch',
+      ar: 'الفرع',
+      dataKey: 'branch_name'
+    },
+    bank_name: {
       en: 'Bank Account',
       ar: 'الحساب البنكي',
       dataKey: 'bank_name',
-      formatter: (value, item) => {
-        return `${item.bank_name || ''} - ${item.account_number || ''}`;
-      }
+      formatter: (value, item) => item.bank_name ? `${item.bank_name} - ${item.account_number}` : '-'
     },
     amount: {
       en: 'Amount',
       ar: 'المبلغ',
       dataKey: 'amount',
-      formatter: (value) => formatCurrency(value)
+      formatter: (value, item) => `${value} ${item.currency || 'AED'}`
+    },
+    vat: {
+      en: 'VAT %',
+      ar: 'ضريبة القيمة المضافة %',
+      dataKey: 'vat'
+    },
+    currency: {
+      en: 'Currency',
+      ar: 'العملة',
+      dataKey: 'currency'
     },
     status: {
       en: 'Status',
@@ -122,10 +135,8 @@ function InvoicesPage() {
       dataKey: 'status',
       type: 'status',
       statusMap: {
-        draft: { en: 'Draft', ar: 'مسودة' },
-        issued: { en: 'Issued', ar: 'صادرة' },
-        paid: { en: 'Paid', ar: 'مدفوعة' },
-        cancelled: { en: 'Cancelled', ar: 'ملغاة' }
+        pending: { en: 'Pending', ar: 'قيد الانتظار' },
+        approved: { en: 'Approved', ar: 'معتمدة' }
       }
     },
     created_by_name: {
@@ -141,7 +152,7 @@ function InvoicesPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            الفواتير العامة
+            {t('pageTitle')}
           </h1>
         </div>
 
@@ -149,7 +160,7 @@ function InvoicesPage() {
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center flex-wrap gap-3">
-              <CardTitle>قائمة الفواتير</CardTitle>
+              <CardTitle>{t('listTitle')}</CardTitle>
               <div className="flex items-center gap-2 flex-wrap">
                 <ExportButtons
                   data={invoices}
@@ -163,7 +174,7 @@ function InvoicesPage() {
                   className="flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  إضافة فاتورة جديدة
+                  {t('addNewInvoice')}
                 </Button>
               </div>
             </div>
@@ -172,13 +183,13 @@ function InvoicesPage() {
             {loading ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <span className="mr-3">جاري تحميل الفواتير...</span>
+                <span className={isRTL ? "mr-3" : "ml-3"}>{t('loading')}</span>
               </div>
             ) : invoices.length === 0 ? (
               <div className="text-center p-8">
-                <p className="text-gray-500 mb-4">لا توجد فواتير مضافة</p>
+                <p className="text-gray-500 mb-4">{t('noInvoices')}</p>
                 <Button onClick={() => setShowAddModal(true)}>
-                  إضافة فاتورة جديدة
+                  {t('addNewInvoice')}
                 </Button>
               </div>
             ) : (
@@ -186,14 +197,16 @@ function InvoicesPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>رقم الفاتورة</TableHead>
-                      <TableHead>التاريخ</TableHead>
-                      <TableHead>العميل</TableHead>
-                      <TableHead>الحساب البنكي</TableHead>
-                      <TableHead>المبلغ</TableHead>
-                      <TableHead>الحالة</TableHead>
-                      <TableHead>أضيف بواسطة</TableHead>
-                      <TableHead>الإجراءات</TableHead>
+                      <TableHead>{t('invoiceNumber')}</TableHead>
+                      <TableHead>{t('date')}</TableHead>
+                      <TableHead>{t('clientName')}</TableHead>
+                      <TableHead>{t('branchName')}</TableHead>
+                      <TableHead>{t('bankAccount')}</TableHead>
+                      <TableHead>{t('amount')}</TableHead>
+                      <TableHead>{t('vatPercent')}</TableHead>
+                      <TableHead>{t('status')}</TableHead>
+                      <TableHead>{t('createdBy')}</TableHead>
+                      <TableHead>{t('actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -208,15 +221,22 @@ function InvoicesPage() {
                         <TableCell>
                           {invoice.client_name || '-'}
                         </TableCell>
-                        <TableCell className="text-sm">
-                          {invoice.bank_name}
-                          <br />
-                          <span className="text-gray-500 font-mono">
-                            {invoice.account_number}
-                          </span>
+                        <TableCell>
+                          {invoice.branch_name || '-'}
+                        </TableCell>
+                        <TableCell>
+                          {invoice.bank_name ? (
+                            <div className="text-xs">
+                              <div className="font-medium">{invoice.bank_name}</div>
+                              <div className="text-gray-500">{invoice.account_number}</div>
+                            </div>
+                          ) : '-'}
                         </TableCell>
                         <TableCell className="font-semibold">
-                          {formatCurrency(invoice.amount)}
+                          {formatCurrency(invoice.amount, invoice.currency)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {invoice.vat ? `${invoice.vat}%` : '-'}
                         </TableCell>
                         <TableCell>
                           {getStatusBadge(invoice.status)}
@@ -230,7 +250,7 @@ function InvoicesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleView(invoice.id)}
-                              title="عرض"
+                              title={t('view')}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -238,7 +258,7 @@ function InvoicesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handlePrint(invoice.id)}
-                              title="طباعة"
+                              title={t('print')}
                             >
                               <Printer className="h-4 w-4 text-blue-600" />
                             </Button>
@@ -246,7 +266,7 @@ function InvoicesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleEdit(invoice.id)}
-                              title="تعديل"
+                              title={t('edit')}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -254,7 +274,7 @@ function InvoicesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleDelete(invoice.id)}
-                              title="حذف"
+                              title={t('delete')}
                             >
                               <Trash2 className="h-4 w-4 text-red-600" />
                             </Button>

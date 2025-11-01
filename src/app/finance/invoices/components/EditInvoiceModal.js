@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Loader2, CalendarIcon } from "lucide-react";
+import { Plus, Trash2, Loader2, CalendarIcon, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,38 +9,37 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui/custom-modal";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { toast } from "react-toastify";
 import { getInvoiceById, updateInvoice } from "@/app/services/api/invoices";
-import { getEmployees } from "@/app/services/api/employees";
-import { getAllBankAccounts } from "@/app/services/api/bankAccounts";
+import { getBranches } from "@/app/services/api/branches";
 import { getAllParties } from "@/app/services/api/parties";
+import { getAllBankAccounts } from "@/app/services/api/bankAccounts";
+import { useTranslations } from "@/hooks/useTranslations";
 import useSWR from "swr";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess }) {
+  const t = useTranslations('invoices');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(null);
   const [formData, setFormData] = useState({
     client_id: "",
-    referred_by_employee_id: "",
+    branch_id: "",
     bank_account_id: "",
-    status: "draft",
+    vat: "5.00",
+    currency: "AED",
   });
   const [items, setItems] = useState([{ description: "", amount: "" }]);
+  const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch employees
-  const { data: employeesData } = useSWR(
-    isOpen ? "/employees" : null,
-    getEmployees
-  );
-
-  // Fetch bank accounts
-  const { data: bankAccountsData } = useSWR(
-    isOpen ? "/bank-accounts" : null,
-    getAllBankAccounts
+  // Fetch branches
+  const { data: branchesData } = useSWR(
+    isOpen ? "/branches" : null,
+    getBranches
   );
 
   // Fetch clients (parties)
@@ -49,7 +48,15 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     getAllParties
   );
 
+  // Fetch bank accounts
+  const { data: bankAccountsData } = useSWR(
+    isOpen ? "/bank-accounts" : null,
+    getAllBankAccounts
+  );
+
   const clients = clientsData?.data || [];
+  const branches = branchesData?.data || [];
+  const bankAccounts = bankAccountsData?.data || [];
 
   // Load invoice data
   useEffect(() => {
@@ -69,9 +76,10 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         setInvoiceDate(invoice.invoice_date ? parseISO(invoice.invoice_date) : new Date());
         setFormData({
           client_id: invoice.client_id?.toString() || "",
-          referred_by_employee_id: invoice.referred_by_employee_id?.toString() || "",
+          branch_id: invoice.branch_id?.toString() || "",
           bank_account_id: invoice.bank_account_id?.toString() || "",
-          status: invoice.status || "draft",
+          vat: invoice.vat?.toString() || "5.00",
+          currency: invoice.currency || "AED",
         });
         
         // Load items
@@ -83,13 +91,20 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         } else {
           setItems([{ description: "", amount: "" }]);
         }
+
+        // Load attachments
+        if (invoice.attachments && invoice.attachments.length > 0) {
+          setAttachments(invoice.attachments);
+        } else {
+          setAttachments([]);
+        }
       } else {
-        toast.error("فشل في تحميل بيانات الفاتورة");
+        toast.error(t('createError'));
         onClose();
       }
     } catch (error) {
 
-      toast.error("فشل في تحميل بيانات الفاتورة");
+      toast.error(t('createError'));
       onClose();
     } finally {
       setLoading(false);
@@ -101,7 +116,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     return sum + (parseFloat(item.amount) || 0);
   }, 0);
   
-  const vatRate = 5.00; // 5% VAT
+  const vatRate = parseFloat(formData.vat) || 0;
   const vatAmount = (subtotal * vatRate) / 100;
   const totalAmount = subtotal + vatAmount;
 
@@ -126,27 +141,50 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     setItems(newItems);
   };
 
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // For now, just store file info. In production, you'd upload to server
+    const newAttachments = files.map(file => ({
+      attachment_name: file.name,
+      attachment_url: URL.createObjectURL(file), // Temporary URL for preview
+      file: file // Store file for later upload
+    }));
+
+    setAttachments(prev => [...prev, ...newAttachments]);
+  };
+
+  const handleRemoveAttachment = (index) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation
     if (!invoiceDate) {
-      toast.error("الرجاء إدخال تاريخ الفاتورة");
+      toast.error(t('pleaseEnterDate'));
       return;
     }
 
-    if (items.length === 0 || items.every(item => !item.description || !item.amount)) {
-      toast.error("الرجاء إضافة بند واحد على الأقل");
+    if (!formData.branch_id) {
+      toast.error(t('pleaseSelectBranch'));
       return;
     }
 
     if (!formData.bank_account_id) {
-      toast.error("الرجاء اختيار الحساب البنكي");
+      toast.error(t('pleaseSelectBank'));
+      return;
+    }
+
+    if (items.length === 0 || items.every(item => !item.description || !item.amount)) {
+      toast.error(t('pleaseAddOneItem'));
       return;
     }
 
     if (totalAmount <= 0) {
-      toast.error("المبلغ الإجمالي يجب أن يكون أكبر من صفر");
+      toast.error(t('totalMustBePositive'));
       return;
     }
 
@@ -159,24 +197,27 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         invoice_date: format(invoiceDate, "yyyy-MM-dd"),
         amount: totalAmount.toFixed(2),
         client_id: formData.client_id || null,
-        referred_by_employee_id: formData.referred_by_employee_id || null,
-        bank_account_id: formData.bank_account_id,
-        status: formData.status,
+        branch_id: formData.branch_id || null,
+        bank_account_id: formData.bank_account_id || null,
+        status: "pending",
+        vat: parseFloat(formData.vat) || 0,
+        currency: formData.currency || "AED",
         items: validItems,
+        attachments: attachments,
       };
 
       const response = await updateInvoice(invoiceId, payload);
 
       if (response.success) {
-        toast.success("تم تعديل الفاتورة بنجاح");
+        toast.success(t('updateSuccess'));
         onSuccess();
         onClose();
       } else {
-        toast.error(response.error || "فشل في تعديل الفاتورة");
+        toast.error(response.error || t('updateError'));
       }
     } catch (error) {
 
-      toast.error(error.response?.data?.error || "فشل في تعديل الفاتورة");
+      toast.error(error.response?.data?.error || t('updateError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -194,13 +235,13 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     <CustomModal
       isOpen={isOpen}
       onClose={onClose}
-      title="تعديل الفاتورة"
+      title={t('editInvoice')}
       size="lg"
     >
       {loading ? (
         <div className="flex items-center justify-center p-12">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="mr-3">جاري تحميل البيانات...</span>
+          <span className="mr-3">{t('loading')}</span>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
@@ -208,7 +249,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
             <div className="space-y-6">
             {/* Invoice Date */}
             <div className="space-y-2">
-              <Label htmlFor="invoice_date">تاريخ الفاتورة *</Label>
+              <Label htmlFor="invoice_date">{t('invoiceDateRequired')}</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -220,7 +261,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                     disabled={isSubmitting}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {invoiceDate ? format(invoiceDate, "PPP", { locale: ar }) : "اختر التاريخ"}
+                    {invoiceDate ? format(invoiceDate, "PPP", { locale: ar }) : t('selectDate')}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -238,40 +279,35 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
 
             {/* Client Selection */}
             <div className="space-y-2">
-              <Label htmlFor="client_id">العميل (اختياري)</Label>
-              <Select
-                value={formData.client_id || undefined}
+              <Label htmlFor="client_id">{t('selectClient')}</Label>
+              <SearchableCombobox
+                options={clients.map(client => ({
+                  value: client.id.toString(),
+                  label: client.name
+                }))}
+                value={formData.client_id}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, client_id: value }))}
+                placeholder={t('searchClient')}
+                emptyMessage={t('noClientFound')}
                 disabled={isSubmitting}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="-- اختر العميل --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {clients.map((client) => (
-                    <SelectItem key={client.id} value={client.id.toString()}>
-                      {client.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              />
             </div>
 
-            {/* Employee Selection */}
+            {/* Branch Selection */}
             <div className="space-y-2">
-              <Label htmlFor="referred_by_employee_id">الموظف المحول (اختياري)</Label>
+              <Label htmlFor="branch_id">{t('branchRequired')}</Label>
               <Select
-                value={formData.referred_by_employee_id || undefined}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, referred_by_employee_id: value }))}
+                value={formData.branch_id || undefined}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, branch_id: value }))}
                 disabled={isSubmitting}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="-- اختر الموظف --" />
+                  <SelectValue placeholder={t('selectBranch')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {employeesData?.data?.map((employee) => (
-                    <SelectItem key={employee.id} value={employee.id.toString()}>
-                      {employee.name}
+                  {branches.map((branch) => (
+                    <SelectItem key={branch.id} value={branch.id.toString()}>
+                      {branch.name_ar}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -280,41 +316,59 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
 
             {/* Bank Account Selection */}
             <div className="space-y-2">
-              <Label htmlFor="bank_account_id">الحساب البنكي *</Label>
+              <Label htmlFor="bank_account_id">{t('bankAccountRequired')}</Label>
               <Select
-                value={formData.bank_account_id}
+                value={formData.bank_account_id || undefined}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, bank_account_id: value }))}
                 disabled={isSubmitting}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="-- اختر الحساب البنكي --" />
+                  <SelectValue placeholder={t('selectBankAccount')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {bankAccountsData?.data?.map((account) => (
+                  {bankAccounts.map((account) => (
                     <SelectItem key={account.id} value={account.id.toString()}>
-                      {account.bank_name} - {account.account_number}
+                      {account.branch_name_en} - {account.bank_name} - {account.account_number}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Status */}
+            {/* VAT Percentage */}
             <div className="space-y-2">
-              <Label htmlFor="status">حالة الفاتورة *</Label>
+              <Label htmlFor="vat">{t('vatPercentage')}</Label>
+              <Input
+                id="vat"
+                name="vat"
+                type="number"
+                step="0.01"
+                min="0"
+                max="100"
+                value={formData.vat}
+                onChange={handleInputChange}
+                placeholder="5.00"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            {/* Currency */}
+            <div className="space-y-2">
+              <Label htmlFor="currency">{t('currencyRequired')}</Label>
               <Select
-                value={formData.status}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
+                value={formData.currency}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, currency: value }))}
                 disabled={isSubmitting}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">مسودة</SelectItem>
-                  <SelectItem value="issued">صادرة</SelectItem>
-                  <SelectItem value="paid">مدفوعة</SelectItem>
-                  <SelectItem value="cancelled">ملغاة</SelectItem>
+                  <SelectItem value="AED">درهم إماراتي (AED)</SelectItem>
+                  <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
+                  <SelectItem value="EUR">يورو (EUR)</SelectItem>
+                  <SelectItem value="GBP">جنيه إسترليني (GBP)</SelectItem>
+                  <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -322,7 +376,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
             {/* Invoice Items */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label>بنود الفاتورة *</Label>
+                <Label>{t('invoiceDetails')}</Label>
                 <Button
                   type="button"
                   variant="outline"
@@ -332,7 +386,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                   className="flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  إضافة بند
+                  {t('addItem')}
                 </Button>
               </div>
 
@@ -341,7 +395,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                   <div key={index} className="flex gap-2 items-start">
                     <div className="flex-1">
                       <Input
-                        placeholder="وصف البند"
+                        placeholder={t('itemDescription')}
                         value={item.description}
                         onChange={(e) =>
                           handleItemChange(index, "description", e.target.value)
@@ -354,7 +408,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                       <Input
                         type="number"
                         step="0.01"
-                        placeholder="المبلغ"
+                        placeholder={t('itemAmount')}
                         value={item.amount}
                         onChange={(e) =>
                           handleItemChange(index, "amount", e.target.value)
@@ -380,25 +434,71 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
               </div>
             </div>
 
+            {/* Invoice Attachments */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>{t('attachments')}</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => document.getElementById('invoice-attachments-edit').click()}
+                  disabled={isSubmitting}
+                  className="flex items-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  {t('uploadFile')}
+                </Button>
+                <input
+                  id="invoice-attachments-edit"
+                  type="file"
+                  multiple
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                />
+              </div>
+
+              {attachments.length > 0 && (
+                <div className="space-y-2">
+                  {attachments.map((attachment, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-md">
+                      <span className="text-sm truncate flex-1">{attachment.attachment_name}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveAttachment(index)}
+                        disabled={isSubmitting}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Total Amount with VAT breakdown */}
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span>المجموع الفرعي:</span>
+                <span>{t('subtotal')}</span>
                 <span className="font-medium">
-                  {subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AED
+                  {subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {formData.currency}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span>ضريبة القيمة المضافة ({vatRate}%):</span>
+                <span>{t('vatAmount', { vat: vatRate })}</span>
                 <span className="font-medium">
-                  {vatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AED
+                  {vatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {formData.currency}
                 </span>
               </div>
               <div className="border-t pt-2 mt-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-lg">الإجمالي:</span>
+                  <span className="font-bold text-lg">{t('total')}</span>
                   <span className="text-2xl font-bold text-blue-600">
-                    {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AED
+                    {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {formData.currency}
                   </span>
                 </div>
               </div>
@@ -413,16 +513,16 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
             onClick={onClose}
             disabled={isSubmitting}
           >
-            إلغاء
+            {t('cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                جاري الحفظ...
+                {t('saving')}
               </>
             ) : (
-              "حفظ التعديلات"
+              t('saveChanges')
             )}
           </Button>
         </CustomModalFooter>

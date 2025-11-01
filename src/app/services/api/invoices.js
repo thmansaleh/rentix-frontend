@@ -35,3 +35,9 @@ export const deleteInvoice = async (id) => {
   const response = await api.delete(`/invoices/${id}`);
   return response.data;
 };
+
+// Delete invoice attachment
+export const deleteInvoiceAttachment = async (attachmentId) => {
+  const response = await api.delete(`/invoices/attachments/${attachmentId}`);
+  return response.data;
+};

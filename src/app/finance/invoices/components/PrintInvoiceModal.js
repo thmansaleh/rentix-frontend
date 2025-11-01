@@ -21,6 +21,172 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
     }
   }, [isOpen, invoiceId]);
 
+  // Convert number to Arabic words
+  const numberToArabicWords = (num) => {
+    const ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
+    const tens = ['', '', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+    const teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
+    const hundreds = ['', 'مائة', 'مئتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+    
+    if (num === 0) return 'صفر';
+    
+    const convertBelow1000 = (n) => {
+      let str = '';
+      const hasHundreds = n >= 100;
+      
+      if (hasHundreds) {
+        str += hundreds[Math.floor(n / 100)];
+        n = n % 100;
+        if (n > 0) str += ' و '; // Add "و" if there are remaining tens/ones
+      }
+      
+      if (n >= 20) {
+        str += tens[Math.floor(n / 10)];
+        n = n % 10;
+        if (n > 0) str += ' و '; // Add "و" between tens and ones
+      } else if (n >= 10) {
+        str += teens[n - 10];
+        return str;
+      }
+      
+      if (n > 0 && n < 10) {
+        str += ones[n];
+      }
+      
+      return str;
+    };
+    
+    let result = '';
+    let intPart = Math.floor(num);
+    const decPart = Math.round((num - intPart) * 100);
+    
+    // Millions
+    if (intPart >= 1000000) {
+      const millions = Math.floor(intPart / 1000000);
+      if (millions === 1) result += 'مليون';
+      else if (millions === 2) result += 'مليونان';
+      else result += convertBelow1000(millions) + ' مليون';
+      intPart = intPart % 1000000;
+      if (intPart > 0) result += ' و ';
+    }
+    
+    // Thousands
+    if (intPart >= 1000) {
+      const thousands = Math.floor(intPart / 1000);
+      if (thousands === 1) result += 'ألف';
+      else if (thousands === 2) result += 'ألفان';
+      else if (thousands >= 3 && thousands <= 10) result += convertBelow1000(thousands) + ' آلاف';
+      else result += convertBelow1000(thousands) + ' ألف';
+      intPart = intPart % 1000;
+      if (intPart > 0) result += ' و ';
+    }
+    
+    // Below 1000
+    if (intPart > 0) {
+      result += convertBelow1000(intPart);
+    }
+    
+    // Decimal part (fils)
+    if (decPart > 0) {
+      result += ' و ' + convertBelow1000(decPart) + ' فلس';
+    }
+    
+    return result.trim();
+  };
+
+  // Convert number to English words
+  const numberToEnglishWords = (num) => {
+    const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    
+    if (num === 0) return 'Zero';
+    
+    let result = '';
+    const intPart = Math.floor(num);
+    const decPart = Math.round((num - intPart) * 100);
+    
+    if (intPart >= 1000000) {
+      result += convertHundreds(Math.floor(intPart / 1000000)) + ' Million ';
+      num = intPart % 1000000;
+    } else {
+      num = intPart;
+    }
+    
+    if (num >= 1000) {
+      result += convertHundreds(Math.floor(num / 1000)) + ' Thousand ';
+      num = num % 1000;
+    }
+    
+    if (num >= 100) {
+      result += ones[Math.floor(num / 100)] + ' Hundred ';
+      num = num % 100;
+    }
+    
+    if (num >= 20) {
+      result += tens[Math.floor(num / 10)] + ' ';
+      num = num % 10;
+    } else if (num >= 10) {
+      result += teens[num - 10] + ' ';
+      num = 0;
+    }
+    
+    if (num > 0) {
+      result += ones[num] + ' ';
+    }
+    
+    if (decPart > 0) {
+      result += 'and ';
+      if (decPart >= 10 && decPart < 20) {
+        result += teens[decPart - 10];
+      } else {
+        if (decPart >= 20) {
+          result += tens[Math.floor(decPart / 10)] + ' ';
+        }
+        if (decPart % 10 > 0) {
+          result += ones[decPart % 10];
+        }
+      }
+      result += ' Fils';
+    }
+    
+    return result.trim();
+  };
+
+  const convertHundreds = (num) => {
+    const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    
+    let result = '';
+    if (num >= 100) {
+      result += ones[Math.floor(num / 100)] + ' Hundred ';
+      num = num % 100;
+    }
+    if (num >= 20) {
+      result += tens[Math.floor(num / 10)] + ' ';
+      num = num % 10;
+    } else if (num >= 10) {
+      result += teens[num - 10] + ' ';
+      return result.trim();
+    }
+    if (num > 0) {
+      result += ones[num] + ' ';
+    }
+    return result.trim();
+  };
+
+  const getCurrencyName = (currency) => {
+    const currencies = {
+      'AED': { ar: 'درهم إماراتي', en: 'UAE Dirham' },
+      'USD': { ar: 'دولار أمريكي', en: 'US Dollar' },
+      'EUR': { ar: 'يورو', en: 'Euro' },
+      'GBP': { ar: 'جنيه إسترليني', en: 'British Pound' },
+      'SAR': { ar: 'ريال سعودي', en: 'Saudi Riyal' }
+    };
+    return currencies[currency] || { ar: currency, en: currency };
+  };
+
   const loadInvoiceData = async () => {
     try {
       setLoading(true);
@@ -69,54 +235,204 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
             body {
               font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               direction: rtl;
-              padding: 20px;
+              padding: 0;
+              background: white;
             }
-            .border-b-2 { border-bottom: 2px solid #1f2937; }
-            .border-gray-800 { border-color: #1f2937; }
-            .pb-6 { padding-bottom: 1.5rem; }
-            .mb-6 { margin-bottom: 1.5rem; }
-            .mb-8 { margin-bottom: 2rem; }
-            .mt-6 { margin-top: 1.5rem; }
-            .mt-12 { margin-top: 3rem; }
-            .pt-6 { padding-top: 1.5rem; }
-            .p-4 { padding: 1rem; }
-            .flex { display: flex; }
-            .justify-between { justify-content: space-between; }
-            .items-center { align-items: center; }
-            .items-start { align-items: flex-start; }
-            .grid { display: grid; }
-            .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-            .gap-6 { gap: 1.5rem; }
-            .space-y-2 > * + * { margin-top: 0.5rem; }
-            .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-            .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-            .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-            .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-            .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-            .text-xs { font-size: 0.75rem; line-height: 1rem; }
-            .font-bold { font-weight: 700; }
-            .font-semibold { font-weight: 600; }
-            .font-medium { font-weight: 500; }
-            .font-mono { font-family: monospace; }
-            .text-gray-600 { color: #4b5563; }
-            .text-gray-500 { color: #6b7280; }
-            .text-blue-600 { color: #2563eb; }
-            .bg-gray-50 { background-color: #f9fafb; }
-            .bg-gray-800 { background-color: #1f2937; }
-            .text-white { color: white; }
-            .border { border: 1px solid; }
-            .border-t-2 { border-top: 2px solid; }
-            .border-gray-300 { border-color: #d1d5db; }
-            .rounded-t { border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem; }
-            .rounded-b { border-bottom-left-radius: 0.25rem; border-bottom-right-radius: 0.25rem; }
-            .w-80 { width: 20rem; }
-            .text-right { text-align: right; }
-            .text-center { text-align: center; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 0.75rem; text-align: right; border: 1px solid #d1d5db; }
-            th { background-color: #f3f4f6; font-weight: 600; }
+            .invoice-container {
+              max-width: 210mm;
+              margin: 0 auto;
+              background: white;
+              padding: 10mm;
+            }
+            .header-section {
+              border: 2px solid #1e3a8a;
+              padding: 15px;
+              margin-bottom: 20px;
+              background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+              color: white;
+            }
+            .company-info {
+              text-align: center;
+              margin-bottom: 10px;
+            }
+            .company-name {
+              font-size: 28px;
+              font-weight: bold;
+              margin-bottom: 5px;
+            }
+            .invoice-title {
+              background: white;
+              color: #1e3a8a;
+              display: inline-block;
+              padding: 8px 40px;
+              font-size: 24px;
+              font-weight: bold;
+              border-radius: 5px;
+            }
+            .invoice-details {
+              display: flex;
+              justify-content: space-between;
+              margin-top: 10px;
+              padding-top: 10px;
+              border-top: 1px solid rgba(255,255,255,0.3);
+            }
+            .invoice-number {
+              font-size: 18px;
+              font-weight: bold;
+            }
+            .info-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 15px;
+              margin-bottom: 20px;
+            }
+            .info-box {
+              border: 1px solid #d1d5db;
+              padding: 12px;
+              background: #f9fafb;
+            }
+            .info-label {
+              font-size: 11px;
+              color: #6b7280;
+              text-transform: uppercase;
+              margin-bottom: 4px;
+              font-weight: 600;
+            }
+            .info-value {
+              font-size: 14px;
+              color: #1f2937;
+              font-weight: 500;
+            }
+            .bilingual-label {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .label-ar { font-weight: 600; }
+            .label-en { font-size: 10px; color: #6b7280; }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 20px 0;
+              border: 1px solid #d1d5db;
+            }
+            thead {
+              background: #1e3a8a;
+              color: white;
+            }
+            th {
+              padding: 12px 8px;
+              text-align: center;
+              font-weight: 600;
+              font-size: 12px;
+              border: 1px solid #1e3a8a;
+            }
+            td {
+              padding: 10px 8px;
+              border: 1px solid #d1d5db;
+              font-size: 13px;
+            }
+            tbody tr:nth-child(even) {
+              background: #f9fafb;
+            }
+            .amount-cell {
+              text-align: left;
+              font-family: monospace;
+              font-weight: 600;
+            }
+            .totals-section {
+              margin-top: 20px;
+              display: flex;
+              justify-content: flex-end;
+            }
+            .totals-box {
+              width: 350px;
+              border: 2px solid #1e3a8a;
+            }
+            .total-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 10px 15px;
+              border-bottom: 1px solid #e5e7eb;
+            }
+            .total-row.subtotal {
+              background: #f3f4f6;
+            }
+            .total-row.vat {
+              background: #fef3c7;
+            }
+            .total-row.grand-total {
+              background: #1e3a8a;
+              color: white;
+              font-size: 16px;
+              font-weight: bold;
+              border-bottom: none;
+            }
+            .amount-in-words {
+              border: 2px solid #e5e7eb;
+              padding: 15px;
+              margin: 20px 0;
+              background: #fffbeb;
+            }
+            .words-title {
+              font-size: 12px;
+              color: #92400e;
+              font-weight: 600;
+              margin-bottom: 8px;
+              text-transform: uppercase;
+            }
+            .words-ar {
+              font-size: 14px;
+              color: #1f2937;
+              margin-bottom: 5px;
+              font-weight: 500;
+            }
+            .words-en {
+              font-size: 12px;
+              color: #6b7280;
+              font-style: italic;
+            }
+            .footer-section {
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 2px solid #d1d5db;
+            }
+            .signatures {
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr;
+              gap: 20px;
+              margin-top: 40px;
+            }
+            .signature-box {
+              text-align: center;
+            }
+            .signature-line {
+              border-top: 1px solid #1f2937;
+              padding-top: 5px;
+              margin-top: 50px;
+              font-size: 12px;
+              color: #6b7280;
+            }
+            .thank-you {
+              text-align: center;
+              margin-top: 30px;
+              padding: 15px;
+              background: #f3f4f6;
+              border-radius: 5px;
+            }
+            .thank-you-ar {
+              font-size: 16px;
+              font-weight: 600;
+              color: #1e3a8a;
+              margin-bottom: 3px;
+            }
+            .thank-you-en {
+              font-size: 12px;
+              color: #6b7280;
+            }
             @media print {
               body { padding: 0; }
+              .invoice-container { padding: 5mm; }
             }
           </style>
         </head>
@@ -136,11 +452,11 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
     };
   };
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount, currency = 'AED') => {
     return new Intl.NumberFormat('ar-AE', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    }).format(amount);
+    }).format(amount) + ' ' + currency;
   };
 
   const formatDate = (dateString) => {
@@ -154,10 +470,8 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
 
   const getStatusLabel = (status) => {
     const statusLabels = {
-      draft: 'مسودة',
-      issued: 'صادرة',
-      paid: 'مدفوعة',
-      cancelled: 'ملغاة'
+      pending: 'قيد الانتظار',
+      approved: 'معتمدة'
     };
     return statusLabels[status] || status;
   };
@@ -181,140 +495,391 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
           <>
             <CustomModalBody>
               {/* Print Area */}
-              <div id="invoice-print-area" ref={printRef} className="bg-white">
-                {/* Header */}
-                <div className="border-b-2 border-gray-800 pb-6 mb-6">
-                  <div className="flex justify-between items-start">
+              <style jsx>{`
+                .invoice-container {
+                  max-width: 210mm;
+                  margin: 0 auto;
+                  background: white;
+                  padding: 20px;
+                }
+                .header-section {
+                  border: 2px solid #1e3a8a;
+                  padding: 15px;
+                  margin-bottom: 20px;
+                  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+                  color: white;
+                  border-radius: 5px;
+                }
+                .company-info {
+                  text-align: center;
+                  margin-bottom: 10px;
+                }
+                .company-name {
+                  font-size: 24px;
+                  font-weight: bold;
+                  margin-bottom: 5px;
+                }
+                .invoice-title {
+                  background: white;
+                  color: #1e3a8a;
+                  display: inline-block;
+                  padding: 8px 40px;
+                  font-size: 20px;
+                  font-weight: bold;
+                  border-radius: 5px;
+                }
+                .invoice-details {
+                  display: flex;
+                  justify-content: space-between;
+                  margin-top: 10px;
+                  padding-top: 10px;
+                  border-top: 1px solid rgba(255,255,255,0.3);
+                }
+                .invoice-number {
+                  font-size: 16px;
+                  font-weight: bold;
+                }
+                .info-grid {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 15px;
+                  margin-bottom: 20px;
+                }
+                .info-box {
+                  border: 1px solid #d1d5db;
+                  padding: 12px;
+                  background: #f9fafb;
+                  border-radius: 4px;
+                }
+                .info-label {
+                  font-size: 11px;
+                  color: #6b7280;
+                  text-transform: uppercase;
+                  margin-bottom: 4px;
+                  font-weight: 600;
+                }
+                .info-value {
+                  font-size: 14px;
+                  color: #1f2937;
+                  font-weight: 500;
+                }
+                .bilingual-label {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 5px;
+                }
+                .label-ar { 
+                  font-weight: 600;
+                  font-size: 13px;
+                }
+                .label-en { 
+                  font-size: 10px;
+                  color: #6b7280;
+                }
+                .invoice-container table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin: 20px 0;
+                  border: 1px solid #d1d5db;
+                }
+                .invoice-container thead {
+                  background: #1e3a8a;
+                  color: white;
+                }
+                .invoice-container th {
+                  padding: 12px 8px;
+                  text-align: center;
+                  font-weight: 600;
+                  font-size: 13px;
+                  border: 1px solid #1e3a8a;
+                }
+                .invoice-container td {
+                  padding: 10px 8px;
+                  border: 1px solid #d1d5db;
+                  font-size: 13px;
+                }
+                .invoice-container tbody tr:nth-child(even) {
+                  background: #f9fafb;
+                }
+                .amount-cell {
+                  text-align: left;
+                  font-family: monospace;
+                  font-weight: 600;
+                }
+                .totals-section {
+                  margin-top: 20px;
+                  display: flex;
+                  justify-content: flex-end;
+                }
+                .totals-box {
+                  width: 350px;
+                  border: 2px solid #1e3a8a;
+                  border-radius: 5px;
+                  overflow: hidden;
+                }
+                .total-row {
+                  display: flex;
+                  justify-content: space-between;
+                  padding: 10px 15px;
+                  border-bottom: 1px solid #e5e7eb;
+                }
+                .total-row.subtotal {
+                  background: #f3f4f6;
+                }
+                .total-row.vat {
+                  background: #fef3c7;
+                }
+                .total-row.grand-total {
+                  background: #1e3a8a;
+                  color: white;
+                  font-size: 16px;
+                  font-weight: bold;
+                  border-bottom: none;
+                }
+                .amount-in-words {
+                  border: 2px solid #e5e7eb;
+                  padding: 15px;
+                  margin: 20px 0;
+                  background: #fffbeb;
+                  border-radius: 5px;
+                }
+                .words-title {
+                  font-size: 12px;
+                  color: #92400e;
+                  font-weight: 600;
+                  margin-bottom: 8px;
+                  text-transform: uppercase;
+                }
+                .words-ar {
+                  font-size: 14px;
+                  color: #1f2937;
+                  margin-bottom: 5px;
+                  font-weight: 500;
+                }
+                .words-en {
+                  font-size: 12px;
+                  color: #6b7280;
+                  font-style: italic;
+                }
+                .footer-section {
+                  margin-top: 30px;
+                  padding-top: 20px;
+                  border-top: 2px solid #d1d5db;
+                }
+                .signatures {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr 1fr;
+                  gap: 20px;
+                  margin-top: 40px;
+                }
+                .signature-box {
+                  text-align: center;
+                }
+                .signature-line {
+                  border-top: 1px solid #1f2937;
+                  padding-top: 5px;
+                  margin-top: 50px;
+                  font-size: 12px;
+                  color: #6b7280;
+                }
+                .thank-you {
+                  text-align: center;
+                  margin-top: 30px;
+                  padding: 15px;
+                  background: #f3f4f6;
+                  border-radius: 5px;
+                }
+                .thank-you-ar {
+                  font-size: 16px;
+                  font-weight: 600;
+                  color: #1e3a8a;
+                  margin-bottom: 3px;
+                }
+                .thank-you-en {
+                  font-size: 12px;
+                  color: #6b7280;
+                }
+              `}</style>
+              <div id="invoice-print-area" ref={printRef} className="invoice-container">
+                {/* Header Section */}
+                <div className="header-section">
+                  <div className="company-info">
+                    <div className="company-name">مكتب محمد بني هاشم للمحاماة والاستشارات القانونية</div>
+                    <div style={{ fontSize: '12px', marginBottom: '15px' }}>
+                      Mohammed Bani Hashem Law Firm & Legal Consultations
+                    </div>
+                    <div className="invoice-title">
+                      فاتورة / INVOICE
+                    </div>
+                  </div>
+                  <div className="invoice-details">
                     <div>
-                      <h1 className="text-3xl font-bold text-gray-900">فاتورة</h1>
-                      <p className="text-gray-600 mt-1">INVOICE</p>
+                      <div style={{ fontSize: '11px', marginBottom: '3px' }}>رقم الفاتورة / Invoice No.</div>
+                      <div className="invoice-number">{invoice.invoice_number}</div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900">{invoice.invoice_number}</div>
-                      <div className="text-sm text-gray-600 mt-1">
-                        التاريخ: {formatDate(invoice.invoice_date)}
+                    <div>
+                      <div style={{ fontSize: '11px', marginBottom: '3px' }}>التاريخ / Date</div>
+                      <div className="invoice-number">{formatDate(invoice.invoice_date)}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Client and Details Info */}
+                <div className="info-grid">
+                  <div className="info-box">
+                    <div className="bilingual-label">
+                      <span className="label-ar">إلى / To</span>
+                    </div>
+                    <div className="info-value">{invoice.client_name || 'غير محدد / Not Specified'}</div>
+                  </div>
+                  <div className="info-box">
+                    <div className="bilingual-label">
+                      <span className="label-ar">الفرع / Branch</span>
+                    </div>
+                    <div className="info-value">{invoice.branch_name || '-'}</div>
+                  </div>
+                  <div className="info-box">
+                    <div className="bilingual-label">
+                      <span className="label-ar">العملة / Currency</span>
+                    </div>
+                    <div className="info-value">{getCurrencyName(invoice.currency || 'AED').ar} / {getCurrencyName(invoice.currency || 'AED').en}</div>
+                  </div>
+                  {invoice.bank_name && (
+                    <>
+                      <div className="info-box">
+                        <div className="bilingual-label">
+                          <span className="label-ar">البنك / Bank</span>
+                        </div>
+                        <div className="info-value">{invoice.bank_name}</div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Invoice Info Grid */}
-                <div className="grid grid-cols-2 gap-6 mb-8">
-                  {/* From/To */}
-                  <div>
-                    <h3 className="font-bold text-gray-700 mb-2">من:</h3>
-                    <div className="text-gray-600">
-                      <p className="font-semibold text-gray-900">مكتب محمد بني هاشم  </p>
-                      {/* <p className="text-sm">محمد بني هاشم</p> */}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="font-bold text-gray-700 mb-2">إلى:</h3>
-                    <div className="text-gray-600">
-                      {invoice.client_name ? (
-                        <p className="font-semibold text-gray-900">{invoice.client_name}</p>
-                      ) : (
-                        <p className="text-gray-500 italic">غير محدد</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Info */}
-                <div className="grid grid-cols-2 gap-6 mb-8 p-4 bg-gray-50 rounded">
-                  <div>
-                    <span className="text-sm font-medium text-gray-600">الموظف المحول:</span>
-                    <p className="font-semibold text-gray-900">{invoice.referred_by_employee_name || '-'}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-600">الحالة:</span>
-                    <p className="font-semibold text-gray-900">{getStatusLabel(invoice.status)}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <span className="text-sm font-medium text-gray-600">الحساب البنكي:</span>
-                    <p className="font-semibold text-gray-900">
-                      {invoice.bank_name} - {invoice.account_number}
-                    </p>
-                  </div>
+                      <div className="info-box">
+                        <div className="bilingual-label">
+                          <span className="label-ar">رقم الحساب / Account No.</span>
+                        </div>
+                        <div className="info-value">{invoice.account_number}</div>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Items Table */}
-                <div className="mb-8">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-gray-800 text-white">
-                        <th className="border border-gray-700 p-3 text-right" style={{ width: '60px' }}>#</th>
-                        <th className="border border-gray-700 p-3 text-right">الوصف</th>
-                        <th className="border border-gray-700 p-3 text-left" style={{ width: '150px' }}>المبلغ (AED)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {invoice.items && invoice.items.length > 0 ? (
-                        invoice.items.map((item, index) => (
-                          <tr key={item.id || index} className="border-b">
-                            <td className="border border-gray-300 p-3 text-center font-medium">
-                              {index + 1}
-                            </td>
-                            <td className="border border-gray-300 p-3">
-                              {item.description}
-                            </td>
-                            <td className="border border-gray-300 p-3 text-left font-mono font-semibold">
-                              {formatCurrency(item.amount)}
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="3" className="border border-gray-300 p-6 text-center text-gray-500">
-                            لا توجد بنود
+                <table>
+                  <thead>
+                    <tr>
+                      <th style={{ width: '50px' }}>
+                        #<br/>
+                        <span style={{ fontSize: '9px', fontWeight: 'normal' }}>No.</span>
+                      </th>
+                      <th>
+                        الوصف<br/>
+                        <span style={{ fontSize: '9px', fontWeight: 'normal' }}>Description</span>
+                      </th>
+                      <th style={{ width: '150px' }}>
+                        المبلغ<br/>
+                        <span style={{ fontSize: '9px', fontWeight: 'normal' }}>Amount ({invoice.currency || 'AED'})</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invoice.items && invoice.items.length > 0 ? (
+                      invoice.items.map((item, index) => (
+                        <tr key={item.id || index}>
+                          <td style={{ textAlign: 'center' }}>{index + 1}</td>
+                          <td>{item.description}</td>
+                          <td className="amount-cell">
+                            {formatCurrency(item.amount, invoice.currency)}
                           </td>
                         </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" style={{ textAlign: 'center', padding: '30px', color: '#6b7280' }}>
+                          لا توجد بنود / No Items
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
 
-                {/* Total with VAT breakdown */}
-                <div className="flex justify-end mb-8">
-                  <div className="w-80">
-                    <div className="bg-gray-50 border border-gray-300 p-4 space-y-2 rounded-t">
-                      <div className="flex justify-between text-sm">
-                        <span>المجموع الفرعي / Subtotal</span>
-                        <span className="font-mono">{formatCurrency(invoice.amount / 1.05)} AED</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>ضريبة القيمة المضافة (5%) / VAT</span>
-                        <span className="font-mono">{formatCurrency(invoice.amount - (invoice.amount / 1.05))} AED</span>
-                      </div>
+                {/* Totals Section */}
+                <div className="totals-section">
+                  <div className="totals-box">
+                    <div className="total-row subtotal">
+                      <span>المجموع الفرعي / Subtotal</span>
+                      <span className="amount-cell">
+                        {formatCurrency(
+                          invoice.items?.reduce((sum, item) => sum + parseFloat(item.amount), 0) || 0,
+                          invoice.currency
+                        )}
+                      </span>
                     </div>
-                    <div className="bg-gray-800 text-white p-4 rounded-b">
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-bold">الإجمالي / Total</span>
-                        <span className="text-2xl font-bold font-mono">
-                          {formatCurrency(invoice.amount)} AED
+                    {invoice.vat > 0 && (
+                      <div className="total-row vat">
+                        <span>ضريبة القيمة المضافة ({invoice.vat}%) / VAT</span>
+                        <span className="amount-cell">
+                          {formatCurrency(
+                            ((invoice.items?.reduce((sum, item) => sum + parseFloat(item.amount), 0) || 0) * invoice.vat) / 100,
+                            invoice.currency
+                          )}
                         </span>
                       </div>
+                    )}
+                    <div className="total-row grand-total">
+                      <span>الإجمالي / TOTAL</span>
+                      <span className="amount-cell" style={{ fontSize: '18px' }}>
+                        {formatCurrency(invoice.amount, invoice.currency)}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Footer */}
-                <div className="border-t-2 border-gray-300 pt-6 mt-12">
-                  <div className="grid grid-cols-2 gap-6 text-sm text-gray-600">
-                    <div>
-                      <p className="font-medium">أضيف بواسطة:</p>
-                      <p>{invoice.created_by_name || '-'}</p>
+                {/* Amount in Words */}
+                <div className="amount-in-words">
+                  <div className="words-title">المبلغ بالحروف / Amount in Words</div>
+                  <div className="words-ar">
+                    {numberToArabicWords(invoice.amount)} {getCurrencyName(invoice.currency || 'AED').ar}
+                  </div>
+                  <div className="words-en">
+                    {numberToEnglishWords(invoice.amount)} {getCurrencyName(invoice.currency || 'AED').en} Only
+                  </div>
+                </div>
+
+                {/* Footer Section */}
+                <div className="footer-section">
+                  <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '5px' }}>
+                    <strong>أضيف بواسطة / Created By:</strong> {invoice.created_by_name || '-'}
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                    <strong>تاريخ الإصدار / Issue Date:</strong> {formatDate(invoice.created_at)}
+                  </div>
+
+                  {/* Signatures */}
+                  <div className="signatures">
+                    <div className="signature-box">
+                      <div className="signature-line">
+                        <div>المحاسب</div>
+                        <div style={{ fontSize: '10px' }}>Accountant</div>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-medium">تاريخ الإصدار:</p>
-                      <p>{formatDate(invoice.created_at)}</p>
+                    <div className="signature-box">
+                      <div className="signature-line">
+                        <div>المدير المالي</div>
+                        <div style={{ fontSize: '10px' }}>Financial Manager</div>
+                      </div>
+                    </div>
+                    <div className="signature-box">
+                      <div className="signature-line">
+                        <div>المدير العام</div>
+                        <div style={{ fontSize: '10px' }}>General Manager</div>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="mt-6 text-center text-xs text-gray-500">
-                    <p>شكراً لتعاملكم معنا</p>
-                    <p>Thank you for your business</p>
+
+                  {/* Thank You */}
+                  <div className="thank-you">
+                    <div className="thank-you-ar">شكراً لتعاملكم معنا</div>
+                    <div className="thank-you-en">Thank you for your business</div>
                   </div>
                 </div>
               </div>
