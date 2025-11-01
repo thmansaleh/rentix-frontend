@@ -81,11 +81,17 @@ export const deleteForm = async (id) => {
 
 export const downloadForm = async (id) => {
   try {
-    // For direct download, we'll use window.open
-    const baseURL = axiosInstance.defaults.baseURL || '';
-    const downloadUrl = `${baseURL}${API_URL}/${id}/download`;
-    window.open(downloadUrl, '_blank');
+    // Get the signed URL from backend
+    const response = await axiosInstance.get(`${API_URL}/${id}/download`);
+    
+    if (response.data.success && response.data.data.url) {
+      // Open the signed AWS URL directly
+      window.open(response.data.data.url, '_blank');
+      return response.data;
+    } else {
+      throw new Error('Failed to get download URL');
+    }
   } catch (error) {
-    throw new Error('Failed to download form');
+    throw new Error(error.response?.data?.message || 'Failed to download form');
   }
 };

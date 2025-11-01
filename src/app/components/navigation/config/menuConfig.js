@@ -90,7 +90,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'finance/invoices', label: t('navigation.invoices'), icon: List },
         { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote },
         { id: 'finance/statistics', label: t('navigation.statistics'), icon: BarChartIcon },
-        { id: 'finance/employees', label: t('navigation.employeesStatements'), icon: Users2     },
+        { id: 'finance/employeesv2', label: t('navigation.employeesStatements'), icon: Users2     },
       ]
     },
     {
