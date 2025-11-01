@@ -22,7 +22,6 @@ import {
 } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { usePermission } from '@/hooks/useAuth';
 import { getCaseEmployeesDocuments, deleteCaseEmployeeDocument } from '@/app/services/api/cases';
 import { toast } from 'react-toastify';
 
@@ -30,7 +29,6 @@ function EmployeeDocuments({ caseId }) {
   const { t } = useTranslations();
   const { language } = useLanguage();
   const isArabic = language === 'ar';
-  const { hasPermission: canEditCase } = usePermission('Edit Case');
 
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
@@ -220,18 +218,16 @@ function EmployeeDocuments({ caseId }) {
                         <Download className="w-3 h-3" />
                       </Button>
                       
-                      {canEditCase && (
-                        <Button
-                           
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openDeleteModal(document.id, document.document_name)}
-                          className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
-                          title={isArabic ? 'حذف المستند' : 'Delete document'}
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      )}
+                      <Button
+                         
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openDeleteModal(document.id, document.document_name)}
+                        className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        title={isArabic ? 'حذف المستند' : 'Delete document'}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
                     </div>
                   </div>
                 </div>

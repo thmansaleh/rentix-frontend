@@ -82,16 +82,4 @@ export const filterEmployeeRequests = (requests, employeeId) => {
   return requests.filter(req => req.employee_id === employeeId);
 };
 
-/**
- * Check if user can edit manager approval
- */
-export const canEditManagerApproval = (role) => {
-  return isAdminRole(role);
-};
 
-/**
- * Check if user can edit HR approval
- */
-export const canEditHRApproval = (role, department, language) => {
-  return isAdminRole(role) || isHRRole(department, language);
-};

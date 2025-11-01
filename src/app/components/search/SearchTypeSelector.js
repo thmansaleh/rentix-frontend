@@ -54,7 +54,7 @@ const SearchTypeSelector = ({ searchType, setSearchType, isRTL }) => {
   };
 
   return (
-    <div className="relative z-100" ref={dropdownRef}>
+    <div className="relative z-50" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`
@@ -82,7 +82,7 @@ const SearchTypeSelector = ({ searchType, setSearchType, isRTL }) => {
             border border-border
             rounded-md shadow-md
             py-1 min-w-[140px]
-            z-50
+            z-49
             animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200
           `}
         >

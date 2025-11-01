@@ -33,9 +33,6 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
   const { language } = useLanguage()
   const [isSubmitting, setIsSubmitting] = useState(false)
   
-  // Check if user can edit status (only admin or secretary)
-  const canEditStatus = employeeRole?.toLowerCase() === 'admin' || employeeRole?.toLowerCase() === 'secretary'
-//   console.log("Can edit status:", employeeRole)
   const [formData, setFormData] = useState({
     title: "",
     submission_date: null,
@@ -69,8 +66,7 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
       return
     }
     
-    // Validate status only if user can edit it
-    if (canEditStatus && !formData.status) {
+    if (!formData.status) {
       toast.error(t('memos.fillAllRequired'))
       return
     }
@@ -84,11 +80,6 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
         submission_date: formData.submission_date 
           ? format(formData.submission_date, 'yyyy-MM-dd')
           : null
-      }
-      
-      // Remove status from formData if user can't edit it
-      if (!canEditStatus) {
-        delete formattedData.status
       }
 
       const response = await updateMemo(memoId, formattedData)

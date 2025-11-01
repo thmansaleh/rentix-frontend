@@ -343,9 +343,6 @@ export default function EmployeeTablePage() {
                       StatusBadge={StatusBadge} 
                       isArabic={isArabic}
                       onEmployeeUpdate={() => mutate()}
-                      canView={true}
-                      canEdit={true}
-                      canDelete={true}
                     />
                   ))}
                 </tbody>

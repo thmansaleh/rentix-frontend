@@ -1,6 +1,6 @@
 'use client';
 import { useDispatch } from 'react-redux';
-import { useAuth, usePermission, useUserRole, useUserDepartment } from '@/hooks/useAuth';
+import { useAuth, useUserRole, useUserDepartment } from '@/hooks/useAuth';
 import { logoutWithRedux } from '@/app/services/api/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,8 +22,6 @@ const UserProfile = () => {
   const roleEn = useUserRole('en');
   const departmentAr = useUserDepartment('ar');
   const departmentEn = useUserDepartment('en');
-  
-  const hasTaskManagement = usePermission('إدارة المهام');
 
   const handleLogout = async () => {
     await dispatch(logoutWithRedux());
@@ -95,14 +93,6 @@ const UserProfile = () => {
                   ))}
                 </div>
               </div>
-              
-              {hasTaskManagement && (
-                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-sm text-green-800">
-                    ✓ لديك صلاحية إدارة المهام
-                  </p>
-                </div>
-              )}
             </div>
           )}
         </CardContent>

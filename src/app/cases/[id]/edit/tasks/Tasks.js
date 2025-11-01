@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import useSWR from 'swr'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useTranslations } from '@/hooks/useTranslations'
-import { usePermission } from '@/hooks/useAuth'
 import AddTaskModal from './AddTaskModal'
 import EditTaskModal from './EditTaskModal'
 import {
@@ -29,12 +28,6 @@ import { useCallback } from 'react'
 function Tasks({ caseId }) {
   const { language } = useLanguage()
   const { t } = useTranslations()
-  
-  // Permission checks
-  const { hasPermission: canViewTask } = usePermission('View Task')
-  const { hasPermission: canAddTask } = usePermission('Add Task')
-  const { hasPermission: canEditTask } = usePermission('Edit Task')
-  const { hasPermission: canDeleteTask } = usePermission('Delete Task')
   
   // Fetch case tasks using SWR
   const { tasks, error, isLoading, mutate } = useCaseTasks(caseId)
@@ -298,37 +291,6 @@ function Tasks({ caseId }) {
     )
   }
 
-  // Check if user has permission to view tasks
-  if (!canViewTask) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5" />
-            {t('tasks.title') || 'Case Tasks'}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-center items-center py-8">
-            <div className="text-center">
-              <div className="mb-4">
-                <svg className="mx-auto h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-semibold mb-2">
-                {language === 'ar' ? 'غير مصرح' : 'Access Denied'}
-              </h2>
-              <p className="text-gray-600">
-                {language === 'ar' ? 'ليس لديك صلاحية لعرض المهام' : 'You do not have permission to view tasks'}
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -337,12 +299,10 @@ function Tasks({ caseId }) {
             <Calendar className="w-5 h-5" />
             {t('tasks.title') || 'Case Tasks'}
           </CardTitle>
-          {canAddTask && (
-            <Button onClick={() => setIsDialogOpen(true)} size="sm" className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              {t('tasks.addTask') || 'Add Task'}
-            </Button>
-          )}
+          <Button onClick={() => setIsDialogOpen(true)} size="sm" className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            {t('tasks.addTask') || 'Add Task'}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -410,26 +370,22 @@ function Tasks({ caseId }) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {canEditTask && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditTask(task)}
-                          className="h-8 w-8 p-0 hover:bg-blue-100"
-                        >
-                          <Eye className="h-4 w-4 text-blue-600" />
-                        </Button>
-                      )}
-                      {canDeleteTask && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteTask(task.id)}
-                          className="h-8 w-8 p-0 hover:bg-red-100"
-                        >
-                          <Trash2 className="h-4 w-4 text-red-600" />
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditTask(task)}
+                        className="h-8 w-8 p-0 hover:bg-blue-100"
+                      >
+                        <Eye className="h-4 w-4 text-blue-600" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteTask(task.id)}
+                        className="h-8 w-8 p-0 hover:bg-red-100"
+                      >
+                        <Trash2 className="h-4 w-4 text-red-600" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>

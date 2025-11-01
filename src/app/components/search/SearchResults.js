@@ -48,7 +48,7 @@ const SearchResults = ({
           shadow-xl
           max-h-96
           overflow-y-auto
-          z-50
+          z-44
           animate-in
           fade-in-0
           slide-in-from-top-2

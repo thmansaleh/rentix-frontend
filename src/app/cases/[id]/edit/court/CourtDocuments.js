@@ -218,18 +218,16 @@ function CourtDocuments({ caseId }) {
                         <Download className="w-3 h-3" />
                       </Button>
                       
-                      {canEditCase && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openDeleteModal(document.id, document.document_name)}
-                          className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
-                          title={isArabic ? 'حذف المستند' : 'Delete document'}
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      )}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openDeleteModal(document.id, document.document_name)}
+                        className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        title={isArabic ? 'حذف المستند' : 'Delete document'}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
                     </div>
                   </div>
                 </div>

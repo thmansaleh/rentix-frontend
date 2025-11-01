@@ -6,7 +6,6 @@ import useSWR, { mutate } from 'swr';
 import { getJudicialOrdersByCaseId, deleteJudicialOrder } from '@/app/services/api/judicialOrders';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import { usePermission } from '@/hooks/useAuth';
 import {
   Table,
   TableBody,
@@ -35,9 +34,6 @@ import EditJudicialOrderModal from './EditJudicialOrderModal';
 function Notifications({ caseId }) {
   const { language, isRTL } = useLanguage();
   const { t } = useTranslations();
-  const { hasPermission: canAddJudicialNotice } = usePermission('Add Judicial Notice');
-  const { hasPermission: canEditJudicialNotice } = usePermission('Edit Judicial Notice');
-  const { hasPermission: canDeleteJudicialNotice } = usePermission('Delete Judicial Notice');
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -172,12 +168,10 @@ function Notifications({ caseId }) {
             <CardTitle>{t('judicialOrders.title')}</CardTitle>
             <CardDescription>{t('judicialOrders.description')}</CardDescription>
           </div>
-          {canAddJudicialNotice && (
-            <Button onClick={() => setIsModalOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              {language === 'ar' ? 'إشعار قضائي جديد' : 'Add New Order'}
-            </Button>
-          )}
+          <Button onClick={() => setIsModalOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            {language === 'ar' ? 'إشعار قضائي جديد' : 'Add New Order'}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -259,26 +253,22 @@ function Notifications({ caseId }) {
                     </TableCell>
                     <TableCell className={isRTL ? 'text-right' : 'text-left'}>
                       <div className="flex items-center space-x-1">
-                        {canEditJudicialNotice && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEditOrder(order.id)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {canDeleteJudicialNotice && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteOrder(order.id)}
-                            className="h-8 w-8 p-0 text-red-600 hover:text-red-800 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditOrder(order.id)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteOrder(order.id)}
+                          className="h-8 w-8 p-0 text-red-600 hover:text-red-800 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>

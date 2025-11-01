@@ -5,7 +5,6 @@ import useSWR, { mutate } from 'swr'
 
 import { getExecutionByCaseId, deleteExecution } from '@/app/services/api/executions'
 import { useTranslations } from '@/hooks/useTranslations'
-import { usePermission } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -24,9 +23,6 @@ import DeleteExecutionModal from './DeleteExecutionModal'
 function Executions({ caseId }) {
   const t = useTranslations('executions')
   const tc = useTranslations('common')
-  const { hasPermission: canAddExecution } = usePermission('Add Execution')
-  const { hasPermission: canEditExecution } = usePermission('Edit Execution')
-  const { hasPermission: canDeleteExecution } = usePermission('Delete Execution')
   
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -139,12 +135,10 @@ function Executions({ caseId }) {
   if (executions.length === 0) {
     return (
       <div className="text-center py-8 flex items-center flex-col gap-3.5">
-        {canAddExecution && (
-          <Button onClick={() => setIsDialogOpen(true)} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            {t('addExecution')}
-          </Button>
-        )}
+        <Button onClick={() => setIsDialogOpen(true)} size="sm">
+          <Plus className="h-4 w-4 mr-2" />
+          {t('addExecution')}
+        </Button>
         <p className="text-gray-500">{t('noExecutions')}</p>
         <AddExecutionModal
           isOpen={isDialogOpen}
@@ -163,12 +157,10 @@ function Executions({ caseId }) {
     <div className="w-full">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium">{t('title')}</h3>
-        {canAddExecution && (
-          <Button onClick={() => setIsDialogOpen(true)} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            {t('addExecution')}
-          </Button>
-        )}
+        <Button onClick={() => setIsDialogOpen(true)} size="sm">
+          <Plus className="h-4 w-4 mr-2" />
+          {t('addExecution')}
+        </Button>
       </div>
       
       <div className="rounded-md border">
@@ -199,26 +191,22 @@ function Executions({ caseId }) {
                 </TableCell>
                 <TableCell className="text-center">
                   <div className="flex items-center justify-center gap-1">
-                    {canEditExecution && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditExecution(execution.id)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Pen className="h-4 w-4" />
-                      </Button>
-                    )}
-                    {canDeleteExecution && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteClick(execution.id)}
-                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditExecution(execution.id)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Pen className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteClick(execution.id)}
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
