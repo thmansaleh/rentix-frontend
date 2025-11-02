@@ -3,12 +3,14 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Printer, X } from 'lucide-react';
 import { getEmployeeCashTransactionById } from '@/app/services/api/employeeCashTransactions';
 import { toast } from 'react-toastify';
 
 const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
   const { isRTL } = useLanguage();
+  const t = useTranslations('employeeFinance.printModal');
   const printRef = useRef();
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -295,14 +297,14 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
         >
           {/* Header - Fixed */}
           <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b flex justify-between items-center rounded-t-lg">
-            <h2 className="text-xl font-bold text-gray-800" dir="rtl">معاينة الطباعة</h2>
+            <h2 className="text-xl font-bold text-gray-800" dir="rtl">{t('title')}</h2>
             <div className="flex gap-3">
               <Button 
                 onClick={handlePrint} 
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
               >
                 <Printer className="h-4 w-4" />
-                طباعة
+                {t('print')}
               </Button>
               <Button 
                 variant="outline" 
@@ -310,7 +312,7 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
                 className="flex items-center gap-2"
               >
                 <X className="h-4 w-4" />
-                إغلاق
+                {t('close')}
               </Button>
             </div>
           </div>
@@ -320,7 +322,7 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
             {loading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-                <span className="mr-3 text-lg">جاري التحميل...</span>
+                <span className="mr-3 text-lg">{t('loading')}</span>
               </div>
             ) : transaction ? (
               <div ref={printRef} className="bg-white shadow-lg" dir="rtl">
@@ -416,7 +418,7 @@ const PrintTransactionModal = ({ isOpen, onClose, transactionId }) => {
               </div>
             ) : (
               <div className="flex items-center justify-center h-full text-gray-500">
-                لا توجد بيانات
+                {t('noData')}
               </div>
             )}
           </div>

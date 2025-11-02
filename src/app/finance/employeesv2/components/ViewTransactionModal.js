@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Download, Trash2, X, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -14,6 +15,7 @@ import api from '@/app/services/api/axiosInstance';
 
 const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachment }) => {
   const { isRTL } = useLanguage();
+  const t = useTranslations('employeeFinance.viewModal');
   const [deletingAttachment, setDeletingAttachment] = useState(null);
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -98,7 +100,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
     try {
       // Call the parent function to handle deletion
       await onDeleteAttachment(transactionId, attachmentId);
-      toast.success('تم حذف المرفق بنجاح');
+      toast.success(t('deleteAttachmentSuccess'));
       // Refresh transaction data
       const response = await getEmployeeCashTransactionById(transactionId);
       if (response.success) {
@@ -106,7 +108,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
       }
     } catch (error) {
       console.error('Error deleting attachment:', error);
-      toast.error('حدث خطأ في حذف المرفق');
+      toast.error(t('deleteAttachmentError'));
     } finally {
       setDeletingAttachment(null);
     }
@@ -199,32 +201,32 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
       <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${isRTL ? 'rtl' : 'ltr'}`}>
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            تفاصيل العهدة
+            {t('title')}
           </DialogTitle>
         </DialogHeader>
         
         {loading ? (
           <div className="flex items-center justify-center p-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="mr-3">جاري التحميل...</span>
+            <span className="mr-3">{t('loading')}</span>
           </div>
         ) : transaction ? (
           <div className="space-y-4">
           {/* Employee Info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="text-sm text-gray-500">اسم الموظف</Label>
+              <Label className="text-sm text-gray-500">{t('employeeName')}</Label>
               <p className="font-medium">{transaction.employee_name || '-'}</p>
             </div>
             <div className="space-y-1">
-              <Label className="text-sm text-gray-500">رقم الهاتف</Label>
+              <Label className="text-sm text-gray-500">{t('phoneNumber')}</Label>
               <p className="font-mono">{transaction.employee_phone || '-'}</p>
             </div>
           </div>
 
           {/* Amount */}
           <div className="space-y-1">
-            <Label className="text-sm text-gray-500">المبلغ</Label>
+            <Label className="text-sm text-gray-500">{t('amount')}</Label>
             <p className="text-2xl font-bold text-green-600">
               {formatCurrency(transaction.amount)}
             </p>
@@ -232,20 +234,20 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
 
           {/* Description */}
           <div className="space-y-1">
-            <Label className="text-sm text-gray-500">الوصف</Label>
+            <Label className="text-sm text-gray-500">{t('description')}</Label>
             <p className="text-gray-700 whitespace-pre-wrap">
-              {transaction.description || 'لا يوجد وصف'}
+              {transaction.description || t('noDescription')}
             </p>
           </div>
 
           {/* Created By */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="text-sm text-gray-500">أضيف بواسطة</Label>
+              <Label className="text-sm text-gray-500">{t('addedBy')}</Label>
               <p>{transaction.created_by_name || '-'}</p>
             </div>
             <div className="space-y-1">
-              <Label className="text-sm text-gray-500">تاريخ الإضافة</Label>
+              <Label className="text-sm text-gray-500">{t('addedAt')}</Label>
               <p className="text-sm">{formatDateTime(transaction.created_at)}</p>
             </div>
           </div>
@@ -254,7 +256,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
           <div className="space-y-3 border-t pt-4">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-semibold">
-                المرفقات ({attachments.length})
+                {t('attachments')} ({attachments.length})
               </Label>
               
               {/* Add Files Button */}
@@ -278,7 +280,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
                   >
                     <span>
                       <Upload className="h-4 w-4 ml-2" />
-                      {uploading ? 'جاري الرفع...' : 'إضافة ملفات'}
+                      {uploading ? t('uploading') : t('addFiles')}
                     </span>
                   </Button>
                 </label>
@@ -287,7 +289,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
             
             {attachments.length === 0 ? (
               <p className="text-sm text-gray-500 py-4 text-center">
-                لا توجد مرفقات
+                {t('noAttachments')}
               </p>
             ) : (
               <div className="space-y-2">
@@ -330,9 +332,9 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>تأكيد حذف المرفق</AlertDialogTitle>
+                            <AlertDialogTitle>{t('deleteAttachmentConfirm')}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              هل أنت متأكد من حذف هذا المرفق؟ لا يمكن التراجع عن هذا الإجراء.
+                              {t('deleteAttachmentMessage')}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -341,7 +343,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
                               onClick={() => handleDeleteAttachment(attachment.id, attachment.attachment_name)}
                               className="bg-red-600 hover:bg-red-700"
                             >
-                              حذف
+                              {t('delete')}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -360,13 +362,13 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
                 variant="outline" 
                 onClick={onClose}
               >
-                إغلاق
+                {t('close')}
               </Button>
             </div>
           </div>
         ) : (
           <div className="text-center p-8 text-gray-500">
-            لا توجد بيانات
+            {t('noData')}
           </div>
         )}
       </DialogContent>

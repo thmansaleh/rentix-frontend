@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Loader2, CalendarIcon, Upload, X } from "lucide-react";
+import { Plus, Trash2, Loader2, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +33,6 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     currency: "AED",
   });
   const [items, setItems] = useState([{ description: "", amount: "" }]);
-  const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // Fetch branches
@@ -91,13 +90,6 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         } else {
           setItems([{ description: "", amount: "" }]);
         }
-
-        // Load attachments
-        if (invoice.attachments && invoice.attachments.length > 0) {
-          setAttachments(invoice.attachments);
-        } else {
-          setAttachments([]);
-        }
       } else {
         toast.error(t('createError'));
         onClose();
@@ -139,24 +131,6 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
     const newItems = [...items];
     newItems[index][field] = value;
     setItems(newItems);
-  };
-
-  const handleFileChange = async (e) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-
-    // For now, just store file info. In production, you'd upload to server
-    const newAttachments = files.map(file => ({
-      attachment_name: file.name,
-      attachment_url: URL.createObjectURL(file), // Temporary URL for preview
-      file: file // Store file for later upload
-    }));
-
-    setAttachments(prev => [...prev, ...newAttachments]);
-  };
-
-  const handleRemoveAttachment = (index) => {
-    setAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -203,7 +177,6 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         vat: parseFloat(formData.vat) || 0,
         currency: formData.currency || "AED",
         items: validItems,
-        attachments: attachments,
       };
 
       const response = await updateInvoice(invoiceId, payload);
@@ -432,52 +405,6 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Invoice Attachments */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>{t('attachments')}</Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => document.getElementById('invoice-attachments-edit').click()}
-                  disabled={isSubmitting}
-                  className="flex items-center gap-2"
-                >
-                  <Upload className="h-4 w-4" />
-                  {t('uploadFile')}
-                </Button>
-                <input
-                  id="invoice-attachments-edit"
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                />
-              </div>
-
-              {attachments.length > 0 && (
-                <div className="space-y-2">
-                  {attachments.map((attachment, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-md">
-                      <span className="text-sm truncate flex-1">{attachment.attachment_name}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveAttachment(index)}
-                        disabled={isSubmitting}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Total Amount with VAT breakdown */}

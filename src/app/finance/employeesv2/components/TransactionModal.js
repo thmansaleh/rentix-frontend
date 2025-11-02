@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { createEmployeeCashTransaction, updateEmployeeCashTransaction } from '@/app/services/api/employeeCashTransactions';
 import { getEmployees } from '@/app/services/api/employees';
 import { getAllBankAccounts } from '@/app/services/api/bankAccounts';
@@ -19,6 +20,8 @@ import { X, Upload } from 'lucide-react';
 
 const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, transactionData = null }) => {
   const { isRTL } = useLanguage();
+  const t = useTranslations('employeeFinance.modal');
+  const tTransactions = useTranslations('employeeFinance.transactions');
   const [employees, setEmployees] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +60,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
       formik.setValues({
         employee_id: transactionData.employee_id?.toString() || '',
         amount: transactionData.amount || 0,
-        bank_account_id: transactionData.bank_account_id?.toString() || '',
+        bank_account_id: '', // Don't set bank_account_id in edit mode
         description: transactionData.description || ''
       });
     } else {
@@ -67,9 +70,9 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
   }, [transactionData, isEditMode]);
 
   const validationSchema = Yup.object({
-    employee_id: Yup.number().required('يجب اختيار الموظف'),
-    amount: Yup.number().min(0.01, 'المبلغ يجب أن يكون أكبر من صفر').required('المبلغ مطلوب'),
-    bank_account_id: Yup.number().required('يجب اختيار الحساب البنكي'),
+    employee_id: !isEditMode ? Yup.number().required(t('employeeRequired')) : Yup.number().notRequired(),
+    amount: Yup.number().min(0.01, t('amountMinError')).required(t('amountRequired')),
+    bank_account_id: !isEditMode ? Yup.number().required(t('bankAccountRequired', { scope: 'common' }) || 'Bank account is required') : Yup.number().notRequired(),
     description: Yup.string().optional()
   });
 
@@ -103,7 +106,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           employee_id: parseInt(values.employee_id),
           amount: parseFloat(values.amount),
           type: 'credit', // Always credit by default
-          bank_account_id: parseInt(values.bank_account_id),
+          ...(!isEditMode && { bank_account_id: parseInt(values.bank_account_id) }),
           description: values.description || null,
           attachments: uploadedAttachments
         };
@@ -121,17 +124,17 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
         console.log('API Response:', response);
         
         if (response.success) {
-          toast.success(isEditMode ? 'تم تعديل العهدة بنجاح' : 'تم إضافة العهدة بنجاح');
+          toast.success(isEditMode ? t('updateSuccess') : t('addSuccess'));
           formik.resetForm();
           setSelectedFiles([]);
           onSuccess();
           onClose();
         } else {
-          toast.error(response.message || 'حدث خطأ في حفظ العهدة');
+          toast.error(response.message || t('saveError'));
         }
       } catch (error) {
         console.error('Error saving transaction:', error);
-        toast.error('حدث خطأ في حفظ العهدة');
+        toast.error(t('saveError'));
       } finally {
         setIsLoading(false);
       }
@@ -160,37 +163,39 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
       <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${isRTL ? 'rtl' : 'ltr'}`}>
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            {isEditMode ? 'تعديل عهدة موظف' : 'إضافة عهدة موظف جديدة'}
+            {isEditMode ? tTransactions('edit') : tTransactions('addNew')}
           </DialogTitle>
         </DialogHeader>
         
         <form onSubmit={formik.handleSubmit} className="space-y-4">
-          {/* Employee Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="employee_id">الموظف *</Label>
-            <Select 
-              value={formik.values.employee_id} 
-              onValueChange={(value) => formik.setFieldValue('employee_id', value)}
-            >
-              <SelectTrigger className={formik.touched.employee_id && formik.errors.employee_id ? 'border-red-500' : ''}>
-                <SelectValue placeholder="اختر الموظف" />
-              </SelectTrigger>
-              <SelectContent>
-                {employees.map((employee) => (
-                  <SelectItem key={employee.id} value={employee.id.toString()}>
-                    {employee.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {formik.touched.employee_id && formik.errors.employee_id && (
-              <p className="text-sm text-red-500">{formik.errors.employee_id}</p>
-            )}
-          </div>
+          {/* Employee Selection - Only show in Add mode */}
+          {!isEditMode && (
+            <div className="space-y-2">
+              <Label htmlFor="employee_id">{t('employee')} *</Label>
+              <Select 
+                value={formik.values.employee_id} 
+                onValueChange={(value) => formik.setFieldValue('employee_id', value)}
+              >
+                <SelectTrigger className={formik.touched.employee_id && formik.errors.employee_id ? 'border-red-500' : ''}>
+                  <SelectValue placeholder={t('selectEmployee')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {employees.map((employee) => (
+                    <SelectItem key={employee.id} value={employee.id.toString()}>
+                      {employee.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formik.touched.employee_id && formik.errors.employee_id && (
+                <p className="text-sm text-red-500">{formik.errors.employee_id}</p>
+              )}
+            </div>
+          )}
 
           {/* Amount */}
           <div className="space-y-2">
-            <Label htmlFor="amount">المبلغ *</Label>
+            <Label htmlFor="amount">{t('amount')} *</Label>
             <Input
               id="amount"
               name="amount"
@@ -200,46 +205,48 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.amount && formik.errors.amount ? 'border-red-500' : ''}
-              placeholder="0.00"
+              placeholder={t('amountPlaceholder')}
             />
             {formik.touched.amount && formik.errors.amount && (
               <p className="text-sm text-red-500">{formik.errors.amount}</p>
             )}
           </div>
 
-          {/* Bank Account Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="bank_account_id">الحساب البنكي *</Label>
-            <Select 
-              value={formik.values.bank_account_id} 
-              onValueChange={(value) => formik.setFieldValue('bank_account_id', value)}
-            >
-              <SelectTrigger className={formik.touched.bank_account_id && formik.errors.bank_account_id ? 'border-red-500' : ''}>
-                <SelectValue placeholder="اختر الحساب البنكي" />
-              </SelectTrigger>
-              <SelectContent>
-                {bankAccounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id.toString()}>
-                    {account.bank_name} - {account.account_name} ({new Intl.NumberFormat('ar-AE', { style: 'currency', currency: 'AED' }).format(account.current_balance)})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {formik.touched.bank_account_id && formik.errors.bank_account_id && (
-              <p className="text-sm text-red-500">{formik.errors.bank_account_id}</p>
-            )}
-          </div>
+          {/* Bank Account Selection - Only show in Add mode */}
+          {!isEditMode && (
+            <div className="space-y-2">
+              <Label htmlFor="bank_account_id">{t('bankAccount')} *</Label>
+              <Select 
+                value={formik.values.bank_account_id} 
+                onValueChange={(value) => formik.setFieldValue('bank_account_id', value)}
+              >
+                <SelectTrigger className={formik.touched.bank_account_id && formik.errors.bank_account_id ? 'border-red-500' : ''}>
+                  <SelectValue placeholder={t('selectBankAccount')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {bankAccounts.map((account) => (
+                    <SelectItem key={account.id} value={account.id.toString()}>
+                      {account.bank_name} - {account.account_name} ({new Intl.NumberFormat('ar-AE', { style: 'currency', currency: 'AED' }).format(account.current_balance)})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formik.touched.bank_account_id && formik.errors.bank_account_id && (
+                <p className="text-sm text-red-500">{formik.errors.bank_account_id}</p>
+              )}
+            </div>
+          )}
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">الوصف</Label>
+            <Label htmlFor="description">{t('description')}</Label>
             <Textarea
               id="description"
               name="description"
               value={formik.values.description}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="اكتب وصف العهدة..."
+              placeholder={t('descriptionPlaceholder')}
               rows={3}
             />
           </div>
@@ -247,7 +254,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           {/* Attachments - Only show in Add mode */}
           {!isEditMode && (
             <div className="space-y-2">
-              <Label>المرفقات</Label>
+              <Label>{t('attachments')}</Label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
                 <input
                   type="file"
@@ -262,10 +269,10 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
                 >
                   <Upload className="h-8 w-8 text-gray-400 mb-2" />
                   <span className="text-sm text-gray-600">
-                    اضغط لاختيار الملفات
+                    {t('selectFiles')}
                   </span>
                   <span className="text-xs text-gray-400 mt-1">
-                    سيتم رفع الملفات عند الإضافة
+                    {t('uploadNote')}
                   </span>
                 </label>
               </div>
@@ -273,7 +280,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
               {/* Selected Files List */}
               {selectedFiles.length > 0 && (
                 <div className="mt-3 space-y-2">
-                  <Label className="text-sm">الملفات المحددة ({selectedFiles.length}):</Label>
+                  <Label className="text-sm">{t('selectedFiles')} ({selectedFiles.length}):</Label>
                   {selectedFiles.map((file, index) => (
                     <div
                       key={index}
@@ -306,13 +313,13 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
               onClick={handleClose}
               disabled={isLoading}
             >
-              إلغاء
+              {t('cancel')}
             </Button>
             <Button 
               type="submit" 
               disabled={isLoading}
             >
-              {isLoading ? 'جاري الحفظ...' : (isEditMode ? 'تحديث' : 'إضافة')}
+              {isLoading ? t('saving') : (isEditMode ? t('update') : t('save'))}
             </Button>
           </div>
         </form>

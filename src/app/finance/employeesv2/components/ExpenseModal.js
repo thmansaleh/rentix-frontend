@@ -10,18 +10,20 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { createEmployeeExpense, updateEmployeeExpense } from '@/app/services/api/employeeExpenses';
 import { getEmployees } from '@/app/services/api/employees';
 import { toast } from 'react-toastify';
 
 const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseData = null }) => {
   const { isRTL } = useLanguage();
+  const t = useTranslations('employeeFinance.modal');
+  const tExpenses = useTranslations('employeeFinance.expenses');
   const [employees, setEmployees] = useState([]);
-  const [bankAccounts, setBankAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const isEditMode = !!expenseId;
 
-  // Fetch employees and bank accounts on component mount
+  // Fetch employees on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,17 +31,6 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
         
         if (employeesRes.success) {
           setEmployees(employeesRes.data);
-        }
-
-        // Fetch bank accounts
-        const bankAccountsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bank-accounts`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        const bankAccountsData = await bankAccountsRes.json();
-        if (bankAccountsData.success) {
-          setBankAccounts(bankAccountsData.data);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -51,22 +42,9 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
     }
   }, [isOpen]);
 
-  // Update form when expense data changes
-  useEffect(() => {
-    if (isEditMode && expenseData) {
-      formik.setValues({
-        employee_id: expenseData.employee_id?.toString() || '',
-        amount: expenseData.amount || 0,
-        bank_account_id: expenseData.bank_account_id?.toString() || '',
-        description: expenseData.description || ''
-      });
-    }
-  }, [expenseData, isEditMode]);
-
   const validationSchema = Yup.object({
-    employee_id: Yup.number().required('يجب اختيار الموظف'),
-    amount: Yup.number().min(0.01, 'المبلغ يجب أن يكون أكبر من صفر').required('المبلغ مطلوب'),
-    bank_account_id: Yup.number().optional(),
+    employee_id: !isEditMode ? Yup.number().required(t('employeeRequired')) : Yup.number().notRequired(),
+    amount: Yup.number().min(0.01, t('amountMinError')).required(t('amountRequired')),
     description: Yup.string().optional()
   });
 
@@ -74,7 +52,6 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
     initialValues: {
       employee_id: '',
       amount: 0,
-      bank_account_id: '',
       description: ''
     },
     validationSchema,
@@ -95,20 +72,32 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
         }
         
         if (response.success) {
-          toast.success(isEditMode ? 'تم تحديث المصروف بنجاح' : 'تم إضافة المصروف بنجاح');
+          toast.success(isEditMode ? t('updateSuccess') : t('addSuccess'));
           onSuccess();
           handleClose();
         } else {
-          toast.error(response.message || 'حدث خطأ في حفظ المصروف');
+          toast.error(response.message || t('saveError'));
         }
       } catch (error) {
         console.error('Error saving expense:', error);
-        toast.error('حدث خطأ في حفظ المصروف');
+        const errorMessage = error.response?.data?.message || error.message || t('saveError');
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
     }
   });
+
+  // Update form when expense data changes
+  useEffect(() => {
+    if (isEditMode && expenseData) {
+      formik.setValues({
+        employee_id: expenseData.employee_id?.toString() || '',
+        amount: expenseData.amount || 0,
+        description: expenseData.description || ''
+      });
+    }
+  }, [expenseData, isEditMode]);
 
   const handleClose = () => {
     formik.resetForm();
@@ -120,45 +109,47 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
       <DialogContent className="sm:max-w-[600px]" dir={isRTL ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle>
-            {isEditMode ? 'تعديل مصروف' : 'إضافة مصروف جديد'}
+            {isEditMode ? tExpenses('edit') : tExpenses('addNew')}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={formik.handleSubmit} className="space-y-6">
-          {/* Employee Select */}
-          <div className="space-y-2">
-            <Label htmlFor="employee_id">الموظف *</Label>
-            <Select
-              value={formik.values.employee_id}
-              onValueChange={(value) => formik.setFieldValue('employee_id', value)}
-              disabled={isLoading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="اختر الموظف" />
-              </SelectTrigger>
-              <SelectContent>
-                {employees.map((employee) => (
-                  <SelectItem key={employee.id} value={employee.id.toString()}>
-                    {employee.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {formik.touched.employee_id && formik.errors.employee_id && (
-              <p className="text-sm text-red-500">{formik.errors.employee_id}</p>
-            )}
-          </div>
+          {/* Employee Select - Only show in Add mode */}
+          {!isEditMode && (
+            <div className="space-y-2">
+              <Label htmlFor="employee_id">{t('employee')} *</Label>
+              <Select
+                value={formik.values.employee_id}
+                onValueChange={(value) => formik.setFieldValue('employee_id', value)}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('selectEmployee')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {employees.map((employee) => (
+                    <SelectItem key={employee.id} value={employee.id.toString()}>
+                      {employee.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formik.touched.employee_id && formik.errors.employee_id && (
+                <p className="text-sm text-red-500">{formik.errors.employee_id}</p>
+              )}
+            </div>
+          )}
 
           {/* Amount */}
           <div className="space-y-2">
-            <Label htmlFor="amount">المبلغ *</Label>
+            <Label htmlFor="amount">{t('amount')} *</Label>
             <Input
               id="amount"
               name="amount"
               type="number"
               step="0.01"
               min="0"
-              placeholder="أدخل المبلغ"
+              placeholder={t('amountPlaceholder')}
               value={formik.values.amount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -171,11 +162,11 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">الوصف</Label>
+            <Label htmlFor="description">{t('description')}</Label>
             <Textarea
               id="description"
               name="description"
-              placeholder="أدخل وصف المصروف"
+              placeholder={t('descriptionPlaceholder')}
               value={formik.values.description}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -192,10 +183,10 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
               onClick={handleClose}
               disabled={isLoading}
             >
-              إلغاء
+              {t('cancel')}
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'جاري الحفظ...' : (isEditMode ? 'تحديث' : 'إضافة')}
+              {isLoading ? t('saving') : (isEditMode ? t('update') : t('save'))}
             </Button>
           </div>
         </form>

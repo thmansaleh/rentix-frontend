@@ -12,6 +12,18 @@ export const getEmployeeExpenseById = async (id) => {
   return response.data;
 };
 
+// Add attachments to expense
+export const addEmployeeExpenseAttachments = async (id, attachments) => {
+  const response = await api.post(`/employee-expenses/${id}/attachments`, { attachments });
+  return response.data;
+};
+
+// Delete expense attachment
+export const deleteEmployeeExpenseAttachment = async (expenseId, attachmentId) => {
+  const response = await api.delete(`/employee-expenses/${expenseId}/attachments/${attachmentId}`);
+  return response.data;
+};
+
 // Create new expense
 export const createEmployeeExpense = async (expenseData) => {
   const response = await api.post('/employee-expenses', expenseData);

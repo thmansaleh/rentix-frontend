@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, Download, Trash2, FileText, File } from "lucide-react";
+import { Loader2, Download, Trash2, FileText, File, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui/custom-modal";
 import { toast } from "react-toastify";
-import { getInvoiceById, deleteInvoiceAttachment } from "@/app/services/api/invoices";
+import { getInvoiceById, deleteInvoiceAttachment, uploadInvoiceAttachments } from "@/app/services/api/invoices";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
 
@@ -14,6 +14,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(false);
   const [deletingAttachment, setDeletingAttachment] = useState(null);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
 
   useEffect(() => {
     if (isOpen && invoiceId) {
@@ -68,7 +69,8 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
   const getStatusBadge = (status) => {
     const statusConfig = {
       pending: { label: 'قيد الانتظار', variant: 'secondary' },
-      approved: { label: 'معتمدة', variant: 'success' }
+      approved: { label: 'معتمدة', variant: 'success' },
+      rejected: { label: 'مرفوضة', variant: 'destructive' }
     };
 
     const config = statusConfig[status] || statusConfig.pending;
@@ -81,14 +83,15 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
   };
 
   const handleDownloadAttachment = (attachment) => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    const fileUrl = `${API_URL}${attachment.file_path}`;
+    // Use the S3 URL directly from attachment_url
+    const fileUrl = attachment.attachment_url;
     
     // Create temporary link and trigger download
     const link = document.createElement('a');
     link.href = fileUrl;
-    link.download = attachment.file_name;
+    link.download = attachment.attachment_name;
     link.target = '_blank';
+    link.rel = 'noopener noreferrer';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -111,6 +114,34 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
       toast.error('فشل في حذف المرفق');
     } finally {
       setDeletingAttachment(null);
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    try {
+      setUploadingAttachment(true);
+      
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append('files', file);
+      });
+
+      const result = await uploadInvoiceAttachments(invoiceId, formData);
+
+      if (result.success) {
+        toast.success('تم رفع المرفقات بنجاح');
+        loadInvoiceData(); // Reload to get updated data
+        e.target.value = ''; // Clear input
+      } else {
+        toast.error(result.error || 'فشل في رفع المرفقات');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'فشل في رفع المرفقات');
+    } finally {
+      setUploadingAttachment(false);
     }
   };
 
@@ -258,10 +289,39 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
             </div>
 
             {/* Attachments */}
-            {invoice.attachments && invoice.attachments.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="font-bold text-lg border-b pb-2">المرفقات</h3>
-                
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-lg border-b pb-2 flex-1">المرفقات</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => document.getElementById('invoice-attachments-upload').click()}
+                  disabled={uploadingAttachment}
+                  className="flex items-center gap-2"
+                >
+                  {uploadingAttachment ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>جاري الرفع...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4" />
+                      <span>رفع ملف</span>
+                    </>
+                  )}
+                </Button>
+                <input
+                  id="invoice-attachments-upload"
+                  type="file"
+                  multiple
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                />
+              </div>
+              
+              {invoice.attachments && invoice.attachments.length > 0 ? (
                 <div className="space-y-2">
                   {invoice.attachments.map((attachment) => (
                     <div 
@@ -303,8 +363,10 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <p className="text-gray-500 text-center py-4 text-sm">لا توجد مرفقات</p>
+              )}
+            </div>
 
             {/* Metadata */}
             <div className="pt-4 border-t text-sm text-gray-600 dark:text-gray-400 space-y-1">

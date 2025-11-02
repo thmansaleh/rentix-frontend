@@ -9,6 +9,7 @@ import WalletsBalance from './components/WalletsBalance';
 import FinanceCharts from './components/FinanceCharts';
 import LastExpenses from './components/LastExpenses';
 import LastInvoices from './components/LastInvoices';
+import Transactions from './components/Transactions';
 
 const FinanceStatisticsPage = () => {
   const { isRTL, language } = useLanguage();
@@ -28,7 +29,7 @@ const FinanceStatisticsPage = () => {
           </CardDescription>
         </CardHeader>
       </Card>
-
+<Transactions/>
       {/* Wallets Balance Summary */}
       <WalletsBalance />
 

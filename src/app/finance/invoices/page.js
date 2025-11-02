@@ -72,7 +72,8 @@ function InvoicesPage() {
   const getStatusBadge = (status) => {
     const statusConfig = {
       pending: { label: t('statusPending'), variant: 'secondary' },
-      approved: { label: t('statusApproved'), variant: 'success' }
+      approved: { label: t('statusApproved'), variant: 'success' },
+      rejected: { label: t('statusRejected'), variant: 'destructive' }
     };
 
     const config = statusConfig[status] || statusConfig.pending;
@@ -136,7 +137,8 @@ function InvoicesPage() {
       type: 'status',
       statusMap: {
         pending: { en: 'Pending', ar: 'قيد الانتظار' },
-        approved: { en: 'Approved', ar: 'معتمدة' }
+        approved: { en: 'Approved', ar: 'معتمدة' },
+        rejected: { en: 'Rejected', ar: 'مرفوضة' }
       }
     },
     created_by_name: {

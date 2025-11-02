@@ -4,6 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import React from 'react';
 import Memos from './memos/Memos';
 import EmployeesRequests from './employees-requests/EmployeesRequests';
+import EmployeeTransactions from './employee-transactions/EmployeeTransactions';
+import Invoices from './invoices/Invoices';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import MyTasksPage from '../cases/my-tasks/page';
@@ -17,6 +19,8 @@ export default function ApprovalsPage() {
       <TabsTrigger value="memos">{t('memos')}</TabsTrigger>
       <TabsTrigger value="tasks">{t('tasks')}</TabsTrigger>
       <TabsTrigger value="employees requests">{t('employeesRequests')}</TabsTrigger>
+      <TabsTrigger value="employee transactions">{t('employeeTransactions')}</TabsTrigger>
+      <TabsTrigger value="invoices">{t('invoices')}</TabsTrigger>
     </TabsList>
       <TabsContent value="memos">
         <Memos />
@@ -26,6 +30,12 @@ export default function ApprovalsPage() {
       </TabsContent>
       <TabsContent value="employees requests">
         <EmployeesRequests />
+      </TabsContent>
+      <TabsContent value="employee transactions">
+        <EmployeeTransactions />
+      </TabsContent>
+      <TabsContent value="invoices">
+        <Invoices />
       </TabsContent>
   </Tabs>;
 }

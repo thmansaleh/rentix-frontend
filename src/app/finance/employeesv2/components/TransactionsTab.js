@@ -1,29 +1,32 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import useSWR from 'swr';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Edit, Trash2, Plus, Download, Eye, Printer, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Edit, Trash2, Plus, Download, Eye, Printer, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
 import { getAllEmployeeCashTransactions, deleteEmployeeCashTransaction, deleteEmployeeCashTransactionAttachment } from '@/app/services/api/employeeCashTransactions';
 import TransactionModal from './TransactionModal';
 import ViewTransactionModal from './ViewTransactionModal';
 import PrintTransactionModal from './PrintTransactionModal';
+import EmployeeStatementModal from './EmployeeStatementModal';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const TransactionsTab = () => {
-  const [transactions, setTransactions] = useState([]);
-  const [transactionsPagination, setTransactionsPagination] = useState({});
-  const [loading, setLoading] = useState(true);
+  const t = useTranslations('employeeFinance.transactions');
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showPrintModal, setShowPrintModal] = useState(false);
+  const [showStatementModal, setShowStatementModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [viewTransactionId, setViewTransactionId] = useState(null);
   const [printTransactionId, setPrintTransactionId] = useState(null);
+  const [statementEmployee, setStatementEmployee] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   
   // Pagination & Filter states
@@ -42,33 +45,49 @@ const TransactionsTab = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch transactions
-  const fetchTransactions = async () => {
-    try {
-      setLoading(true);
-      const response = await getAllEmployeeCashTransactions({
-        page: currentPage,
-        limit: itemsPerPage,
-        search: searchDebounce,
-        type: 'credit'
-      });
-      if (response.success) {
-        setTransactions(response.data);
-        setTransactionsPagination(response.pagination || {});
-      } else {
-        toast.error('حدث خطأ في تحميل عهد الموظفين');
-      }
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-      toast.error('حدث خطأ في تحميل عهد الموظفين');
-    } finally {
-      setLoading(false);
+  // SWR key and fetcher with best practices
+  const swrKey = useMemo(() => 
+    searchDebounce || currentPage !== 1 
+      ? `/api/employee-cash-transactions?page=${currentPage}&limit=${itemsPerPage}&search=${searchDebounce}&type=credit`
+      : `/api/employee-cash-transactions?page=${currentPage}&limit=${itemsPerPage}&type=credit`,
+    [currentPage, itemsPerPage, searchDebounce]
+  );
+
+  const fetcher = async (url) => {
+    const response = await getAllEmployeeCashTransactions({
+      page: currentPage,
+      limit: itemsPerPage,
+      search: searchDebounce,
+      type: 'credit'
+    });
+    
+    if (!response.success) {
+      throw new Error('حدث خطأ في تحميل عهد الموظفين');
     }
+    
+    return {
+      data: response.data,
+      pagination: response.pagination || {}
+    };
   };
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [currentPage, searchDebounce]);
+  // Use SWR with best practices
+  const { data, error, isLoading, mutate } = useSWR(
+    swrKey,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+      dedupingInterval: 5000,
+      errorRetryCount: 3,
+      onError: (err) => {
+        toast.error(err.message || 'حدث خطأ في تحميل عهد الموظفين');
+      }
+    }
+  );
+
+  const transactions = data?.data || [];
+  const transactionsPagination = data?.pagination || {};
 
   const handleAdd = () => {
     setSelectedTransaction(null);
@@ -90,13 +109,21 @@ const TransactionsTab = () => {
     setShowModal(true);
   };
 
+  const handleStatement = (transaction) => {
+    setStatementEmployee({
+      id: transaction.employee_id,
+      name: transaction.employee_name
+    });
+    setShowStatementModal(true);
+  };
+
   const handleDeleteAttachment = async (transactionId, attachmentId) => {
     try {
       const response = await deleteEmployeeCashTransactionAttachment(transactionId, attachmentId);
       
       if (response.success) {
-        // Refresh the transaction list
-        await fetchTransactions();
+        // Revalidate data with SWR
+        await mutate();
         return Promise.resolve();
       } else {
         return Promise.reject(new Error('Failed to delete attachment'));
@@ -112,17 +139,23 @@ const TransactionsTab = () => {
       const response = await deleteEmployeeCashTransaction(transactionId);
       
       if (response.success) {
-        toast.success('تم حذف العهدة بنجاح');
-        fetchTransactions();
+        toast.success(t('deleteSuccess'));
+        // Revalidate data with SWR
+        await mutate();
       } else {
-        toast.error('حدث خطأ في حذف العهدة');
+        toast.error(t('deleteError'));
       }
     } catch (error) {
       console.error('Error deleting transaction:', error);
-      toast.error('حدث خطأ في حذف العهدة');
+      toast.error(t('deleteError'));
     } finally {
       setDeleteLoading(false);
     }
+  };
+
+  const handleSuccess = () => {
+    // Revalidate data after successful add/edit
+    mutate();
   };
 
   const handleExportToExcel = () => {
@@ -189,7 +222,7 @@ const TransactionsTab = () => {
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center mb-4">
-            <CardTitle>قائمة عهد الموظفين</CardTitle>
+            <CardTitle>{t('title')}</CardTitle>
             <div className="flex gap-2">
               <Button 
                 onClick={handleExportToExcel}
@@ -205,7 +238,7 @@ const TransactionsTab = () => {
                 className="flex items-center gap-2"
               >
                 <Plus className="h-4 w-4" />
-                إضافة عهدة جديدة
+                {t('addNew')}
               </Button>
             </div>
           </div>
@@ -213,7 +246,7 @@ const TransactionsTab = () => {
           <div className="mb-4">
             <Input
               type="text"
-              placeholder="بحث بالاسم، الهاتف، المبلغ، أو الوصف..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="max-w-md"
@@ -221,19 +254,24 @@ const TransactionsTab = () => {
           </div>
         </CardHeader>
         <CardContent>
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center p-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              <span className="mr-3">جاري تحميل العهد...</span>
+              <span className="mr-3">{t('loading')}</span>
+            </div>
+          ) : error ? (
+            <div className="text-center p-8">
+              <p className="text-red-500 mb-4">حدث خطأ في تحميل البيانات</p>
+              <Button onClick={() => mutate()}>إعادة المحاولة</Button>
             </div>
           ) : transactions.length === 0 ? (
             <div className="text-center p-8">
               <p className="text-gray-500 mb-4">
-                {searchQuery ? 'لا توجد نتائج للبحث' : 'لا توجد عهد مضافة'}
+                {searchQuery ? t('noResults') : t('noData')}
               </p>
               {!searchQuery && (
                 <Button onClick={handleAdd}>
-                  إضافة عهدة جديدة
+                  {t('addNew')}
                 </Button>
               )}
             </div>
@@ -244,14 +282,15 @@ const TransactionsTab = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-center">#</TableHead>
-                      <TableHead>اسم الموظف</TableHead>
-                      <TableHead>رقم الهاتف</TableHead>
-                      <TableHead>الرصيد الحالي</TableHead>
-                      <TableHead>المبلغ</TableHead>
-                      <TableHead>الوصف</TableHead>
-                      <TableHead>أضيف بواسطة</TableHead>
-                      <TableHead>تاريخ الإضافة</TableHead>
-                      <TableHead className="text-center">الإجراءات</TableHead>
+                      <TableHead>{t('employeeName')}</TableHead>
+                      <TableHead>{t('phoneNumber')}</TableHead>
+                      <TableHead>{t('currentBalance')}</TableHead>
+                      <TableHead>{t('amount')}</TableHead>
+                      <TableHead>{t('description')}</TableHead>
+                      <TableHead>{t('status')}</TableHead>
+                      <TableHead>{t('addedBy')}</TableHead>
+                      <TableHead>{t('addedAt')}</TableHead>
+                      <TableHead className="text-center">{t('actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -288,6 +327,17 @@ const TransactionsTab = () => {
                         {transaction.description || '-'}
                       </TableCell>
                       <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          transaction.status === 'approved' 
+                            ? 'bg-green-100 text-green-800' 
+                            : transaction.status === 'rejected'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {transaction.status === 'approved' ? t('approved') : transaction.status === 'rejected' ? t('rejected') : t('pending')}
+                        </span>
+                      </TableCell>
+                      <TableCell>
                         {transaction.created_by_name || '-'}
                       </TableCell>
                       <TableCell className="text-sm text-gray-600">
@@ -295,6 +345,15 @@ const TransactionsTab = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleStatement(transaction)}
+                            className="hover:bg-indigo-50"
+                            title="كشف حساب الموظف"
+                          >
+                            <FileText className="h-4 w-4 text-indigo-600" />
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -334,9 +393,9 @@ const TransactionsTab = () => {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                                <AlertDialogTitle>{t('deleteConfirm')}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  هل أنت متأكد من حذف هذه العهدة؟ لا يمكن التراجع عن هذا الإجراء.
+                                  {t('deleteMessage')}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -421,7 +480,7 @@ const TransactionsTab = () => {
           setShowModal(false);
           setSelectedTransaction(null);
         }}
-        onSuccess={fetchTransactions}
+        onSuccess={handleSuccess}
         transactionId={selectedTransaction?.id}
         transactionData={selectedTransaction}
       />
@@ -445,6 +504,28 @@ const TransactionsTab = () => {
           setPrintTransactionId(null);
         }}
         transactionId={printTransactionId}
+      />
+
+      {/* Employee Statement Modal */}
+      <EmployeeStatementModal
+        isOpen={showStatementModal}
+        onClose={() => {
+          setShowStatementModal(false);
+          setStatementEmployee(null);
+        }}
+        employeeId={statementEmployee?.id}
+        employeeName={statementEmployee?.name}
+        onViewTransaction={(transactionId) => {
+          setViewTransactionId(transactionId);
+          setShowViewModal(true);
+        }}
+        onViewExpense={() => {}} // Expenses view will be handled in AllTransactionsTab
+        onEditTransaction={handleEdit}
+        onEditExpense={() => {}} // Will be handled in AllTransactionsTab
+        onPrintTransaction={(transaction) => {
+          setPrintTransactionId(transaction.id);
+          setShowPrintModal(true);
+        }}
       />
     </>
   );

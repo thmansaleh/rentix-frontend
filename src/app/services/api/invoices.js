@@ -41,3 +41,19 @@ export const deleteInvoiceAttachment = async (attachmentId) => {
   const response = await api.delete(`/invoices/attachments/${attachmentId}`);
   return response.data;
 };
+
+// Update invoice status
+export const updateInvoiceStatus = async (id, status) => {
+  const response = await api.patch(`/invoices/${id}/status`, { status });
+  return response.data;
+};
+
+// Upload invoice attachments
+export const uploadInvoiceAttachments = async (invoiceId, formData) => {
+  const response = await api.post(`/invoices/${invoiceId}/attachments`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
