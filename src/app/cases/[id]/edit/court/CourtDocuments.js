@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { getCourtDocuments, deleteCourtDocument } from '@/app/services/api/cases';
+import { getCaseCourtDocuments, deleteCaseCourtDocument } from '@/app/services/api/cases';
 import { toast } from 'react-toastify';
 
 function CourtDocuments({ caseId }) {
