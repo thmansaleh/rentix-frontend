@@ -11,16 +11,18 @@ function SessionWithNoDecision() {
 
     if (isLoading) {
         return (
-            <div>
-                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-l-4 border-orange-500'>
+            <div className="flex flex-col h-full">
+                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-l-4 border-orange-500 shadow-sm'>
                     <div className='flex-1'>
-                        <h3 className='text-base font-semibold text-orange-900 dark:text-orange-100'>
+                        <h3 className='text-sm sm:text-base font-semibold text-orange-900 dark:text-orange-100'>
                             {t('home.delayedDecisions')}
                         </h3>
                     </div>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                    <div className="text-center text-gray-500 dark:text-gray-400">{t('home.loading')}</div>
+                <div className="flex-1 bg-gray-50 dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div className="flex items-center justify-center h-full">
+                        <div className="animate-pulse text-center text-gray-500 dark:text-gray-400">{t('home.loading')}</div>
+                    </div>
                 </div>
             </div>
         )
@@ -28,16 +30,18 @@ function SessionWithNoDecision() {
 
     if (error) {
         return (
-            <div>
-                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-l-4 border-orange-500'>
+            <div className="flex flex-col h-full">
+                <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-l-4 border-orange-500 shadow-sm'>
                     <div className='flex-1'>
-                        <h3 className='text-base font-semibold text-orange-900 dark:text-orange-100'>
+                        <h3 className='text-sm sm:text-base font-semibold text-orange-900 dark:text-orange-100'>
                             {t('home.delayedDecisions')}
                         </h3>
                     </div>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                    <div className="text-center text-red-500 dark:text-red-400">{t('home.errorLoadingData')}</div>
+                <div className="flex-1 bg-gray-50 dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-red-500 dark:text-red-400">{t('home.errorLoadingData')}</div>
+                    </div>
                 </div>
             </div>
         )
@@ -45,10 +49,10 @@ function SessionWithNoDecision() {
 
     const sessions = data?.success ? data.data : []
 
-    return <div>
-        <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-l-4 border-orange-500'>
+    return <div className="flex flex-col h-full">
+        <div className='flex items-center gap-3 px-4 py-3 mb-4 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-all duration-300'>
             <div className='flex-1'>
-                <h3 className='text-base font-semibold text-orange-900 dark:text-orange-100'>
+                <h3 className='text-sm sm:text-base font-semibold text-orange-900 dark:text-orange-100'>
                     {t('home.delayedDecisions')}
                 </h3>
             </div>
@@ -59,9 +63,9 @@ function SessionWithNoDecision() {
                 </span>
             )}
         </div>
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 p-4">
+        <div className="flex-1 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 p-4 shadow-sm hover:shadow-md transition-all duration-300 overflow-y-auto max-h-[600px]">
             {sessions.length === 0 ? (
-                <div className="text-center text-gray-500 dark:text-gray-400 py-4">{t('home.noDelayedDecisions')}</div>
+                <div className="flex items-center justify-center h-full min-h-[200px] text-center text-gray-500 dark:text-gray-400 py-4">{t('home.noDelayedDecisions')}</div>
             ) : (
                 sessions.map((session) => (
                     <SessionWithNoDecisionItem 

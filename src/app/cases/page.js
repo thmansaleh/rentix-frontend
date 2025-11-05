@@ -275,14 +275,25 @@ const CasesPage = () => {
   };
 
   if (error) {
+    // Check if it's a permission error (403)
+    const isPermissionError = error?.response?.status === 403;
+    const errorMessage = isPermissionError 
+      ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض القضايا' : 'You do not have permission to view cases'))
+      : (language === 'ar' ? 'حدث خطأ أثناء تحميل البيانات' : 'An error occurred while loading data');
+    
     return (
       <div className="container mx-auto p-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-destructive">{t('common.error')}</CardTitle>
+            <CardTitle className="text-destructive">
+              {isPermissionError 
+                ? (language === 'ar' ? 'غير مصرح' : 'Unauthorized')
+                : t('common.error')
+              }
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{t('common.errorLoading')}</p>
+            <p>{errorMessage}</p>
           </CardContent>
         </Card>
       </div>

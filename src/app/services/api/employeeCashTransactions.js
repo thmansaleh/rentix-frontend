@@ -35,3 +35,20 @@ export const deleteEmployeeCashTransactionAttachment = async (transactionId, att
   const response = await api.delete(`/employee-cash-transactions/${transactionId}/attachments/${attachmentId}`);
   return response.data;
 };
+
+// Get transactions by client ID
+export const getEmployeeCashTransactionsByClientId = async (clientId, params = {}) => {
+  const response = await api.get('/employee-cash-transactions', { 
+    params: { 
+      client_id: clientId,
+      ...params 
+    } 
+  });
+  return response.data;
+};
+
+// Get transaction statistics for charts
+export const getEmployeeCashTransactionStatistics = async (params = {}) => {
+  const response = await api.get('/employee-cash-transactions/statistics', { params });
+  return response.data;
+};

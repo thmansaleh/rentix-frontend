@@ -18,8 +18,13 @@ import useSWR, { mutate } from "swr";
 import { useSelector } from 'react-redux';
 import { getEmployeeById } from "@/app/services/api/employees";
 import EditEmployeeModal from "./EditEmployeeModal";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const BasicInfoTab = ({ employeeId }) => {
+  const { isRTL } = useLanguage();
+  const { t } = useTranslations();
+  
   // Get employee role from Redux to check if user is admin
   const employeeRole = useSelector((state) => state.auth.roleEn);
   const isAdmin = employeeRole?.toLowerCase() === 'admin';
@@ -44,7 +49,7 @@ const BasicInfoTab = ({ employeeId }) => {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-destructive">
         <AlertCircle className="w-12 h-12 mb-4" />
-        <p>حدث خطأ أثناء تحميل البيانات</p>
+        <p>{t('common.errorLoading')}</p>
       </div>
     );
   }
@@ -54,7 +59,7 @@ const BasicInfoTab = ({ employeeId }) => {
   if (!employee) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">لا توجد بيانات</p>
+        <p className="text-muted-foreground">{t('common.noData')}</p>
       </div>
     );
   }
@@ -62,23 +67,24 @@ const BasicInfoTab = ({ employeeId }) => {
   const formatDate = (dateString) => {
     if (!dateString) return null;
     try {
-      return new Date(dateString).toLocaleDateString('ar-AE');
+      const locale = isRTL ? 'ar-AE' : 'en-US';
+      return new Date(dateString).toLocaleDateString(locale);
     } catch (error) {
       return null;
     }
   };
 
   const getStatusBadge = (status) => {
-    if (!status) return <Badge variant="secondary">غير محدد</Badge>;
+    if (!status) return <Badge variant="secondary">{t('common.notSpecified')}</Badge>;
     const variant = status === 'active' ? 'default' : 'secondary';
-    const text = status === 'active' ? 'نشط' : 'غير نشط';
+    const text = status === 'active' ? t('employees.active') : t('employees.inactive');
     return <Badge variant={variant}>{text}</Badge>;
   };
 
   const InfoRow = ({ label, value }) => (
     <div className="flex justify-between py-3 border-b last:border-0">
       <span className="font-medium text-muted-foreground">{label}</span>
-      <span className="text-foreground">{value || "غير محدد"}</span>
+      <span className="text-foreground">{value || t('common.notSpecified')}</span>
     </div>
   );
 
@@ -87,9 +93,9 @@ const BasicInfoTab = ({ employeeId }) => {
       {/* Header with name and status */}
       <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
         <div>
-          <h3 className="text-xl font-semibold">{employee.name || "غير محدد"}</h3>
+          <h3 className="text-xl font-semibold">{employee.name || t('common.notSpecified')}</h3>
           <p className="text-muted-foreground">
-            {employee.role_ar || "غير محدد"}
+            {(isRTL ? employee.role_ar : employee.role_en) || t('common.notSpecified')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -110,16 +116,16 @@ const BasicInfoTab = ({ employeeId }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <User className="w-5 h-5" />
-              المعلومات الشخصية
+              {t('employees.personalInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <InfoRow label="الاسم" value={employee.name} />
-            <InfoRow label="الرقم الوظيفي" value={employee.job_id} />
-            <InfoRow label="رقم الهوية" value={employee.eId} />
-            <InfoRow label="رقم جواز السفر" value={employee.passport} />
-            <InfoRow label="المدير" value={employee.managerName} />
-            <InfoRow label="الدور الوظيفي" value={employee.role_ar} />
+            <InfoRow label={t('employees.name')} value={employee.name} />
+            <InfoRow label={t('employees.employeeNumber')} value={employee.job_id} />
+            <InfoRow label={t('employees.identityNumber')} value={employee.eId} />
+            <InfoRow label={t('employees.passportNumber')} value={employee.passport} />
+            <InfoRow label={t('employees.directManager')} value={employee.managerName} />
+            <InfoRow label={t('employees.role')} value={isRTL ? employee.role_ar : employee.role_en} />
           </CardContent>
         </Card>
 
@@ -128,15 +134,15 @@ const BasicInfoTab = ({ employeeId }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Mail className="w-5 h-5" />
-              معلومات الاتصال
+              {t('employees.contactInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <InfoRow label="البريد الإلكتروني" value={employee.email} />
-            <InfoRow label="رقم الهاتف" value={employee.phone} />
-            <InfoRow label="اسم المستخدم" value={employee.username} />
+            <InfoRow label={t('employees.email')} value={employee.email} />
+            <InfoRow label={t('employees.phoneNumber')} value={employee.phone} />
+            <InfoRow label={t('employees.username')} value={employee.username} />
             {isAdmin && (
-              <InfoRow label="كلمة المرور" value={employee.password} />
+              <InfoRow label={t('employees.password')} value={employee.password} />
             )}
           </CardContent>
         </Card>
@@ -146,17 +152,17 @@ const BasicInfoTab = ({ employeeId }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Building className="w-5 h-5" />
-              معلومات العمل
+              {t('employees.workInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <InfoRow label="القسم" value={employee.department_ar} />
-            <InfoRow label="الحالة" value={getStatusBadge(employee.status)} />
-            <InfoRow label="نوع العقد" value={employee.contract_type} />
-            <InfoRow label="أول يوم عمل" value={formatDate(employee.fisrt_day_of_work)} />
-            <InfoRow label="آخر تسجيل دخول" value={formatDate(employee.last_login)} />
-            <InfoRow label="تاريخ تفعيل الحساب" value={formatDate(employee.account_activation_date)} />
-            <InfoRow label="تاريخ إغلاق الحساب" value={formatDate(employee.account_close_date)} />
+            <InfoRow label={t('employees.department')} value={isRTL ? employee.department_ar : employee.department_en} />
+            <InfoRow label={t('employees.status')} value={getStatusBadge(employee.status)} />
+            <InfoRow label={t('employees.contractType')} value={employee.contract_type} />
+            <InfoRow label={t('employees.firstDayOfWork')} value={formatDate(employee.fisrt_day_of_work)} />
+            <InfoRow label={t('employees.lastLogin')} value={formatDate(employee.last_login)} />
+            <InfoRow label={t('employees.accountActivationDate')} value={formatDate(employee.account_activation_date)} />
+            <InfoRow label={t('employees.accountCloseDate')} value={formatDate(employee.account_close_date)} />
           </CardContent>
         </Card>
 
@@ -165,14 +171,14 @@ const BasicInfoTab = ({ employeeId }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <DollarSign className="w-5 h-5" />
-              الراتب والبدلات
+              {t('employees.salaryInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <InfoRow label="الراتب الأساسي" value={employee.basic_salary ? `${employee.basic_salary} AED` : null} />
-            <InfoRow label="بدل السكن" value={employee.housing_allowance ? `${employee.housing_allowance} AED` : null} />
-            <InfoRow label="بدل المواصلات" value={employee.trnsportation_allownce ? `${employee.trnsportation_allownce} AED` : null} />
-            <InfoRow label="بدل آخر" value={employee.another_allownce ? `${employee.another_allownce} AED` : null} />
+            <InfoRow label={t('employees.basicSalary')} value={employee.basic_salary ? `${employee.basic_salary} AED` : null} />
+            <InfoRow label={t('employees.housingAllowance')} value={employee.housing_allowance ? `${employee.housing_allowance} AED` : null} />
+            <InfoRow label={t('employees.transportationAllowance')} value={employee.trnsportation_allownce ? `${employee.trnsportation_allownce} AED` : null} />
+            <InfoRow label={t('employees.anotherAllowance')} value={employee.another_allownce ? `${employee.another_allownce} AED` : null} />
           </CardContent>
         </Card>
 
@@ -181,14 +187,14 @@ const BasicInfoTab = ({ employeeId }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Building className="w-5 h-5" />
-              المعلومات البنكية
+              {t('employees.bankInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <InfoRow label="اسم البنك" value={employee.bank_name} />
-            <InfoRow label="رقم الآيبان" value={employee.iban} />
-            <InfoRow label="رقم الحساب" value={employee.account_number} />
-            <InfoRow label="طريقة الدفع" value={employee.pay_type} />
+            <InfoRow label={t('employees.bankName')} value={employee.bank_name} />
+            <InfoRow label={t('employees.iban')} value={employee.iban} />
+            <InfoRow label={t('employees.accountNumber')} value={employee.account_number} />
+            <InfoRow label={t('employees.payType')} value={employee.pay_type} />
           </CardContent>
         </Card>
 
@@ -197,16 +203,16 @@ const BasicInfoTab = ({ employeeId }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <FileText className="w-5 h-5" />
-              معلومات الوثائق
+              {t('employees.documentsInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <InfoRow label="تاريخ انتهاء الإقامة" value={formatDate(employee.residence_end_date)} />
-            <InfoRow label="تاريخ انتهاء الهوية" value={formatDate(employee.id_end_date)} />
-            <InfoRow label="تاريخ انتهاء جواز السفر" value={formatDate(employee.passport_end_date)} />
-            <InfoRow label="تاريخ انتهاء بطاقة العمل" value={formatDate(employee.labor_card_end_date)} />
-            <InfoRow label="تاريخ انتهاء التأمين الصحي" value={formatDate(employee.health_insurance_end_date)} />
-            <InfoRow label="تاريخ انتهاء العقد" value={formatDate(employee.contract_end_date)} />
+            <InfoRow label={t('employees.residenceExpiryDate')} value={formatDate(employee.residence_end_date)} />
+            <InfoRow label={t('employees.identityExpiryDate')} value={formatDate(employee.id_end_date)} />
+            <InfoRow label={t('employees.passportExpiryDate')} value={formatDate(employee.passport_end_date)} />
+            <InfoRow label={t('employees.workPermitExpiryDate')} value={formatDate(employee.labor_card_end_date)} />
+            <InfoRow label={t('employees.insuranceExpiryDate')} value={formatDate(employee.health_insurance_end_date)} />
+            <InfoRow label={t('employees.contractExpiryDate')} value={formatDate(employee.contract_end_date)} />
           </CardContent>
         </Card>
       </div>

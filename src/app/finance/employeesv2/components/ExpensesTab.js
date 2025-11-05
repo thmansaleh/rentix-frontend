@@ -131,6 +131,7 @@ const ExpensesTab = () => {
         'رقم الهاتف': expense.employee_phone || '-',
         'الرصيد الحالي': expense.employee_balance || 0,
         'المبلغ': expense.amount,
+        'الموكل': expense.client_name || '-',
         'الوصف': expense.description || '-',
         'أضيف بواسطة': expense.created_by_name || '-',
         'تاريخ الإضافة': formatDateTime(expense.created_at)
@@ -146,6 +147,7 @@ const ExpensesTab = () => {
         { wch: 15 },  // رقم الهاتف
         { wch: 15 },  // الرصيد الحالي
         { wch: 12 },  // المبلغ
+        { wch: 20 },  // العميل/الطرف
         { wch: 30 },  // الوصف
         { wch: 20 },  // أضيف بواسطة
         { wch: 15 }   // تاريخ الإضافة
@@ -248,6 +250,7 @@ const ExpensesTab = () => {
                     <TableHead>{t('phoneNumber')}</TableHead>
                     <TableHead>{t('currentBalance')}</TableHead>
                     <TableHead>{t('amount')}</TableHead>
+                    <TableHead>الموكل</TableHead>
                     <TableHead>{t('description')}</TableHead>
                     <TableHead>{t('status')}</TableHead>
                     <TableHead>{t('addedBy')}</TableHead>
@@ -282,6 +285,18 @@ const ExpensesTab = () => {
                         <span className="text-red-600 font-semibold">
                           - {formatCurrency(expense.amount)}
                         </span>
+                      </TableCell>
+                      <TableCell>
+                        {expense.client_name ? (
+                          <div className="flex flex-col">
+                            <span className="font-medium">{expense.client_name}</span>
+                            {expense.client_phone && (
+                              <span className="text-xs text-gray-500">{expense.client_phone}</span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
                       </TableCell>
                       <TableCell className="max-w-xs truncate">
                         {expense.description || '-'}

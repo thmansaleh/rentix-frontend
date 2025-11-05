@@ -47,7 +47,8 @@ function Page() {
                     setError('Failed to fetch case data');
                 }
             } catch (err) {
-                setError(err.message || 'Failed to fetch case data');
+                // Store the full error object to check status code later
+                setError(err);
             } finally {
                 setIsLoading(false);
             }
@@ -84,11 +85,20 @@ function Page() {
 
     // Show error state
     if (error) {
+        // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403;
+        const errorTitle = isPermissionError 
+            ? (language === 'ar' ? 'غير مصرح' : 'Unauthorized')
+            : (language === 'ar' ? 'خطأ' : 'Error');
+        const errorMessage = isPermissionError 
+            ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض تفاصيل هذه القضية' : 'You do not have permission to view this case details'))
+            : (error?.message || (language === 'ar' ? 'حدث خطأ أثناء تحميل بيانات القضية' : 'Failed to load case data'));
+        
         return (
             <div className="flex items-center justify-center p-8">
                 <div className="text-center text-red-600">
-                    <p className="mb-2">Error loading case data</p>
-                    <p className="text-sm">{error}</p>
+                    <p className="mb-2 font-semibold">{errorTitle}</p>
+                    <p className="text-sm">{errorMessage}</p>
                 </div>
             </div>
         );

@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'react-toastify';
 import { Loader2 } from 'lucide-react';
 import { createGoamlRecord } from '@/app/services/api/goaml';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -42,7 +44,7 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'الاسم مطلوب';
+      newErrors.name = t('validation.nameRequired');
     }
 
     setErrors(newErrors);
@@ -71,15 +73,14 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
       const result = await createGoamlRecord(submitData);
 
       if (result.success) {
-        toast.success('تم إضافة السجل بنجاح');
+        toast.success(t('goaml.createRecordSuccess'));
         handleClose();
         onSuccess();
       } else {
-        throw new Error(result.message || 'فشل في إضافة السجل');
+        throw new Error(result.message || t('goaml.createRecordError'));
       }
     } catch (error) {
-
-      toast.error(error.response?.data?.message || 'فشل في إضافة السجل');
+      toast.error(error.response?.data?.message || t('goaml.createRecordError'));
     } finally {
       setLoading(false);
     }
@@ -89,8 +90,8 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
     setFormData({
       name: '',
       phone: '',
+      type: 'فرد',
       status: 'under_review',
-      amount: '',
       note: ''
     });
     setErrors({});
@@ -99,21 +100,21 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md md:max-w-lg" dir="rtl">
+      <DialogContent className="sm:max-w-md md:max-w-lg" dir={t('common.direction')}>
         <DialogHeader>
-          <DialogTitle>إضافة سجل GoAML جديد</DialogTitle>
+          <DialogTitle>{t('goaml.addModal.title')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="name">الاسم *</Label>
+              <Label htmlFor="name">{t('goaml.table.name')} *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
-                placeholder="مثال: أحمد محمد"
+                placeholder={t('goaml.placeholders.nameExample')}
                 className={errors.name ? 'border-red-500' : ''}
               />
               {errors.name && (
@@ -123,13 +124,13 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Phone */}
             <div className="space-y-2">
-              <Label htmlFor="phone">رقم الهاتف</Label>
+              <Label htmlFor="phone">{t('goaml.table.phone')}</Label>
               <Input
                 id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleChange('phone', e.target.value)}
-                placeholder="0500000000"
+                placeholder={t('goaml.placeholders.phoneExample')}
                 className={errors.phone ? 'border-red-500' : ''}
               />
               {errors.phone && (
@@ -139,16 +140,16 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Type */}
             <div className="space-y-2">
-              <Label htmlFor="type">النوع *</Label>
+              <Label htmlFor="type">{t('goaml.table.type')} *</Label>
               <Select value={formData.type} onValueChange={(value) => handleChange('type', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر النوع" />
+                  <SelectValue placeholder={t('goaml.placeholders.selectType')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="فرد">فرد</SelectItem>
-                  <SelectItem value="شركة">شركة</SelectItem>
-                  <SelectItem value="كيان">كيان</SelectItem>
-                  <SelectItem value="منظمة">منظمة</SelectItem>
+                  <SelectItem value="فرد">{t('goaml.types.individual')}</SelectItem>
+                  <SelectItem value="شركة">{t('goaml.types.company')}</SelectItem>
+                  <SelectItem value="كيان">{t('goaml.types.entity')}</SelectItem>
+                  <SelectItem value="منظمة">{t('goaml.types.organization')}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.type && (
@@ -158,15 +159,15 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Status */}
             <div className="space-y-2">
-              <Label htmlFor="status">الحالة *</Label>
+              <Label htmlFor="status">{t('goaml.table.status')} *</Label>
               <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر الحالة" />
+                  <SelectValue placeholder={t('goaml.placeholders.selectStatus')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="under_review">قيد المراجعة</SelectItem>
-                  <SelectItem value="compliant">مطابق</SelectItem>
-                  <SelectItem value="safe">آمن</SelectItem>
+                  <SelectItem value="under_review">{t('goaml.status.under_review')}</SelectItem>
+                  <SelectItem value="compliant">{t('goaml.status.compliant')}</SelectItem>
+                  <SelectItem value="safe">{t('goaml.status.safe')}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.status && (
@@ -176,12 +177,12 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Note */}
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="note">ملاحظة</Label>
+              <Label htmlFor="note">{t('goaml.table.note')}</Label>
               <Textarea
                 id="note"
                 value={formData.note}
                 onChange={(e) => handleChange('note', e.target.value)}
-                placeholder="مثال: ملاحظات إضافية"
+                placeholder={t('goaml.placeholders.noteExample')}
                 rows={3}
                 className={errors.note ? 'border-red-500' : ''}
               />
@@ -198,14 +199,14 @@ const AddGoamlModal = ({ isOpen, onClose, onSuccess }) => {
               onClick={handleClose}
               disabled={loading}
             >
-              إلغاء
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
               disabled={loading}
             >
               {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {loading ? 'جار الإضافة...' : 'إضافة'}
+              {loading ? t('buttons.saving') : t('buttons.add')}
             </Button>
           </div>
         </form>

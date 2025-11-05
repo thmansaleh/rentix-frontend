@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'react-toastify';
 import { Loader2 } from 'lucide-react';
 import { createCallLog } from '@/app/services/api/callLogs';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     call_type: '',
@@ -46,27 +48,27 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
     const newErrors = {};
 
     if (!formData.call_type) {
-      newErrors.call_type = 'نوع المكالمة مطلوب';
+      newErrors.call_type = t('callLogs.validation.callTypeRequired');
     }
 
     if (!formData.caller_name.trim()) {
-      newErrors.caller_name = 'اسم المتصل مطلوب';
+      newErrors.caller_name = t('validation.nameRequired');
     }
 
     if (!formData.phone_number.trim()) {
-      newErrors.phone_number = 'رقم الهاتف مطلوب';
+      newErrors.phone_number = t('validation.phoneRequired');
     }
 
     if (!formData.call_date) {
-      newErrors.call_date = 'تاريخ المكالمة مطلوب';
+      newErrors.call_date = t('callLogs.validation.callDateRequired');
     }
 
     if (!formData.call_time) {
-      newErrors.call_time = 'وقت المكالمة مطلوب';
+      newErrors.call_time = t('callLogs.validation.callTimeRequired');
     }
 
     if (formData.duration_minutes < 0) {
-      newErrors.duration_minutes = 'مدة المكالمة لا يمكن أن تكون سالبة';
+      newErrors.duration_minutes = t('callLogs.validation.durationNonNegative');
     }
 
     setErrors(newErrors);
@@ -86,15 +88,14 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
       const result = await createCallLog(formData);
 
       if (result.success) {
-        toast.success('تم إضافة المكالمة بنجاح');
+        toast.success(t('callLogs.createCallSuccess'));
         handleClose();
         onSuccess();
       } else {
-        throw new Error(result.message || 'فشل في إضافة المكالمة');
+        throw new Error(result.message || t('callLogs.createCallError'));
       }
     } catch (error) {
-
-      toast.error('فشل في إضافة المكالمة');
+      toast.error(t('callLogs.createCallError'));
     } finally {
       setLoading(false);
     }
@@ -133,23 +134,23 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md md:max-w-lg" dir="rtl">
+      <DialogContent className="sm:max-w-md md:max-w-lg" dir={t('common.direction')}>
         <DialogHeader>
-          <DialogTitle>إضافة مكالمة جديدة</DialogTitle>
+          <DialogTitle>{t('callLogs.modal.addTitle')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Call Type */}
             <div className="space-y-2">
-              <Label htmlFor="call_type">نوع المكالمة *</Label>
+              <Label htmlFor="call_type">{t('callLogs.table.type')} *</Label>
               <Select value={formData.call_type} onValueChange={(value) => handleChange('call_type', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر نوع المكالمة" />
+                  <SelectValue placeholder={t('callLogs.placeholders.selectCallType')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="incoming">واردة</SelectItem>
-                  <SelectItem value="outgoing">صادرة</SelectItem>
+                  <SelectItem value="incoming">{t('callLogs.callTypes.incoming')}</SelectItem>
+                  <SelectItem value="outgoing">{t('callLogs.callTypes.outgoing')}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.call_type && (
@@ -159,14 +160,14 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Duration */}
             <div className="space-y-2">
-              <Label htmlFor="duration_minutes">المدة (دقيقة)</Label>
+              <Label htmlFor="duration_minutes">{t('callLogs.table.duration')}</Label>
               <Input
                 id="duration_minutes"
                 type="number"
                 min="0"
                 value={formData.duration_minutes}
                 onChange={(e) => handleChange('duration_minutes', parseInt(e.target.value) || 0)}
-                placeholder="0"
+                placeholder={t('callLogs.placeholders.duration')}
               />
               {errors.duration_minutes && (
                 <p className="text-sm text-red-600">{errors.duration_minutes}</p>
@@ -177,12 +178,12 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Caller Name */}
             <div className="space-y-2">
-              <Label htmlFor="caller_name">اسم المتصل *</Label>
+              <Label htmlFor="caller_name">{t('callLogs.table.callerName')} *</Label>
               <Input
                 id="caller_name"
                 value={formData.caller_name}
                 onChange={(e) => handleChange('caller_name', e.target.value)}
-                placeholder="أدخل اسم المتصل"
+                placeholder={t('callLogs.placeholders.callerName')}
               />
               {errors.caller_name && (
                 <p className="text-sm text-red-600">{errors.caller_name}</p>
@@ -191,12 +192,12 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Phone Number */}
             <div className="space-y-2">
-              <Label htmlFor="phone_number">رقم الهاتف *</Label>
+              <Label htmlFor="phone_number">{t('callLogs.table.phoneNumber')} *</Label>
               <Input
                 id="phone_number"
                 value={formData.phone_number}
                 onChange={(e) => handleChange('phone_number', e.target.value)}
-                placeholder="0500000000"
+                placeholder={t('callLogs.placeholders.phoneExample')}
                 dir="ltr"
                 className="text-left"
               />
@@ -209,7 +210,7 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Call Date */}
             <div className="space-y-2">
-              <Label htmlFor="call_date">تاريخ المكالمة *</Label>
+              <Label htmlFor="call_date">{t('callLogs.table.date')} *</Label>
               <Input
                 id="call_date"
                 type="date"
@@ -223,7 +224,7 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Call Time */}
             <div className="space-y-2">
-              <Label htmlFor="call_time">وقت المكالمة *</Label>
+              <Label htmlFor="call_time">{t('callLogs.table.time')} *</Label>
               <Input
                 id="call_time"
                 type="time"
@@ -238,34 +239,34 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Topic */}
           <div className="space-y-2">
-            <Label htmlFor="topic">موضوع المكالمة</Label>
+            <Label htmlFor="topic">{t('callLogs.table.topic')}</Label>
             <Input
               id="topic"
               value={formData.topic}
               onChange={(e) => handleChange('topic', e.target.value)}
-              placeholder="أدخل موضوع المكالمة"
+              placeholder={t('callLogs.placeholders.topic')}
             />
           </div>
 
           {/* Case File Number */}
           <div className="space-y-2">
-            <Label htmlFor="file_case_number">رقم القضية (اختياري)</Label>
+            <Label htmlFor="file_case_number">{t('callLogs.placeholders.caseNumberOptional')}</Label>
             <Input
               id="file_case_number"
               value={formData.file_case_number}
               onChange={(e) => handleChange('file_case_number', e.target.value)}
-              placeholder="أدخل رقم القضية إن وجد"
+              placeholder={t('callLogs.placeholders.caseNumberPlaceholder')}
             />
           </div>
 
           {/* Details */}
           <div className="space-y-2">
-            <Label htmlFor="details">تفاصيل المكالمة</Label>
+            <Label htmlFor="details">{t('callLogs.table.topic')} - {t('forms.description')}</Label>
             <Textarea
               id="details"
               value={formData.details}
               onChange={(e) => handleChange('details', e.target.value)}
-              placeholder="أدخل تفاصيل المكالمة..."
+              placeholder={t('callLogs.placeholders.details')}
               rows={3}
             />
           </div>
@@ -278,11 +279,11 @@ const AddCallModal = ({ isOpen, onClose, onSuccess }) => {
               onClick={handleClose}
               disabled={loading}
             >
-              إلغاء
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              إضافة المكالمة
+              {loading ? t('buttons.saving') : t('buttons.add')}
             </Button>
           </div>
         </form>

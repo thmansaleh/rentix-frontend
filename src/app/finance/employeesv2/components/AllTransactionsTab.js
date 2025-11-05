@@ -368,7 +368,7 @@ const AllTransactionsTab = () => {
             {transactionsPagination.totalPages > 1 && (
               <div className="flex items-center justify-between mt-4">
                 <div className="text-sm text-gray-600">
-                  {t('showing', { scope: 'employeeFinance.pagination' })} {((currentPage - 1) * itemsPerPage) + 1} {t('to', { scope: 'employeeFinance.pagination' })} {Math.min(currentPage * itemsPerPage, transactionsPagination.total)} {t('of', { scope: 'employeeFinance.pagination' })} {transactionsPagination.total}
+                  {t('showing')} {((currentPage - 1) * itemsPerPage) + 1} {t('to')} {Math.min(currentPage * itemsPerPage, transactionsPagination.total)} {t('of')} {transactionsPagination.total}
                 </div>
                 <div className="flex gap-2">
                   <Button

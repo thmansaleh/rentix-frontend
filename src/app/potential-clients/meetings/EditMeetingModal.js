@@ -19,6 +19,7 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { toast } from "react-toastify";
 import meetingsApi from "../../services/api/meetings";
 import { getEmployees } from "../../services/api/employees";
+import RichTextEditor from "@/components/RichTextEditor";
 
 export function EditMeetingModal({ isOpen, onClose, meetingId, onSuccess }) {
   const { t } = useTranslations();
@@ -376,12 +377,10 @@ export function EditMeetingModal({ isOpen, onClose, meetingId, onSuccess }) {
                 </Label>
                 <Field name="note">
                   {({ field }) => (
-                    <Textarea
-                      {...field}
-                      id="note"
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={(html) => setFieldValue("note", html)}
                       placeholder={t("meetings.placeholders.enterNotes")}
-                      rows={4}
-                      className="w-full resize-none"
                     />
                   )}
                 </Field>

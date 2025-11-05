@@ -244,7 +244,7 @@ function Orders() {
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <CardTitle className={cn("text-2xl font-bold", isArabic && "text-right")}>
-              {isArabic ? 'أوامر الأطراف' : 'Party Orders'}
+              {isArabic ? 'طلبات العملاء  ' : 'Client Requests'}
             </CardTitle>
             
             <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
@@ -257,7 +257,7 @@ function Orders() {
               {/* Add Button */}
               <Button onClick={handleAddOrder} className="whitespace-nowrap">
                 <Plus className={cn("h-4 w-4", isArabic ? "ml-2" : "mr-2")} />
-                {isArabic ? 'إضافة طلب' : 'Add Order'}
+                {isArabic ? 'إضافة طلب' : 'Add Request'}
               </Button>
             </div>
           </div>
@@ -287,7 +287,7 @@ function Orders() {
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              {isArabic ? 'لا توجد طلبات' : 'No orders found'}
+              {isArabic ? 'لا توجد طلبات' : 'No requests found'}
             </div>
           ) : (
             <>
@@ -302,7 +302,7 @@ function Orders() {
                         {isArabic ? 'الموكل' : 'Party Name'}
                       </TableHead>
                       <TableHead className={isArabic ? "text-right" : ""}>
-                        {isArabic ? 'نوع الطلب' : 'Order Type'}
+                        {isArabic ? 'نوع الطلب' : 'Request Type'}
                       </TableHead>
                       <TableHead className={isArabic ? "text-right" : ""}>
                         {isArabic ? 'التاريخ' : 'Date'}
@@ -436,7 +436,7 @@ function Orders() {
             <AlertDialogDescription className={isArabic ? "text-right" : ""}>
               {isArabic 
                 ? `سيتم حذف أمر الطرف "${deleteModal.orderInfo?.party_name || ''}" بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.`
-                : `This will permanently delete the order for "${deleteModal.orderInfo?.party_name || ''}". This action cannot be undone.`
+                : `This will permanently delete the request for "${deleteModal.orderInfo?.party_name || ''}". This action cannot be undone.`
               }
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Calendar, Clock, Loader2, Save, Upload, X, FileText, Users, MapPin } from "lucide-react";
+import { Calendar, Clock, Loader2, Save, Upload, X, FileText, Users, MapPin, Plus, UserPlus, Link } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { toast } from "react-toastify";
 import meetingsApi from "../services/api/meetings";
@@ -20,12 +20,16 @@ import { getEmployees } from "../services/api/employees";
 import { searchParties } from "../services/api/parties";
 import { uploadFiles } from "../../../utils/fileUpload";
 import useSWR from "swr";
+import AddPartyModal from "../parties/AddPartyModal";
+import { AddClientModal } from "../potential-clients/AddClientModal";
+import RichTextEditor from "@/components/RichTextEditor";
 
 export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
   const { t } = useTranslations();
   const [partySearchResults, setPartySearchResults] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAddPotentialClientModal, setShowAddPotentialClientModal] = useState(false);
 
   // Fetch employees for attendee selection
   const { data: employeesData, isLoading: employeesLoading } = useSWR(
@@ -63,7 +67,8 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
     value: party.id,
     label: `${party.name}${party.phone ? ` - ${party.phone}` : ''}`,
     phone: party.phone,
-    name: party.name
+    name: party.name,
+    party_type: party.party_type
   }));
 
   const meetingResults = [
@@ -89,6 +94,7 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
     meet_result: "",
     meeting_type: "",
     address: "",
+    link: "",
     employee_ids: []
   };
 
@@ -110,6 +116,11 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
     meet_result: Yup.string(),
     meeting_type: Yup.string(),
     address: Yup.string(),
+    link: Yup.string().when("meeting_type", {
+      is: "online",
+      then: (schema) => schema.url(t("meetings.validation.linkInvalid")),
+      otherwise: (schema) => schema
+    }),
     employee_ids: Yup.array()
   });
 
@@ -125,6 +136,7 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
         meet_result: values.meet_result || null,
         meeting_type: values.meeting_type || null,
         address: values.address || null,
+        link: values.link || null,
         employee_ids: values.employee_ids || []
       };
 
@@ -197,6 +209,23 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Handle opening modals
+  const handleAddPotentialClient = () => {
+    setShowAddPotentialClientModal(true);
+  };
+
+  // Handle modal success callbacks
+  const handlePartyAdded = () => {
+    // Optionally refresh the search results or show success message
+    toast.success(t("parties.messages.createSuccess"));
+  };
+
+  const handlePotentialClientAdded = () => {
+    setShowAddPotentialClientModal(false);
+    // Optionally refresh the search results or show success message
+    toast.success(t("potentialClients.messages.createSuccess"));
+  };
+
   // Get today's date in YYYY-MM-DD format for min date
   const today = new Date().toISOString().split('T')[0];
 
@@ -225,17 +254,42 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
                   <Label htmlFor="party_id" className="text-sm font-medium">
                     {t("meetings.fields.client")} *
                   </Label>
-                  <SearchableCombobox
-                    value={values.party_id}
-                    onValueChange={(value) => setFieldValue("party_id", value)}
-                    onSearch={handlePartySearch}
-                    options={partyOptions}
-                    placeholder={t("meetings.placeholders.selectClient")}
-                    searchPlaceholder={t("meetings.placeholders.searchClient")}
-                    emptyMessage={t("meetings.messages.noResults")}
-                    minSearchLength={3}
-                    className={errors.party_id && touched.party_id ? "border-red-500" : ""}
-                  />
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <SearchableCombobox
+                        value={values.party_id}
+                        onValueChange={(value) => setFieldValue("party_id", value)}
+                        onSearch={handlePartySearch}
+                        options={partyOptions}
+                        placeholder={t("meetings.placeholders.selectClient")}
+                        searchPlaceholder={t("meetings.placeholders.searchClient")}
+                        emptyMessage={t("meetings.messages.noResults")}
+                        minSearchLength={3}
+                        className={errors.party_id && touched.party_id ? "border-red-500" : ""}
+                      />
+                    </div>
+                    <AddPartyModal onPartyAdded={handlePartyAdded}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        title={t("meetings.actions.addClient")}
+                        className="flex-shrink-0"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </AddPartyModal>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={handleAddPotentialClient}
+                      title={t("meetings.actions.addPotentialClient")}
+                      className="flex-shrink-0"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                    </Button>
+                  </div>
                   <ErrorMessage name="party_id" component="div" className="text-red-500 text-sm" />
                 </div>
               )}
@@ -353,6 +407,27 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
                 </Select>
               </div>
 </div>
+              {/* Meeting Link Field - Only show when meeting type is online */}
+              {values.meeting_type === "online" && (
+                <div className="space-y-2">
+                  <Label htmlFor="link" className="text-sm font-medium flex items-center gap-1">
+                    <Link className="h-4 w-4" />
+                    {t("meetings.fields.link")}
+                  </Label>
+                  <Field name="link">
+                    {({ field }) => (
+                      <Input
+                        {...field}
+                        id="link"
+                        type="url"
+                        placeholder={t("meetings.placeholders.enterLink")}
+                        className={`w-full ${errors.link && touched.link ? "border-red-500" : ""}`}
+                      />
+                    )}
+                  </Field>
+                  <ErrorMessage name="link" component="div" className="text-red-500 text-sm" />
+                </div>
+              )}
               {/* Notes Field */}
               <div className="space-y-2">
                 <Label htmlFor="note" className="text-sm font-medium">
@@ -360,12 +435,10 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
                 </Label>
                 <Field name="note">
                   {({ field }) => (
-                    <Textarea
-                      {...field}
-                      id="note"
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={(html) => setFieldValue("note", html)}
                       placeholder={t("meetings.placeholders.enterNotes")}
-                      rows={4}
-                      className="w-full resize-none"
                     />
                   )}
                 </Field>
@@ -540,6 +613,13 @@ export function AddMeetingModal({ isOpen, onClose, onSuccess, partyId }) {
           )}
         </Formik>
       </CustomModalBody>
+      
+      {/* Add Potential Client Modal */}
+      <AddClientModal
+        isOpen={showAddPotentialClientModal}
+        onClose={() => setShowAddPotentialClientModal(false)}
+        onSuccess={handlePotentialClientAdded}
+      />
     </CustomModal>
   );
 }

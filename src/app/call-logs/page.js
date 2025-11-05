@@ -30,12 +30,14 @@ import { toast } from 'react-toastify';
 import { useCallLogs } from '@/hooks/useCallLogs';
 import { deleteCallLog } from '@/app/services/api/callLogs';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import ExportButtons from '@/components/ui/export-buttons';
 import AddCallModal from './components/AddCallModal';
 import EditCallModal from './components/EditCallModal';
 
 const CallLogsPage = () => {
   const { language } = useLanguage();
+  const { t } = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [callTypeFilter, setCallTypeFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,14 +60,13 @@ const CallLogsPage = () => {
     try {
       const result = await deleteCallLog(id);
       if (result.success) {
-        toast.success('تم حذف المكالمة بنجاح');
+        toast.success(t('callLogs.deleteCallSuccess'));
         mutate(); // Refresh the data
       } else {
-        throw new Error(result.message || 'فشل في حذف المكالمة');
+        throw new Error(result.message || t('callLogs.deleteCallError'));
       }
     } catch (error) {
-
-      toast.error('فشل في حذف المكالمة');
+      toast.error(t('callLogs.deleteCallError'));
     }
   };
 
@@ -123,14 +124,14 @@ const CallLogsPage = () => {
       return (
         <Badge variant="secondary" className="flex items-center gap-1">
           <Phone className="w-3 h-3" />
-          واردة
+          {t('callLogs.callTypes.incoming')}
         </Badge>
       );
     } else {
       return (
         <Badge variant="outline" className="flex items-center gap-1">
           <PhoneCall className="w-3 h-3" />
-          صادرة
+          {t('callLogs.callTypes.outgoing')}
         </Badge>
       );
     }
@@ -138,7 +139,7 @@ const CallLogsPage = () => {
 
   // Show error state if needed
   if (isError) {
-    toast.error('فشل في جلب سجل المكالمات');
+    toast.error(t('callLogs.errorLoadingCalls'));
   }
 
   // Column configuration for export
@@ -149,38 +150,38 @@ const CallLogsPage = () => {
       dataKey: 'id'
     },
     client_name: {
-      ar: 'اسم العميل',
+      ar: t('callLogs.table.callerName'),
       en: 'Client Name',
       dataKey: 'client_name'
     },
     phone_number: {
-      ar: 'رقم الهاتف',
+      ar: t('callLogs.table.phoneNumber'),
       en: 'Phone Number',
       dataKey: 'phone_number'
     },
     call_type: {
-      ar: 'نوع المكالمة',
+      ar: t('callLogs.table.type'),
       en: 'Call Type',
       dataKey: 'call_type',
       type: 'status',
       statusMap: {
-        'incoming': { ar: 'واردة', en: 'Incoming' },
-        'outgoing': { ar: 'صادرة', en: 'Outgoing' }
+        'incoming': { ar: t('callLogs.callTypes.incoming'), en: 'Incoming' },
+        'outgoing': { ar: t('callLogs.callTypes.outgoing'), en: 'Outgoing' }
       }
     },
     date: {
-      ar: 'التاريخ',
+      ar: t('callLogs.table.date'),
       en: 'Date',
       dataKey: 'date',
       type: 'date'
     },
     time: {
-      ar: 'الوقت',
+      ar: t('callLogs.table.time'),
       en: 'Time',
       dataKey: 'time'
     },
     duration: {
-      ar: 'المدة (دقائق)',
+      ar: t('callLogs.table.duration'),
       en: 'Duration (minutes)',
       dataKey: 'duration'
     },
@@ -197,19 +198,19 @@ const CallLogsPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6" dir="rtl">
+    <div className="container mx-auto p-6 space-y-6" >
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">سجل المكالمات</h1>
-          <p className="text-gray-600 mt-1">إدارة وتتبع جميع المكالمات الواردة والصادرة</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('callLogs.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('callLogs.description')}</p>
         </div>
         <Button 
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          إضافة مكالمة جديدة
+          {t('callLogs.addNewCall')}
         </Button>
       </div>
 
@@ -220,7 +221,7 @@ const CallLogsPage = () => {
             <div className="relative flex-1">
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="البحث في المكالمات..."
+                placeholder={t('callLogs.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pr-10"
@@ -228,12 +229,12 @@ const CallLogsPage = () => {
             </div>
             <Select value={callTypeFilter} onValueChange={handleFilterChange}>
               <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="نوع المكالمة" />
+                <SelectValue placeholder={t('callLogs.filters.callType')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">جميع المكالمات</SelectItem>
-                <SelectItem value="incoming">المكالمات الواردة</SelectItem>
-                <SelectItem value="outgoing">المكالمات الصادرة</SelectItem>
+                <SelectItem value="all">{t('callLogs.filters.allCalls')}</SelectItem>
+                <SelectItem value="incoming">{t('callLogs.filters.incomingCalls')}</SelectItem>
+                <SelectItem value="outgoing">{t('callLogs.filters.outgoingCalls')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -244,9 +245,9 @@ const CallLogsPage = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>قائمة المكالمات</span>
+            <span>{t('callLogs.callsList')}</span>
             <span className="text-sm font-normal text-gray-500">
-              {pagination.totalRecords} مكالمة إجمالية
+              {pagination.totalRecords} {t('callLogs.totalCalls')}
             </span>
           </CardTitle>
         </CardHeader>
@@ -258,7 +259,7 @@ const CallLogsPage = () => {
               columnConfig={callLogsColumnConfig}
               language={language}
               exportName="call-logs"
-              sheetName={language === 'ar' ? 'سجل المكالمات' : 'Call Logs'}
+              sheetName={language === 'ar' ? t('callLogs.title') : 'Call Logs'}
             />
           )}
 
@@ -268,7 +269,7 @@ const CallLogsPage = () => {
             </div>
           ) : callLogs.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              لا توجد مكالمات مسجلة
+              {t('callLogs.noCalls')}
             </div>
           ) : (
             <>
@@ -276,15 +277,15 @@ const CallLogsPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-right">النوع</TableHead>
-                      <TableHead className="text-right">اسم المتصل</TableHead>
-                      <TableHead className="text-right">رقم الهاتف</TableHead>
-                      <TableHead className="text-right">التاريخ</TableHead>
-                      <TableHead className="text-right">الوقت</TableHead>
-                      <TableHead className="text-right">الموضوع</TableHead>
-                      <TableHead className="text-right">المدة (دقيقة)</TableHead>
-                      <TableHead className="text-right">رقم القضية</TableHead>
-                      <TableHead className="text-right">الإجراءات</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.type')}</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.callerName')}</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.phoneNumber')}</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.date')}</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.time')}</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.topic')}</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.duration')}</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.caseNumber')}</TableHead>
+                      <TableHead className="text-right">{t('callLogs.table.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -326,18 +327,18 @@ const CallLogsPage = () => {
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                                    <AlertDialogTitle>{t('callLogs.confirmDelete')}</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      هل أنت متأكد من حذف هذه المكالمة؟ لا يمكن التراجع عن هذا الإجراء.
+                                      {t('callLogs.confirmDeleteMessage')}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
-                                    <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                                     <AlertDialogAction 
                                       onClick={() => handleDelete(call.id)}
                                       className="bg-red-600 hover:bg-red-700"
                                     >
-                                      حذف
+                                      {t('common.delete')}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -355,9 +356,9 @@ const CallLogsPage = () => {
               {pagination.totalPages > 1 && (
                 <div className="flex justify-between items-center mt-4">
                   <div className="text-sm text-gray-700">
-                    عرض {((pagination.currentPage - 1) * pagination.limit) + 1} إلى{' '}
+                    {t('callLogs.pagination.showing')} {((pagination.currentPage - 1) * pagination.limit) + 1} {t('callLogs.pagination.to')}{' '}
                     {Math.min(pagination.currentPage * pagination.limit, pagination.totalRecords)}{' '}
-                    من {pagination.totalRecords} نتيجة
+                    {t('callLogs.pagination.of')} {pagination.totalRecords} {t('callLogs.pagination.results')}
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -366,7 +367,7 @@ const CallLogsPage = () => {
                       onClick={() => handlePageChange(pagination.currentPage - 1)}
                       disabled={pagination.currentPage === 1}
                     >
-                      السابق
+                      {t('callLogs.pagination.previous')}
                     </Button>
                     {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
                       .filter(page => 
@@ -394,7 +395,7 @@ const CallLogsPage = () => {
                       onClick={() => handlePageChange(pagination.currentPage + 1)}
                       disabled={pagination.currentPage === pagination.totalPages}
                     >
-                      التالي
+                      {t('callLogs.pagination.next')}
                     </Button>
                   </div>
                 </div>
@@ -415,7 +416,8 @@ const CallLogsPage = () => {
       />
 
       <EditCallModal 
-        call={editingCall}
+        isOpen={!!editingCall}
+        callId={editingCall?.id}
         onClose={() => setEditingCall(null)}
         onSuccess={() => {
           setEditingCall(null);

@@ -29,10 +29,12 @@ import {
 import { toast } from 'react-toastify';
 import { useGoamlRecords } from '@/hooks/useGoaml';
 import { deleteGoamlRecord } from '@/app/services/api/goaml';
+import { useTranslations } from '@/hooks/useTranslations';
 import AddGoamlModal from './components/AddGoamlModal';
 import EditGoamlModal from './components/EditGoamlModal';
 
 const GoAmlPage = () => {
+  const { t } = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
@@ -53,23 +55,23 @@ const GoAmlPage = () => {
   });
 
   const exportColumnConfig = {
-    name: { ar: 'الاسم', en: 'Name', dataKey: 'name' },
-    phone: { ar: 'رقم الهاتف', en: 'Phone', dataKey: 'phone' },
-    type: { ar: 'التصنيف', en: 'Type', dataKey: 'type' },
+    name: { ar: t('goaml.export.name'), en: 'Name', dataKey: 'name' },
+    phone: { ar: t('goaml.export.phone'), en: 'Phone', dataKey: 'phone' },
+    type: { ar: t('goaml.export.type'), en: 'Type', dataKey: 'type' },
     status: {
-      ar: 'الحالة',
+      ar: t('goaml.export.status'),
       en: 'Status',
       dataKey: 'status',
       type: 'status',
       statusMap: {
-        compliant: { ar: 'مطابق', en: 'Compliant' },
-        safe: { ar: 'آمن', en: 'Safe' },
-        under_review: { ar: 'قيد المراجعة', en: 'Under Review' }
+        compliant: { ar: t('goaml.status.compliant'), en: 'Compliant' },
+        safe: { ar: t('goaml.status.safe'), en: 'Safe' },
+        under_review: { ar: t('goaml.status.under_review'), en: 'Under Review' }
       }
     },
-    note: { ar: 'الملاحظات', en: 'Note', dataKey: 'note' },
-    created_at: { ar: 'تاريخ الإنشاء', en: 'Created At', dataKey: 'created_at', type: 'date' },
-    created_by_name: { ar: 'أنشئ بواسطة', en: 'Created By', dataKey: 'created_by_name' }
+    note: { ar: t('goaml.export.note'), en: 'Note', dataKey: 'note' },
+    created_at: { ar: t('goaml.export.createdAt'), en: 'Created At', dataKey: 'created_at', type: 'date' },
+    created_by_name: { ar: t('goaml.export.createdBy'), en: 'Created By', dataKey: 'created_by_name' }
   };
 
   // Delete record
@@ -77,14 +79,13 @@ const GoAmlPage = () => {
     try {
       const result = await deleteGoamlRecord(id);
       if (result.success) {
-        toast.success('تم حذف السجل بنجاح');
+        toast.success(t('goaml.deleteRecordSuccess'));
         mutate(); // Refresh the data
       } else {
-        throw new Error(result.message || 'فشل في حذف السجل');
+        throw new Error(result.message || t('goaml.deleteRecordError'));
       }
     } catch (error) {
-
-      toast.error('فشل في حذف السجل');
+      toast.error(t('goaml.deleteRecordError'));
     }
   };
 
@@ -92,17 +93,17 @@ const GoAmlPage = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       compliant: {
-        label: 'مطابق',
+        label: t('goaml.status.compliant'),
         variant: 'default',
         className: 'bg-green-500 hover:bg-green-600 text-white'
       },
       safe: {
-        label: 'آمن',
+        label: t('goaml.status.safe'),
         variant: 'secondary',
         className: 'bg-blue-500 hover:bg-blue-600 text-white'
       },
       under_review: {
-        label: 'قيد المراجعة',
+        label: t('goaml.status.under_review'),
         variant: 'outline',
         className: 'bg-yellow-500 hover:bg-yellow-600 text-white'
       }
@@ -130,11 +131,11 @@ const GoAmlPage = () => {
 
   // Show error state if needed
   if (isError) {
-    toast.error('فشل في جلب سجلات GoAML');
+    toast.error(t('goaml.errorLoadingRecords'));
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6" dir="rtl">
+    <div className="container mx-auto p-6 space-y-6" >
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -143,8 +144,8 @@ const GoAmlPage = () => {
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">مكافحة غسل الأموال</h1>
-              <p className="text-gray-600 mt-1">إدارة وتتبع سجلات GoAML</p>
+              <h1 className="text-2xl font-bold text-gray-900">{t('goaml.title')}</h1>
+              <p className="text-gray-600 mt-1">{t('goaml.description')}</p>
             </div>
           </div>
         </div>
@@ -153,7 +154,7 @@ const GoAmlPage = () => {
           className="flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          إضافة سجل جديد
+          {t('goaml.addNewRecord')}
         </Button>
       </div>
 
@@ -163,7 +164,7 @@ const GoAmlPage = () => {
           <div className="relative">
             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              placeholder="البحث في السجلات..."
+              placeholder={t('goaml.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pr-10"
@@ -176,9 +177,9 @@ const GoAmlPage = () => {
       <Card>
         <CardHeader className="gap-4 md:flex md:flex-row md:items-center md:justify-between">
           <CardTitle className="flex items-center justify-between w-full md:w-auto">
-            <span>قائمة السجلات</span>
+            <span>{t('goaml.recordsList')}</span>
             <span className="text-sm font-normal text-gray-500">
-              {filteredRecords.length} سجل
+              {filteredRecords.length} {t('goaml.recordsCount')}
             </span>
           </CardTitle>
           {!isLoading && filteredRecords.length > 0 && (
@@ -198,35 +199,35 @@ const GoAmlPage = () => {
             </div>
           ) : filteredRecords.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              {searchTerm ? 'لا توجد نتائج للبحث' : 'لا توجد سجلات مسجلة'}
+              {searchTerm ? t('goaml.noSearchResults') : t('goaml.noRecords')}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-right">الاسم</TableHead>
-                    <TableHead className="text-right">رقم الهاتف</TableHead>
-                    <TableHead className="text-right">النوع</TableHead>
-                    <TableHead className="text-right">الحالة</TableHead>
-                    <TableHead className="text-right">ملاحظة</TableHead>
-                    <TableHead className="text-right">تاريخ الإنشاء</TableHead>
-                    <TableHead className="text-right">أُنشئ بواسطة</TableHead>
-                    <TableHead className="text-right">الإجراءات</TableHead>
+                    <TableHead className="text-right">{t('goaml.table.name')}</TableHead>
+                    <TableHead className="text-right">{t('goaml.table.phone')}</TableHead>
+                    <TableHead className="text-right">{t('goaml.table.type')}</TableHead>
+                    <TableHead className="text-right">{t('goaml.table.status')}</TableHead>
+                    <TableHead className="text-right">{t('goaml.table.note')}</TableHead>
+                    <TableHead className="text-right">{t('goaml.table.createdAt')}</TableHead>
+                    <TableHead className="text-right">{t('goaml.table.createdBy')}</TableHead>
+                    <TableHead className="text-right">{t('goaml.table.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredRecords.map((record) => (
                     <TableRow key={record.id}>
-                      <TableCell className="font-medium">{record.name}</TableCell>
+                      <TableCell className="font-medium max-w-32 truncate">{record.name}</TableCell>
                       <TableCell className="font-mono">{record.phone || '-'}</TableCell>
-                      <TableCell>{record.type || '-'}</TableCell>
+                      <TableCell className="max-w-24 truncate">{record.type || '-'}</TableCell>
                       <TableCell>{getStatusBadge(record.status)}</TableCell>
                       <TableCell className="max-w-48 truncate">
                         {record.note || '-'}
                       </TableCell>
-                      <TableCell>{formatDate(record.created_at)}</TableCell>
-                      <TableCell>{record.created_by_name || '-'}</TableCell>
+                      <TableCell className="whitespace-nowrap">{formatDate(record.created_at)}</TableCell>
+                      <TableCell className="max-w-28 truncate">{record.created_by_name || '-'}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Button
@@ -247,20 +248,20 @@ const GoAmlPage = () => {
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent dir="rtl">
+                            <AlertDialogContent >
                               <AlertDialogHeader>
-                                <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                                <AlertDialogTitle>{t('goaml.confirmDelete')}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.
+                                  {t('goaml.confirmDeleteMessage')}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleDelete(record.id)}
                                   className="bg-red-600 hover:bg-red-700"
                                 >
-                                  حذف
+                                  {t('common.delete')}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>

@@ -476,16 +476,18 @@
     },
     "actions": {
       "view": "View Details",
-      "edit": "Edit Meeting", 
+      "edit": "Edit Meeting",
       "delete": "Delete Meeting",
       "search": "Search",
       "reset": "Reset Filters",
       "documents": "Documents",
       "uploadFiles": "Upload Documents",
-      "selectFiles": "Select Files"
+      "selectFiles": "Select Files",
+      "addClient": "Add Client",
+      "addPotentialClient": "Add Potential Client"
     },
     "fields": {
-      "client": "Client",
+      "client": "Client / Potential Client",
       "date": "Meeting Date",
       "startTime": "Start Time",
       "endTime": "End Time",
@@ -495,7 +497,8 @@
       "meetingType": "Meeting Type",
       "documents": "Documents",
       "address": "Meeting Address",
-      "attendees": "Attendees"
+      "attendees": "Attendees",
+      "link": "Meeting Link"
     },
     "results": {
       "scheduled": "Scheduled",
@@ -509,20 +512,22 @@
       "onsite": "On-site"
     },
     "placeholders": {
-      "selectClient": "Select client",
-      "searchClient": "Search for a client...",
+      "selectClient": "Select client or potential client",
+      "searchClient": "Search for a client or potential client...",
       "selectResult": "Select meeting result",
       "enterNotes": "Enter meeting notes or details...",
       "selectLawyer": "Select lawyer or advisor",
       "selectMeetingType": "Select meeting type",
       "selectDate": "Select date",
       "enterAddress": "Enter meeting address...",
-      "searchEmployee": "Search employee..."
+      "searchEmployee": "Search employee...",
+      "enterLink": "Enter meeting link..."
     },
     "validation": {
       "clientRequired": "Client is required",
       "dateRequired": "Meeting date is required",
-      "endTimeAfterStart": "End time must be after start time"
+      "endTimeAfterStart": "End time must be after start time",
+      "linkInvalid": "Meeting link is invalid"
     },
     "messages": {
       "loading": "Loading meetings...",
@@ -618,9 +623,7 @@
     "addSession": "Add Session",
     "editSession": "Edit Session",
     "deleteSession": "Delete Session",
-    "confirmDeleteSession": "Are you sure you want to delete this session? This action cannot be undone.",
-    "deleting": "Deleting...",
-    "delete": "Delete",
+  "confirmDeleteSession": "Are you sure you want to delete this session? This action cannot be undone.",
     "noSessions": "No sessions added yet",
     "addFirstSession": "Add the first session",
     "date": "Date",
@@ -708,8 +711,7 @@
     "failedToLoadDocuments": "Failed to load documents",
     "uploadedOn": "Uploaded on:",
     "by": "By:",
-    "download": "Download",
-    "deleting": "Deleting...",
+  "download": "Download",
     "noDocumentsFound": "No documents found for this session",
     "updating": "Updating...",
     "notes": "Notes",
@@ -1129,6 +1131,24 @@
     "permissions": "Permissions",
     "public_prosecutions": "Public Prosecutions"
   },
+  "auth": {
+    "loginTitle": "Login",
+    "usernameLabel": "Username",
+    "passwordLabel": "Password",
+    "usernamePlaceholder": "Enter username",
+    "passwordPlaceholder": "Enter password",
+    "rememberMe": "Remember me",
+    "loginButton": "Login",
+    "loggingIn": "Logging in...",
+    "loginSuccess": "Login successful",
+    "loginError": "Login error",
+    "invalidCredentials": "Invalid username or password",
+    "accountInactive": "Your account is inactive. Please contact administration",
+    "accountDisabled": "Your account has been disabled. Please contact the administrator",
+    "sessionExpired": "Session expired. Please login again",
+    "unauthorizedAccess": "You are not authorized to access this page",
+    "logoutSuccess": "Logout successful"
+  },
   "validation": {
     "nameRequired": "Name is required",
     "usernameRequired": "Username is required",
@@ -1420,6 +1440,137 @@
     "createdAt": "Created At",
     "clickToDownload": "Click to download",
     "browseAndDownload": "Browse and download client forms"
+  },
+  "callLogs": {
+    "title": "Call Logs",
+    "description": "Manage and track all incoming and outgoing calls",
+    "addNewCall": "Add New Call",
+    "searchPlaceholder": "Search calls...",
+    "callsList": "Calls List",
+    "totalCalls": "total calls",
+    "noCalls": "No calls recorded",
+    "loadingCalls": "Loading calls...",
+    "errorLoadingCalls": "Failed to fetch call logs",
+    "deleteCallSuccess": "Call deleted successfully",
+    "deleteCallError": "Failed to delete call",
+    "confirmDelete": "Confirm Delete",
+    "confirmDeleteMessage": "Are you sure you want to delete this call? This action cannot be undone.",
+    "filters": {
+      "callType": "Call Type",
+      "allCalls": "All Calls",
+      "incomingCalls": "Incoming Calls",
+      "outgoingCalls": "Outgoing Calls"
+    },
+    "table": {
+      "type": "Type",
+      "callerName": "Caller Name",
+      "phoneNumber": "Phone Number",
+      "date": "Date",
+      "time": "Time",
+      "topic": "Topic",
+      "duration": "Duration (minutes)",
+      "caseNumber": "Case Number",
+      "actions": "Actions"
+    },
+    "callTypes": {
+      "incoming": "Incoming",
+      "outgoing": "Outgoing"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "results": "results",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "modal": {
+      "addTitle": "Add New Call",
+      "editTitle": "Edit Call"
+    },
+    "placeholders": {
+      "selectCallType": "Select call type",
+      "phoneExample": "0500000000",
+      "topic": "Enter call topic",
+      "caseNumberOptional": "Case Number (Optional)",
+      "caseNumberPlaceholder": "Enter case number if available",
+      "details": "Enter call details...",
+      "duration": "0",
+      "callerName": "Enter caller name"
+    },
+    "validation": {
+      "callTypeRequired": "Call type is required",
+      "callDateRequired": "Call date is required",
+      "callTimeRequired": "Call time is required",
+      "durationNonNegative": "Duration cannot be negative"
+    },
+    "createCallSuccess": "Call created successfully",
+    "createCallError": "Failed to create call",
+    "updateCallSuccess": "Call updated successfully",
+    "updateCallError": "Failed to update call"
+  },
+  "goaml": {
+    "title": "Anti-Money Laundering",
+    "description": "Manage and track GoAML records",
+    "addNewRecord": "Add New Record",
+    "searchPlaceholder": "Search records...",
+    "recordsList": "Records List",
+    "recordsCount": "record",
+    "noRecords": "No records registered",
+    "noSearchResults": "No search results found",
+    "loadingRecords": "Loading records...",
+    "errorLoadingRecords": "Failed to fetch GoAML records",
+    "createRecordSuccess": "Record created successfully",
+    "createRecordError": "Failed to create record",
+    "updateRecordSuccess": "Record updated successfully",
+    "updateRecordError": "Failed to update record",
+    "deleteRecordSuccess": "Record deleted successfully",
+    "deleteRecordError": "Failed to delete record",
+    "confirmDelete": "Confirm Delete",
+    "confirmDeleteMessage": "Are you sure you want to delete this record? This action cannot be undone.",
+    "addModal": {
+      "title": "Add GoAML Record"
+    },
+    "editModal": {
+      "title": "Edit GoAML Record"
+    },
+    "placeholders": {
+      "nameExample": "e.g., Ahmed Mohamed",
+      "phoneExample": "0500000000",
+      "selectType": "Select Type",
+      "selectStatus": "Select Status",
+      "noteExample": "e.g., additional notes"
+    },
+    "table": {
+      "name": "Name",
+      "phone": "Phone Number",
+      "type": "Type",
+      "status": "Status",
+      "note": "Notes",
+      "createdAt": "Created At",
+      "createdBy": "Created By",
+      "actions": "Actions"
+    },
+    "status": {
+      "compliant": "Compliant",
+      "safe": "Safe",
+      "under_review": "Under Review"
+    },
+    "types": {
+      "individual": "Individual",
+      "company": "Company",
+      "entity": "Entity",
+      "organization": "Organization"
+    },
+    "export": {
+      "name": "Name",
+      "phone": "Phone Number",
+      "type": "Type",
+      "status": "Status",
+      "note": "Notes",
+      "createdAt": "Created At",
+      "createdBy": "Created By"
+    }
   },
   "invoices": {
     "title": "General Invoices",
@@ -2068,6 +2219,27 @@
     "errorUpdating": "Error updating employee",
     "selectManager": "Select Manager",
     "noManager": "No Manager",
+    "tabs": {
+      "basicInfo": "Basic Information",
+      "timeManagement": "Time Management",
+      "performanceReviews": "Performance Reviews",
+      "salary": "Salary Information",
+      "documents": "Documents",
+      "requests": "Requests",
+      "permissions": "Permissions"
+    },
+    "timeManagementTabs": {
+      "attendance": "Attendance Log",
+      "deductions": "Deductions",
+      "annualLeave": "Annual Leave Balance",
+      "sickLeave": "Sick Leave Balance",
+      "otherLeave": "Other Leaves"
+    },
+    "performanceReviewsTabs": {
+      "reviews": "Reviews",
+      "training": "Training",
+      "warnings": "Warnings"
+    },
     "branch": "Branch",
     "leaveEmptyToKeepCurrent": "Leave empty to keep current password",
     "duplicateNameExists": "An employee with the same name already exists",
@@ -2249,7 +2421,6 @@
     "delete": "Delete",
     "openMenu": "Open menu",
     "eId": "ID Number",
-    "consultationType": "Consultation Type",
     "source": "Source"
   },
   "partyTabs": {
@@ -2731,7 +2902,10 @@
       "addedBy": "Added By",
       "addedAt": "Added At",
       "credit": "Credit",
-      "debit": "Debit"
+      "debit": "Debit",
+      "showing": "Showing",
+      "to": "to",
+      "of": "of"
     },
     "modal": {
       "employee": "Employee",
@@ -2755,7 +2929,10 @@
     "pagination": {
       "showing": "Showing",
       "to": "to",
-      "of": "of"
+      "of": "of",
+      "results": "results",
+      "previous": "Previous",
+      "next": "Next"
     }
   }
 }

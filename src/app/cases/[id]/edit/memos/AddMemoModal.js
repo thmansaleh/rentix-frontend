@@ -15,6 +15,7 @@ import { ar } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { createMemo } from "@/app/services/api/memos"
 import { toast } from "react-toastify"
+import RichTextEditor from "@/components/RichTextEditor"
 
 const MEMO_STATUSES = [
   { value: "Draft", label: "مسودة" },
@@ -195,12 +196,10 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">الوصف</Label>
-              <Textarea
-                id="description"
+              <RichTextEditor
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(html) => setFormData(prev => ({ ...prev, description: html }))}
                 placeholder="أدخل وصف المذكرة"
-                rows={4}
                 disabled={isSubmitting}
               />
             </div>

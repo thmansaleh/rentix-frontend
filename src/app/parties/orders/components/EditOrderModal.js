@@ -60,15 +60,15 @@ const EditOrderModal = ({
         const response = await updatePartyOrder(orderId, updateData)
         
         if (response.message) {
-          toast.success(isArabic ? 'تم تحديث الأمر بنجاح' : 'Order updated successfully')
+          toast.success(isArabic ? 'تم تحديث الطلب بنجاح' : 'Request updated successfully')
           onSuccess?.()
           onClose()
         } else {
-          toast.error(response.error || (isArabic ? 'حدث خطأ أثناء تحديث الأمر' : 'Error updating order'))
+          toast.error(response.error || (isArabic ? 'حدث خطأ أثناء تحديث الطلب' : 'Error updating request'))
         }
       } catch (error) {
 
-        toast.error(isArabic ? 'حدث خطأ أثناء تحديث الأمر' : 'Error updating order')
+        toast.error(isArabic ? 'حدث خطأ أثناء تحديث الطلب' : 'Error updating request')
       } finally {
         setSubmitting(false)
       }
@@ -130,7 +130,7 @@ const EditOrderModal = ({
           </DialogHeader>
           <div className="text-center py-4">
             <p className="text-muted-foreground">
-              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الأمر' : 'Error loading order data'}
+              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الطلب' : 'Error loading request data'}
             </p>
           </div>
           <DialogFooter>
@@ -148,7 +148,7 @@ const EditOrderModal = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className={isArabic ? 'text-right' : 'text-left'}>
-            {isArabic ? 'تعديل الأمر' : 'Edit Order'}
+            {isArabic ? 'تعديل الطلب' : 'Edit Request'}
           </DialogTitle>
         </DialogHeader>
 

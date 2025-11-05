@@ -113,7 +113,7 @@ const AddOrderModal = ({
       return false
     }
     if (!formData.type) {
-      toast.error(isArabic ? 'يرجى اختيار نوع الأمر' : 'Please select order type')
+      toast.error(isArabic ? 'يرجى اختيار نوع الطلب' : 'Please select request type')
       return false
     }
     if (!formData.date) {
@@ -141,15 +141,15 @@ const AddOrderModal = ({
       const response = await createPartyOrder(createData)
       
       if (response.id || response.message) {
-        toast.success(isArabic ? 'تم إنشاء الأمر بنجاح' : 'Order created successfully')
+        toast.success(isArabic ? 'تم إنشاء الطلب بنجاح' : 'Request created successfully')
         onSuccess?.()
         onClose()
       } else {
-        toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الأمر' : 'Error creating order'))
+        toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الطلب' : 'Error creating request'))
       }
     } catch (error) {
 
-      toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الأمر' : 'Error creating order')
+      toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الطلب' : 'Error creating request')
     } finally {
       setIsLoading(false)
     }
@@ -160,7 +160,7 @@ const AddOrderModal = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className={isArabic ? 'text-right' : 'text-left'}>
-            {isArabic ? 'إضافة أمر جديد' : 'Add New Order'}
+            {isArabic ? 'إضافة طلب جديد' : 'Add New Request'}
           </DialogTitle>
         </DialogHeader>
 
@@ -184,14 +184,14 @@ const AddOrderModal = ({
           {/* Order Type */}
           <div className="space-y-2">
             <Label htmlFor="type" className={isArabic ? 'text-right block' : ''}>
-              {isArabic ? 'نوع الطلب' : 'Order Type'} <span className="text-red-500">*</span>
+              {isArabic ? 'نوع الطلب' : 'Request Type'} <span className="text-red-500">*</span>
             </Label>
             <Select
               value={formData.type}
               onValueChange={(value) => handleInputChange('type', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={isArabic ? 'اختر نوع الطلب' : 'Select order type'} />
+                <SelectValue placeholder={isArabic ? 'اختر نوع الطلب' : 'Select request type'} />
               </SelectTrigger>
               <SelectContent>
                 {typeOptions.map(option => (

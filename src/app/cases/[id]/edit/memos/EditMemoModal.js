@@ -18,6 +18,7 @@ import { toast } from "react-toastify"
 import { useMemoById } from "./hooks/useMemoById"
 import { useTranslations } from "@/hooks/useTranslations"
 import { useLanguage } from "@/contexts/LanguageContext"
+import RichTextEditor from "@/components/RichTextEditor"
 
 const MEMO_STATUSES = [
   { value: "Draft", labelAr: "مسودة", labelEn: "Draft" },
@@ -242,12 +243,10 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
               {/* Description */}
               <div className="space-y-2">
                 <Label htmlFor="description">{t('memos.description')}</Label>
-                <Textarea
-                  id="description"
+                <RichTextEditor
                   value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(html) => setFormData(prev => ({ ...prev, description: html }))}
                   placeholder={t('memos.descriptionPlaceholder')}
-                  rows={4}
                   disabled={isSubmitting}
                 />
               </div>

@@ -8,7 +8,7 @@ import { CustomModal, CustomModalBody } from "@/components/ui/custom-modal"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Calendar, Clock, MapPin, FileText, Users, Monitor } from 'lucide-react'
+import { Calendar, Clock, MapPin, FileText, Users, Monitor, Link } from 'lucide-react'
 import meetingsApi from '../services/api/meetings'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
@@ -154,6 +154,25 @@ const ViewMeetingDialog = ({
                       {isArabic ? 'العنوان' : 'Address'}
                     </p>
                     <p className="text-base">{meeting.address}</p>
+                  </div>
+                </div>
+              )}
+
+              {meeting.link && meeting.meeting_type === "online" && (
+                <div className="flex items-start gap-3">
+                  <Link className="h-5 w-5 mt-0.5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {isArabic ? 'رابط الاجتماع' : 'Meeting Link'}
+                    </p>
+                    <a 
+                      href={meeting.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-base text-blue-600 hover:text-blue-800 underline"
+                    >
+                      {meeting.link}
+                    </a>
                   </div>
                 </div>
               )}

@@ -1574,29 +1574,12 @@
     "errorUpdating": "خطأ في تحديث الموظف",
     "selectManager": "اختر المدير",
     "noManager": "بدون مدير",
-    "tabs": {
-      "basicInfo": "المعلومات الأساسية",
-      "timeManagement": "إدارة الوقت",
-      "performanceReviews": "الأداء والتقييمات",
-      "salary": "معلومات الراتب",
-      "documents": "الوثائق",
-      "requests": "الطلبات",
-      "permissions": "الصلاحيات"
-    },
-    "timeManagementTabs": {
-      "attendance": "سجل الحضور",
-      "deductions": "الخصومات",
-      "annualLeave": "رصيد الإجازات السنوية",
-      "sickLeave": "رصيد الإجازات المرضية",
-      "otherLeave": "الإجازات الأخرى"
-    },
-    "performanceReviewsTabs": {
-      "reviews": "التقييمات",
-      "training": "التدريب",
-      "warnings": "الإنذارات"
-    },
     "branch": "الفرع",
-  "leaveEmptyToKeepCurrent": "اتركه فارغاً للاحتفاظ بكلمة المرور الحالية",
+    "leaveEmptyToKeepCurrent": "اتركه فارغاً للاحتفاظ بكلمة المرور الحالية",
+    "duplicateNameExists": "موظف بنفس الاسم موجود بالفعل",
+    "duplicatePhoneExists": "موظف بنفس رقم الهاتف موجود بالفعل",
+    "duplicateEmailExists": "موظف بنفس البريد الإلكتروني موجود بالفعل",
+    "duplicateEmployeeExists": "موظف بنفس الاسم أو رقم الهاتف أو البريد الإلكتروني موجود بالفعل",
     "permissionsList": {
       "addCar": "إضافة سيارة",
       "editCar": "تعديل سيارة",
@@ -1685,7 +1668,8 @@
     "chooseBranch": "اختر الفرع",
     "username": "اسم المستخدم",
     "password": "كلمة المرور",
-  "status": "الحالة",
+    "status": "الحالة",
+    "consultationType": "نوع الاستشارة",
     "source": "المصدر",
     "client": "موكل",
     "opponent": "خصم",
@@ -2009,31 +1993,7 @@
       "results": "نتيجة",
       "previous": "السابق",
       "next": "التالي"
-    },
-    "modal": {
-      "addTitle": "إضافة مكالمة جديدة",
-      "editTitle": "تعديل المكالمة"
-    },
-    "placeholders": {
-      "selectCallType": "اختر نوع المكالمة",
-      "phoneExample": "0500000000",
-      "topic": "أدخل موضوع المكالمة",
-      "caseNumberOptional": "رقم القضية (اختياري)",
-      "caseNumberPlaceholder": "أدخل رقم القضية إن وجد",
-      "details": "أدخل تفاصيل المكالمة...",
-      "duration": "0",
-      "callerName": "أدخل اسم المتصل"
-    },
-    "validation": {
-      "callTypeRequired": "نوع المكالمة مطلوب",
-      "callDateRequired": "تاريخ المكالمة مطلوب",
-      "callTimeRequired": "وقت المكالمة مطلوب",
-      "durationNonNegative": "مدة المكالمة لا يمكن أن تكون سالبة"
-    },
-    "createCallSuccess": "تم إنشاء المكالمة بنجاح",
-    "createCallError": "فشل في إنشاء المكالمة",
-    "updateCallSuccess": "تم تحديث المكالمة بنجاح",
-    "updateCallError": "فشل في تحديث المكالمة"
+    }
   },
   "goaml": {
     "title": "مكافحة غسل الأموال",
@@ -2046,27 +2006,10 @@
     "noSearchResults": "لا توجد نتائج للبحث",
     "loadingRecords": "جاري تحميل السجلات...",
     "errorLoadingRecords": "فشل في جلب سجلات GoAML",
-    "createRecordSuccess": "تم إضافة السجل بنجاح",
-    "createRecordError": "فشل في إضافة السجل",
-    "updateRecordSuccess": "تم تحديث السجل بنجاح",
-    "updateRecordError": "فشل في تحديث السجل",
     "deleteRecordSuccess": "تم حذف السجل بنجاح",
     "deleteRecordError": "فشل في حذف السجل",
     "confirmDelete": "تأكيد الحذف",
     "confirmDeleteMessage": "هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.",
-    "addModal": {
-      "title": "إضافة سجل GoAML جديد"
-    },
-    "editModal": {
-      "title": "تعديل سجل GoAML"
-    },
-    "placeholders": {
-      "nameExample": "مثال: أحمد محمد",
-      "phoneExample": "0500000000",
-      "selectType": "اختر النوع",
-      "selectStatus": "اختر الحالة",
-      "noteExample": "مثال: ملاحظات إضافية"
-    },
     "table": {
       "name": "الاسم",
       "phone": "رقم الهاتف",
@@ -2081,12 +2024,6 @@
       "compliant": "مطابق",
       "safe": "آمن",
       "under_review": "قيد المراجعة"
-    },
-    "types": {
-      "individual": "فرد",
-      "company": "شركة",
-      "entity": "كيان",
-      "organization": "منظمة"
     },
     "export": {
       "name": "الاسم",
@@ -2486,10 +2423,7 @@
       "addedBy": "أضيف بواسطة",
       "addedAt": "تاريخ الإضافة",
       "credit": "دائن",
-      "debit": "مدين",
-      "showing": "عرض",
-      "to": "إلى",
-      "of": "من"
+      "debit": "مدين"
     },
     "modal": {
       "employee": "الموظف",

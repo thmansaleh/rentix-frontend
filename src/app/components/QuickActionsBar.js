@@ -53,7 +53,12 @@ function QuickActionsBar() {
   ];
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className="relative bg-gradient-to-br from-sidebar-accent/30 via-transparent to-transparent border-b border-sidebar-border/50">
+      {/* Decorative background elements matching SidebarHeader */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl"></div>
+      
       <style jsx>{`
         @keyframes shimmer-flow {
           0% {
@@ -411,7 +416,9 @@ function QuickActionsBar() {
           );
         }
       `}</style>
-      <div className="flex items-center justify-center gap-2 gap-x-4 px-2 md:px-6 py-2">
+      
+      {/* Content with relative positioning to stay above decorative elements */}
+      <div className="relative flex items-center justify-center gap-2 gap-x-4 px-2 md:px-6 py-3">
         {quickActions.map((action, index) => {
           const btnClass = `action-btn action-btn-${index}`;
           const iconClass = `icon-wrapper icon-wrapper-${index}`;
@@ -419,7 +426,7 @@ function QuickActionsBar() {
             <button
               key={action.path}
               onClick={() => router.push(action.path)}
-              className={`${btnClass} relative flex items-center justify-center gap-2.5 px-5 py-2 rounded-xl transition-all duration-300 group cursor-pointer hover:shadow-lg hover:-translate-y-0.5`}
+              className={`${btnClass} relative flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-xl transition-all duration-300 group cursor-pointer hover:shadow-lg hover:-translate-y-0.5 backdrop-blur-sm`}
               style={{
                 animationDelay: `${index * 0.15}s`,
                 boxShadow: `0 10px 15px -3px ${action.colors.shadow}, 0 4px 6px -4px ${action.colors.shadow}`
@@ -435,13 +442,16 @@ function QuickActionsBar() {
                   className="object-contain opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 relative z-10"
                 />
               </div>
-              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-all duration-300 relative z-10 group-hover:tracking-wide">
+              <span className="text-sm font-semibold text-sidebar-foreground/70 group-hover:text-sidebar-foreground transition-all duration-300 relative z-10 group-hover:tracking-wide">
                 {action.label}
               </span>
             </button>
           );
         })}
       </div>
+      
+      {/* Bottom Accent Line - matching SidebarHeader */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
     </div>
   );
 }
