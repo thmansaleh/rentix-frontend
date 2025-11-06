@@ -162,3 +162,17 @@ export const checkDuplicateParty = async (name, phone, email = null, excludeId =
     throw error;
   }
 };
+
+export const getClientsForFinance = async (page = 1, limit = 20, search = "") => {
+  try {
+    const params = new URLSearchParams();
+    params.append('page', page);
+    params.append('limit', limit);
+    if (search) params.append('search', search);
+    
+    const response = await api.get(`/parties/finance-clients?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -96,7 +96,7 @@ function Branch({ formikProps }) {
 
   return (
     <div className="space-y-2">
-      <Label>تغيير الفرع الى</Label>
+      <Label>{t('branches.changeBranchTo')}</Label>
       <div className="flex items-center gap-2">
         <Select dir={language === 'ar' ? 'rtl' : 'ltr'} value={values.branch_id} onValueChange={handleBranchChange}>
           <SelectTrigger className={`w-full ${errors.branch_id && touched.branch_id ? 'border-red-500' : ''}`}>

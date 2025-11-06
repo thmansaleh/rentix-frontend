@@ -188,7 +188,7 @@ function EmployeeFiles({ formikProps }) {
                           {/* Preview Button */}
                           {isImage && (
                             <Button
-                               
+                              type="button"
                               variant="ghost"
                               size="sm"
                               onClick={() => {
@@ -204,7 +204,7 @@ function EmployeeFiles({ formikProps }) {
                           
                           {/* Download Button */}
                           <Button
-                             
+                             type="button"
                             variant="ghost"
                             size="sm"
                             onClick={() => {
@@ -224,7 +224,7 @@ function EmployeeFiles({ formikProps }) {
                           
                           {/* Remove Button */}
                           <Button
-                             
+                             type="button"
                             variant="ghost"
                             size="sm"
                             onClick={() => removeFile(index)}

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFormikContext } from '../FormikContext';
 import { searchCasesForAddNewCasePage } from '@/app/services/api/cases';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -21,6 +22,7 @@ import { Check, ChevronsUpDown, X, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 function RelatedCases() {
+  const { t } = useTranslations();
   const formikProps = useFormikContext();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,7 +91,7 @@ function RelatedCases() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <label className="text-sm font-medium">الملفات المرتبطة</label>
+        <label className="text-sm font-medium">{t('employeeFinance.relatedCases.title')}</label>
         
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -99,30 +101,30 @@ function RelatedCases() {
               aria-expanded={open}
               className="w-[300px] justify-between"
             >
-              اختر ملف مرتبط
+              {t('employeeFinance.relatedCases.selectRelatedCase')}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0">
             <Command>
               <CommandInput 
-                placeholder="البحث عن ملف..." 
+                placeholder={t('employeeFinance.relatedCases.searchPlaceholder')} 
                 value={searchTerm}
                 onValueChange={setSearchTerm}
               />
               <CommandList>
                 {loading && (
                   <div className="p-4 text-sm text-center text-muted-foreground">
-                    جاري البحث...
+                    {t('employeeFinance.relatedCases.searching')}
                   </div>
                 )}
                 {!loading && searchTerm.length < 3 && (
                   <div className="p-4 text-sm text-center text-muted-foreground">
-                    اكتب 3 أحرف على الأقل للبحث
+                    {t('employeeFinance.relatedCases.minSearchChars')}
                   </div>
                 )}
                 {!loading && searchTerm.length >= 3 && availableCases.length === 0 && (
-                  <CommandEmpty>لا توجد ملفات</CommandEmpty>
+                  <CommandEmpty>{t('employeeFinance.relatedCases.noCasesFound')}</CommandEmpty>
                 )}
                 <CommandGroup>
                   {availableCases.map((caseItem) => {
@@ -149,7 +151,7 @@ function RelatedCases() {
                             {caseItem.case_number}
                           </span>
                           <span className="text-sm text-muted-foreground">
-                            ملف: {caseItem.file_number}
+                            {t('employeeFinance.relatedCases.fileLabel')}: {caseItem.file_number}
                           </span>
                           {caseItem.topic && (
                             <span className="text-xs text-muted-foreground">
@@ -170,7 +172,7 @@ function RelatedCases() {
       {/* Display selected related cases */}
       {relatedCases.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">الملفات المرتبطة المختارة:</h3>
+          <h3 className="text-sm font-medium">{t('employeeFinance.relatedCases.selectedCases')}:</h3>
           <div className="space-y-2">
             {relatedCases.map((caseItem) => (
               <div
@@ -182,7 +184,7 @@ function RelatedCases() {
                   <div className="flex flex-col">
                     <span className="font-medium">{caseItem.case_number}</span>
                     <span className="text-sm text-muted-foreground">
-                      ملف: {caseItem.file_number}
+                      {t('employeeFinance.relatedCases.fileLabel')}: {caseItem.file_number}
                     </span>
                     {caseItem.topic && (
                       <span className="text-xs text-muted-foreground">

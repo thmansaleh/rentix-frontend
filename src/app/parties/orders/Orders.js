@@ -222,8 +222,13 @@ function Orders() {
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف الأمر' : 'Error deleting order'))
       }
     } catch (error) {
-
-      toast.error(isArabic ? 'حدث خطأ أثناء حذف الأمر' : 'Error deleting order')
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لحذف الأمر' : 'You do not have permission to delete this request'))
+        : (isArabic ? 'حدث خطأ أثناء حذف الأمر' : 'Error deleting order')
+      
+      toast.error(errorMessage)
     } finally {
       setDeleteModal(prev => ({ ...prev, isDeleting: false }))
     }
@@ -282,8 +287,19 @@ function Orders() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : isError ? (
-            <div className="text-center py-12 text-red-500">
-              {isArabic ? 'حدث خطأ أثناء تحميل البيانات' : 'Error loading data'}
+            <div className="text-center py-12">
+              <div className="text-red-500 font-semibold mb-2">
+                {error?.response?.status === 403 
+                  ? (isArabic ? 'غير مصرح' : 'Unauthorized')
+                  : (isArabic ? 'خطأ' : 'Error')
+                }
+              </div>
+              <p className="text-muted-foreground">
+                {error?.response?.status === 403 
+                  ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لعرض طلبات العملاء' : 'You do not have permission to view client requests'))
+                  : (isArabic ? 'حدث خطأ أثناء تحميل البيانات' : 'Error loading data')
+                }
+              </p>
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">

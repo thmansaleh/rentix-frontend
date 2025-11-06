@@ -9,11 +9,11 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { Download, Trash2, X, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { getEmployeeCashTransactionById, updateEmployeeCashTransaction } from '@/app/services/api/employeeCashTransactions';
+import { getEmployeeCashTransactionById, updateEmployeeCashTransaction, deleteEmployeeCashTransactionAttachment } from '@/app/services/api/employeeCashTransactions';
 import { uploadFiles } from '../../../../../utils/fileUpload';
 import api from '@/app/services/api/axiosInstance';
 
-const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachment }) => {
+const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
   const { isRTL } = useLanguage();
   const t = useTranslations('employeeFinance.viewModal');
   const [deletingAttachment, setDeletingAttachment] = useState(null);
@@ -98,17 +98,22 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId, onDeleteAttachme
   const handleDeleteAttachment = async (attachmentId, attachmentName) => {
     setDeletingAttachment(attachmentId);
     try {
-      // Call the parent function to handle deletion
-      await onDeleteAttachment(transactionId, attachmentId);
-      toast.success(t('deleteAttachmentSuccess'));
-      // Refresh transaction data
-      const response = await getEmployeeCashTransactionById(transactionId);
+      // Call the API to delete the attachment
+      const response = await deleteEmployeeCashTransactionAttachment(transactionId, attachmentId);
+      
       if (response.success) {
-        setTransaction(response.data);
+        toast.success(t('deleteAttachmentSuccess') || 'تم حذف المرفق بنجاح');
+        // Refresh transaction data
+        const updatedTransaction = await getEmployeeCashTransactionById(transactionId);
+        if (updatedTransaction.success) {
+          setTransaction(updatedTransaction.data);
+        }
+      } else {
+        toast.error(t('deleteAttachmentError') || 'حدث خطأ في حذف المرفق');
       }
     } catch (error) {
       console.error('Error deleting attachment:', error);
-      toast.error(t('deleteAttachmentError'));
+      toast.error(t('deleteAttachmentError') || 'حدث خطأ في حذف المرفق');
     } finally {
       setDeletingAttachment(null);
     }

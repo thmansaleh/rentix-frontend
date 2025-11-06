@@ -107,7 +107,13 @@ const EditDealModal = ({
           toast.error(response.error || (isArabic ? 'حدث خطأ أثناء تحديث الاتفاقية' : 'Error updating deal'))
         }
       } catch (error) {
-        toast.error(isArabic ? 'حدث خطأ أثناء تحديث الاتفاقية' : 'Error updating deal')
+        // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403
+        const errorMessage = isPermissionError 
+          ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لتحديث الاتفاقية' : 'You do not have permission to update this deal'))
+          : (isArabic ? 'حدث خطأ أثناء تحديث الاتفاقية' : 'Error updating deal')
+        
+        toast.error(errorMessage)
       } finally {
         setSubmitting(false)
       }
@@ -194,7 +200,13 @@ const EditDealModal = ({
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document'))
       }
     } catch (error) {
-      toast.error(isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لحذف المستند' : 'You do not have permission to delete this document'))
+        : (isArabic ? 'حدث خطأ أثناء حذف المستند' : 'Error deleting document')
+      
+      toast.error(errorMessage)
     }
   }
 
@@ -218,17 +230,26 @@ const EditDealModal = ({
   }
 
   if (dealError) {
+    // Check if it's a permission error (403)
+    const isPermissionError = dealError?.response?.status === 403
+    const errorTitle = isPermissionError 
+      ? (isArabic ? 'غير مصرح' : 'Unauthorized')
+      : (isArabic ? 'خطأ' : 'Error')
+    const errorMessage = isPermissionError 
+      ? (dealError?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لعرض تفاصيل الاتفاقية' : 'You do not have permission to view this deal'))
+      : (isArabic ? 'حدث خطأ أثناء تحميل بيانات الاتفاقية' : 'Error loading deal data')
+    
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-destructive">
-              {isArabic ? 'خطأ' : 'Error'}
+              {errorTitle}
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-4">
             <p className="text-muted-foreground">
-              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الاتفاقية' : 'Error loading deal data'}
+              {errorMessage}
             </p>
           </div>
           <DialogFooter>

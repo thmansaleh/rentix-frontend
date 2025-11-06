@@ -169,7 +169,13 @@ const AddDealModal = ({
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الاتفاقية' : 'Error creating deal'))
       }
     } catch (error) {
-      toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الاتفاقية' : 'Error creating deal')
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لإنشاء اتفاقية' : 'You do not have permission to create a deal'))
+        : (isArabic ? 'حدث خطأ أثناء إنشاء الاتفاقية' : 'Error creating deal')
+      
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

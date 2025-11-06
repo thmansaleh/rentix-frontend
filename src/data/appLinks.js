@@ -131,13 +131,6 @@ export const appLinks = [
     keywords: { ar: ['مالية', 'عملاء', 'فواتير', 'finance'], en: ['finance', 'clients', 'billing'] }
   },
   {
-    id: 'wallets',
-    label: { ar: 'أرصدة الموكلين', en: 'Client Balances' },
-    route: '/finance/wallets',
-    category: { ar: 'المالية', en: 'Finance' },
-    keywords: { ar: ['أرصدة', 'رصيد', 'محافظ', 'موكلين', 'balances'], en: ['balances', 'wallets', 'accounts', 'ledger'] }
-  },
-  {
     id: 'invoices',
     label: { ar: 'الفواتير', en: 'Invoices' },
     route: '/finance/invoices',

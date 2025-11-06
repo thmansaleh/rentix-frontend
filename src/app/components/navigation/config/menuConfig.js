@@ -17,7 +17,6 @@ import {
   DollarSign,
   Banknote,
   Clock,
-  Wallet,
   List,
   BarChartIcon,
   Users2,
@@ -86,7 +85,6 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       type: 'category',
       submenu: [
         { id: 'finance/clients', label: t('navigation.financeClients'), icon: Users },
-        { id: 'finance/wallets', label: t('navigation.clientBalances'), icon: Wallet },
         { id: 'finance/invoices', label: t('navigation.invoices'), icon: List },
         { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote },
         { id: 'finance/statistics', label: t('navigation.statistics'), icon: BarChartIcon },

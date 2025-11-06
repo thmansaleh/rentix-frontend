@@ -148,8 +148,13 @@ const AddOrderModal = ({
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء إنشاء الطلب' : 'Error creating request'))
       }
     } catch (error) {
-
-      toast.error(isArabic ? 'حدث خطأ أثناء إنشاء الطلب' : 'Error creating request')
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لإنشاء طلب' : 'You do not have permission to create a request'))
+        : (isArabic ? 'حدث خطأ أثناء إنشاء الطلب' : 'Error creating request')
+      
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

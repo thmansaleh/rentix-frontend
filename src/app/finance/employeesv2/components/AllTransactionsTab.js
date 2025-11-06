@@ -425,12 +425,10 @@ const AllTransactionsTab = () => {
         onClose={() => {
           setShowViewModal(false);
           setSelectedTransactionId(null);
+          // Refresh data after modal closes
+          mutate();
         }}
         transactionId={selectedTransactionId}
-        onDeleteAttachment={async () => {
-          // Refresh data after deletion
-          await mutate();
-        }}
       />
 
       {/* Expense Details Modal (for debit/expense transactions) */}

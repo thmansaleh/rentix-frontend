@@ -52,3 +52,9 @@ export const getEmployeeCashTransactionStatistics = async (params = {}) => {
   const response = await api.get('/employee-cash-transactions/statistics', { params });
   return response.data;
 };
+
+// Get expenses by client ID (debit transactions with status=approved)
+export const getExpensesByClientId = async (clientId) => {
+  const response = await api.get(`/employee-cash-transactions/client/${clientId}/expenses`);
+  return response.data;
+};

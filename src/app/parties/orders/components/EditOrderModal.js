@@ -67,8 +67,13 @@ const EditOrderModal = ({
           toast.error(response.error || (isArabic ? 'حدث خطأ أثناء تحديث الطلب' : 'Error updating request'))
         }
       } catch (error) {
-
-        toast.error(isArabic ? 'حدث خطأ أثناء تحديث الطلب' : 'Error updating request')
+        // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403
+        const errorMessage = isPermissionError 
+          ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لتحديث الطلب' : 'You do not have permission to update this request'))
+          : (isArabic ? 'حدث خطأ أثناء تحديث الطلب' : 'Error updating request')
+        
+        toast.error(errorMessage)
       } finally {
         setSubmitting(false)
       }
@@ -120,17 +125,26 @@ const EditOrderModal = ({
   }
 
   if (orderError) {
+    // Check if it's a permission error (403)
+    const isPermissionError = orderError?.response?.status === 403
+    const errorTitle = isPermissionError 
+      ? (isArabic ? 'غير مصرح' : 'Unauthorized')
+      : (isArabic ? 'خطأ' : 'Error')
+    const errorMessage = isPermissionError 
+      ? (orderError?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لعرض تفاصيل الطلب' : 'You do not have permission to view this request'))
+      : (isArabic ? 'حدث خطأ أثناء تحميل بيانات الطلب' : 'Error loading request data')
+    
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-destructive">
-              {isArabic ? 'خطأ' : 'Error'}
+              {errorTitle}
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-4">
             <p className="text-muted-foreground">
-              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الطلب' : 'Error loading request data'}
+              {errorMessage}
             </p>
           </div>
           <DialogFooter>

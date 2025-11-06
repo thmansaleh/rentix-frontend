@@ -82,11 +82,7 @@ function CaseDocuments({ caseId }) {
       await deleteCaseDocument(caseId, deleteModal.documentId);
       
       // Show success toast
-      toast.success(
-        isArabic 
-          ? 'تم حذف المستند بنجاح' 
-          : 'Document deleted successfully'
-      );
+      toast.success(t('employeeFinance.caseDocuments.deleteSuccess'));
 
       // Refresh the documents list
       mutateDocuments();
@@ -98,11 +94,7 @@ function CaseDocuments({ caseId }) {
         documentName: ''
       });
     } catch (error) {
-      toast.error(
-        isArabic 
-          ? 'فشل في حذف المستند' 
-          : 'Failed to delete document'
-      );
+      toast.error(t('employeeFinance.caseDocuments.deleteFailed'));
     } finally {
       setIsDeleting(false);
     }
@@ -146,7 +138,7 @@ function CaseDocuments({ caseId }) {
         <CardContent className="p-6">
           <div className="text-red-500 text-center">
             <AlertTriangle className="w-8 h-8 mx-auto mb-2" />
-            <p>{isArabic ? 'خطأ في تحميل مستندات القضية' : 'Error loading case documents'}</p>
+            <p>{t('employeeFinance.caseDocuments.errorLoading')}</p>
           </div>
         </CardContent>
       </Card>
@@ -158,7 +150,7 @@ function CaseDocuments({ caseId }) {
       <Card>
         <CardHeader>
           <CardTitle className={isArabic ? 'text-right' : 'text-left'}>
-            {isArabic ? 'مستندات القضية' : 'Case Documents'}
+            {t('employeeFinance.caseDocuments.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -166,14 +158,14 @@ function CaseDocuments({ caseId }) {
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
               <p className="text-muted-foreground">
-                {isArabic ? 'جار تحميل المستندات...' : 'Loading documents...'}
+                {t('employeeFinance.caseDocuments.loading')}
               </p>
             </div>
           ) : documents.length === 0 ? (
             <div className="text-center py-8">
               <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
-                {isArabic ? 'لا توجد مستندات للقضية' : 'No case documents found'}
+                {t('employeeFinance.caseDocuments.noDocuments')}
               </p>
             </div>
           ) : (
@@ -200,7 +192,7 @@ function CaseDocuments({ caseId }) {
                         
                         {document.uploaded_by && (
                           <Badge variant="secondary" className="text-xs">
-                            {isArabic ? 'رُفع بواسطة:' : 'Uploaded by:'} {document.uploaded_by}
+                            {t('employeeFinance.caseDocuments.uploadedBy')} {document.uploaded_by}
                           </Badge>
                         )}
                       </div>
@@ -213,7 +205,7 @@ function CaseDocuments({ caseId }) {
                         size="sm"
                         onClick={() => handleDownloadDocument(document.document_url, document.document_name)}
                         className="h-8 px-3"
-                        title={isArabic ? 'تحميل المستند' : 'Download document'}
+                        title={t('employeeFinance.caseDocuments.downloadDocument')}
                       >
                         <Download className="w-3 h-3" />
                       </Button>
@@ -224,7 +216,7 @@ function CaseDocuments({ caseId }) {
                         size="sm"
                         onClick={() => openDeleteModal(document.id, document.document_name)}
                         className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
-                        title={isArabic ? 'حذف المستند' : 'Delete document'}
+                        title={t('employeeFinance.caseDocuments.deleteDocument')}
                       >
                         <Trash2 className="w-3 h-3" />
                       </Button>
@@ -242,13 +234,10 @@ function CaseDocuments({ caseId }) {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className={isArabic ? 'text-right' : 'text-left'}>
-              {isArabic ? 'تأكيد الحذف' : 'Confirm Delete'}
+              {t('employeeFinance.caseDocuments.confirmDelete')}
             </DialogTitle>
             <DialogDescription className={isArabic ? 'text-right' : 'text-left'}>
-              {isArabic 
-                ? `هل أنت متأكد من حذف المستند "${deleteModal.documentName}"؟ لا يمكن التراجع عن هذا الإجراء.`
-                : `Are you sure you want to delete the document "${deleteModal.documentName}"? This action cannot be undone.`
-              }
+              {t('employeeFinance.caseDocuments.deleteMessage', { name: deleteModal.documentName })}
             </DialogDescription>
           </DialogHeader>
           
@@ -259,7 +248,7 @@ function CaseDocuments({ caseId }) {
               onClick={closeDeleteModal}
               disabled={isDeleting}
             >
-              {isArabic ? 'إلغاء' : 'Cancel'}
+              {t('common.cancel')}
             </Button>
             <Button
               type="button"
@@ -270,10 +259,10 @@ function CaseDocuments({ caseId }) {
               {isDeleting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  {isArabic ? 'جار الحذف...' : 'Deleting...'}
+                  {t('employeeFinance.caseDocuments.deleting')}
                 </>
               ) : (
-                isArabic ? 'حذف' : 'Delete'
+                t('common.delete')
               )}
             </Button>
           </DialogFooter>

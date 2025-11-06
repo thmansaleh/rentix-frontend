@@ -89,7 +89,7 @@ function CaseClassifications({ formikProps }) {
 
   return (
     <div className="space-y-2">
-      <Label>تغيير نوع التصنيف الى</Label>
+      <Label>{t('caseClassifications.changeClassificationTo')}</Label>
       <div className="flex items-center gap-2">
         <Select dir={language === 'ar' ? 'rtl' : 'ltr'} value={values.case_classification_id} onValueChange={handleCaseClassificationChange}>
           <SelectTrigger className={`w-full ${errors.case_classification_id && touched.case_classification_id ? 'border-red-500' : ''}`}>

@@ -208,7 +208,7 @@ function EmployeeDocuments({ caseId }) {
 
                     <div className="flex items-center gap-2 ml-4">
                       <Button
-                         
+                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => handleDownloadDocument(document.document_url, document.document_name)}
@@ -219,7 +219,7 @@ function EmployeeDocuments({ caseId }) {
                       </Button>
                       
                       <Button
-                         
+                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => openDeleteModal(document.id, document.document_name)}
@@ -254,7 +254,7 @@ function EmployeeDocuments({ caseId }) {
           
           <DialogFooter className={isArabic ? 'flex-row-reverse' : ''}>
             <Button
-               
+               type="button"
               variant="outline"
               onClick={closeDeleteModal}
               disabled={isDeleting}
@@ -262,7 +262,7 @@ function EmployeeDocuments({ caseId }) {
               {isArabic ? 'إلغاء' : 'Cancel'}
             </Button>
             <Button
-               
+               type="button"
               variant="destructive"
               onClick={handleDeleteDocument}
               disabled={isDeleting}

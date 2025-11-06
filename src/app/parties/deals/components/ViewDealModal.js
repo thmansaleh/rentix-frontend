@@ -96,18 +96,27 @@ const ViewDealModal = ({
 
   // Error state
   if (dealError) {
+    // Check if it's a permission error (403)
+    const isPermissionError = dealError?.response?.status === 403
+    const errorTitle = isPermissionError 
+      ? (isArabic ? 'غير مصرح' : 'Unauthorized')
+      : (isArabic ? 'خطأ' : 'Error')
+    const errorMessage = isPermissionError 
+      ? (dealError?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لعرض تفاصيل الاتفاقية' : 'You do not have permission to view this deal'))
+      : (isArabic ? 'حدث خطأ أثناء تحميل بيانات الاتفاقية' : 'Error loading deal data')
+    
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-destructive flex items-center gap-2">
               <Eye className="h-5 w-5" />
-              {isArabic ? 'خطأ' : 'Error'}
+              {errorTitle}
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-4">
             <p className="text-muted-foreground">
-              {isArabic ? 'حدث خطأ أثناء تحميل بيانات الاتفاقية' : 'Error loading deal data'}
+              {errorMessage}
             </p>
           </div>
           <div className="flex justify-end">

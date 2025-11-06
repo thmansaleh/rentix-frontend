@@ -1,278 +1,273 @@
-'use client';
+"use client";
 
-import React, { useMemo, useState } from 'react';
-import useSWR from 'swr';
-import { Eye, Search } from 'lucide-react';
-import { getAllParties } from '@/app/services/api/parties';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslations } from '@/hooks/useTranslations';
-import { ClientInfoModal } from '@/app/finance/clients/ClientInfoModal';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
+import { Eye, Search, User, DollarSign, Phone, Flag, Users, Loader2 } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card.jsx";
+import { useTranslations } from "@/hooks/useTranslations";
+import { useLanguage } from "@/contexts/LanguageContext";
+import ExportButtons from "@/components/ui/export-buttons";
+import { getClientsForFinance } from "@/app/services/api/parties";
+import ClientFinanceModal from "./components/ClientFinanceModal";
 
-const FinanceClientsPage = () => {
-  const { isRTL, language } = useLanguage();
-  const { t } = useTranslations();
-  
-  // State
+export default function FinanceClientsPage() {
+  const t = useTranslations("common");
+  const { language } = useLanguage();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedClient, setSelectedClient] = useState(null);
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
-  const itemsPerPage = 10;
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // Build query parameters - only fetch client type parties
-  const queryParams = useMemo(() => ({
-    page: currentPage,
-    limit: itemsPerPage,
-    partyType: 'client',
-    ...(searchTerm && { search: searchTerm })
-  }), [currentPage, searchTerm]);
-  
-  // Fetch client parties data
-  const { data: partiesData, error, isLoading, mutate } = useSWR(
-    ['/parties/clients', queryParams],
-    ([url, params]) => getAllParties(params),
+  const limit = 20;
+
+  const exportColumnConfig = useMemo(() => ({
+    name: {
+      label: t("name"),
+      dataKey: "name",
+    },
+    balance: {
+      label: t("balance"),
+      dataKey: "balance",
+      formatter: (value) => {
+        const numericValue = Number(value ?? 0);
+        if (Number.isNaN(numericValue)) {
+          return value ?? 0;
+        }
+        return new Intl.NumberFormat(language === "ar" ? "ar-AE" : "en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(numericValue);
+      },
+    },
+    phone: {
+      label: t("phone"),
+      dataKey: "phone",
+    },
+    nationality: {
+      label: t("nationality"),
+      dataKey: "nationality",
+    },
+  }), [language, t]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm.trim());
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  const { data, error, isLoading, isValidating } = useSWR(
+    `/parties/finance-clients?page=${currentPage}&limit=${limit}&search=${debouncedSearchTerm}`,
+    () => getClientsForFinance(currentPage, limit, debouncedSearchTerm),
     {
-      refreshInterval: 300000,
-      revalidateOnFocus: true
+      keepPreviousData: true,
+      revalidateOnFocus: false,
     }
   );
 
-  // Process parties data
-  const clients = useMemo(() => {
-    if (!partiesData?.success || !partiesData?.data) return [];
-    return partiesData.data;
-  }, [partiesData]);
-  
-  // Get pagination info
-  const pagination = useMemo(() => {
-    return partiesData?.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 };
-  }, [partiesData]);
+  const isInitialLoading = !data && isLoading;
+  const isRefreshing = isValidating && !!data;
 
-  // Handle search
+  const handleViewClient = (client) => {
+    setSelectedClient(client);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedClient(null);
+  };
+
   const handleSearch = (value) => {
     setSearchTerm(value);
     setCurrentPage(1);
   };
 
-  // Handle view wallet
-  const handleViewWallet = (client) => {
-    setSelectedClient(client);
-    setIsWalletModalOpen(true);
-  };
+  if (isInitialLoading) {
+    return <div className="p-8 text-center">{t("loading")}</div>;
+  }
 
-  // Handle close wallet modal
-  const handleCloseWalletModal = () => {
-    setIsWalletModalOpen(false);
-    setSelectedClient(null);
-  };
+  if (error) {
+    return <div className="p-8 text-center text-red-500">{t("errorLoading")}</div>;
+  }
 
-  // Generate pagination items
-  const renderPaginationItems = () => {
-    const items = [];
-    const totalPages = pagination.totalPages;
-    const current = pagination.page;
-    
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= current - 1 && i <= current + 1)
-      ) {
-        items.push(
-          <PaginationItem key={i}>
-            <PaginationLink
-              onClick={() => setCurrentPage(i)}
-              isActive={current === i}
-              className="cursor-pointer"
-            >
-              {i}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      } else if (
-        (i === current - 2 && current > 3) ||
-        (i === current + 2 && current < totalPages - 2)
-      ) {
-        items.push(
-          <PaginationItem key={i}>
-            <span className="px-4">...</span>
-          </PaginationItem>
-        );
-      }
-    }
-    
-    return items;
-  };
+  const clients = data?.data || [];
+  const hasClients = clients.length > 0;
+  const pagination = data?.pagination || {};
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
-            {language === 'ar' ? 'إدارة موكلي المالية' : 'Finance Clients Management'}
-          </CardTitle>
-          <CardDescription className={isRTL ? 'text-right' : 'text-left'}>
-            {language === 'ar' 
-              ? 'إدارة ومتابعة الحسابات المالية للموكلين'
-              : 'Manage and track client financial accounts'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {/* Search Bar */}
-          <div className="mb-6">
-            <div className="relative">
-              <Search className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} h-4 w-4 text-gray-400`} />
+    <div className="p-6 space-y-6">
+      {/* Header Section */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-blue-100 rounded-lg">
+            <Users className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">{t("financeClients")}</h1>
+            <p className="text-sm text-gray-500">
+              {t("managingClients")} ({pagination.total || 0})
+            </p>
+          </div>
+        </div>
+
+        {/* Search & Export */}
+        <Card>
+          <CardContent className="flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="relative w-full sm:max-w-md">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               <Input
-                placeholder={language === 'ar' ? 'البحث بالاسم أو رقم الهاتف...' : 'Search by name or phone...'}
+                type="text"
+                placeholder={t("search")}
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                className={isRTL ? 'pr-10' : 'pl-10'}
+                className="h-12 w-full pl-10 pr-10"
+                aria-busy={isRefreshing}
               />
-            </div>
-          </div>
-
-          {/* Loading State */}
-          {isLoading && (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && (
-            <div className="text-center py-12 text-red-600">
-              {language === 'ar' ? 'حدث خطأ في تحميل البيانات' : 'Error loading data'}
-            </div>
-          )}
-
-          {/* Table */}
-          {!isLoading && !error && (
-            <>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                        {language === 'ar' ? 'الرقم' : 'ID'}
-                      </TableHead>
-                      <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                        {language === 'ar' ? 'الاسم' : 'Name'}
-                      </TableHead>
-                      <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                        {language === 'ar' ? 'رقم الهاتف' : 'Phone'}
-                      </TableHead>
-                      <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                        {language === 'ar' ? 'الجنسية' : 'Nationality'}
-                      </TableHead>
-                      <TableHead className={isRTL ? 'text-right' : 'text-left'}>
-                        {language === 'ar' ? 'الإجراءات' : 'Actions'}
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {clients.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                          {language === 'ar' ? 'لا توجد بيانات' : 'No data available'}
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      clients.map((client) => (
-                        <TableRow key={client.id}>
-                          <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                            {client.id}
-                          </TableCell>
-                          <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                            {client.name}
-                          </TableCell>
-                          <TableCell className={isRTL ? 'text-right' : 'text-left'} dir="ltr">
-                            {client.phone || '-'}
-                          </TableCell>
-                          <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                            {client.nationality || '-'}
-                          </TableCell>
-                          <TableCell className={isRTL ? 'text-right' : 'text-left'}>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleViewWallet(client)}
-                              className="gap-2"
-                            >
-                              <Eye className="h-4 w-4" />
-                              {language === 'ar' ? 'عرض' : 'View'}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-
-              {/* Pagination */}
-              {pagination.totalPages > 1 && (
-                <div className="mt-4">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                          className={`cursor-pointer ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
-                        />
-                      </PaginationItem>
-                      
-                      {renderPaginationItems()}
-                      
-                      <PaginationItem>
-                        <PaginationNext
-                          onClick={() => setCurrentPage(Math.min(pagination.totalPages, currentPage + 1))}
-                          className={`cursor-pointer ${currentPage === pagination.totalPages ? 'pointer-events-none opacity-50' : ''}`}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                  
-                  <div className="text-center mt-2 text-sm text-gray-600">
-                    {language === 'ar' 
-                      ? `عرض ${clients.length} من ${pagination.total} موكل`
-                      : `Showing ${clients.length} of ${pagination.total} clients`}
-                  </div>
-                </div>
+              {isRefreshing && (
+                <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transform animate-spin text-blue-500" />
               )}
-            </>
-          )}
+            </div>
+            {hasClients && (
+              <ExportButtons
+                data={clients}
+                columnConfig={exportColumnConfig}
+                language={language}
+                exportName="finance_clients"
+                sheetName={t("financeClients")}
+              />
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Table Section */}
+      <Card>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50/50">
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-gray-500" />
+                      {t("name")}
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      {t("balance")}
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-gray-500" />
+                      {t("phone")}
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <Flag className="h-4 w-4 text-gray-500" />
+                      {t("nationality")}
+                    </div>
+                  </TableHead>
+                  <TableHead className="text-center">{t("actions")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {clients.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-12">
+                      <div className="flex flex-col items-center gap-2">
+                        <Users className="h-12 w-12 text-gray-300" />
+                        <p className="text-gray-500">{t("noData")}</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  clients.map((client) => (
+                    <TableRow key={client.id} className="hover:bg-gray-50/50">
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            <User className="h-4 w-4 text-blue-600" />
+                          </div>
+                          {client.name}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`font-semibold ${client.balance > 0 ? 'text-green-600' : client.balance < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                          {client.balance || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-gray-600">{client.phone || "-"}</TableCell>
+                      <TableCell className="text-gray-600">{client.nationality || "-"}</TableCell>
+                      <TableCell className="text-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewClient(client)}
+                          className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          {t("view")}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Client Wallet Info Modal */}
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <Card>
+          <CardContent className="py-4">
+            <div className="flex justify-center items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="hover:bg-blue-50"
+              >
+                {t("previous")}
+              </Button>
+              <div className="px-4 py-2 bg-blue-50 rounded-md">
+                <span className="font-medium text-blue-700">
+                  {t("page")} {currentPage} {t("of")} {pagination.totalPages}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, pagination.totalPages))}
+                disabled={currentPage === pagination.totalPages}
+                className="hover:bg-blue-50"
+              >
+                {t("next")}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {selectedClient && (
-        <ClientInfoModal
-          isOpen={isWalletModalOpen}
-          onClose={handleCloseWalletModal}
-          client={selectedClient}
+        <ClientFinanceModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          clientId={selectedClient.id}
+          clientName={selectedClient.name}
+          clientBalance={selectedClient.balance}
         />
       )}
     </div>
   );
-};
-
-export default FinanceClientsPage;
+}

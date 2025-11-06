@@ -5,7 +5,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import {  Building2, List, NotebookText, StickyNote, Users } from "lucide-react";
+import {  
+  Building2, 
+  StickyNote, 
+  Users, 
+  UserCog,
+  Scale,
+  FileText,
+  CalendarDays,
+  Gavel,
+  Bell,
+  ListTodo,
+  BookOpen
+} from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -305,61 +317,57 @@ function AddCasePage() {
     {
       title: t('addCase.basicInfo'),
       content: <Info />,
-      icon: <StickyNote />,
+      icon: <StickyNote className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
     {
       title: t('addCase.courtsAndPolice'),
       content: <CourtAndPoliceStations />,
-      icon: <Building2 />,
+      icon: <Building2 className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
-      {
+    {
       title: t('addCase.team'),
       content: <Employees />,
-      icon: <Users />,
+      icon: <UserCog className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
     {
       title: t('addCase.parties'),
       content: <Parties />,
-      icon: <Users />,
+      icon: <Users className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
-     {
+    {
       title: t('addCase.initiationProceeding'),
       content: <CaseDegrees />,
-      icon: <NotebookText />,
+      icon: <Scale className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
-     {
+    {
       title: t('addCase.petition'),
       content: <Petition />,
-      icon: <NotebookText />,
+      icon: <FileText className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
-  
-    
     {
       title: t('addCase.sessions'),
       content: <Sessions />,
-      icon: <NotebookText />,
+      icon: <CalendarDays className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
-   
     {
       title: t('addCase.execution'),
       content: <Execution />,
-      icon: <NotebookText />,
+      icon: <Gavel className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
     {
       title: t('addCase.judicialNotices'),
       content: <JudicialNoticess />,
-      icon: <NotebookText />,
+      icon: <Bell className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
-   
     {
       title: t('addCase.tasks'),
       content: <Tasks />,
-      icon: <NotebookText />,
+      icon: <ListTodo className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
     {
       title: t('addCase.memos'),
       content: <Memos />,
-      icon: <NotebookText />,
+      icon: <BookOpen className="w-4 h-4 md:w-5 md:h-5 text-primary" />,
     },
   ];
   
@@ -373,26 +381,32 @@ function AddCasePage() {
       {({ values, errors, touched, isSubmitting, setFieldValue, setFieldTouched, submitForm, validateForm, isValid, status, setTouched }) => (
         <FormikProvider formikProps={{ values, errors, touched, isSubmitting, setFieldValue, setFieldTouched, submitForm }}>
           <Form>
-            <div className="pb-24 relative"> {/* Add bottom padding to prevent content being hidden behind sticky button */}
+            <div className="pb-24 relative max-w-7xl mx-auto"> {/* Add bottom padding to prevent content being hidden behind sticky button */}
               {/* Status Display */}
               {status && (
-                <div className={`mb-4 p-4 rounded-lg ${status.type === 'error' ? 'bg-red-50 border border-red-200' : 'bg-green-50 border border-green-200'}`}>
-                  <p className={`text-sm ${status.type === 'error' ? 'text-red-700' : 'text-green-700'}`}>
+                <div className={`mb-4 md:mb-6 p-4 rounded-lg shadow-sm ${status.type === 'error' ? 'bg-destructive/10 border border-destructive/20 text-destructive' : 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400'}`}>
+                  <p className="text-sm font-medium">
                     {status.message}
                   </p>
                 </div>
               )}
 
-              <Accordion type="multiple" defaultValue={[t('addCase.basicInfo')]}>
+              <Accordion type="multiple" defaultValue={[t('addCase.basicInfo')]} className="space-y-2 md:space-y-3">
                 {accordions.map((accordion, index) => (
-                  <AccordionItem className="border-b my-2" value={accordion.title} key={index}>
-                    <AccordionTrigger className="hover:no-underline">
-                      <div className="flex items-center gap-2">
+                  <AccordionItem 
+                    className="border rounded-lg px-3 md:px-4 bg-card shadow-sm hover:shadow-md transition-shadow" 
+                    value={accordion.title} 
+                    key={index}
+                  >
+                    <AccordionTrigger className="hover:no-underline py-3 md:py-4">
+                      <div className="flex items-center gap-2 md:gap-3">
                         {accordion.icon}
-                        <span className="font-semibold text-md">{accordion.title}</span>
+                        <span className="font-semibold text-sm md:text-base">{accordion.title}</span>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent>{accordion.content}</AccordionContent>
+                    <AccordionContent className="pt-2 pb-4 md:pb-6">
+                      {accordion.content}
+                    </AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>

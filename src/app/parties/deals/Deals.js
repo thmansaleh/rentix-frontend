@@ -183,7 +183,13 @@ function Deals() {
         toast.error(response.error || (isArabic ? 'حدث خطأ أثناء حذف الاتفاقية' : 'Error deleting deal'))
       }
     } catch (error) {
-      toast.error(isArabic ? 'حدث خطأ أثناء حذف الاتفاقية' : 'Error deleting deal')
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لحذف الاتفاقية' : 'You do not have permission to delete this deal'))
+        : (isArabic ? 'حدث خطأ أثناء حذف الاتفاقية' : 'Error deleting deal')
+      
+      toast.error(errorMessage)
     } finally {
       setDeleteModal(prev => ({ ...prev, isDeleting: false }))
     }
@@ -234,6 +240,15 @@ function Deals() {
 
   // Error state
   if (isError) {
+    // Check if it's a permission error (403)
+    const isPermissionError = error?.response?.status === 403
+    const errorTitle = isPermissionError 
+      ? (isArabic ? 'غير مصرح' : 'Unauthorized')
+      : (isArabic ? 'خطأ في تحميل البيانات' : 'Error Loading Data')
+    const errorMessage = isPermissionError 
+      ? (error?.response?.data?.message || (isArabic ? 'ليس لديك صلاحية لعرض اتفاقيات العملاء' : 'You do not have permission to view client deals'))
+      : (isArabic ? 'حدث خطأ أثناء تحميل البيانات' : 'An error occurred while loading data')
+    
     return (
       <div className="space-y-6">
         <DealsSearchFilter
@@ -256,14 +271,16 @@ function Deals() {
               <div className="text-center">
                 <AlertCircle className="h-8 w-8 mx-auto mb-4 text-destructive" />
                 <h3 className="text-lg font-semibold mb-2">
-                  {isArabic ? 'خطأ في تحميل البيانات' : 'Error Loading Data'}
+                  {errorTitle}
                 </h3>
                 <p className="text-muted-foreground mb-4">
-                  {isArabic ? 'حدث خطأ أثناء تحميل البيانات' : 'An error occurred while loading data'}
+                  {errorMessage}
                 </p>
-                <Button onClick={() => mutate()} variant="outline">
-                  {isArabic ? 'إعادة المحاولة' : 'Try Again'}
-                </Button>
+                {!isPermissionError && (
+                  <Button onClick={() => mutate()} variant="outline">
+                    {isArabic ? 'إعادة المحاولة' : 'Try Again'}
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>

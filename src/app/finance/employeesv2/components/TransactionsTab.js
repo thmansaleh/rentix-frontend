@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Edit, Trash2, Plus, Download, Eye, Printer, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
-import { getAllEmployeeCashTransactions, deleteEmployeeCashTransaction, deleteEmployeeCashTransactionAttachment } from '@/app/services/api/employeeCashTransactions';
+import { getAllEmployeeCashTransactions, deleteEmployeeCashTransaction } from '@/app/services/api/employeeCashTransactions';
 import TransactionModal from './TransactionModal';
 import ViewTransactionModal from './ViewTransactionModal';
 import PrintTransactionModal from './PrintTransactionModal';
@@ -117,21 +117,7 @@ const TransactionsTab = () => {
     setShowStatementModal(true);
   };
 
-  const handleDeleteAttachment = async (transactionId, attachmentId) => {
-    try {
-      const response = await deleteEmployeeCashTransactionAttachment(transactionId, attachmentId);
-      
-      if (response.success) {
-        // Revalidate data with SWR
-        await mutate();
-        return Promise.resolve();
-      } else {
-        return Promise.reject(new Error('Failed to delete attachment'));
-      }
-    } catch (error) {
-      return Promise.reject(error);
-    }
-  };
+
 
   const handleDelete = async (transactionId) => {
     try {
@@ -491,9 +477,10 @@ const TransactionsTab = () => {
         onClose={() => {
           setShowViewModal(false);
           setViewTransactionId(null);
+          // Refresh data after modal closes
+          mutate();
         }}
         transactionId={viewTransactionId}
-        onDeleteAttachment={handleDeleteAttachment}
       />
 
       {/* Print Transaction Modal */}
