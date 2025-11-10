@@ -113,7 +113,8 @@ export default function AddExpenseModal({ isOpen, onClose, clientId, clientName,
             <SelectContent>
               {employees.map((employee) => (
                 <SelectItem key={employee.id} value={employee.id.toString()}>
-                  {employee.name} ({t("clientFinance.balance")}: {employee.balance || 0})
+                  {employee.name} 
+                  {/* ({t("clientFinance.balance")}: {employee.balance || 0}) */}
                 </SelectItem>
               ))}
             </SelectContent>
