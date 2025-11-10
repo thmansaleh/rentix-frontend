@@ -61,13 +61,13 @@ function Tasks() {
   const employees = employeesResponse?.success ? employeesResponse.data : []
 
   const handleAddTask = async () => {
-    if (formData.title && formData.description  && formData.assignedTo && formData.dueDate && formData.priority) {
+    if (formData.title && formData.description && formData.assignedTo && formData.dueDate && formData.priority) {
       
       const newTask = {
         id: Date.now(),
         title: formData.title,
         description: formData.description,
-        taskType: formData.taskType,
+        taskType: formData.taskType || "administrative", // Default value
         assignedTo: formData.assignedTo,
         dueDate: formData.dueDate,
         priority: formData.priority,
@@ -177,12 +177,12 @@ function Tasks() {
   }
 
   const handleUpdateTask = async () => {
-    if (formData.title && formData.description && formData.taskType && formData.assignedTo && formData.dueDate && formData.priority && editingTaskIndex !== null) {
+    if (formData.title && formData.description && formData.assignedTo && formData.dueDate && formData.priority && editingTaskIndex !== null) {
       const updatedTask = {
         ...tasks[editingTaskIndex],
         title: formData.title,
         description: formData.description,
-        taskType: formData.taskType,
+        taskType: formData.taskType || tasks[editingTaskIndex].taskType,
         assignedTo: formData.assignedTo,
         dueDate: formData.dueDate,
         priority: formData.priority,

@@ -258,7 +258,7 @@ export default function EditMemoModal({ isOpen, onClose, onUpdate, memo }) {
             <Button type="button" variant="outline" onClick={handleClose}>
               {t('memos.cancel')}
             </Button>
-            <Button type="button" >
+            <Button type="button" onClick={handleSubmit}>
               {t('memos.saveChanges')}
             </Button>
           </DialogFooter>

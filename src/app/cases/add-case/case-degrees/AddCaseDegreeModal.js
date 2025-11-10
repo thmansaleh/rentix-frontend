@@ -260,7 +260,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
                   selected={formData.referral_date}
                   onSelect={(date) => handleInputChange('referral_date', date)}
                   initialFocus
-                  disabled={(date) => date > new Date()}
+                  // disabled={(date) => date > new Date()}
                 />
               </PopoverContent>
             </Popover>

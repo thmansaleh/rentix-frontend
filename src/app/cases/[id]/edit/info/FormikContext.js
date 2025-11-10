@@ -1,9 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { tr } from 'date-fns/locale';
 import { updateCase } from '@/app/services/api/cases';
 import { toast } from 'react-toastify';
 
@@ -18,12 +17,7 @@ export const useFormikContext = () => {
 };
 
 export const FormikProvider = ({ children, caseId, caseData }) => {
-  // Format the date to YYYY-MM-DD for input compatibility
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
-  };
+ 
 
   // Process case data directly into initialValues (no useState needed)
   const initialValues = React.useMemo(() => {

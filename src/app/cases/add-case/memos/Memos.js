@@ -124,18 +124,20 @@ function Memos({ caseId }) {
                         </TableCell>
                         <TableCell className="text-center max-w-xs">
                           {memo.description ? (
-                            <span className="text-sm line-clamp-2" title={memo.description}>
-                              {memo.description}
-                            </span>
+                            <div 
+                              className="text-sm line-clamp-2" 
+                              dangerouslySetInnerHTML={{ __html: memo.description }}
+                            />
                           ) : (
                             <span className="text-gray-400 text-sm">{t('memos.notSpecified')}</span>
                           )}
                         </TableCell>
                         <TableCell className="text-center max-w-xs">
                           {memo.admin_note ? (
-                            <span className="text-sm line-clamp-2" title={memo.admin_note}>
-                              {memo.admin_note}
-                            </span>
+                            <div 
+                              className="text-sm line-clamp-2"
+                              dangerouslySetInnerHTML={{ __html: memo.admin_note }}
+                            />
                           ) : (
                             <span className="text-gray-400 text-sm">{t('memos.notSpecified')}</span>
                           )}

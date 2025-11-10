@@ -8,14 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
 
 function Inputs({ formikProps }) {
   const { values, errors, touched, setFieldValue, handleChange, handleBlur } = formikProps
@@ -35,10 +27,7 @@ function Inputs({ formikProps }) {
     return `${year}-${month}-${day}`
   }
 
-  const handleDateChange = (date) => {
-    const formattedDate = formatDateForDatabase(date)
-    setFieldValue('start_date', formattedDate)
-  }
+  
 
   return (
     <div className="space-y-4 grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">

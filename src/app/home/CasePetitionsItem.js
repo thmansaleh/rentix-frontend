@@ -79,7 +79,9 @@ function CasePetitionsItem({ petition }) {
             {/* <span className="ml-2">⏰</span> */}
             <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400 ml-2 flex-shrink-0" />
             <div className="min-w-0 flex-1">
-              <span className="block font-medium text-gray-700 dark:text-gray-300 text-xs">{t('home.lastActionDate')}</span>
+              <span className="block font-medium text-gray-700 dark:text-gray-300 text-xs">
+                {petition.decision === 1 ? t('petitions.lastDateToRegisterCase') : t('petitions.lastDateToAppeal')}
+              </span>
               <span className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">{formatDate(petition.appeal_date)}</span>
             </div>
           </div>

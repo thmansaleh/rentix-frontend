@@ -365,9 +365,14 @@ function Meetings({ headerAction }) {
                         {getStatusBadge(meeting.meet_result)}
                       </TableCell>
                       <TableCell className="max-w-xs">
-                        <div className="truncate" title={meeting.note}>
-                          {meeting.note || "-"}
-                        </div>
+                        {meeting.note ? (
+                          <div 
+                            className="truncate line-clamp-2"
+                            dangerouslySetInnerHTML={{ __html: meeting.note }}
+                          />
+                        ) : (
+                          <span>-</span>
+                        )}
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">

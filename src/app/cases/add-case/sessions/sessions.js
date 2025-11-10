@@ -134,7 +134,7 @@ function Sessions() {
                           <div className="flex justify-center">
                             <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
                               <File className="w-3 h-3 mr-1" />
-                              {session.files.length} {session.files.length === 1 ? t('sessions.file') : t('sessions.files')}
+                              {session.files.length} {session.files.length === 1 ? t('files.filesCount') : t('files.filesCount')}
                             </Badge>
                           </div>
                         ) : (

@@ -374,16 +374,7 @@ const CasesPage = () => {
                       {t('casesTable.opponentParties')}
                     </TableHead>
                     <TableHead className='text-center'>
-                      {t('casesTable.status')}
-                    </TableHead>
-                    <TableHead className='text-center'>
                       {t('casesTable.flags')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.sessionCount')}
-                    </TableHead>
-                    <TableHead className='text-center'>
-                      {t('casesTable.lastSessionDate')}
                     </TableHead>
                     <TableHead className='text-center'>
                       {t('casesTable.actions')}
@@ -467,9 +458,6 @@ const CasesPage = () => {
                           </div>
                         )}
                       </TableCell>
-                      <TableCell className="text-center">
-                        {getStatusBadge(case_.status)}
-                      </TableCell>
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
                           {case_.is_important === 1 && (
@@ -492,22 +480,6 @@ const CasesPage = () => {
                               {t('caseToggles.isPending')}
                             </Badge>
                           )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">
-                            {case_.session_count || 0}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">
-                            {case_.last_session_date ? formatDate(case_.last_session_date) : '-'}
-                          </span>
                         </div>
                       </TableCell>
                       <TableCell>

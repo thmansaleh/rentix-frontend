@@ -123,3 +123,51 @@ export const uploadFile = async (file, folder = 'documents') => {
     throw new Error(error.message || 'Failed to upload file');
   }
 };
+
+/**
+ * Delete uploaded files from storage
+ * @param {string[]} fileUrls - Array of file URLs to delete
+ * @returns {Promise<void>}
+ */
+export const deleteUploadedFiles = async (fileUrls) => {
+  try {
+    if (!fileUrls || !Array.isArray(fileUrls) || fileUrls.length === 0) {
+      return;
+    }
+
+    // Get auth token
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    };
+    
+    let token = getCookie('authToken');
+    if (!token && typeof window !== 'undefined') {
+      token = localStorage.getItem('authToken');
+    }
+
+    const backendUrl = api.defaults.baseURL || 'http://localhost:8080/api';
+
+    // Call backend API to delete files
+    const response = await fetch(`${backendUrl}/upload/delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+      credentials: 'include',
+      body: JSON.stringify({ fileUrls }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Failed to delete files:', errorText);
+      // Don't throw - cleanup is best effort
+    }
+  } catch (error) {
+    console.error('Error deleting uploaded files:', error);
+    // Don't throw - cleanup is best effort
+  }
+};

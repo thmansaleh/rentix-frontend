@@ -186,7 +186,10 @@ const ViewMeetingDialog = ({
                   <p className="text-sm font-medium text-muted-foreground mb-1">
                     {isArabic ? 'الملاحظات' : 'Notes'}
                   </p>
-                  <p className="text-base whitespace-pre-wrap">{meeting.note}</p>
+                  <div 
+                    className="text-base prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: meeting.note }}
+                  />
                 </div>
               </div>
             )}

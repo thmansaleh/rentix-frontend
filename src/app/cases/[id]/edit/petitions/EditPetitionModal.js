@@ -401,29 +401,31 @@ function EditPetitionModal({
                   </RadioGroup>
                 </div>
 
-                {/* Appeal Date */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    {t('petitions.appealDate') || 'Appeal Date'}
-                  </Label>
-                  <Button
-                    variant="outline"
-                    disabled
-                    className={cn(
-                      "w-full justify-start text-left font-normal border h-10 text-sm bg-gray-50 cursor-not-allowed",
-                      !formData.appealDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
-                    <span className="truncate">
-                      {formData.appealDate ? (
-                        format(formData.appealDate, "PPP", { locale: ar })
-                      ) : (
-                        t('petitions.selectAppealDate') || 'Appeal date will be auto-calculated'
+                {/* Appeal Date - Only show if judgeDecision is not null */}
+                {formData.judgeDecision !== null && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      {formData.judgeDecision ? t('petitions.lastDateToRegisterCase') : t('petitions.lastDateToAppeal')}
+                    </Label>
+                    <Button
+                      variant="outline"
+                      disabled
+                      className={cn(
+                        "w-full justify-start text-left font-normal border h-10 text-sm bg-gray-50 cursor-not-allowed",
+                        !formData.appealDate && "text-muted-foreground"
                       )}
-                    </span>
-                  </Button>
-                </div>
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">
+                        {formData.appealDate ? (
+                          format(formData.appealDate, "PPP", { locale: ar })
+                        ) : (
+                          t('petitions.selectAppealDate')
+                        )}
+                      </span>
+                    </Button>
+                  </div>
+                )}
                 
                 {/* Existing Documents Section */}
                 {existingDocuments.length > 0 && (

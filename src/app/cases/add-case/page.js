@@ -25,7 +25,6 @@ import { toast } from 'react-toastify';
 import { FormikProvider } from "./FormikContext";
 import Sessions from "./sessions/sessions";
 import Employees from "./employees/Employees";
-import Court from "./court/Court";
 import CourtAndPoliceStations from "./court/CourtAndPoliceStations";
 import Info from "./info/Info";
 import Parties from "./parties/Parties";
@@ -35,33 +34,20 @@ import JudicialNoticess from "./judicial-notices/JudicialNotices";
 import CaseDegrees from "./case-degrees/CaseDegrees";
 import Tasks from "./tasks/Tasks";
 import SaveCaseButton from "./SaveCaseButton";
-import { createCase } from '@/app/services/api/cases';
-import { addPartyToCase } from '@/app/services/api/parties';
-import { createSession } from '@/app/services/api/sessions';
-import { createCaseDegree } from '@/app/services/api/caseDegrees';
-import { createCasePetition } from '@/app/services/api/CasePetitions';
-import { createExecution } from '@/app/services/api/executions';
-import { createJudicialOrder } from '@/app/services/api/judicialOrders';
-import { createTask } from "@/app/services/api/tasks";
-import { createMemo } from "@/app/services/api/memos";
+import { createCaseWithRelations } from '@/app/services/api/cases';
 import Memos from "./memos/Memos";
 function AddCasePage() {
   const { t } = useTranslations();
 
   // Handle form submission
   const handleSubmit = async(values, { setSubmitting, setStatus, setFieldError, resetForm }) => {
-    // Clear any previous error status
     setStatus(null);
     setSubmitting(true);
     
-    // Show persistent loading toast
     const loadingToast = toast.loading('جاري انشاء قضية...');
     
     try {
-
-      
-      // console.log('Form values at submission:', values);
-      
+      // Prepare case data
       const caseData = {
         case_number: values.caseNumber || null,
         police_station_id: values.policeStationId || null,
@@ -78,147 +64,32 @@ function AddCasePage() {
         additional_note: values.additionalNote || null,
         topic: values.topic || null,
         branch_id: values.branchId || null,
-        isImportant: values.isImportant || 0,
+        is_important: values.is_important || 0,
         is_secret: values.is_secret || 0,
         is_archived: values.is_archived || 0,
         is_pending: values.is_pending || 0,
-        related_cases: values.related_cases ? values.related_cases.map(c => c.id) : []
+        related_cases: values.related_cases ? values.related_cases.map(c => c.id) : [],
+        files: values.caseFiles || [],
+        employeesFiles: values.employeeFiles || [],
+        courtFiles: values.courtFiles || []
       };
-   
-      
-      // First, create the case
-      const employeesFiles = values.caseFiles || [];
-      const courtFiles = values.courtFiles || [];
-      const createdCase = await createCase(caseData, values.caseFiles, employeesFiles, courtFiles);
-      const caseId = createdCase.caseId;
 
-    
+      // Call the batch API endpoint
+      const result = await createCaseWithRelations({
+        caseData,
+        parties: values.parties || [],
+        caseDegrees: values.caseDegrees || [],
+        petitions: values.petition || [],
+        sessions: values.sessions || [],
+        executions: values.executions || [],
+        judicialNotices: values.JudicialNotices || [],
+        tasks: values.tasks || [],
+        memos: values.memos || []
+      });
 
-
-      // Then, associate parties with the created case
-      if(values.parties && values.parties.length > 0){
-        for(const party of values.parties){
-          await addPartyToCase({
-            caseId: caseId,
-            partyId: party.id,
-            type: party.party_type,
-            files: party.files || [],
-          });
-        }
-      }
-
-      // add case degrees
-      if(values.caseDegrees && values.caseDegrees.length > 0){
-        for(const degree of values.caseDegrees){
-          await createCaseDegree({
-            case_id: caseId,
-            degree: degree.degree,
-            case_number: degree.case_number,
-            year: degree.year,
-            referral_date: degree.referral_date,
-            client_status: degree.client_status,
-            opponent_status: degree.opponent_status
-          });
-        }
-      }
-
-      // add petitions
-      if(values.petition && values.petition.length > 0){
-        for(const petition of values.petition){
-          await createCasePetition({
-            case_id: caseId,
-            date: petition.submissionDate,
-            decision: petition.judgeDecision,
-            type: petition.orderType,
-            appealDate: petition.appealDate,
-            files: petition.files || []
-          });
-        }
-      }
-
-      // add sessions
-      if(values.sessions && values.sessions.length > 0){
-        for(const session of values.sessions){
-          await createSession({
-            case_id: caseId,
-            session_date: session.date,
-            link: session.link,
-            is_expert_session: session.isExpertSession,
-            note: session.note,
-            decision: session.decision || "",
-            files: session.files || []
-          });
-        }
-      }
-
-      // add executions
-      if(values.executions && values.executions.length > 0){
-        for(const execution of values.executions){
-          await createExecution({
-            case_id: caseId,
-            date: execution.date,
-            type: execution.type,
-            status: execution.status,
-            amount: execution.amount,
-            files: execution.attachedFiles || []
-          });
-        }
-      }
-
-      // create Judicial order
-      if(values.JudicialNotices && values.JudicialNotices.length > 0){
-        for(const notice of values.JudicialNotices){
-          await createJudicialOrder({
-            case_id: caseId,
-            date: notice.certificationDate,
-            notification_period_days: notice.noticePeriod || null,
-            case_filed: notice.lawsuitFiled,
-            service_completed: notice.noticeCompleted,
-            files: notice.files || []
-          });
-        }
-      }
-
-
-   // add tasks
-      if(values.tasks && values.tasks.length > 0){
-        for(const task of values.tasks){
-            // const { title, description, priority, assigned_to, due_date, case_id } = task;
-
-          await createTask({
-            case_id: caseId,
-            title: task.title,
-            description: task.description,
-            assigned_to: task.assignedTo,
-            due_date: task.dueDate,
-            priority: task.priority,
-            files: task.files || []
-          });
-        }
-      }
-
-      // add memos
-      if(values.memos && values.memos.length > 0){
-        for(const memo of values.memos){
-          await createMemo({
-            case_id: caseId,
-            title: memo.title,
-            submission_date: memo.submission_date,
-            description: memo.description,
-            status: memo.status,
-            admin_note: memo.admin_note,
-            files: memo.files || []
-          });
-        }
-      }
-
-
-
-      // Show success toast
-      toast.dismiss(loadingToast); // Dismiss loading toast first
+      toast.dismiss(loadingToast);
       toast.success('تم انشاء قضية بنجاح');
 
-      // Reset form to initial values after successful submission
       resetForm({
         values: initialValues,
         errors: {},
@@ -230,20 +101,16 @@ function AddCasePage() {
       });
 
     } catch(error){
-
-      toast.dismiss(loadingToast); // Dismiss loading toast first
+      toast.dismiss(loadingToast);
       
-      // Set general error status
       setStatus({
         type: 'error',
         message: 'حدث خطأ أثناء إنشاء القضية. يرجى المحاولة مرة أخرى.'
       });
       
-      // Show error toast with more specific message if available
       const errorMessage = error?.response?.data?.message || error?.message || 'حدث خطأ أثناء إنشاء القضية';
       toast.error(errorMessage);
       
-      // If there are field-specific errors, set them
       if (error?.response?.data?.errors) {
         Object.entries(error.response.data.errors).forEach(([field, message]) => {
           setFieldError(field, message);

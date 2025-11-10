@@ -444,7 +444,9 @@
       "deleteConfirmMessage": "Are you sure you want to delete the file",
       "deleteWarning": "This action cannot be undone.",
       "invalidType": "Invalid file type",
-      "tooLarge": "File size too large (Max 10MB)"
+      "tooLarge": "File size too large (Max 10MB)",
+      "filesCount": "file(s)",
+      "uploadedFiles": "Uploaded Files"
     }
   },
   "meetings": {
@@ -763,6 +765,8 @@
     "rejected": "Rejected",
     "appealDate": "Appeal Date",
     "selectAppealDate": "Select appeal date",
+    "lastDateToRegisterCase": "Last Date to Register Case",
+    "lastDateToAppeal": "Last Date to Appeal",
     "attachFiles": "Attach Files",
     "attachedFiles": "Attached Files",
     "noFiles": "No files",
@@ -2496,6 +2500,7 @@
     "clickToUpload": "Click to upload files",
     "existingDocuments": "Existing Documents",
     "documentsCount": "Documents Count",
+    "filesCount": "file(s)",
     "view": "View",
     "uploadedBy": "Uploaded by",
     "deleteDocument": "Delete Document",

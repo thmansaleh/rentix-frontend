@@ -451,7 +451,9 @@
       "deleteConfirmMessage": "هل أنت متأكد من حذف الملف",
       "deleteWarning": "لا يمكن التراجع عن هذا الإجراء.",
       "invalidType": "نوع الملف غير صالح",
-      "tooLarge": "حجم الملف كبير جداً (الحد الأقصى 10 ميجابايت)"
+      "tooLarge": "حجم الملف كبير جداً (الحد الأقصى 10 ميجابايت)",
+      "filesCount": "ملف",
+      "uploadedFiles": "الملفات المرفوعة"
     }
   },
   "meetings": {
@@ -771,6 +773,8 @@
     "rejected": "رفض",
     "appealDate": "موعد الاستئناف",
     "selectAppealDate": "اختر موعد الاستئناف",
+    "lastDateToRegisterCase": "اخر موعد لتسجيل الدعوى",
+    "lastDateToAppeal": "اخر موعد للتظلم",
     "attachFiles": "إرفاق ملفات",
     "attachedFiles": "الملفات المرفقة",
     "noFiles": "لا يوجد ملف",
@@ -1853,6 +1857,7 @@
     "clickToUpload": "انقر لرفع الملفات",
     "existingDocuments": "المستندات الموجودة",
     "documentsCount": "عدد الملفات",
+    "filesCount": "ملف",
     "view": "عرض",
     "uploadedBy": "رفع بواسطة",
     "deleteDocument": "حذف المستند",
@@ -2499,6 +2504,8 @@
       "remove": "إزالة"
     },
     "files": {
+      "filesCount": "الملفات المرفقة ({count})",
+      "uploadFiles": "رفع ملفات",
       "dragOrClick": "اسحب الملفات هنا أو انقر للاختيار",
       "supportedFormats": "يدعم: PDF, DOC, DOCX, JPG, PNG, GIF, TXT",
       "maxFiles": "الحد الأقصى: {maxFiles} ملفات، {maxSize} ميجابايت لكل ملف",
