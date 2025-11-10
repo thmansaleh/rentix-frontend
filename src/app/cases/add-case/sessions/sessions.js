@@ -120,7 +120,7 @@ function Sessions() {
                         </a>
                       </TableCell>
                       <TableCell className="text-center">
-                        {session.decision || <span className="text-gray-400 text-sm">?? ???? ????</span>}
+                        {session.decision || <span className="text-gray-400 text-sm">{t('sessions.notSpecified')}</span>}
                       </TableCell>
                       <TableCell className="flex justify-center">
                         {session.isExpertSession ? (
