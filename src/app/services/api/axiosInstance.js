@@ -9,17 +9,18 @@ const api = axios.create({
   },
 });
 
+// Helper function to get cookie
+const getCookie = (name) => {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
+
 // Request interceptor to add auth token to all requests
 api.interceptors.request.use(
   (config) => {
-    // Try to get token from cookie first
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-      return null;
-    };
-    
     let token = getCookie('authToken');
     
     // Fallback to localStorage if cookie doesn't exist
@@ -43,16 +44,31 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // If we get a 401 unauthorized error, redirect to login
+    // If we get a 401 unauthorized error
     if (error.response && error.response.status === 401) {
-      // Clear auth data
-      document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('authToken');
-        // Redirect to login if not already there
-        if (!window.location.pathname.includes('/login')) {
-          window.location.href = '/login';
+      const token = getCookie('authToken') || (typeof window !== 'undefined' ? localStorage.getItem('authToken') : null);
+      
+      // Only redirect if:
+      // 1. There's no token at all (user is not logged in)
+      // 2. Or it's an authentication endpoint failing (token refresh, login, etc.)
+      const isAuthEndpoint = error.config.url?.includes('/auth/') || 
+                            error.config.url?.includes('/login') ||
+                            error.config.url?.includes('/verify');
+      
+      if (!token || isAuthEndpoint) {
+        // Clear auth data
+        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('authToken');
+          // Redirect to login if not already there
+          if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
+          }
         }
+      } else {
+        // If we have a token but got 401, it might be a permission issue
+        // Let the component handle it (show error message instead of redirecting)
+        console.warn('401 error with valid token - might be a permission issue');
       }
     }
     return Promise.reject(error);
