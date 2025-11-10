@@ -87,10 +87,15 @@ function Tasks({ caseId }) {
       mutate()
       
     } catch (error) {
-      
       toast.dismiss(loadingToast)
-      const errorMessage = error?.response?.data?.message || error?.message || t('tasks.errorDeletingTask') || 'حدث خطأ أثناء حذف المهمة'
-      toast.error(errorMessage)
+      
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف المهمة' : 'You do not have permission to delete this task'))
+        : (error?.response?.data?.message || error?.message || t('tasks.errorDeletingTask') || 'حدث خطأ أثناء حذف المهمة');
+      
+      toast.error(errorMessage);
     } finally {
       setIsDeleting(false)
     }

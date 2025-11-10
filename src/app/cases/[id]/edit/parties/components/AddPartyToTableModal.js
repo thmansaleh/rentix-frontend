@@ -122,6 +122,12 @@ const AddPartyToTableModal = ({ children, caseId, onPartyAdded }) => {
         // Call the API to add party to case
         const response = await addPartyToCase(partyData);
         
+        // Check if response indicates failure (permission or other errors)
+        if (response?.success === false) {
+          toast.error(response?.message || (language === 'ar' ? 'حدث خطأ أثناء إضافة الطرف للقضية' : 'Error adding party to case'));
+          return;
+        }
+        
         if (response.success) {
           toast.success(t('parties.partyAddedToCase') || 'تم إضافة الطرف للقضية بنجاح');
           
@@ -136,11 +142,15 @@ const AddPartyToTableModal = ({ children, caseId, onPartyAdded }) => {
           setSelectedPartyData(null);
           setPartyFiles([]);
           setOpen(false);
-        } else {
-          toast.error(t('parties.errorAddingParty') || 'حدث خطأ أثناء إضافة الطرف للقضية');
         }
       } catch (error) {
-        toast.error(t('parties.errorAddingParty') || 'حدث خطأ أثناء إضافة الطرف للقضية');
+        // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403;
+        const errorMessage = isPermissionError 
+          ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإضافة طرف للقضية' : 'You do not have permission to add a party to the case'))
+          : (error?.response?.data?.message || t('parties.errorAddingParty') || 'حدث خطأ أثناء إضافة الطرف للقضية');
+        
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }

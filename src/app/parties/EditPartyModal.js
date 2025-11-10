@@ -274,6 +274,12 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
 
       const response = await updateParty(partyId, partyDataWithFiles);
       
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(response?.message || t('parties.partyUpdateError') || "حدث خطأ أثناء تحديث الطرف");
+        return;
+      }
+      
       if (response) {
         toast.success(t('parties.partyUpdatedSuccess') || "تم تحديث الطرف بنجاح");
         resetForm();
@@ -284,12 +290,15 @@ const EditPartyModal = ({ partyId, onPartyUpdated, children }) => {
             id: partyId
           });
         }
-      } else {
-        toast.error(t('parties.partyUpdateError') || "حدث خطأ أثناء تحديث الطرف");
       }
     } catch (error) {
-
-      toast.error(t('parties.partyUpdateError') || "حدث خطأ أثناء تحديث الطرف");
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (isRTL ? 'ليس لديك صلاحية لتحديث الطرف' : 'You do not have permission to update this party'))
+        : (error?.response?.data?.message || t('parties.partyUpdateError') || "حدث خطأ أثناء تحديث الطرف");
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

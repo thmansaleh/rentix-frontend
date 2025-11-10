@@ -54,7 +54,22 @@
     "deleteSuccess": "Deleted Successfully",
     "deleteError": "Error Deleting",
     "searchPages": "Search for a page...",
-    "noResultsFound": "No results found"
+    "noResultsFound": "No results found",
+    "search": "Search",
+    "page": "Page",
+    "of": "of",
+    "name": "Name",
+    "phone": "Phone",
+    "nationality": "Nationality",
+    "balance": "Balance",
+    "managingClients": "Managing Clients",
+    "fromDate": "From Date",
+    "toDate": "To Date",
+    "date": "Date",
+    "type": "Type",
+    "amount": "Amount",
+    "description": "Description",
+    "print": "Print"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -2675,6 +2690,7 @@
     "deposits": "Deposits",
     "expenses": "Expenses",
     "invoices": "Invoices",
+    "accountStatement": "Account Statement",
     "addDeposit": "Add Deposit",
     "editDeposit": "Edit Deposit",
     "deleteDeposit": "Delete Deposit",
@@ -2691,7 +2707,14 @@
     "errorAddingDeposit": "Failed to add deposit",
     "errorEditingDeposit": "Failed to update deposit",
     "errorDeletingDeposit": "Failed to delete deposit",
-    "amountRequired": "Amount is required"
+    "amountRequired": "Amount is required",
+    "balance": "Balance",
+    "pleaseSelectDates": "Please select dates",
+    "selectDatesAndSearch": "Select dates and click search to view account statement",
+    "totalCredits": "Total Credits",
+    "totalDebits": "Total Debits",
+    "credit": "Credit",
+    "debit": "Debit"
   },
   "home": {
     "newCasePetitions": "Notifications or Reminders",

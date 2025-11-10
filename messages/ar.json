@@ -61,7 +61,14 @@
     "phone": "الهاتف",
     "nationality": "الجنسية",
     "balance": "الرصيد",
-    "managingClients": "إدارة الموكلين"
+    "managingClients": "إدارة الموكلين",
+    "fromDate": "من تاريخ",
+    "toDate": "إلى تاريخ",
+    "date": "التاريخ",
+    "type": "النوع",
+    "amount": "المبلغ",
+    "description": "الوصف",
+    "print": "طباعة"
   },
   "navigation": {
     "dashboard": "لوحة التحكم",
@@ -2534,6 +2541,7 @@
     "deposits": "الإيداعات",
     "expenses": "المصروفات",
     "invoices": "الفواتير",
+    "accountStatement": "كشف الحساب",
     "employeeName": "اسم الموظف",
     "noExpenses": "لا توجد مصروفات",
     "addExpense": "إضافة مصروف",
@@ -2561,6 +2569,12 @@
     "amountRequired": "المبلغ مطلوب",
     "insufficientPartyBalance": "رصيد العميل غير كافٍ",
     "insufficientEmployeeBalance": "رصيد الموظف غير كافٍ",
-    "balance": "الرصيد"
+    "balance": "الرصيد",
+    "pleaseSelectDates": "الرجاء اختيار التواريخ",
+    "selectDatesAndSearch": "اختر التواريخ واضغط على بحث لعرض كشف الحساب",
+    "totalCredits": "إجمالي الدائن",
+    "totalDebits": "إجمالي المدين",
+    "credit": "دائن",
+    "debit": "مدين"
   }
 }

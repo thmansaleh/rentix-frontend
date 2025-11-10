@@ -63,7 +63,14 @@ function CaseType({ formikProps }) {
     setIsSubmitting(true)
     
     try {
-      await createCaseType(formData)
+      const response = await createCaseType(formData)
+      
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(response?.message || t('caseTypes.failedToCreateCaseType'))
+        return
+      }
+      
       toast.success(t('caseTypes.caseTypeCreatedSuccessfully'))
       
       // Refresh the data
@@ -73,14 +80,31 @@ function CaseType({ formikProps }) {
       setFormData({ name_ar: '', name_en: '' })
       setIsDialogOpen(false)
     } catch (error) {
-      toast.error(t('caseTypes.failedToCreateCaseType'))
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403
+      
+      if (isPermissionError) {
+        // Show permission error message
+        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإنشاء نوع قضية' : 'You do not have permission to create a case type')
+        toast.error(permissionMessage)
+      } else {
+        // Show general error message (try to get from backend first)
+        const generalMessage = error?.response?.data?.message || t('caseTypes.failedToCreateCaseType')
+        toast.error(generalMessage)
+      }
     } finally {
       setIsSubmitting(false)
     }
   }
 
   if (error) {
-    return <div className="text-red-500">{t('caseTypes.failedToLoadCaseTypes')}</div>
+    // Check if it's a permission error (403)
+    const isPermissionError = error?.response?.status === 403
+    const errorMessage = isPermissionError 
+      ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض أنواع القضايا' : 'You do not have permission to view case types'))
+      : t('caseTypes.failedToLoadCaseTypes')
+    
+    return <div className="text-red-500">{errorMessage}</div>
   }
 
   if (isLoading) {

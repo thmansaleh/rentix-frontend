@@ -59,8 +59,14 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
 
       const response = await createMemo(formattedData)
       
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(response?.message || (language === 'ar' ? "فشل في إضافة المذكرة" : "Failed to add memo"));
+        return;
+      }
+      
       if (response.success) {
-        toast.success("تم إضافة المذكرة بنجاح")
+        toast.success(language === 'ar' ? "تم إضافة المذكرة بنجاح" : "Memo added successfully");
         
         // Call onSuccess to refresh the memos list
         if (onSuccess) {
@@ -68,11 +74,15 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
         }
         
         handleClose()
-      } else {
-        throw new Error(response.message || "فشل في إضافة المذكرة")
       }
     } catch (error) {
-      toast.error(error.message || "حدث خطأ أثناء إضافة المذكرة")
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإضافة مذكرة' : 'You do not have permission to add a memo'))
+        : (error?.response?.data?.message || error.message || (language === 'ar' ? "حدث خطأ أثناء إضافة المذكرة" : "Error adding memo"));
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false)
     }

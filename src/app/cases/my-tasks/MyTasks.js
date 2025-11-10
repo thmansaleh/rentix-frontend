@@ -8,6 +8,7 @@ import { selectUser } from '@/redux/slices/authSlice';
 import { getCreatorTasks, deleteTask } from '@/app/services/api/tasks';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import { toast } from 'react-toastify';
 import EditTaskModal from '@/app/cases/[id]/edit/tasks/EditTaskModal';
 import AddTaskModal from '@/app/cases/[id]/edit/tasks/AddTaskModal';
 import {
@@ -201,9 +202,15 @@ const MyTasks = () => {
       mutate();
       setIsDeleteDialogOpen(false);
       setTaskToDelete(null);
+      toast.success(language === 'ar' ? 'تم حذف المهمة بنجاح' : 'Task deleted successfully');
     } catch (error) {
-
-      // You can add a toast notification here if available
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف المهمة' : 'You do not have permission to delete this task'))
+        : (error?.response?.data?.message || (language === 'ar' ? 'حدث خطأ أثناء حذف المهمة' : 'Error deleting task'));
+      
+      toast.error(errorMessage);
     } finally {
       setIsDeleting(false);
     }
@@ -487,9 +494,9 @@ const MyTasks = () => {
             <AlertDialogDescription>
               {t('tasks.confirmDeleteMessage')}
               {taskToDelete && (
-                <div className="mt-2 p-2 bg-muted rounded">
+                <span className="mt-2 p-2 bg-muted rounded inline-block">
                   <strong>#{taskToDelete.id} - {taskToDelete.title}</strong>
-                </div>
+                </span>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>

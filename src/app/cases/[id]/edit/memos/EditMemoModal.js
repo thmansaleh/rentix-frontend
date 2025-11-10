@@ -85,6 +85,12 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
 
       const response = await updateMemo(memoId, formattedData)
       
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(response?.message || t('memos.errorUpdatingMemo'));
+        return;
+      }
+      
       if (response.success) {
         toast.success(t('memos.memoUpdatedSuccessfully'))
         
@@ -97,11 +103,15 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
         }
         
         handleClose()
-      } else {
-        throw new Error(response.message || t('memos.errorUpdatingMemo'))
       }
     } catch (error) {
-      toast.error(error.message || t('memos.errorUpdatingMemo'))
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لتحديث المذكرة' : 'You do not have permission to update this memo'))
+        : (error?.response?.data?.message || error.message || t('memos.errorUpdatingMemo'));
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false)
     }

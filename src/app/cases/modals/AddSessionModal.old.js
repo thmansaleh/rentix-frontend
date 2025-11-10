@@ -206,6 +206,17 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
 
         const response = await createSession(sessionData);
         
+        if (response?.success === false) {
+          toast.error(
+            response?.message || (isRtl ? "فشل في إضافة الجلسة" : "Failed to add session"),
+            {
+              position: "top-right",
+              autoClose: 3000,
+            }
+          );
+          return;
+        }
+        
         if (response.success) {
           toast.success(
             isRtl ? "تم إضافة الجلسة بنجاح" : "Session added successfully",
@@ -224,24 +235,18 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
           formik.resetForm();
           onSessionAdded && onSessionAdded(response.data);
           onClose();
-        } else {
-          toast.error(
-            isRtl ? "فشل في إضافة الجلسة" : "Failed to add session",
-            {
-              position: "top-right",
-              autoClose: 3000,
-            }
-          );
         }
       } catch (error) {
-        toast.error(
-          isRtl ? "فشل في إضافة الجلسة" : "Failed to add session",
-          {
-            position: "top-right",
-            autoClose: 3000,
-          }
-        );
-
+        // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403;
+        const errorMessage = isPermissionError 
+          ? (error?.response?.data?.message || (isRtl ? "ليس لديك صلاحية لإضافة جلسة" : "You do not have permission to add a session"))
+          : (error?.response?.data?.message || (isRtl ? "فشل في إضافة الجلسة" : "Failed to add session"));
+        
+        toast.error(errorMessage, {
+          position: "top-right",
+          autoClose: 3000,
+        });
       } finally {
         setIsLoading(false);
         setIsUploading(false);

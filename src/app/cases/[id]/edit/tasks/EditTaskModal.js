@@ -162,10 +162,15 @@ function EditTaskModal({
         onOpenChange(false)
         
       } catch (error) {
-        
         toast.dismiss(loadingToast)
-        const errorMessage = error?.response?.data?.message || error?.message || t('tasks.errorUpdatingTask') || 'حدث خطأ أثناء تحديث المهمة'
-        toast.error(errorMessage)
+        
+        // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403;
+        const errorMessage = isPermissionError 
+          ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لتحديث المهمة' : 'You do not have permission to update this task'))
+          : (error?.response?.data?.message || error?.message || t('tasks.errorUpdatingTask') || 'حدث خطأ أثناء تحديث المهمة');
+        
+        toast.error(errorMessage);
       } finally {
         setIsSubmitting(false)
       }

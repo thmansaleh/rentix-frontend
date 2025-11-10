@@ -194,6 +194,12 @@ const AddTaskModal = ({ isOpen, onClose, caseId, onTaskAdded }) => {
 
       const result = await createTask(taskData);
       
+      // Check if response indicates failure (permission or other errors)
+      if (result?.success === false) {
+        toast.error(result?.message || t('tasks.createTaskError'));
+        return;
+      }
+      
       if (result.success) {
         toast.success(t('tasks.taskCreated'));
         
@@ -204,12 +210,15 @@ const AddTaskModal = ({ isOpen, onClose, caseId, onTaskAdded }) => {
         
         // Close the modal
         onClose();
-      } else {
-        throw new Error(result.message || 'Failed to create task');
       }
     } catch (error) {
-
-      toast.error(error.message || t('tasks.createTaskError'));
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإضافة مهمة' : 'You do not have permission to add a task'))
+        : (error?.response?.data?.message || error.message || t('tasks.createTaskError'));
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
       setIsUploadingFiles(false);

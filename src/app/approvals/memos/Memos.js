@@ -155,8 +155,13 @@ const Memos = () => {
       
       handleCloseApprovalModal();
     } catch (error) {
-
-      toast.error(t('memos.failedToUpdateApproval'));
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لتحديث حالة الموافقة' : 'You do not have permission to update approval status'))
+        : (error?.response?.data?.message || t('memos.failedToUpdateApproval'));
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

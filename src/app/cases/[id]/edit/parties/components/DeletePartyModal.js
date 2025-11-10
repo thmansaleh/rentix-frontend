@@ -34,6 +34,12 @@ const DeletePartyModal = ({
       // Call the API to remove party from case
       const response = await removePartyFromCase(caseId, party.case_party_id);
       
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(response?.message || t('parties.errorRemovingParty') || 'Error occurred while removing party from case');
+        return;
+      }
+      
       if (response.success) {
         toast.success(t('parties.partyRemovedSuccess') || 'Party removed from case successfully');
         
@@ -43,11 +49,15 @@ const DeletePartyModal = ({
         }
         
         setOpen(false);
-      } else {
-        toast.error(t('parties.errorRemovingParty') || 'Error occurred while removing party from case');
       }
     } catch (error) {
-      toast.error(t('parties.errorRemovingParty') || 'Error occurred while removing party from case');
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || t('parties.noPermissionToRemove') || 'You do not have permission to remove this party')
+        : (error?.response?.data?.message || t('parties.errorRemovingParty') || 'Error occurred while removing party from case');
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

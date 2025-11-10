@@ -284,14 +284,21 @@ const Parties = () => {
   };
 
   if (error) {
+    const isPermissionError = error?.response?.status === 403;
+    const errorMessage = isPermissionError 
+      ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض الأطراف' : 'You do not have permission to view parties'))
+      : (language === 'ar' ? 'حدث خطأ في تحميل البيانات' : 'Error loading data');
+    
     return (
       <div className="container mx-auto p-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-destructive">{t('common.error')}</CardTitle>
+            <CardTitle className={isPermissionError ? "text-amber-600" : "text-destructive"}>
+              {t('common.error')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{t('common.errorLoading')}</p>
+            <p>{errorMessage}</p>
           </CardContent>
         </Card>
       </div>

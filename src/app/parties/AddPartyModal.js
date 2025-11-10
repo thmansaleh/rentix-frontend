@@ -199,6 +199,12 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
 
       const response = await createParty(partyDataWithFiles);
       
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(response?.message || t('parties.partyAddError') || "حدث خطأ أثناء إضافة الطرف");
+        return;
+      }
+      
       if (response.success) {
         toast.success(t('parties.partyAddedSuccess') || "تم إضافة الطرف بنجاح");
         resetForm();
@@ -210,12 +216,15 @@ const AddPartyModal = ({ onPartyAdded, children }) => {
             id: response.id
           });
         }
-      } else {
-        toast.error(t('parties.partyAddError') || "حدث خطأ أثناء إضافة الطرف");
       }
     } catch (error) {
-
-      toast.error(t('parties.partyAddError') || "حدث خطأ أثناء إضافة الطرف");
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (isRTL ? 'ليس لديك صلاحية لإضافة طرف' : 'You do not have permission to add a party'))
+        : (error?.response?.data?.message || t('parties.partyAddError') || "حدث خطأ أثناء إضافة الطرف");
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

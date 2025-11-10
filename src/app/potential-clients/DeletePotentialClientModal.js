@@ -30,6 +30,14 @@ const DeletePotentialClientModal = ({ clientId, clientName, onClientDeleted, chi
     try {
       const response = await deleteParty(clientId);
       
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(
+          response?.message || (language === 'ar' ? "حدث خطأ أثناء حذف العميل المحتمل" : "Error deleting potential client")
+        );
+        return;
+      }
+      
       if (response.success) {
         toast.success(
           language === 'ar' 
@@ -40,20 +48,15 @@ const DeletePotentialClientModal = ({ clientId, clientName, onClientDeleted, chi
         if (onClientDeleted) {
           onClientDeleted();
         }
-      } else {
-        toast.error(
-          language === 'ar' 
-            ? "حدث خطأ أثناء حذف العميل المحتمل" 
-            : "Error deleting potential client"
-        );
       }
     } catch (error) {
-
-      toast.error(
-        language === 'ar' 
-          ? "حدث خطأ أثناء حذف العميل المحتمل" 
-          : "Error deleting potential client"
-      );
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف العميل المحتمل' : 'You do not have permission to delete this potential client'))
+        : (error?.response?.data?.message || (language === 'ar' ? "حدث خطأ أثناء حذف العميل المحتمل" : "Error deleting potential client"));
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

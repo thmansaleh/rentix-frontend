@@ -322,15 +322,30 @@ const EditSessionModal = ({
         setSelectedFiles([]);
         onClose();
       } catch (error) {
-        toast.error(t('sessions.sessionUpdateFailed'), {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-
+        // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403;
+        
+        if (isPermissionError) {
+          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لتحديث الجلسة' : 'You do not have permission to update this session');
+          toast.error(permissionMessage, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          const generalMessage = error?.response?.data?.message || t('sessions.sessionUpdateFailed');
+          toast.error(generalMessage, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
       } finally {
         setIsLoading(false);
         setIsUploading(false);

@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { getAllSessions } from "@/app/services/api/sessions";
 import { getBranches } from "@/app/services/api/branches";
 import { format } from "date-fns";
+import { toast } from "react-toastify";
 import {
   Table,
   TableBody,
@@ -242,10 +243,15 @@ export default function SessionsPage() {
       setIsDeleteDialogOpen(false);
       setSessionToDelete(null);
       
-      // TODO: Show success toast/notification
+      toast.success(language === 'ar' ? 'تم حذف الجلسة بنجاح' : 'Session deleted successfully');
     } catch (error) {
-
-      // TODO: Show error toast/notification
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف الجلسة' : 'You do not have permission to delete this session'))
+        : (error?.response?.data?.message || (language === 'ar' ? 'حدث خطأ أثناء حذف الجلسة' : 'Error deleting session'));
+      
+      toast.error(errorMessage);
     } finally {
       setIsDeleting(false);
     }
@@ -283,10 +289,17 @@ export default function SessionsPage() {
   }
 
   if (error) {
+    const isPermissionError = error?.response?.status === 403;
+    const errorMessage = isPermissionError 
+      ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض الجلسات' : 'You do not have permission to view sessions'))
+      : (language === 'ar' ? 'حدث خطأ أثناء تحميل البيانات' : 'Error loading data');
+    
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center h-64">
-          <div className="text-lg text-red-500">{t("common.errorLoading")}</div>
+          <div className={`text-lg ${isPermissionError ? 'text-amber-600' : 'text-red-500'}`}>
+            {errorMessage}
+          </div>
         </div>
       </div>
     );

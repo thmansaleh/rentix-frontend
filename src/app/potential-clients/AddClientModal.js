@@ -195,6 +195,12 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
       const response = await createParty(partyDataWithFiles);
       
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(response?.message || t("potentialClientsPage.messages.createError") || "حدث خطأ أثناء إضافة العميل المحتمل");
+        return;
+      }
+      
       if (response.success) {
         toast.success(t("potentialClientsPage.messages.createSuccess") || "تم إضافة العميل المحتمل بنجاح");
         
@@ -210,12 +216,15 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
             id: response.id
           });
         }
-      } else {
-        toast.error(t("potentialClientsPage.messages.createError") || "حدث خطأ أثناء إضافة العميل المحتمل");
       }
     } catch (error) {
-
-      toast.error(t("potentialClientsPage.messages.createError") || "حدث خطأ أثناء إضافة العميل المحتمل");
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإضافة عميل محتمل' : 'You do not have permission to add a potential client'))
+        : (error?.response?.data?.message || t("potentialClientsPage.messages.createError") || "حدث خطأ أثناء إضافة العميل المحتمل");
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

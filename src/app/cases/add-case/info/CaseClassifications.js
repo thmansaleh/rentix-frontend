@@ -60,7 +60,14 @@ function CaseClassifications() {
     setIsSubmitting(true)
     
     try {
-      await createCaseClassification(formData)
+      const response = await createCaseClassification(formData)
+      
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(response?.message || t('caseClassifications.failedToCreateCaseClassification'))
+        return
+      }
+      
       toast.success(t('caseClassifications.caseClassificationCreatedSuccessfully'))
       
       // Refresh the data
@@ -70,15 +77,31 @@ function CaseClassifications() {
       setFormData({ name_ar: '', name_en: '' })
       setIsDialogOpen(false)
     } catch (error) {
-      toast.error(t('caseClassifications.failedToCreateCaseClassification'))
-
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403
+      
+      if (isPermissionError) {
+        // Show permission error message
+        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإنشاء تصنيف قضية' : 'You do not have permission to create a case classification')
+        toast.error(permissionMessage)
+      } else {
+        // Show general error message (try to get from backend first)
+        const generalMessage = error?.response?.data?.message || t('caseClassifications.failedToCreateCaseClassification')
+        toast.error(generalMessage)
+      }
     } finally {
       setIsSubmitting(false)
     }
   }
 
   if (error) {
-    return <div className="text-red-500">{t('caseClassifications.failedToLoadCaseClassifications')}</div>
+    // Check if it's a permission error (403)
+    const isPermissionError = error?.response?.status === 403
+    const errorMessage = isPermissionError 
+      ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لعرض تصنيفات القضايا' : 'You do not have permission to view case classifications'))
+      : t('caseClassifications.failedToLoadCaseClassifications')
+    
+    return <div className="text-red-500">{errorMessage}</div>
   }
 
   if (isLoading) {

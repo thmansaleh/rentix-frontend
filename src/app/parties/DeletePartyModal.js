@@ -30,6 +30,14 @@ const DeletePartyModal = ({ partyId, partyName, onPartyDeleted, children }) => {
     try {
       const response = await deleteParty(partyId);
       
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        toast.error(
+          response?.message || (language === 'ar' ? "حدث خطأ أثناء حذف الطرف" : "Error deleting party")
+        );
+        return;
+      }
+      
       if (response.success) {
         toast.success(
           language === 'ar' 
@@ -40,20 +48,15 @@ const DeletePartyModal = ({ partyId, partyName, onPartyDeleted, children }) => {
         if (onPartyDeleted) {
           onPartyDeleted();
         }
-      } else {
-        toast.error(
-          language === 'ar' 
-            ? "حدث خطأ أثناء حذف الطرف" 
-            : "Error deleting party"
-        );
       }
     } catch (error) {
-
-      toast.error(
-        language === 'ar' 
-          ? "حدث خطأ أثناء حذف الطرف" 
-          : "Error deleting party"
-      );
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف الطرف' : 'You do not have permission to delete this party'))
+        : (error?.response?.data?.message || (language === 'ar' ? "حدث خطأ أثناء حذف الطرف" : "Error deleting party"));
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

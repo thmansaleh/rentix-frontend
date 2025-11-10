@@ -28,7 +28,13 @@ export default function DeleteMemoModal({ isOpen, onClose, memoId, memoTitle, on
       onSuccess?.()
       onClose()
     } catch (error) {
-      toast.error(error.message || "حدث خطأ أثناء حذف المذكرة")
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      const errorMessage = isPermissionError 
+        ? (error?.response?.data?.message || 'ليس لديك صلاحية لحذف المذكرة')
+        : (error?.response?.data?.message || error.message || "حدث خطأ أثناء حذف المذكرة");
+      
+      toast.error(errorMessage);
     } finally {
       setIsDeleting(false)
     }

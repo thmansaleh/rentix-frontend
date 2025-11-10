@@ -144,6 +144,192 @@ const EmployeeStatementModal = ({
   
   const balance = totalCredit - totalDebit;
 
+  const handlePrintStatement = () => {
+    if (transactions.length === 0) {
+      toast.error('لا توجد بيانات للطباعة');
+      return;
+    }
+
+    const printWindow = window.open('', '', 'width=800,height=600');
+    const printContent = `
+      <!DOCTYPE html>
+      <html dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <title>كشف حساب ${employeeName}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+          }
+          .header h1 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+          }
+          .header .subtitle {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+          }
+          .summary {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+          }
+          .summary-item {
+            text-align: center;
+          }
+          .summary-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+          }
+          .summary-value {
+            font-size: 18px;
+            font-weight: bold;
+          }
+          .summary-value.credit {
+            color: #16a34a;
+          }
+          .summary-value.debit {
+            color: #dc2626;
+          }
+          .summary-value.balance {
+            color: #2563eb;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: right;
+          }
+          th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            font-size: 14px;
+          }
+          td {
+            font-size: 13px;
+          }
+          .amount-credit {
+            color: #16a34a;
+            font-weight: bold;
+          }
+          .amount-debit {
+            color: #dc2626;
+            font-weight: bold;
+          }
+          .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+          }
+          @media print {
+            body {
+              padding: 10px;
+            }
+            .no-print {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>كشف حساب الموظف</h1>
+          <div class="subtitle">
+            <strong>الموظف:</strong> ${employeeName}<br>
+            <strong>من:</strong> ${formatDate(dateFrom)} <strong>إلى:</strong> ${formatDate(dateTo)}
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="summary-item">
+            <div class="summary-label">إجمالي العهد</div>
+            <div class="summary-value credit">${formatCurrency(totalCredit)}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">إجمالي المصروفات</div>
+            <div class="summary-value debit">${formatCurrency(totalDebit)}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">الرصيد</div>
+            <div class="summary-value balance">${formatCurrency(balance)}</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>التاريخ</th>
+              <th>النوع</th>
+              <th>المبلغ</th>
+              <th>الوصف</th>
+              <th>أضيف بواسطة</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${transactions.map((transaction, index) => `
+              <tr>
+                <td>${index + 1}</td>
+                <td>${formatDateTime(transaction.created_at)}</td>
+                <td>${getTransactionTypeLabel(transaction.type)}</td>
+                <td class="${transaction.type === 'credit' ? 'amount-credit' : 'amount-debit'}">
+                  ${transaction.type === 'credit' ? '+ ' : '- '}${formatCurrency(transaction.amount)}
+                </td>
+                <td>${transaction.description || '-'}</td>
+                <td>${transaction.created_by_name || '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div class="footer">
+          تم الطباعة في: ${new Date().toLocaleDateString('ar-AE', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.print();
+            window.onafterprint = function() {
+              window.close();
+            };
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+  };
+
   const handleExportToExcel = () => {
     if (transactions.length === 0) {
       toast.error(t('noDataToExport'));
@@ -270,9 +456,17 @@ const EmployeeStatementModal = ({
             </div>
           </div>
 
-          {/* Export Button */}
+          {/* Export and Print Buttons */}
           {transactions.length > 0 && (
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              <Button 
+                onClick={handlePrintStatement}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Printer className="h-4 w-4" />
+                طباعة
+              </Button>
               <Button 
                 onClick={handleExportToExcel}
                 variant="outline"

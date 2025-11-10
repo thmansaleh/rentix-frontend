@@ -91,20 +91,44 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
         filesUrls: filesUrls
       };
 
+      console.log('Calling createSession with data:', sessionData); // Debug log
       const response = await createSession(sessionData);
       
+      console.log('API Response:', response); // Debug log
+      
+      // Check if response indicates failure (permission or other errors)
+      if (response?.success === false) {
+        console.log('Response success is false, showing error:', response?.message); // Debug log
+        toast.error(response?.message || t('sessions.addError'));
+        return;
+      }
+      
       if (response.success) {
+        console.log('Session added successfully'); // Debug log
         toast.success(t('sessions.addSuccess'));
         resetForm();
         setSelectedFiles([]);
         onSessionAdded && onSessionAdded(response.data);
         onClose();
-      } else {
-        toast.error(t('sessions.addError'));
       }
     } catch (error) {
-
-      toast.error(t('sessions.addError'));
+      console.log('Caught error:', error); // Debug log
+      console.log('Error response:', error?.response); // Debug log
+      console.log('Error response data:', error?.response?.data); // Debug log
+      console.log('Error response status:', error?.response?.status); // Debug log
+      
+      // Check if it's a permission error (403)
+      const isPermissionError = error?.response?.status === 403;
+      
+      if (isPermissionError) {
+        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإضافة جلسة' : 'You do not have permission to add a session');
+        console.log('Permission error, showing:', permissionMessage); // Debug log
+        toast.error(permissionMessage);
+      } else {
+        const generalMessage = error?.response?.data?.message || t('sessions.addError');
+        console.log('General error, showing:', generalMessage); // Debug log
+        toast.error(generalMessage);
+      }
     } finally {
       setIsSubmitting(false);
       setSubmitting(false);
