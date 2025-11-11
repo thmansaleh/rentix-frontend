@@ -36,6 +36,29 @@ export const deleteEmployeeCashTransactionAttachment = async (transactionId, att
   return response.data;
 };
 
+// Add attachments to transaction (by updating with existing data + new attachments)
+export const addEmployeeCashTransactionAttachments = async (transactionId, attachments) => {
+  // Get current transaction first
+  const transaction = await getEmployeeCashTransactionById(transactionId);
+  if (!transaction.success) {
+    throw new Error('Transaction not found');
+  }
+  
+  // Combine existing attachments with new ones
+  const existingAttachments = transaction.data.attachments || [];
+  const allAttachments = [...existingAttachments, ...attachments];
+  
+  // Update transaction with all attachments
+  const response = await api.put(`/employee-cash-transactions/${transactionId}`, {
+    employee_id: transaction.data.employee_id,
+    amount: transaction.data.amount,
+    type: transaction.data.type,
+    description: transaction.data.description,
+    attachments: allAttachments
+  });
+  return response.data;
+};
+
 // Get transactions by client ID
 export const getEmployeeCashTransactionsByClientId = async (clientId, params = {}) => {
   const response = await api.get('/employee-cash-transactions', { 

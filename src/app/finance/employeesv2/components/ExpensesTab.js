@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Edit, Trash2, Plus, Download, Eye, Printer, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getAllEmployeeExpenses, deleteEmployeeExpense } from '@/app/services/api/employeeExpenses';
+import { getAllEmployeeCashTransactions, deleteEmployeeCashTransaction } from '@/app/services/api/employeeCashTransactions';
 import { useTranslations } from '@/hooks/useTranslations';
 import ExpenseModal from './ExpenseModal';
 import ExpenseDetailsModal from './ExpenseDetailsModal';
@@ -42,16 +42,17 @@ const ExpensesTab = () => {
   // SWR key and fetcher with best practices
   const swrKey = useMemo(() => 
     searchDebounce || currentPage !== 1 
-      ? `/api/employee-expenses?page=${currentPage}&limit=${itemsPerPage}&search=${searchDebounce}`
-      : `/api/employee-expenses?page=${currentPage}&limit=${itemsPerPage}`,
+      ? `/api/employee-cash-transactions?page=${currentPage}&limit=${itemsPerPage}&search=${searchDebounce}&type=debit`
+      : `/api/employee-cash-transactions?page=${currentPage}&limit=${itemsPerPage}&type=debit`,
     [currentPage, itemsPerPage, searchDebounce]
   );
 
   const fetcher = async (url) => {
-    const response = await getAllEmployeeExpenses({
+    const response = await getAllEmployeeCashTransactions({
       page: currentPage,
       limit: itemsPerPage,
-      search: searchDebounce
+      search: searchDebounce,
+      type: 'debit'
     });
     
     if (!response.success) {
@@ -105,7 +106,7 @@ const ExpensesTab = () => {
   const handleDeleteExpense = async (expenseId) => {
     try {
       setDeleteLoading(true);
-      const response = await deleteEmployeeExpense(expenseId);
+      const response = await deleteEmployeeCashTransaction(expenseId);
       
       if (response.success) {
         toast.success(t('deleteSuccess'));
@@ -230,7 +231,7 @@ const ExpensesTab = () => {
             </div>
           ) : expenses.length === 0 ? (
             <div className="text-center p-8">
-              <p className="text-gray-500 mb-4">
+              <p className=" mb-4">
                 {searchQuery ? t('noResults') : t('noData')}
               </p>
               {!searchQuery && (
@@ -291,11 +292,11 @@ const ExpensesTab = () => {
                           <div className="flex flex-col">
                             <span className="font-medium">{expense.client_name}</span>
                             {expense.client_phone && (
-                              <span className="text-xs text-gray-500">{expense.client_phone}</span>
+                              <span className="text-xs ">{expense.client_phone}</span>
                             )}
                           </div>
                         ) : (
-                          <span className="text-gray-400">-</span>
+                          <span >-</span>
                         )}
                       </TableCell>
                       <TableCell className="max-w-xs truncate">
@@ -315,7 +316,7 @@ const ExpensesTab = () => {
                       <TableCell>
                         {expense.created_by_name || '-'}
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
+                      <TableCell className="text-sm ">
                         {formatDateTime(expense.created_at)}
                       </TableCell>
                       <TableCell>
@@ -378,7 +379,7 @@ const ExpensesTab = () => {
               {/* Pagination */}
               {expensesPagination.totalPages > 1 && (
                 <div className="flex items-center justify-between mt-4">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm ">
                     {t('showing', { scope: 'employeeFinance.pagination' })} {((currentPage - 1) * itemsPerPage) + 1} {t('to', { scope: 'employeeFinance.pagination' })} {Math.min(currentPage * itemsPerPage, expensesPagination.total)} {t('of', { scope: 'employeeFinance.pagination' })} {expensesPagination.total}
                   </div>
                   <div className="flex gap-2">

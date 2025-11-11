@@ -902,7 +902,7 @@ export default function PrintInvoiceModal({ isOpen, onClose, invoiceId }) {
             </CustomModalFooter>
           </>
         ) : (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center ">
             لم يتم العثور على بيانات الفاتورة
           </div>
         )}

@@ -97,26 +97,26 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
       ) : invoice ? (
         <>
           <CustomModalBody>
-              <p className="text-gray-700">
+              <p className="">
                 {t('confirmDeleteInvoice')}
               </p>
 
               {/* Invoice Details */}
               <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                 <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">{t('invoiceNumber')}:</span>
+                  <span className="font-medium ">{t('invoiceNumber')}:</span>
                   <span className="font-bold font-mono">{invoice.invoice_number}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">{t('client')}:</span>
+                  <span className="font-medium ">{t('client')}:</span>
                   <span className="font-semibold">{invoice.client_name || '-'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">{t('amount')}:</span>
+                  <span className="font-medium ">{t('amount')}:</span>
                   <span className="font-bold text-red-600">{formatCurrency(invoice.amount)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">{t('status')}:</span>
+                  <span className="font-medium ">{t('status')}:</span>
                   <span className="font-semibold">
                     {invoice.status === 'draft' && t('statusDraft')}
                     {invoice.status === 'issued' && t('statusIssued')}
@@ -161,7 +161,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
           </CustomModalFooter>
         </>
       ) : (
-        <div className="text-center text-gray-500 p-8">
+        <div className="text-center  p-8">
           {t('noInvoiceData')}
         </div>
       )}

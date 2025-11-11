@@ -2192,7 +2192,7 @@
     "updateError": "حدث خطأ أثناء تحديث الفاتورة",
     "invoiceDetails": "تفاصيل الفاتورة *",
     "addItem": "إضافة",
-    "itemDescription": "وصف البند",
+    "itemDescription": "الوصف",
     "itemAmount": "المبلغ",
     "attachments": "المرفقات (اختياري)",
     "uploadFile": "رفع ملف",

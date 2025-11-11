@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import { createEmployeeExpense, updateEmployeeExpense } from '@/app/services/api/employeeExpenses';
+import { createEmployeeCashTransaction, updateEmployeeCashTransaction } from '@/app/services/api/employeeCashTransactions';
 import { getEmployees } from '@/app/services/api/employees';
 import { searchParties } from '@/app/services/api/parties';
 import { SearchableCombobox } from '@/components/ui/searchable-combobox';
@@ -70,15 +70,16 @@ const ExpenseModal = ({ isOpen, onClose, onSuccess, expenseId = null, expenseDat
         const expensePayload = {
           employee_id: parseInt(values.employee_id),
           amount: parseFloat(values.amount),
+          type: 'debit',
           description: values.description || null,
           client_id: values.client_id ? parseInt(values.client_id) : null
         };
         
         let response;
         if (isEditMode) {
-          response = await updateEmployeeExpense(expenseId, expensePayload);
+          response = await updateEmployeeCashTransaction(expenseId, expensePayload);
         } else {
-          response = await createEmployeeExpense(expensePayload);
+          response = await createEmployeeCashTransaction(expensePayload);
         }
         
         if (response.success) {

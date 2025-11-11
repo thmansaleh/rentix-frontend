@@ -18,7 +18,7 @@ function EmployeeCashTransactionsPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold  ">
             {t('title')}
           </h1>
         </div>

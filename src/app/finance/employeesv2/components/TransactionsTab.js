@@ -252,7 +252,7 @@ const TransactionsTab = () => {
             </div>
           ) : transactions.length === 0 ? (
             <div className="text-center p-8">
-              <p className="text-gray-500 mb-4">
+              <p className=" mb-4">
                 {searchQuery ? t('noResults') : t('noData')}
               </p>
               {!searchQuery && (
@@ -326,7 +326,7 @@ const TransactionsTab = () => {
                       <TableCell>
                         {transaction.created_by_name || '-'}
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
+                      <TableCell className="text-sm ">
                         {formatDateTime(transaction.created_at)}
                       </TableCell>
                       <TableCell>
@@ -407,7 +407,7 @@ const TransactionsTab = () => {
               {/* Pagination */}
               {transactionsPagination.totalPages > 1 && (
                 <div className="flex items-center justify-between mt-4">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm ">
                     عرض {((currentPage - 1) * itemsPerPage) + 1} إلى {Math.min(currentPage * itemsPerPage, transactionsPagination.total)} من أصل {transactionsPagination.total}
                   </div>
                   <div className="flex gap-2">

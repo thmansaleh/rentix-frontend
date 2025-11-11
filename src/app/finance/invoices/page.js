@@ -189,7 +189,7 @@ function InvoicesPage() {
               </div>
             ) : invoices.length === 0 ? (
               <div className="text-center p-8">
-                <p className="text-gray-500 mb-4">{t('noInvoices')}</p>
+                <p className=" mb-4">{t('noInvoices')}</p>
                 <Button onClick={() => setShowAddModal(true)}>
                   {t('addNewInvoice')}
                 </Button>
@@ -230,7 +230,7 @@ function InvoicesPage() {
                           {invoice.bank_name ? (
                             <div className="text-xs">
                               <div className="font-medium">{invoice.bank_name}</div>
-                              <div className="text-gray-500">{invoice.account_number}</div>
+                              <div className="">{invoice.account_number}</div>
                             </div>
                           ) : '-'}
                         </TableCell>

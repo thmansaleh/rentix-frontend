@@ -11,7 +11,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Edit, Trash2, Printer, Calendar, Eye, Download } from 'lucide-react';
 import { getAllEmployeeCashTransactions, deleteEmployeeCashTransaction } from '@/app/services/api/employeeCashTransactions';
-import { deleteEmployeeExpense } from '@/app/services/api/employeeExpenses';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
 
@@ -77,13 +76,8 @@ const EmployeeStatementModal = ({
   const handleDelete = async (transaction) => {
     try {
       setDeleteLoading(true);
-      let response;
       
-      if (transaction.type === 'credit') {
-        response = await deleteEmployeeCashTransaction(transaction.id);
-      } else {
-        response = await deleteEmployeeExpense(transaction.id);
-      }
+      const response = await deleteEmployeeCashTransaction(transaction.id);
       
       if (response.success) {
         toast.success(t('deleteSuccess'));
@@ -502,11 +496,11 @@ const EmployeeStatementModal = ({
           {loading ? (
             <div className="text-center p-8">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-              <p className="mt-2 text-gray-600">{t('loading')}</p>
+              <p className="mt-2 ">{t('loading')}</p>
             </div>
           ) : transactions.length === 0 ? (
             <div className="text-center p-8">
-              <p className="text-gray-500">{t('noTransactions')}</p>
+              <p className="">{t('noTransactions')}</p>
             </div>
           ) : (
             <div className="border rounded-lg overflow-hidden">

@@ -147,13 +147,13 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
 
   const getFileIcon = (fileName) => {
     if (!fileName) {
-      return <File className="h-5 w-5 text-gray-500" />;
+      return <File className="h-5 w-5 " />;
     }
     const extension = fileName.split('.').pop().toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension)) {
       return <FileText className="h-5 w-5 text-blue-500" />;
     }
-    return <File className="h-5 w-5 text-gray-500" />;
+    return <File className="h-5 w-5 " />;
   };
 
   const handleBackdropClick = (e) => {
@@ -182,21 +182,21 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
             {/* Invoice Header Info */}
             <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
               <div>
-                <label className="text-sm font-medium text-gray-600">رقم الفاتورة</label>
+                <label className="text-sm font-medium ">رقم الفاتورة</label>
                 <p className="text-lg font-bold font-mono">{invoice.invoice_number}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-600">التاريخ</label>
+                <label className="text-sm font-medium ">التاريخ</label>
                 <p className="text-lg font-semibold">{formatDate(invoice.invoice_date)}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-600">الحالة</label>
+                <label className="text-sm font-medium ">الحالة</label>
                 <div className="mt-1">
                   {getStatusBadge(invoice.status)}
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-600">العملة</label>
+                <label className="text-sm font-medium ">العملة</label>
                 <p className="text-lg font-semibold">{invoice.currency || 'AED'}</p>
               </div>
             </div>
@@ -207,11 +207,11 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-600">الموكل</label>
+                  <label className="text-sm font-medium ">الموكل</label>
                   <p className="text-base">{invoice.client_name || '-'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">الفرع</label>
+                  <label className="text-sm font-medium ">الفرع</label>
                   <p className="text-base">{invoice.branch_name || '-'}</p>
                 </div>
               </div>
@@ -224,11 +224,11 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">اسم البنك</label>
+                    <label className="text-sm font-medium ">اسم البنك</label>
                     <p className="text-base">{invoice.bank_name}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">رقم الحساب</label>
+                    <label className="text-sm font-medium ">رقم الحساب</label>
                     <p className="text-base font-mono">{invoice.account_number}</p>
                   </div>
                 </div>
@@ -244,7 +244,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   {invoice.items.map((item, index) => (
                     <div key={item.id || index} className="flex justify-between items-start p-3 bg-gray-50 rounded">
                       <div className="flex-1">
-                        <span className="font-medium text-gray-700">{index + 1}. </span>
+                        <span className="font-medium ">{index + 1}. </span>
                         <span>{item.description}</span>
                       </div>
                       <div className="font-semibold text-blue-600 mr-4">
@@ -284,7 +284,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-4">لا توجد بنود</p>
+                <p className=" text-center py-4">لا توجد بنود</p>
               )}
             </div>
 
@@ -331,7 +331,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                       <div className="flex items-center gap-3 flex-1">
                         {getFileIcon(attachment.attachment_name)}
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{attachment.attachment_name}</p>
+                          <p className="text-sm font-medium ">{attachment.attachment_name}</p>
                         </div>
                       </div>
                       
@@ -364,7 +364,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-4 text-sm">لا توجد مرفقات</p>
+                <p className=" text-center py-4 text-sm">لا توجد مرفقات</p>
               )}
             </div>
 
@@ -389,7 +389,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
           </CustomModalFooter>
         </>
       ) : (
-        <div className="p-12 text-center text-gray-500">
+        <div className="p-12 text-center ">
           لم يتم العثور على بيانات الفاتورة
         </div>
       )}

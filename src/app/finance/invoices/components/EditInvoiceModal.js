@@ -338,10 +338,10 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="AED">درهم إماراتي (AED)</SelectItem>
-                  <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
+                  {/* <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
                   <SelectItem value="EUR">يورو (EUR)</SelectItem>
                   <SelectItem value="GBP">جنيه إسترليني (GBP)</SelectItem>
-                  <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem>
+                  <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>

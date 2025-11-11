@@ -220,18 +220,18 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
           {/* Employee Info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="text-sm text-gray-500">{t('employeeName')}</Label>
+              <Label className="text-sm ">{t('employeeName')}</Label>
               <p className="font-medium">{transaction.employee_name || '-'}</p>
             </div>
             <div className="space-y-1">
-              <Label className="text-sm text-gray-500">{t('phoneNumber')}</Label>
+              <Label className="text-sm ">{t('phoneNumber')}</Label>
               <p className="font-mono">{transaction.employee_phone || '-'}</p>
             </div>
           </div>
 
           {/* Amount */}
           <div className="space-y-1">
-            <Label className="text-sm text-gray-500">{t('amount')}</Label>
+            <Label className="text-sm ">{t('amount')}</Label>
             <p className="text-2xl font-bold text-green-600">
               {formatCurrency(transaction.amount)}
             </p>
@@ -239,8 +239,8 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
 
           {/* Description */}
           <div className="space-y-1">
-            <Label className="text-sm text-gray-500">{t('description')}</Label>
-            <p className="text-gray-700 whitespace-pre-wrap">
+            <Label className="text-sm ">{t('description')}</Label>
+            <p className=" whitespace-pre-wrap">
               {transaction.description || t('noDescription')}
             </p>
           </div>
@@ -248,11 +248,11 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
           {/* Created By */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="text-sm text-gray-500">{t('addedBy')}</Label>
+              <Label className="text-sm ">{t('addedBy')}</Label>
               <p>{transaction.created_by_name || '-'}</p>
             </div>
             <div className="space-y-1">
-              <Label className="text-sm text-gray-500">{t('addedAt')}</Label>
+              <Label className="text-sm ">{t('addedAt')}</Label>
               <p className="text-sm">{formatDateTime(transaction.created_at)}</p>
             </div>
           </div>
@@ -293,7 +293,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
             </div>
             
             {attachments.length === 0 ? (
-              <p className="text-sm text-gray-500 py-4 text-center">
+              <p className="text-sm  py-4 text-center">
                 {t('noAttachments')}
               </p>
             ) : (
@@ -307,7 +307,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
                       <p className="text-sm font-medium truncate">
                         {attachment.attachment_name}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs ">
                         {formatDateTime(attachment.created_at)}
                       </p>
                     </div>
@@ -372,7 +372,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
             </div>
           </div>
         ) : (
-          <div className="text-center p-8 text-gray-500">
+          <div className="text-center p-8 ">
             {t('noData')}
           </div>
         )}

@@ -111,8 +111,6 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           attachments: uploadedAttachments
         };
         
-        console.log('Transaction Payload:', transactionPayload);
-        console.log('Attachments being sent:', transactionPayload.attachments);
         
         let response;
         if (isEditMode) {
@@ -267,11 +265,11 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
                   htmlFor="file-upload"
                   className="flex flex-col items-center justify-center cursor-pointer"
                 >
-                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <span className="text-sm text-gray-600">
+                  <Upload className="h-8 w-8  mb-2" />
+                  <span className="text-sm ">
                     {t('selectFiles')}
                   </span>
-                  <span className="text-xs text-gray-400 mt-1">
+                  <span className="text-xs  mt-1">
                     {t('uploadNote')}
                   </span>
                 </label>

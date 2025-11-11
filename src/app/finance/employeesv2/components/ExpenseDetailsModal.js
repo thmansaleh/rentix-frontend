@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import { getEmployeeExpenseById, addEmployeeExpenseAttachments, deleteEmployeeExpenseAttachment } from '@/app/services/api/employeeExpenses';
+import { getEmployeeCashTransactionById, addEmployeeCashTransactionAttachments, deleteEmployeeCashTransactionAttachment } from '@/app/services/api/employeeCashTransactions';
 import { uploadFiles } from '../../../../../utils/fileUpload';
 import { toast } from 'react-toastify';
 import { Download, X, Upload, FileText, Loader2 } from 'lucide-react';
@@ -29,15 +29,15 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
   const fetchExpenseDetails = async () => {
     try {
       setLoading(true);
-      const response = await getEmployeeExpenseById(expenseId);
+      const response = await getEmployeeCashTransactionById(expenseId);
       if (response.success) {
         setExpense(response.data);
       } else {
-        toast.error('حدث خطأ في تحميل تفاصيل المصروف');
+        toast.error(t('loadError') || 'حدث خطأ في تحميل تفاصيل المصروف');
       }
     } catch (error) {
       console.error('Error fetching expense details:', error);
-      toast.error('حدث خطأ في تحميل تفاصيل المصروف');
+      toast.error(t('loadError') || 'حدث خطأ في تحميل تفاصيل المصروف');
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
 
   const handleUploadFiles = async () => {
     if (selectedFiles.length === 0) {
-      toast.warning('يرجى اختيار ملفات للرفع');
+      toast.warning(tCommon('selectFilesFirst') || 'يرجى اختيار ملفات للرفع');
       return;
     }
 
@@ -70,38 +70,38 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
       }));
 
       // Save attachments to database
-      const response = await addEmployeeExpenseAttachments(expenseId, attachments);
+      const response = await addEmployeeCashTransactionAttachments(expenseId, attachments);
       
       if (response.success) {
-        toast.success('تم رفع المرفقات بنجاح');
+        toast.success(tCommon('uploadSuccess') || 'تم رفع المرفقات بنجاح');
         setSelectedFiles([]);
         fetchExpenseDetails(); // Refresh to show new attachments
       } else {
-        toast.error('حدث خطأ في حفظ المرفقات');
+        toast.error(tCommon('uploadError') || 'حدث خطأ في حفظ المرفقات');
       }
     } catch (error) {
       console.error('Error uploading files:', error);
-      toast.error('حدث خطأ في رفع المرفقات');
+      toast.error(tCommon('uploadError') || 'حدث خطأ في رفع المرفقات');
     } finally {
       setUploading(false);
     }
   };
 
   const handleDeleteAttachment = async (attachmentId) => {
-    if (!confirm('هل أنت متأكد من حذف هذا المرفق؟')) return;
+    if (!confirm(tCommon('confirmDelete') || 'هل أنت متأكد من حذف هذا المرفق؟')) return;
 
     try {
-      const response = await deleteEmployeeExpenseAttachment(expenseId, attachmentId);
+      const response = await deleteEmployeeCashTransactionAttachment(expenseId, attachmentId);
       
       if (response.success) {
-        toast.success('تم حذف المرفق بنجاح');
+        toast.success(tCommon('deleteSuccess') || 'تم حذف المرفق بنجاح');
         fetchExpenseDetails();
       } else {
-        toast.error('حدث خطأ في حذف المرفق');
+        toast.error(tCommon('deleteError') || 'حدث خطأ في حذف المرفق');
       }
     } catch (error) {
       console.error('Error deleting attachment:', error);
-      toast.error('حدث خطأ في حذف المرفق');
+      toast.error(tCommon('deleteError') || 'حدث خطأ في حذف المرفق');
     }
   };
 
@@ -121,8 +121,8 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[700px]" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="flex items-center justify-center p-8">
-            <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-            <span className="mr-3">جاري التحميل...</span>
+            <Loader2 className="h-8 w-8 animate-spin " />
+            <span className="mr-3">{tCommon('loading') || 'جاري التحميل...'}</span>
           </div>
         </DialogContent>
       </Dialog>
@@ -135,18 +135,18 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
         <DialogHeader>
-          <DialogTitle>تفاصيل المصروف</DialogTitle>
+          <DialogTitle>{t('expenseDetails') || 'تفاصيل المصروف'}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Employee Information */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-sm font-medium text-gray-500">{t('employeeName')}</Label>
+              <Label className="text-sm font-medium ">{t('employeeName')}</Label>
               <p className="mt-1 text-lg font-semibold">{expense.employee_name}</p>
             </div>
             <div>
-              <Label className="text-sm font-medium text-gray-500">{t('phoneNumber')}</Label>
+              <Label className="text-sm font-medium ">{t('phoneNumber')}</Label>
               <p className="mt-1 text-lg">{expense.employee_phone || '-'}</p>
             </div>
           </div>
@@ -160,7 +160,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <Label className="text-sm font-medium text-gray-700">{t('currentBalance')}</Label>
+              <Label className="text-sm font-medium ">{t('currentBalance')}</Label>
               <p className={`mt-1 text-2xl font-bold ${
                 expense.employee_balance > 0 
                   ? 'text-green-600' 
@@ -176,7 +176,7 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
           {/* Description */}
           {expense.description && (
             <div>
-              <Label className="text-sm font-medium text-gray-500">{t('description')}</Label>
+              <Label className="text-sm font-medium ">{t('description')}</Label>
               <p className="mt-1 p-3 bg-gray-50 rounded-lg border">{expense.description}</p>
             </div>
           )}
@@ -184,18 +184,18 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
           {/* Metadata */}
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <Label className="text-gray-500">{t('addedBy')}</Label>
+              <Label className="">{t('addedBy')}</Label>
               <p className="mt-1">{expense.created_by_name || '-'}</p>
             </div>
             <div>
-              <Label className="text-gray-500">{t('addedAt')}</Label>
+              <Label className="">{t('addedAt')}</Label>
               <p className="mt-1">{formatDateTime(expense.created_at)}</p>
             </div>
           </div>
 
           {/* Existing Attachments */}
           <div>
-            <Label className="text-sm font-medium text-gray-700 mb-2 block">
+            <Label className="text-sm font-medium  mb-2 block">
               {tCommon('attachments')} ({expense.attachments?.length || 0})
             </Label>
             
@@ -232,16 +232,16 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500 p-4 bg-gray-50 rounded-lg text-center">
-                لا توجد مرفقات
+              <p className="text-sm  p-4  rounded-lg text-center">
+                {tCommon('noAttachments') || 'لا توجد مرفقات'}
               </p>
             )}
           </div>
 
           {/* Upload New Files */}
           <div className="border-t pt-4">
-            <Label className="text-sm font-medium text-gray-700 mb-2 block">
-              إضافة مرفقات جديدة
+            <Label className="text-sm font-medium  mb-2 block">
+              {tCommon('addNewAttachments') || 'إضافة مرفقات جديدة'}
             </Label>
             
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
@@ -257,11 +257,11 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
                 htmlFor="file-upload"
                 className="flex flex-col items-center cursor-pointer"
               >
-                <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                <span className="text-sm text-gray-600">
+                <Upload className="h-8 w-8  mb-2" />
+                <span className="text-sm ">
                   {tCommon('selectFiles')}
                 </span>
-                <span className="text-xs text-gray-400 mt-1">
+                <span className="text-xs  mt-1">
                   {tCommon('supportedFormats')}
                 </span>
               </label>
@@ -298,12 +298,12 @@ const ExpenseDetailsModal = ({ isOpen, onClose, expenseId }) => {
                   {uploading ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      جاري الرفع...
+                      {tCommon('uploading') || 'جاري الرفع...'}
                     </>
                   ) : (
                     <>
                       <Upload className="h-4 w-4 mr-2" />
-                      رفع المرفقات
+                      {tCommon('uploadFiles') || 'رفع المرفقات'}
                     </>
                   )}
                 </Button>

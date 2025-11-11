@@ -26,7 +26,6 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(new Date());
   const [formData, setFormData] = useState({
-    invoice_number: "",
     client_id: "",
     branch_id: "",
     bank_account_id: "",
@@ -63,7 +62,6 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
     if (!isOpen) {
       setInvoiceDate(new Date());
       setFormData({
-        invoice_number: "",
         client_id: "",
         branch_id: "",
         bank_account_id: "",
@@ -162,7 +160,6 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
     try {
       const payload = {
         invoice_date: format(invoiceDate, "yyyy-MM-dd"),
-        invoice_number: formData.invoice_number || undefined,
         amount: totalAmount.toFixed(2),
         client_id: formData.client_id || null,
         branch_id: formData.branch_id || null,
@@ -237,19 +234,6 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
                   />
                 </PopoverContent>
               </Popover>
-            </div>
-
-            {/* Invoice Number (Optional - auto-generated if empty) */}
-            <div className="space-y-2">
-              <Label htmlFor="invoice_number">{t('invoiceNumberOptional')}</Label>
-              <Input
-                id="invoice_number"
-                name="invoice_number"
-                value={formData.invoice_number}
-                onChange={handleInputChange}
-                placeholder="INV-2025-00001"
-                disabled={isSubmitting}
-              />
             </div>
 
             {/* Client Selection */}
@@ -356,10 +340,10 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="AED">درهم إماراتي (AED)</SelectItem>
-                  <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
+                  {/* <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
                   <SelectItem value="EUR">يورو (EUR)</SelectItem>
                   <SelectItem value="GBP">جنيه إسترليني (GBP)</SelectItem>
-                  <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem>
+                  <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
