@@ -87,17 +87,7 @@ function LastWeekSessionsItem({
     <>
       <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:border-blue-300 dark:hover:border-blue-600 dark:bg-gray-900 dark:border-gray-700">
       <CardContent className="p-3 sm:p-4">
-        {/* <div className="flex items-center justify-center mb-3 sm:mb-4 p-2 sm:p-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 rounded-lg">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 w-full">
-            <div className="p-1.5 sm:p-2 bg-blue-200 dark:bg-blue-700 rounded-full flex-shrink-0">
-              <Hash className="w-4 h-4 sm:w-5 sm:h-5 text-blue-700 dark:text-blue-200" />
-            </div>
-            <h3 className="text-base sm:text-lg lg:text-xl font-bold text-blue-900 dark:text-blue-100 text-center truncate">
-              {displayTitle}
-            </h3>
-          </div>
-        </div>
-         */}
+     
         <div className="space-y-2 sm:space-y-2.5">
           <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex-wrap">
             <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />

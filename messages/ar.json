@@ -2307,7 +2307,8 @@
     "lastDateFor": "آخر موعد لـ",
     "objection": "تظلم",
     "remaining": "متبقي",
-    "noLegalPeriods": "لا توجد مدد قانونية محددة"
+    "noLegalPeriods": "لا توجد مدد قانونية محددة",
+    "viewDetails": "عرض التفاصيل"
   },
   "employeeFinance": {
     "title": "المالية الخاصة بالموظفين",

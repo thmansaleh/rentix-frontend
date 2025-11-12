@@ -2757,7 +2757,8 @@
     "lastDateFor": "Last Date for",
     "objection": "Objection",
     "remaining": "Remaining",
-    "noLegalPeriods": "No legal periods specified"
+    "noLegalPeriods": "No legal periods specified",
+    "viewDetails": "View Details"
   },
   "employeeFinance": {
     "title": "Employee Finance",
