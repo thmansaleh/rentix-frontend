@@ -19,7 +19,6 @@ import * as XLSX from 'xlsx';
 
 function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
   const t = useTranslations('BankAccountLogs');
-  if (!isOpen) return null;
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -61,6 +60,9 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
     description: ''
   });
   const [attachments, setAttachments] = useState([]);
+
+  // Early return after all hooks are declared
+  if (!isOpen) return null;
 
   // Fetch logs when modal opens with default current month dates
   useEffect(() => {
