@@ -61,16 +61,6 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
   });
   const [attachments, setAttachments] = useState([]);
 
-  // Early return after all hooks are declared
-  if (!isOpen) return null;
-
-  // Fetch logs when modal opens with default current month dates
-  useEffect(() => {
-    if (isOpen && accountId) {
-      fetchLogs(dateRange.from, dateRange.to);
-    }
-  }, [isOpen, accountId]);
-
   const fetchLogs = async (fromDate = null, toDate = null) => {
     try {
       setLoading(true);
@@ -98,6 +88,13 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
     }
   };
 
+  // Fetch logs when modal opens with default current month dates
+  useEffect(() => {
+    if (isOpen && accountId) {
+      fetchLogs(dateRange.from, dateRange.to);
+    }
+  }, [isOpen, accountId]);
+
   const handleDateFilter = () => {
     if (!dateRange.from || !dateRange.to) {
       toast.error('Please select both start and end dates');
@@ -110,6 +107,23 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
     }
     
     fetchLogs(dateRange.from, dateRange.to);
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('ar-AE', {
+      style: 'currency',
+      currency: 'AED'
+    }).format(amount);
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString('ar-AE', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   const handleExportToExcel = () => {
@@ -197,23 +211,6 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
     }
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('ar-AE', {
-      style: 'currency',
-      currency: 'AED'
-    }).format(amount);
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('ar-AE', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   const handleViewLog = (log) => {
     setSelectedLog(log);
     setShowViewModal(true);
@@ -242,6 +239,9 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
       setDeleteLoading(false);
     }
   };
+
+  // Early return after all hooks are declared
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>

@@ -23,9 +23,6 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
   const [newAttachments, setNewAttachments] = useState([]);
   const [attachmentsToDelete, setAttachmentsToDelete] = useState([]);
 
-  // Early return after all hooks are declared
-  if (!isOpen || !log) return null;
-
   useEffect(() => {
     if (log && isOpen) {
       setFormData({
@@ -38,6 +35,9 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
       setAttachmentsToDelete([]);
     }
   }, [log, isOpen]);
+
+  // Early return after all hooks are declared
+  if (!isOpen || !log) return null;
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);

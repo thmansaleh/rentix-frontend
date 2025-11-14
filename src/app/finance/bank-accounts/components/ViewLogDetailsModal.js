@@ -7,6 +7,8 @@ import { Download, X } from 'lucide-react';
 
 function ViewLogDetailsModal({ isOpen, onClose, log }) {
   const t = useTranslations('BankAccountLogs');
+  
+  // Early return after all hooks are declared
   if (!isOpen || !log) return null;
 
   const formatCurrency = (amount) => {
