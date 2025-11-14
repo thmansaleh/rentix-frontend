@@ -442,7 +442,7 @@ function QuickActionsBar() {
                   className="object-contain opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110 relative z-10"
                 />
               </div>
-              <span className="text-sm font-semibold text-sidebar-foreground/70 group-hover:text-sidebar-foreground transition-all duration-300 relative z-10 group-hover:tracking-wide">
+              <span className="text-sm font-semibold d group-hover:text-sidebar-foreground transition-all duration-300 relative z-10 group-hover:tracking-wide">
                 {action.label}
               </span>
             </button>

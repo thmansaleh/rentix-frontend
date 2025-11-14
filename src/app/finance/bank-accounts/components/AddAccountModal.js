@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ import { toast } from 'react-toastify';
 
 const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
   const { isRTL } = useLanguage();
+  const t = useTranslations('AddBankAccount');
   const [branches, setBranches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,12 +39,12 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
   }, [isOpen]);
 
   const validationSchema = Yup.object({
-    bank_name: Yup.string().required('اسم البنك مطلوب'),
-    account_name: Yup.string().required('اسم الحساب مطلوب'),
-    account_number: Yup.string().required('رقم الحساب مطلوب'),
+    bank_name: Yup.string().required(t('bankNameRequired')),
+    account_name: Yup.string().required(t('accountNameRequired')),
+    account_number: Yup.string().required(t('accountNumberRequired')),
     iban: Yup.string().optional(),
     branch_id: Yup.number().nullable(),
-    current_balance: Yup.number().min(0, 'الرصيد لا يمكن أن يكون سالباً').default(0),
+    current_balance: Yup.number().min(0, t('balanceNegativeError')).default(0),
     status: Yup.string().oneOf(['active', 'inactive']).default('active')
   });
 
@@ -69,16 +71,16 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
         const response = await createBankAccount(accountData);
         
         if (response.success) {
-          toast.success('تم إضافة الحساب البنكي بنجاح');
+          toast.success(t('accountAddedSuccess'));
           formik.resetForm();
           onSuccess();
           onClose();
         } else {
-          toast.error(response.message || 'حدث خطأ في إضافة الحساب');
+          toast.error(response.message || t('errorAddingAccount'));
         }
       } catch (error) {
 
-        toast.error('حدث خطأ في إضافة الحساب البنكي');
+        toast.error(t('errorAddingAccountGeneric'));
       } finally {
         setIsLoading(false);
       }
@@ -95,14 +97,14 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
       <DialogContent className={`max-w-md ${isRTL ? 'rtl' : 'ltr'}`}>
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            إضافة حساب بنكي جديد
+            {t('title')}
           </DialogTitle>
         </DialogHeader>
         
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           {/* Bank Name */}
           <div className="space-y-2">
-            <Label htmlFor="bank_name">اسم البنك *</Label>
+            <Label htmlFor="bank_name">{t('bankName')} *</Label>
             <Input
               id="bank_name"
               name="bank_name"
@@ -110,7 +112,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.bank_name && formik.errors.bank_name ? 'border-red-500' : ''}
-              placeholder="مثال: بنك الإمارات دبي الوطني"
+              placeholder={t('bankNamePlaceholder')}
             />
             {formik.touched.bank_name && formik.errors.bank_name && (
               <p className="text-sm text-red-500">{formik.errors.bank_name}</p>
@@ -119,7 +121,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Account Name */}
           <div className="space-y-2">
-            <Label htmlFor="account_name">اسم الحساب *</Label>
+            <Label htmlFor="account_name">{t('accountName')} *</Label>
             <Input
               id="account_name"
               name="account_name"
@@ -127,7 +129,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.account_name && formik.errors.account_name ? 'border-red-500' : ''}
-              placeholder="مثال: حساب الشركة الرئيسي"
+              placeholder={t('accountNamePlaceholder')}
             />
             {formik.touched.account_name && formik.errors.account_name && (
               <p className="text-sm text-red-500">{formik.errors.account_name}</p>
@@ -136,7 +138,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Account Number */}
           <div className="space-y-2">
-            <Label htmlFor="account_number">رقم الحساب *</Label>
+            <Label htmlFor="account_number">{t('accountNumber')} *</Label>
             <Input
               id="account_number"
               name="account_number"
@@ -144,7 +146,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.account_number && formik.errors.account_number ? 'border-red-500' : ''}
-              placeholder="مثال: 1234567890"
+              placeholder={t('accountNumberPlaceholder')}
             />
             {formik.touched.account_number && formik.errors.account_number && (
               <p className="text-sm text-red-500">{formik.errors.account_number}</p>
@@ -153,29 +155,29 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* IBAN */}
           <div className="space-y-2">
-            <Label htmlFor="iban">رقم IBAN</Label>
+            <Label htmlFor="iban">{t('iban')}</Label>
             <Input
               id="iban"
               name="iban"
               value={formik.values.iban}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="مثال: AE070331234567890123456"
+              placeholder={t('ibanPlaceholder')}
             />
           </div>
 
           {/* Branch */}
           <div className="space-y-2">
-            <Label htmlFor="branch_id">الفرع</Label>
+            <Label htmlFor="branch_id">{t('branch')}</Label>
             <Select 
               value={formik.values.branch_id} 
               onValueChange={(value) => formik.setFieldValue('branch_id', value === "none" ? "" : value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر الفرع" />
+                <SelectValue placeholder={t('selectBranch')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">بدون فرع</SelectItem>
+                <SelectItem value="none">{t('noBranch')}</SelectItem>
                 {branches.map((branch) => (
                   <SelectItem key={branch.id} value={branch.id.toString()}>
                     {isRTL ? branch.name_ar : branch.name_en}
@@ -187,7 +189,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Current Balance */}
           <div className="space-y-2">
-            <Label htmlFor="current_balance">الرصيد الحالي</Label>
+            <Label htmlFor="current_balance">{t('currentBalance')}</Label>
             <Input
               id="current_balance"
               name="current_balance"
@@ -197,7 +199,7 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.current_balance && formik.errors.current_balance ? 'border-red-500' : ''}
-              placeholder="0.00"
+              placeholder={t('balancePlaceholder')}
             />
             {formik.touched.current_balance && formik.errors.current_balance && (
               <p className="text-sm text-red-500">{formik.errors.current_balance}</p>
@@ -206,17 +208,17 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
 
           {/* Status */}
           <div className="space-y-2">
-            <Label htmlFor="status">الحالة</Label>
+            <Label htmlFor="status">{t('status')}</Label>
             <Select 
               value={formik.values.status} 
               onValueChange={(value) => formik.setFieldValue('status', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر الحالة" />
+                <SelectValue placeholder={t('selectStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">نشط</SelectItem>
-                <SelectItem value="inactive">غير نشط</SelectItem>
+                <SelectItem value="active">{t('active')}</SelectItem>
+                <SelectItem value="inactive">{t('inactive')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -229,14 +231,14 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
               onClick={handleClose}
               className="flex-1"
             >
-              إلغاء
+              {t('cancel')}
             </Button>
             <Button 
               type="submit" 
               disabled={isLoading || !formik.isValid}
               className="flex-1"
             >
-              {isLoading ? 'جاري الحفظ...' : 'حفظ'}
+              {isLoading ? t('saving') : t('save')}
             </Button>
           </div>
         </form>

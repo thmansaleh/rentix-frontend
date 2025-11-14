@@ -357,13 +357,11 @@ function EditPetitionModal({
               <Button 
                 variant="outline" 
                 onClick={handleClose}
-                className="w-full sm:w-auto px-4 py-2 text-sm"
               >
                 {t('petitions.cancel')}
               </Button>
               <Button 
                 onClick={handleSubmit}
-                className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-sm"
                 disabled={!formData.submissionDate || !formData.orderType || formData.judgeDecision === null}
               >
                 {t('petitions.update')}

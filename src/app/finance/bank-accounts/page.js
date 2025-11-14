@@ -2,24 +2,29 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Edit, Trash2, Plus } from 'lucide-react';
+import { Edit, Trash2, Plus, Eye } from 'lucide-react';
 import { getAllBankAccounts, deleteBankAccount } from '@/app/services/api/bankAccounts';
 import AddAccountModal from './components/AddAccountModal';
 import EditAccountModal from './components/EditAccountModal';
+import BankAccountLogsModal from './components/BankAccountLogsModal';
 import { toast } from 'react-toastify';
 
 function BankAccountsPage() {
   const { isRTL } = useLanguage();
+  const t = useTranslations('BankAccountsPage');
   const [bankAccounts, setBankAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showLogsModal, setShowLogsModal] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState(null);
+  const [selectedAccount, setSelectedAccount] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Fetch bank accounts
@@ -30,11 +35,11 @@ function BankAccountsPage() {
       if (response.success) {
         setBankAccounts(response.data);
       } else {
-        toast.error('حدث خطأ في تحميل الحسابات البنكية');
+        toast.error(t('errorLoadingAccounts'));
       }
     } catch (error) {
 
-      toast.error('حدث خطأ في تحميل الحسابات البنكية');
+      toast.error(t('errorLoadingAccounts'));
     } finally {
       setLoading(false);
     }
@@ -49,20 +54,25 @@ function BankAccountsPage() {
     setShowEditModal(true);
   };
 
+  const handleViewLogs = (account) => {
+    setSelectedAccount(account);
+    setShowLogsModal(true);
+  };
+
   const handleDelete = async (accountId) => {
     try {
       setDeleteLoading(true);
       const response = await deleteBankAccount(accountId);
       
       if (response.success) {
-        toast.success('تم حذف الحساب بنجاح');
+        toast.success(t('accountDeletedSuccess'));
         fetchBankAccounts(); // Refresh the list
       } else {
-        toast.error('حدث خطأ في حذف الحساب');
+        toast.error(t('errorDeletingAccount'));
       }
     } catch (error) {
 
-      toast.error('حدث خطأ في حذف الحساب');
+      toast.error(t('errorDeletingAccount'));
     } finally {
       setDeleteLoading(false);
     }
@@ -85,7 +95,7 @@ function BankAccountsPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            الحسابات البنكية
+            {t('title')}
           </h1>
         </div>
 
@@ -93,13 +103,13 @@ function BankAccountsPage() {
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>قائمة الحسابات البنكية</CardTitle>
+              <CardTitle>{t('accountsList')}</CardTitle>
               <Button 
                 onClick={() => setShowAddModal(true)}
                 className="flex items-center gap-2"
               >
                 <Plus className="h-4 w-4" />
-                إضافة حساب جديد
+                {t('addNewAccount')}
               </Button>
             </div>
           </CardHeader>
@@ -107,28 +117,28 @@ function BankAccountsPage() {
             {loading ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <span className="mr-3">جاري تحميل الحسابات...</span>
+                <span className="mr-3">{t('loading')}</span>
               </div>
             ) : bankAccounts.length === 0 ? (
               <div className="text-center p-8">
-                <p className="text-gray-500 mb-4">لا توجد حسابات بنكية مضافة</p>
+                <p className="text-gray-500 mb-4">{t('noAccountsFound')}</p>
                 <Button onClick={() => setShowAddModal(true)}>
-                  إضافة حساب جديد
+                  {t('addNewAccount')}
                 </Button>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>اسم البنك</TableHead>
-                    <TableHead>اسم الحساب</TableHead>
-                    <TableHead>رقم الحساب</TableHead>
+                    <TableHead>{t('bankName')}</TableHead>
+                    <TableHead>{t('accountName')}</TableHead>
+                    <TableHead>{t('accountNumber')}</TableHead>
                     <TableHead>IBAN</TableHead>
-                    <TableHead>الفرع</TableHead>
-                    <TableHead>الرصيد الحالي</TableHead>
-                    <TableHead>الحالة</TableHead>
-                    <TableHead>تاريخ الإنشاء</TableHead>
-                    <TableHead>الإجراءات</TableHead>
+                    <TableHead>{t('branch')}</TableHead>
+                    <TableHead>{t('currentBalance')}</TableHead>
+                    <TableHead>{t('status')}</TableHead>
+                    <TableHead>{t('createdAt')}</TableHead>
+                    <TableHead>{t('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -154,7 +164,7 @@ function BankAccountsPage() {
                         <Badge 
                           variant={account.status === 'active' ? 'default' : 'secondary'}
                         >
-                          {account.status === 'active' ? 'نشط' : 'غير نشط'}
+                          {account.status === 'active' ? t('active') : t('inactive')}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -162,6 +172,15 @@ function BankAccountsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewLogs(account)}
+                            title={t('viewLogs')}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          
                           <Button
                             variant="outline"
                             size="sm"
@@ -182,23 +201,22 @@ function BankAccountsPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                                <AlertDialogTitle>{t('confirmDelete')}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  هل أنت متأكد من حذف الحساب البنكي {account.account_name}؟ 
-                                  لا يمكن التراجع عن هذا الإجراء.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>إلغاء</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDelete(account.id)}
-                                    className="bg-red-600 hover:bg-red-700"
-                                  >
-                                    حذف
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                                  {t('deleteConfirmMessage', { accountName: account.account_name })}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(account.id)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  {t('delete')}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -224,6 +242,16 @@ function BankAccountsPage() {
           }}
           onSuccess={fetchBankAccounts}
           accountId={selectedAccountId}
+        />
+
+        <BankAccountLogsModal
+          isOpen={showLogsModal}
+          onClose={() => {
+            setShowLogsModal(false);
+            setSelectedAccount(null);
+          }}
+          accountId={selectedAccount?.id}
+          accountName={selectedAccount?.account_name}
         />
       </div>
     </div>

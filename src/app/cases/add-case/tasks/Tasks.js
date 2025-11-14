@@ -217,16 +217,16 @@ function Tasks() {
   }
 
   const priorityOptions = [
-    { value: "normal", label: "عادية", color: "bg-blue-100 text-blue-800" },
-    { value: "high", label: "عالية", color: "bg-yellow-100 text-yellow-800" },
-    { value: "urgent", label: "عاجلة", color: "bg-red-100 text-red-800" }
+    { value: "normal", label: t('tasks.priorityNormal'), color: "bg-blue-100 text-blue-800" },
+    { value: "high", label: t('tasks.priorityHigh'), color: "bg-yellow-100 text-yellow-800" },
+    { value: "urgent", label: t('tasks.priorityUrgent'), color: "bg-red-100 text-red-800" }
   ]
 
   const taskTypeOptions = [
-    { value: "administrative", label: "مهمة ادارية" },
-    { value: "legal", label: "قانونية" },
-    { value: "session", label: "جلسة" },
-    { value: "consultative", label: "استشارية" }
+    { value: "administrative", label: t('tasks.taskTypeAdministrative') },
+    { value: "legal", label: t('tasks.taskTypeLegal') },
+    { value: "session", label: t('tasks.taskTypeSession') },
+    { value: "consultative", label: t('tasks.taskTypeConsultative') }
   ]
 
   const getEmployeeName = (employeeId) => {

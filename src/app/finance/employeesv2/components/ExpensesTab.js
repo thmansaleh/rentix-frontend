@@ -17,6 +17,7 @@ import * as XLSX from 'xlsx';
 
 const ExpensesTab = () => {
   const t = useTranslations('employeeFinance.expenses');
+  const tCommon = useTranslations('common');
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
@@ -196,7 +197,7 @@ const ExpensesTab = () => {
                 disabled={expenses.length === 0}
               >
                 <Download className="h-4 w-4" />
-                تصدير Excel
+                {tCommon('exportExcel') || 'Export Excel'}
               </Button>
               <Button 
                 onClick={handleAddExpense}
@@ -226,8 +227,8 @@ const ExpensesTab = () => {
             </div>
           ) : error ? (
             <div className="text-center p-8">
-              <p className="text-red-500 mb-4">حدث خطأ في تحميل البيانات</p>
-              <Button onClick={() => mutate()}>إعادة المحاولة</Button>
+              <p className="text-red-500 mb-4">{tCommon('errorLoading')}</p>
+              <Button onClick={() => mutate()}>{tCommon('refresh')}</Button>
             </div>
           ) : expenses.length === 0 ? (
             <div className="text-center p-8">
@@ -251,7 +252,7 @@ const ExpensesTab = () => {
                     <TableHead>{t('phoneNumber')}</TableHead>
                     <TableHead>{t('currentBalance')}</TableHead>
                     <TableHead>{t('amount')}</TableHead>
-                    <TableHead>الموكل</TableHead>
+                    <TableHead>{t('client') || 'Client'}</TableHead>
                     <TableHead>{t('description')}</TableHead>
                     <TableHead>{t('status')}</TableHead>
                     <TableHead>{t('addedBy')}</TableHead>
@@ -326,7 +327,7 @@ const ExpensesTab = () => {
                             size="sm"
                             onClick={() => handleViewExpense(expense.id)}
                             className="hover:bg-green-50"
-                            title="عرض التفاصيل"
+                            title={tCommon('view')}
                           >
                             <Eye className="h-4 w-4 text-green-600" />
                           </Button>
@@ -335,7 +336,7 @@ const ExpensesTab = () => {
                             size="sm"
                             onClick={() => handleEditExpense(expense)}
                             className="hover:bg-blue-50"
-                            title="تعديل"
+                            title={tCommon('edit')}
                           >
                             <Edit className="h-4 w-4 text-blue-600" />
                           </Button>
@@ -357,13 +358,13 @@ const ExpensesTab = () => {
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>{t('cancel', { scope: 'employeeFinance.modal' })}</AlertDialogCancel>
+                                <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleDeleteExpense(expense.id)}
                                   className="bg-red-600 hover:bg-red-700"
                                   disabled={deleteLoading}
                                 >
-                                  {deleteLoading ? t('deleting', { scope: 'common' }) : t('delete', { scope: 'common' })}
+                                  {deleteLoading ? tCommon('deleting') : tCommon('delete')}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>

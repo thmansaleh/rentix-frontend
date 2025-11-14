@@ -89,11 +89,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
     }
     
     if (!formData.degree || !formData.case_number || !formData.year || !formData.referral_date) {
-      toast.error(
-        language === 'ar' 
-          ? 'يرجى ملء جميع الحقول المطلوبة' 
-          : 'Please fill in all required fields'
-      );
+      toast.error(t('tasks.pleaseFillAllRequiredFields'));
       return;
     }
 
@@ -111,20 +107,12 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
         const updatedCaseDegrees = [...caseDegrees];
         updatedCaseDegrees[editIndex] = caseDegreeData;
         setFieldValue('caseDegrees', updatedCaseDegrees);
-        toast.success(
-          language === 'ar' 
-            ? 'تم تحديث درجة التقاضي بنجاح' 
-            : 'Case degree updated successfully'
-        );
+        toast.success(t('caseDegrees.updateSuccess') || (language === 'ar' ? 'تم تحديث درجة التقاضي بنجاح' : 'Case degree updated successfully'));
       } else {
         // Add new case degree
         const updatedCaseDegrees = [...caseDegrees, caseDegreeData];
         setFieldValue('caseDegrees', updatedCaseDegrees);
-        toast.success(
-          language === 'ar' 
-            ? 'تم إضافة درجة التقاضي بنجاح' 
-            : 'Case degree added successfully'
-        );
+        toast.success(t('caseDegrees.addSuccess'));
       }
       
       // Reset form
@@ -139,11 +127,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
       
       onClose();
     } catch (error) {
-      toast.error(
-        language === 'ar' 
-          ? 'حدث خطأ أثناء حفظ درجة التقاضي' 
-          : 'Error occurred while saving case degree'
-      );
+      toast.error(t('caseDegrees.saveError') || (language === 'ar' ? 'حدث خطأ أثناء حفظ درجة التقاضي' : 'Error occurred while saving case degree'));
     } finally {
       setIsLoading(false);
     }
@@ -269,14 +253,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
           {/* Client Status Input */}
           <div className="space-y-2">
             <Label htmlFor="client_status" className={isRTL ? 'text-right block' : 'text-left block'}>
-              صفة الموكل
+              {t('caseDegrees.clientStatus')}
             </Label>
             <Input
               id="client_status"
               type="text"
               value={formData.client_status}
               onChange={(e) => handleInputChange('client_status', e.target.value)}
-              placeholder="أدخل صفة الموكل"
+              placeholder={t('caseDegrees.enterClientStatus')}
               className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>
@@ -284,14 +268,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, editData, editIndex }) => {
           {/* Opponent Status Input */}
           <div className="space-y-2">
             <Label htmlFor="opponent_status" className={isRTL ? 'text-right block' : 'text-left block'}>
-              صفة الخصم
+              {t('caseDegrees.opponentStatus')}
             </Label>
             <Input
               id="opponent_status"
               type="text"
               value={formData.opponent_status}
               onChange={(e) => handleInputChange('opponent_status', e.target.value)}
-              placeholder="أدخل صفة الخصم"
+              placeholder={t('caseDegrees.enterOpponentStatus')}
               className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>

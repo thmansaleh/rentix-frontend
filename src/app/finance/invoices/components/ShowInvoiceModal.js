@@ -8,9 +8,14 @@ import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui
 import { toast } from "react-toastify";
 import { getInvoiceById, deleteInvoiceAttachment, uploadInvoiceAttachments } from "@/app/services/api/invoices";
 import { format, parseISO } from "date-fns";
-import { ar } from "date-fns/locale";
+import { ar, enUS } from "date-fns/locale";
+import { useTranslations } from "@/hooks/useTranslations";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
+  const t = useTranslations('invoices');
+  const tCommon = useTranslations('common');
+  const { isRTL } = useLanguage();
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(false);
   const [deletingAttachment, setDeletingAttachment] = useState(null);
@@ -30,12 +35,12 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
       if (response.success) {
         setInvoice(response.data);
       } else {
-        toast.error("فشل في تحميل بيانات الفاتورة");
+        toast.error(t('loadingInvoiceData'));
         onClose();
       }
     } catch (error) {
 
-      toast.error("فشل في تحميل بيانات الفاتورة");
+      toast.error(t('loadingInvoiceData'));
       onClose();
     } finally {
       setLoading(false);
@@ -60,7 +65,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
-      return format(parseISO(dateString), "PPP", { locale: ar });
+      return format(parseISO(dateString), "PPP", { locale: isRTL ? ar : enUS });
     } catch {
       return dateString;
     }
@@ -68,9 +73,9 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      pending: { label: 'قيد الانتظار', variant: 'secondary' },
-      approved: { label: 'معتمدة', variant: 'success' },
-      rejected: { label: 'مرفوضة', variant: 'destructive' }
+      pending: { label: t('statusPending'), variant: 'secondary' },
+      approved: { label: t('statusApproved'), variant: 'success' },
+      rejected: { label: t('statusRejected'), variant: 'destructive' }
     };
 
     const config = statusConfig[status] || statusConfig.pending;
@@ -98,20 +103,20 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
   };
 
   const handleDeleteAttachment = async (attachmentId) => {
-    if (!confirm('هل أنت متأكد من حذف هذا المرفق؟')) return;
+    if (!confirm(tCommon('confirmDelete'))) return;
     
     try {
       setDeletingAttachment(attachmentId);
       const response = await deleteInvoiceAttachment(attachmentId);
       
       if (response.success) {
-        toast.success('تم حذف المرفق بنجاح');
+        toast.success(tCommon('deleteSuccess'));
         loadInvoiceData(); // Reload to get updated data
       } else {
-        toast.error(response.error || 'فشل في حذف المرفق');
+        toast.error(response.error || tCommon('deleteError'));
       }
     } catch (error) {
-      toast.error('فشل في حذف المرفق');
+      toast.error(tCommon('deleteError'));
     } finally {
       setDeletingAttachment(null);
     }
@@ -132,14 +137,14 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
       const result = await uploadInvoiceAttachments(invoiceId, formData);
 
       if (result.success) {
-        toast.success('تم رفع المرفقات بنجاح');
+        toast.success(tCommon('uploadSuccess'));
         loadInvoiceData(); // Reload to get updated data
         e.target.value = ''; // Clear input
       } else {
-        toast.error(result.error || 'فشل في رفع المرفقات');
+        toast.error(result.error || tCommon('uploadError'));
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'فشل في رفع المرفقات');
+      toast.error(error.response?.data?.error || tCommon('uploadError'));
     } finally {
       setUploadingAttachment(false);
     }
@@ -151,7 +156,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
     }
     const extension = fileName.split('.').pop().toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension)) {
-      return <FileText className="h-5 w-5 text-blue-500" />;
+      return <FileText className="h-5 w-5 " />;
     }
     return <File className="h-5 w-5 " />;
   };
@@ -168,13 +173,13 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
     <CustomModal
       isOpen={isOpen}
       onClose={onClose}
-      title="تفاصيل الفاتورة"
+      title={t('invoiceDetails')}
       size="lg"
     >
       {loading ? (
         <div className="flex items-center justify-center p-12">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="mr-3">جاري تحميل البيانات...</span>
+          <Loader2 className="h-8 w-8 animate-spin " />
+          <span className="mr-3">{t('loadingData')}</span>
         </div>
       ) : invoice ? (
         <>
@@ -182,36 +187,36 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
             {/* Invoice Header Info */}
             <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
               <div>
-                <label className="text-sm font-medium ">رقم الفاتورة</label>
+                <label className="text-sm font-medium ">{t('invoiceNumber')}</label>
                 <p className="text-lg font-bold font-mono">{invoice.invoice_number}</p>
               </div>
               <div>
-                <label className="text-sm font-medium ">التاريخ</label>
+                <label className="text-sm font-medium ">{t('date')}</label>
                 <p className="text-lg font-semibold">{formatDate(invoice.invoice_date)}</p>
               </div>
               <div>
-                <label className="text-sm font-medium ">الحالة</label>
+                <label className="text-sm font-medium ">{t('status')}</label>
                 <div className="mt-1">
                   {getStatusBadge(invoice.status)}
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium ">العملة</label>
+                <label className="text-sm font-medium ">{t('currency')}</label>
                 <p className="text-lg font-semibold">{invoice.currency || 'AED'}</p>
               </div>
             </div>
 
             {/* Client & Branch Info */}
             <div className="space-y-3">
-              <h3 className="font-bold text-lg border-b pb-2">معلومات أساسية</h3>
+              <h3 className="font-bold text-lg border-b pb-2">{t('invoiceInfo')}</h3>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium ">الموكل</label>
+                  <label className="text-sm font-medium ">{t('client')}</label>
                   <p className="text-base">{invoice.client_name || '-'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium ">الفرع</label>
+                  <label className="text-sm font-medium ">{t('branch')}</label>
                   <p className="text-base">{invoice.branch_name || '-'}</p>
                 </div>
               </div>
@@ -220,15 +225,15 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
             {/* Bank Account Info */}
             {invoice.bank_name && (
               <div className="space-y-3">
-                <h3 className="font-bold text-lg border-b pb-2">معلومات الحساب البنكي</h3>
+                <h3 className="font-bold text-lg border-b pb-2">{t('bankAccount')}</h3>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium ">اسم البنك</label>
+                    <label className="text-sm font-medium ">{t('bankName')}</label>
                     <p className="text-base">{invoice.bank_name}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium ">رقم الحساب</label>
+                    <label className="text-sm font-medium ">{t('accountNumber')}</label>
                     <p className="text-base font-mono">{invoice.account_number}</p>
                   </div>
                 </div>
@@ -237,7 +242,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
 
             {/* Invoice Items */}
             <div className="space-y-3">
-              <h3 className="font-bold text-lg border-b pb-2">تفاصيل الفاتورة</h3>
+              <h3 className="font-bold text-lg border-b pb-2">{t('invoiceDetails')}</h3>
               
               {invoice.items && invoice.items.length > 0 ? (
                 <div className="space-y-2">
@@ -247,7 +252,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                         <span className="font-medium ">{index + 1}. </span>
                         <span>{item.description}</span>
                       </div>
-                      <div className="font-semibold text-blue-600 mr-4">
+                      <div className="font-semibold  mr-4">
                         {formatCurrency(item.amount, invoice.currency)}
                       </div>
                     </div>
@@ -255,7 +260,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   
                   {/* Subtotal */}
                   <div className="flex justify-between items-center p-3 bg-gray-100 rounded">
-                    <span className="font-medium">المجموع الفرعي</span>
+                    <span className="font-medium">{t('subtotal')}</span>
                     <span className="font-semibold">
                       {formatCurrency(
                         invoice.items.reduce((sum, item) => sum + parseFloat(item.amount), 0),
@@ -267,7 +272,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   {/* VAT */}
                   {invoice.vat > 0 && (
                     <div className="flex justify-between items-center p-3 bg-gray-100 rounded">
-                      <span className="font-medium">ضريبة القيمة المضافة ({invoice.vat}%)</span>
+                      <span className="font-medium">{t('vatAmount').replace('{vat}', invoice.vat)}</span>
                       <span className="font-semibold">
                         {formatCurrency(
                           (invoice.items.reduce((sum, item) => sum + parseFloat(item.amount), 0) * invoice.vat) / 100,
@@ -278,20 +283,20 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   )}
                   
                   {/* Total */}
-                  <div className="flex justify-between items-center p-4 bg-blue-50 rounded font-bold text-lg border-t-2 border-blue-200 mt-4">
-                    <span>الإجمالي</span>
-                    <span className="text-blue-600 text-xl">{formatCurrency(invoice.amount, invoice.currency)}</span>
+                  <div className="flex justify-between items-center p-4  rounded font-bold text-lg border-t-2 border-blue-200 mt-4">
+                    <span>{t('total')}</span>
+                    <span className=" text-xl">{formatCurrency(invoice.amount, invoice.currency)}</span>
                   </div>
                 </div>
               ) : (
-                <p className=" text-center py-4">لا توجد بنود</p>
+                <p className=" text-center py-4">{tCommon('noData')}</p>
               )}
             </div>
 
             {/* Attachments */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-lg border-b pb-2 flex-1">المرفقات</h3>
+                <h3 className="font-bold text-lg border-b pb-2 flex-1">{t('attachments')}</h3>
                 <Button
                   variant="outline"
                   size="sm"
@@ -302,12 +307,12 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   {uploadingAttachment ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>جاري الرفع...</span>
+                      <span>{tCommon('uploading')}</span>
                     </>
                   ) : (
                     <>
                       <Upload className="h-4 w-4" />
-                      <span>رفع ملف</span>
+                      <span>{t('uploadFile')}</span>
                     </>
                   )}
                 </Button>
@@ -343,7 +348,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                           className="flex items-center gap-1"
                         >
                           <Download className="h-4 w-4" />
-                          <span>تحميل</span>
+                          <span>{tCommon('download')}</span>
                         </Button>
                         <Button
                           variant="outline"
@@ -357,24 +362,24 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                           ) : (
                             <Trash2 className="h-4 w-4" />
                           )}
-                          <span>حذف</span>
+                          <span>{tCommon('delete')}</span>
                         </Button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className=" text-center py-4 text-sm">لا توجد مرفقات</p>
+                <p className=" text-center py-4 text-sm">{tCommon('noAttachments')}</p>
               )}
             </div>
 
             {/* Metadata */}
             <div className="pt-4 border-t text-sm text-gray-600 dark:text-gray-400 space-y-1">
               <p>
-                <span className="font-medium">أضيف بواسطة:</span> {invoice.created_by_name || '-'}
+                <span className="font-medium">{t('createdBy')}:</span> {invoice.created_by_name || '-'}
               </p>
               <p>
-                <span className="font-medium">تاريخ الإضافة:</span> {formatDate(invoice.created_at)}
+                <span className="font-medium">{t('createdAt')}:</span> {formatDate(invoice.created_at)}
               </p>
             </div>
           </CustomModalBody>
@@ -384,13 +389,13 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
               variant="outline"
               onClick={onClose}
             >
-              إغلاق
+              {tCommon('close')}
             </Button>
           </CustomModalFooter>
         </>
       ) : (
         <div className="p-12 text-center ">
-          لم يتم العثور على بيانات الفاتورة
+          {t('noInvoiceData')}
         </div>
       )}
     </CustomModal>

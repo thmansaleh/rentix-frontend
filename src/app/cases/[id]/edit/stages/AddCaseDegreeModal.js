@@ -40,9 +40,9 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const degreeOptions = [
-    { value: 'first_instance', label: language === 'ar' ? 'ابتدائية' : 'First Instance' },
-    { value: 'appeal', label: language === 'ar' ? 'استئناف' : 'Appeal' },
-    { value: 'cassation', label: language === 'ar' ? 'الطعن' : 'Cassation' },
+    { value: 'first_instance', label: t('caseDegrees.firstInstance') },
+    { value: 'appeal', label: t('caseDegrees.appeal') },
+    { value: 'cassation', label: t('caseDegrees.cassation') },
   ];
 
   const handleInputChange = (field, value) => {
@@ -59,11 +59,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
     }
     
     if (!formData.degree || !formData.case_number || !formData.year || !formData.referral_date) {
-      toast.error(
-        language === 'ar' 
-          ? 'يرجى ملء جميع الحقول المطلوبة' 
-          : 'Please fill in all required fields'
-      );
+      toast.error(t('tasks.pleaseFillAllRequiredFields'));
       return;
     }
 
@@ -82,11 +78,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
 
       await createCaseDegree(caseDegreeData);
       
-      toast.success(
-        language === 'ar' 
-          ? 'تم إضافة درجة التقاضي بنجاح' 
-          : 'Case degree added successfully'
-      );
+      toast.success(t('caseDegrees.addSuccess') || (language === 'ar' ? 'تم إضافة درجة التقاضي بنجاح' : 'Case degree added successfully'));
       
       // Reset form
       setFormData({
@@ -102,11 +94,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
       onClose();
     } catch (error) {
       console.error('Error creating case degree:', error);
-      toast.error(
-        language === 'ar' 
-          ? 'حدث خطأ أثناء إضافة درجة التقاضي' 
-          : 'Error occurred while adding case degree'
-      );
+      toast.error(t('caseDegrees.addError') || (language === 'ar' ? 'حدث خطأ أثناء إضافة درجة التقاضي' : 'Error occurred while adding case degree'));
     } finally {
       setIsLoading(false);
     }
@@ -133,10 +121,10 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
-            {language === 'ar' ? 'إضافة درجة تقاضي' : 'Add Case Degree'}
+            {t('caseDegrees.addCaseDegree')}
           </DialogTitle>
           <DialogDescription className={isRTL ? 'text-right' : 'text-left'}>
-            {language === 'ar' ? 'أضف درجة تقاضي جديدة للقضية' : 'Add a new case degree to the case'}
+            {t('caseDegrees.addDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -144,7 +132,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
           {/* Degree Select */}
           <div className="space-y-2">
             <Label htmlFor="degree" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'درجة التقاضي' : 'Degree'} *
+              {t('caseDegrees.degree')} *
             </Label>
             <Select
               value={formData.degree}
@@ -152,7 +140,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               dir={isRTL ? 'rtl' : 'ltr'}
             >
               <SelectTrigger>
-                <SelectValue placeholder={language === 'ar' ? 'اختر درجة التقاضي' : 'Select degree'} />
+                <SelectValue placeholder={t('caseDegrees.selectDegree')} />
               </SelectTrigger>
               <SelectContent>
                 {degreeOptions.map((option) => (
@@ -167,14 +155,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
           {/* Case Number Input */}
           <div className="space-y-2">
             <Label htmlFor="case_number" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'رقم القضية' : 'Case Number'} *
+              {t('caseDegrees.caseNumber')} *
             </Label>
             <Input
               id="case_number"
               type="text"
               value={formData.case_number}
               onChange={(e) => handleInputChange('case_number', e.target.value)}
-              placeholder={language === 'ar' ? 'أدخل رقم القضية' : 'Enter case number'}
+              placeholder={t('caseDegrees.enterCaseNumber')}
               className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>
@@ -182,14 +170,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
           {/* Year Input */}
           <div className="space-y-2">
             <Label htmlFor="year" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'السنة' : 'Year'} *
+              {t('caseDegrees.year')} *
             </Label>
             <Input
               id="year"
               type="number"
               value={formData.year}
               onChange={(e) => handleInputChange('year', e.target.value)}
-              placeholder={language === 'ar' ? 'أدخل السنة' : 'Enter year'}
+              placeholder={t('caseDegrees.enterYear')}
               min="1900"
               max="2099"
               className={isRTL ? 'text-right' : 'text-left'}
@@ -199,7 +187,7 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
           {/* Referral Date Input */}
           <div className="space-y-2">
             <Label htmlFor="referral_date" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'تاريخ الإحالة' : 'Referral Date'} *
+              {t('caseDegrees.referralDate')} *
             </Label>
             <Input
               id="referral_date"
@@ -218,14 +206,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
           {/* Client Status Input */}
           <div className="space-y-2">
             <Label htmlFor="client_status" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'صفة الموكل' : 'Client Status'}
+              {t('caseDegrees.clientStatus') || (language === 'ar' ? 'صفة الموكل' : 'Client Status')}
             </Label>
             <Input
               id="client_status"
               type="text"
               value={formData.client_status}
               onChange={(e) => handleInputChange('client_status', e.target.value)}
-              placeholder={language === 'ar' ? 'أدخل صفة الموكل' : 'Enter client status'}
+              placeholder={t('caseDegrees.enterClientStatus') || (language === 'ar' ? 'أدخل صفة الموكل' : 'Enter client status')}
               className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>
@@ -233,14 +221,14 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
           {/* Opponent Status Input */}
           <div className="space-y-2">
             <Label htmlFor="opponent_status" className={isRTL ? 'text-right block' : 'text-left block'}>
-              {language === 'ar' ? 'صفة الخصم' : 'Opponent Status'}
+              {t('caseDegrees.opponentStatus') || (language === 'ar' ? 'صفة الخصم' : 'Opponent Status')}
             </Label>
             <Input
               id="opponent_status"
               type="text"
               value={formData.opponent_status}
               onChange={(e) => handleInputChange('opponent_status', e.target.value)}
-              placeholder={language === 'ar' ? 'أدخل صفة الخصم' : 'Enter opponent status'}
+              placeholder={t('caseDegrees.enterOpponentStatus') || (language === 'ar' ? 'أدخل صفة الخصم' : 'Enter opponent status')}
               className={isRTL ? 'text-right' : 'text-left'}
             />
           </div>
@@ -254,14 +242,11 @@ const AddCaseDegreeModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               className={`${isRTL ? 'ml-auto' : 'mr-auto'}`}
             >
               <X className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-              {language === 'ar' ? 'إلغاء' : 'Cancel'}
+              {t('caseDegrees.cancel')}
             </Button>
             <Button type="button" disabled={isLoading} onClick={handleSubmit}>
               <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-              {isLoading 
-                ? (language === 'ar' ? 'جاري الحفظ...' : 'Saving...') 
-                : (language === 'ar' ? 'حفظ' : 'Save')
-              }
+              {isLoading ? t('caseDegrees.saving') : t('caseDegrees.save')}
             </Button>
           </DialogFooter>
         </form>

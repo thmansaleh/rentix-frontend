@@ -84,8 +84,8 @@ function CaseDegrees() {
                   <TableHead className="text-center">{t('initiationProceeding.caseNumber')}</TableHead>
                   <TableHead className="text-center">{t('initiationProceeding.year')}</TableHead>
                   <TableHead className="text-center">{t('initiationProceeding.referralDate')}</TableHead>
-                  <TableHead className="text-center">صفة الموكل</TableHead>
-                  <TableHead className="text-center">صفة الخصم</TableHead>
+                  <TableHead className="text-center">{t('caseDegrees.clientStatus')}</TableHead>
+                  <TableHead className="text-center">{t('caseDegrees.opponentStatus')}</TableHead>
                   <TableHead className="text-center">{t('initiationProceeding.actions')}</TableHead>
                 </TableRow>
               </TableHeader>

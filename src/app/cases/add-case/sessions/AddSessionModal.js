@@ -320,7 +320,7 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
               {/* Has Ruling Switch */}
               <div className="flex items-center justify-between space-x-2 space-x-reverse p-3 border rounded-lg">
                 <Label htmlFor="hasRuling" className="cursor-pointer">
-                  حكم صادر
+                  {t('sessions.hasRuling')}
                 </Label>
                 <Switch
                   id="hasRuling"
@@ -333,10 +333,10 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
               {formData.hasRuling && (
                 <>
                   <div className="space-y-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <Label htmlFor="ruling">منطوق الحكم</Label>
+                    <Label htmlFor="ruling">{t('sessions.ruling')}</Label>
                     <Textarea
                       id="ruling"
-                      placeholder="أدخل منطوق الحكم"
+                      placeholder={t('sessions.rulingPlaceholder')}
                       value={formData.ruling}
                       onChange={(e) => handleInputChange("ruling", e.target.value)}
                       rows={3}
@@ -347,7 +347,7 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
                   {/* Legal Period Selection */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <Label htmlFor="legalPeriod">المدة القانونية</Label>
+                      <Label htmlFor="legalPeriod">{t('sessions.legalPeriod')}</Label>
                       <Button 
                         type="button" 
                         variant="outline" 
@@ -355,7 +355,7 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
                         onClick={handleAddLegalPeriod}
                       >
                         <Plus className="h-4 w-4 mr-1" />
-                        إضافة مدة جديدة
+                        {t('sessions.addNewPeriod')}
                       </Button>
                     </div>
                     <Select 
@@ -363,7 +363,7 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
                       onValueChange={(value) => handleInputChange("legalPeriodId", value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="اختر المدة القانونية" />
+                        <SelectValue placeholder={t('sessions.selectLegalPeriod')} />
                       </SelectTrigger>
                       <SelectContent>
                         {legalPeriods.map((period) => (
@@ -371,11 +371,11 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
                             <div className="flex flex-col">
                               <span className="font-medium">{period.name}</span>
                               <span className="text-xs text-muted-foreground">
-                                {period.objection_days && `التظلم: ${period.objection_days} يوم`}
+                                {period.objection_days && `${t('sessions.objectionLabel')}: ${period.objection_days} ${t('sessions.daysLabel')}`}
                                 {period.objection_days && (period.appeal_days || period.cassation_days) && ' - '}
-                                {period.appeal_days && `الاستئناف: ${period.appeal_days} يوم`}
+                                {period.appeal_days && `${t('sessions.appealLabel')}: ${period.appeal_days} ${t('sessions.daysLabel')}`}
                                 {period.appeal_days && period.cassation_days && ' - '}
-                                {period.cassation_days && `الطعن: ${period.cassation_days} يوم`}
+                                {period.cassation_days && `${t('sessions.cassationLabel')}: ${period.cassation_days} ${t('sessions.daysLabel')}`}
                               </span>
                             </div>
                           </SelectItem>
@@ -387,13 +387,13 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
                     {selectedPeriod && (
                       <div className="text-sm text-muted-foreground bg-gray-50 p-2 rounded border">
                         {selectedPeriod.objection_days && (
-                          <div>التظلم: {selectedPeriod.objection_days} يوم</div>
+                          <div>{t('sessions.objectionLabel')}: {selectedPeriod.objection_days} {t('sessions.daysLabel')}</div>
                         )}
                         {selectedPeriod.appeal_days && (
-                          <div>الاستئناف: {selectedPeriod.appeal_days} يوم</div>
+                          <div>{t('sessions.appealLabel')}: {selectedPeriod.appeal_days} {t('sessions.daysLabel')}</div>
                         )}
                         {selectedPeriod.cassation_days && (
-                          <div>الطعن: {selectedPeriod.cassation_days} يوم</div>
+                          <div>{t('sessions.cassationLabel')}: {selectedPeriod.cassation_days} {t('sessions.daysLabel')}</div>
                         )}
                       </div>
                     )}
@@ -447,17 +447,17 @@ function AddSessionModal({ open, onOpenChange, onAdd, t }) {
                 {/* Display Selected Files */}
                 {formData.files.length > 0 && (
                   <div className="space-y-2 max-h-32 sm:max-h-40 overflow-y-auto">
-                    <div className="text-sm font-medium text-gray-700">
+                    <div className="text-sm font-medium ">
                       {t('sessions.selectedFiles')} ({formData.files.length})
                     </div>
                     {formData.files.map((file, index) => (
                       <div key={index} className="flex items-center justify-between p-2 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
                         <div className="flex items-center space-x-2 sm:space-x-3 space-x-reverse flex-1 min-w-0">
-                          <div className="text-blue-600 flex-shrink-0">
+                          <div className=" flex-shrink-0">
                             {getFileIcon(file.name)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="text-xs sm:text-sm font-medium text-blue-800 truncate">
+                            <div className="text-xs sm:text-sm font-medium  truncate">
                               {file.name}
                             </div>
                             <div className="text-xs text-blue-600">

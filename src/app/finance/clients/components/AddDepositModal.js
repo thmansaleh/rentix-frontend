@@ -13,6 +13,10 @@ export default function AddDepositModal({ isOpen, onClose, clientId, clientName,
   const { t } = useTranslations();
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [paymentType, setPaymentType] = useState("cash");
+  const [checkNumber, setCheckNumber] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [checkDate, setCheckDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,13 +29,35 @@ export default function AddDepositModal({ isOpen, onClose, clientId, clientName,
       return;
     }
 
+    // Validate check fields if payment type is check
+    if (paymentType === "check") {
+      if (!checkNumber.trim()) {
+        setError(t("clientFinance.checkNumberRequired"));
+        return;
+      }
+      if (!checkDate) {
+        setError(t("clientFinance.checkDateRequired"));
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     try {
-      const response = await createDeposit({
+      const depositData = {
         party_id: clientId,
         amount: parseFloat(amount),
-        description: description.trim() || null
-      });
+        description: description.trim() || null,
+        type: paymentType
+      };
+
+      // Add check-related fields only if payment type is check
+      if (paymentType === "check") {
+        depositData.check_number = checkNumber.trim();
+        depositData.bank_name = bankName.trim() || null;
+        depositData.check_date = checkDate;
+      }
+
+      const response = await createDeposit(depositData);
 
       if (response.success) {
         onSuccess();
@@ -50,6 +76,10 @@ export default function AddDepositModal({ isOpen, onClose, clientId, clientName,
   const handleClose = () => {
     setAmount("");
     setDescription("");
+    setPaymentType("cash");
+    setCheckNumber("");
+    setBankName("");
+    setCheckDate("");
     setError("");
     onClose();
   };
@@ -81,6 +111,66 @@ export default function AddDepositModal({ isOpen, onClose, clientId, clientName,
             disabled={isSubmitting}
           />
         </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="paymentType">
+            {t("clientFinance.paymentType")} <span className="text-red-500">*</span>
+          </Label>
+          <select
+            id="paymentType"
+            value={paymentType}
+            onChange={(e) => setPaymentType(e.target.value)}
+            disabled={isSubmitting}
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option value="cash">{t("clientFinance.cash")}</option>
+            <option value="card">{t("clientFinance.card")}</option>
+            <option value="check">{t("clientFinance.check")}</option>
+          </select>
+        </div>
+
+        {paymentType === "check" && (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="checkNumber">
+                {t("clientFinance.checkNumber")} <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="checkNumber"
+                type="text"
+                value={checkNumber}
+                onChange={(e) => setCheckNumber(e.target.value)}
+                placeholder={t("clientFinance.checkNumber")}
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bankName">{t("clientFinance.bankName")}</Label>
+              <Input
+                id="bankName"
+                type="text"
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+                placeholder={t("clientFinance.bankName")}
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="checkDate">
+                {t("clientFinance.checkDate")} <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="checkDate"
+                type="date"
+                value={checkDate}
+                onChange={(e) => setCheckDate(e.target.value)}
+                disabled={isSubmitting}
+              />
+            </div>
+          </>
+        )}
 
         <div className="space-y-2">
           <Label htmlFor="description">{t("clientFinance.descriptionOptional")}</Label>

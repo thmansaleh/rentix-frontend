@@ -45,16 +45,16 @@ function EditTaskModal({
 
   // Define options internally
   const priorityOptions = [
-    { value: "high", label: "عالية", color: "bg-red-100 text-red-800" },
-    { value: "normal", label: "عادية", color: "bg-blue-100 text-blue-800" },
-    // { value: "low", label: "منخفضة", color: "bg-green-100 text-green-800" }
+    { value: "high", label: t('tasks.priorityHigh'), color: "bg-red-100 text-red-800" },
+    { value: "normal", label: t('tasks.priorityNormal'), color: "bg-blue-100 text-blue-800" },
+    // { value: "low", label: t('tasks.priorityLow'), color: "bg-green-100 text-green-800" }
   ]
 
   const statusOptions = [
-    { value: "pending", label: t('tasks.statusPending') || "في الانتظار", color: "bg-yellow-100 text-yellow-800" },
-    { value: "in_progress", label: t('tasks.statusInProgress') || "قيد التنفيذ", color: "bg-blue-100 text-blue-800" },
-    { value: "completed", label: t('tasks.statusCompleted') || "مكتملة", color: "bg-green-100 text-green-800" },
-    { value: "cancelled", label: t('tasks.statusCancel') || "ملغاة", color: "bg-red-100 text-red-800" }
+    { value: "pending", label: t('tasks.statusPending'), color: "bg-yellow-100 text-yellow-800" },
+    { value: "in_progress", label: t('tasks.statusInProgress'), color: "bg-blue-100 text-blue-800" },
+    { value: "completed", label: t('tasks.statusCompleted'), color: "bg-green-100 text-green-800" },
+    { value: "cancelled", label: t('tasks.statusCancel'), color: "bg-red-100 text-red-800" }
   ]
 
 

@@ -16,16 +16,18 @@ import { cn } from "@/lib/utils"
 import { createMemo } from "@/app/services/api/memos"
 import { toast } from "react-toastify"
 import RichTextEditor from "@/components/RichTextEditor"
-
-const MEMO_STATUSES = [
-  { value: "Draft", label: "مسودة" },
-  { value: "Approved", label: "معتمد" },
-  { value: "Pending Approval", label: "في انتظار الموافقة" },
-  { value: "Submitted to Court", label: "مقدم للمحكمة" },
-  { value: "Rejected", label: "مرفوض" }
-]
+import { useTranslations } from "@/hooks/useTranslations"
 
 export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
+  const { t } = useTranslations()
+
+  const MEMO_STATUSES = [
+    { value: "Draft", label: t('memos.statusDraft') },
+    { value: "Approved", label: t('memos.statusApproved') },
+    { value: "Pending Approval", label: t('memos.statusPendingApproval') },
+    { value: "Submitted to Court", label: t('memos.statusSubmittedToCourt') },
+    { value: "Rejected", label: t('memos.statusRejected') }
+  ]
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
@@ -41,7 +43,7 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
     
     // Validate required fields
     if (!formData.title || !formData.submission_date || !formData.status) {
-      toast.error("الرجاء ملء جميع الحقول المطلوبة")
+      toast.error(t('memos.fillAllRequired'))
       return
     }
 
@@ -61,12 +63,12 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
       
       // Check if response indicates failure (permission or other errors)
       if (response?.success === false) {
-        toast.error(response?.message || (language === 'ar' ? "فشل في إضافة المذكرة" : "Failed to add memo"));
+        toast.error(response?.message || t('memos.errorCreatingMemo'));
         return;
       }
       
       if (response.success) {
-        toast.success(language === 'ar' ? "تم إضافة المذكرة بنجاح" : "Memo added successfully");
+        toast.success(t('memos.memoCreatedSuccessfully'));
         
         // Call onSuccess to refresh the memos list
         if (onSuccess) {
@@ -79,8 +81,8 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
       // Check if it's a permission error (403)
       const isPermissionError = error?.response?.status === 403;
       const errorMessage = isPermissionError 
-        ? (error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإضافة مذكرة' : 'You do not have permission to add a memo'))
-        : (error?.response?.data?.message || error.message || (language === 'ar' ? "حدث خطأ أثناء إضافة المذكرة" : "Error adding memo"));
+        ? (error?.response?.data?.message || t('memos.errorCreatingMemo'))
+        : (error?.response?.data?.message || error.message || t('memos.errorCreatingMemo'));
       
       toast.error(errorMessage);
     } finally {
@@ -121,9 +123,9 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>إضافة مذكرة جديدة</DialogTitle>
+          <DialogTitle>{t('memos.addNewMemo')}</DialogTitle>
           <DialogDescription>
-            أدخل تفاصيل المذكرة
+            {t('memos.enterMemoDetails')}
           </DialogDescription>
         </DialogHeader>
 
@@ -132,13 +134,13 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
             {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title">
-                العنوان <span className="text-red-500">*</span>
+                {t('memos.memoTitle')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="أدخل عنوان المذكرة"
+                placeholder={t('memos.titlePlaceholder')}
                 required
                 disabled={isSubmitting}
               />
@@ -147,7 +149,7 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
             {/* Submission Date */}
             <div className="space-y-2">
               <Label>
-                تاريخ التقديم <span className="text-red-500">*</span>
+                {t('memos.submissionDate')} <span className="text-red-500">*</span>
               </Label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -164,7 +166,7 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
                     {formData.submission_date ? (
                       format(formData.submission_date, "PPP", { locale: ar })
                     ) : (
-                      <span>اختر التاريخ</span>
+                      <span>{t('memos.selectDate')}</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -183,7 +185,7 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
             {/* Status */}
             <div className="space-y-2">
               <Label>
-                الحالة <span className="text-red-500">*</span>
+                {t('memos.status')} <span className="text-red-500">*</span>
               </Label>
               <Select
                 value={formData.status}
@@ -191,7 +193,7 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
                 disabled={isSubmitting}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر الحالة" />
+                  <SelectValue placeholder={t('memos.selectStatus')} />
                 </SelectTrigger>
                 <SelectContent>
                   {MEMO_STATUSES.map((status) => (
@@ -205,23 +207,23 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">الوصف</Label>
+              <Label htmlFor="description">{t('memos.description')}</Label>
               <RichTextEditor
                 value={formData.description}
                 onChange={(html) => setFormData(prev => ({ ...prev, description: html }))}
-                placeholder="أدخل وصف المذكرة"
+                placeholder={t('memos.descriptionPlaceholder')}
                 disabled={isSubmitting}
               />
             </div>
 
             {/* Admin Note */}
             <div className="space-y-2">
-              <Label htmlFor="admin_note">ملاحظة الإدارة</Label>
+              <Label htmlFor="admin_note">{t('memos.adminNote')}</Label>
               <Textarea
                 id="admin_note"
                 value={formData.admin_note}
                 onChange={(e) => setFormData(prev => ({ ...prev, admin_note: e.target.value }))}
-                placeholder="أدخل ملاحظة الإدارة"
+                placeholder={t('memos.adminNotePlaceholder')}
                 rows={3}
                 disabled={isSubmitting}
               />
@@ -229,7 +231,7 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
 
             {/* File Upload */}
             <div className="space-y-2">
-              <Label>المرفقات</Label>
+              <Label>{t('memos.attachments')}</Label>
               <div className="border-2 border-dashed rounded-lg p-4">
                 <div className="flex flex-col items-center justify-center space-y-2">
                   <Upload className="h-8 w-8 text-muted-foreground" />
@@ -240,7 +242,7 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
                       isSubmitting && "cursor-not-allowed opacity-50"
                     )}
                   >
-                    انقر للتحميل
+                    {t('memos.clickToUpload')}
                   </Label>
                   <Input
                     id="file-upload"
@@ -251,14 +253,14 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
                     disabled={isSubmitting}
                   />
                   <p className="text-xs text-muted-foreground">
-                    PDF, Word, Image (حتى 10MB)
+                    {t('memos.supportedFormats')}
                   </p>
                 </div>
 
                 {/* Display selected files */}
                 {formData.files.length > 0 && (
                   <div className="mt-4 space-y-2">
-                    <Label className="text-sm font-medium">الملفات المحددة:</Label>
+                    <Label className="text-sm font-medium">{t('memos.selectedFiles')}:</Label>
                     <div className="space-y-2">
                       {formData.files.map((file, index) => (
                         <div
@@ -287,16 +289,16 @@ export default function AddMemoModal({ isOpen, onClose, caseId, onSuccess }) {
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
-              إلغاء
+              {t('memos.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  جاري الحفظ...
+                  {t('memos.saving')}
                 </>
               ) : (
-                "حفظ المذكرة"
+                t('memos.saveMemo')
               )}
             </Button>
           </DialogFooter>

@@ -35,7 +35,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div className="fixed inset-0 z-[20] flex items-center justify-center">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -43,19 +43,19 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-2xl mx-4 h-[90vh] flex flex-col bg-white rounded-lg shadow-2xl">
+      <div className="relative bg-white w-full max-w-2xl mx-4 h-[90vh] flex flex-col  rounded-lg shadow-2xl">
         {/* Header */}
-        <div className={`pb-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg p-6 ${isRtl ? "text-right" : "text-left"}`}>
+        <div className={`pb-4 border-b bg-gradient-to-r  rounded-t-lg p-6 ${isRtl ? "text-right" : "text-left"}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 rounded-lg">
-                <Calendar className="h-5 w-5 text-blue-600" />
+                <Calendar className="h-5 w-5 " />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold ">
                   {isRtl ? "إضافة جلسة" : "Add Session"}
                 </h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm  mt-1">
                   {isRtl 
                     ? "أدخل معلومات الجلسة الجديدة أدناه"
                     : "Enter the new session information below"}
@@ -67,7 +67,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0 rounded-full hover:bg-gray-200"
+              className="h-8 w-8 p-0 rounded-full "
             >
               <CircleX className="h-4 w-4" />
             </Button>
@@ -107,7 +107,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
           </div>
 
           {/* Fixed Footer */}
-          <div className="border-t border-gray-100 p-6 bg-white rounded-b-lg">
+          <div className="border-t  rounded-b-lg">
             <div className="flex justify-end gap-3">
               <Button
                 type="button"
@@ -122,7 +122,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="flex items-center gap-2 px-6 bg-blue-600 hover:bg-blue-700"
+                // className="flex items-center gap-2 px-6 "
               >
                 <Save className="h-4 w-4" />
                 {isUploading

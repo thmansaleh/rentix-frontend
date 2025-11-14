@@ -72,7 +72,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
   const validationSchema = Yup.object({
     employee_id: !isEditMode ? Yup.number().required(t('employeeRequired')) : Yup.number().notRequired(),
     amount: Yup.number().min(0.01, t('amountMinError')).required(t('amountRequired')),
-    bank_account_id: !isEditMode ? Yup.number().required(t('bankAccountRequired', { scope: 'common' }) || 'Bank account is required') : Yup.number().notRequired(),
+    bank_account_id: Yup.number().optional(),
     description: Yup.string().optional()
   });
 
@@ -106,7 +106,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           employee_id: parseInt(values.employee_id),
           amount: parseFloat(values.amount),
           type: 'credit', // Always credit by default
-          ...(!isEditMode && { bank_account_id: parseInt(values.bank_account_id) }),
+          ...(!isEditMode && values.bank_account_id && { bank_account_id: parseInt(values.bank_account_id) }),
           description: values.description || null,
           attachments: uploadedAttachments
         };
@@ -213,7 +213,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           {/* Bank Account Selection - Only show in Add mode */}
           {!isEditMode && (
             <div className="space-y-2">
-              <Label htmlFor="bank_account_id">{t('bankAccount')} *</Label>
+              <Label htmlFor="bank_account_id">{t('bankAccount')}</Label>
               <Select 
                 value={formik.values.bank_account_id} 
                 onValueChange={(value) => formik.setFieldValue('bank_account_id', value)}

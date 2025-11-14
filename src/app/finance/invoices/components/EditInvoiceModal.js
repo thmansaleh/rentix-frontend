@@ -147,11 +147,6 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
       return;
     }
 
-    if (!formData.bank_account_id) {
-      toast.error(t('pleaseSelectBank'));
-      return;
-    }
-
     if (items.length === 0 || items.every(item => !item.description || !item.amount)) {
       toast.error(t('pleaseAddOneItem'));
       return;
@@ -289,7 +284,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
 
             {/* Bank Account Selection */}
             <div className="space-y-2">
-              <Label htmlFor="bank_account_id">{t('bankAccountRequired')}</Label>
+              <Label htmlFor="bank_account_id">{t('bankAccount')}</Label>
               <Select
                 value={formData.bank_account_id || undefined}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, bank_account_id: value }))}
@@ -424,7 +419,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
               <div className="border-t pt-2 mt-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-lg">{t('total')}</span>
-                  <span className="text-2xl font-bold text-blue-600">
+                  <span className="text-2xl font-bold ">
                     {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {formData.currency}
                   </span>
                 </div>

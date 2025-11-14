@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,17 +16,18 @@ import { toast } from 'react-toastify';
 
 const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
   const { isRTL } = useLanguage();
+  const t = useTranslations('EditBankAccount');
   const [branches, setBranches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
 
   const validationSchema = Yup.object({
-    bank_name: Yup.string().required('اسم البنك مطلوب'),
-    account_name: Yup.string().required('اسم الحساب مطلوب'),
-    account_number: Yup.string().required('رقم الحساب مطلوب'),
+    bank_name: Yup.string().required(t('bankNameRequired')),
+    account_name: Yup.string().required(t('accountNameRequired')),
+    account_number: Yup.string().required(t('accountNumberRequired')),
     iban: Yup.string().optional(),
     branch_id: Yup.number().nullable(),
-    current_balance: Yup.number().min(0, 'الرصيد لا يمكن أن يكون سالباً').default(0),
+    current_balance: Yup.number().min(0, t('balanceNegativeError')).default(0),
     status: Yup.string().oneOf(['active', 'inactive']).default('active')
   });
 
@@ -52,15 +54,15 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
         const response = await updateBankAccount(accountId, accountData);
         
         if (response.success) {
-          toast.success('تم تحديث الحساب البنكي بنجاح');
+          toast.success(t('accountUpdatedSuccess'));
           onSuccess();
           onClose();
         } else {
-          toast.error(response.message || 'حدث خطأ في تحديث الحساب');
+          toast.error(response.message || t('errorUpdatingAccount'));
         }
       } catch (error) {
 
-        toast.error('حدث خطأ في تحديث الحساب البنكي');
+        toast.error(t('errorUpdatingAccountGeneric'));
       } finally {
         setIsLoading(false);
       }
@@ -106,11 +108,11 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
             status: accountData.status || 'active'
           });
         } else {
-          toast.error('حدث خطأ في تحميل بيانات الحساب');
+          toast.error(t('errorLoadingAccount'));
         }
       } catch (error) {
 
-        toast.error('حدث خطأ في تحميل بيانات الحساب');
+        toast.error(t('errorLoadingAccount'));
       } finally {
         setIsLoadingData(false);
       }
@@ -130,7 +132,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
         <DialogContent className={`max-w-md ${isRTL ? 'rtl' : 'ltr'}`}>
           <div className="flex items-center justify-center p-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="mr-3">جاري تحميل البيانات...</span>
+            <span className="mr-3">{t('loadingData')}</span>
           </div>
         </DialogContent>
       </Dialog>
@@ -142,14 +144,14 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
       <DialogContent className={`max-w-md ${isRTL ? 'rtl' : 'ltr'}`}>
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            تعديل الحساب البنكي
+            {t('title')}
           </DialogTitle>
         </DialogHeader>
         
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           {/* Bank Name */}
           <div className="space-y-2">
-            <Label htmlFor="bank_name">اسم البنك *</Label>
+            <Label htmlFor="bank_name">{t('bankName')} *</Label>
             <Input
               id="bank_name"
               name="bank_name"
@@ -157,7 +159,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.bank_name && formik.errors.bank_name ? 'border-red-500' : ''}
-              placeholder="مثال: بنك الإمارات دبي الوطني"
+              placeholder={t('bankNamePlaceholder')}
             />
             {formik.touched.bank_name && formik.errors.bank_name && (
               <p className="text-sm text-red-500">{formik.errors.bank_name}</p>
@@ -166,7 +168,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
 
           {/* Account Name */}
           <div className="space-y-2">
-            <Label htmlFor="account_name">اسم الحساب *</Label>
+            <Label htmlFor="account_name">{t('accountName')} *</Label>
             <Input
               id="account_name"
               name="account_name"
@@ -174,7 +176,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.account_name && formik.errors.account_name ? 'border-red-500' : ''}
-              placeholder="مثال: حساب الشركة الرئيسي"
+              placeholder={t('accountNamePlaceholder')}
             />
             {formik.touched.account_name && formik.errors.account_name && (
               <p className="text-sm text-red-500">{formik.errors.account_name}</p>
@@ -183,7 +185,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
 
           {/* Account Number */}
           <div className="space-y-2">
-            <Label htmlFor="account_number">رقم الحساب *</Label>
+            <Label htmlFor="account_number">{t('accountNumber')} *</Label>
             <Input
               id="account_number"
               name="account_number"
@@ -191,7 +193,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.account_number && formik.errors.account_number ? 'border-red-500' : ''}
-              placeholder="مثال: 1234567890"
+              placeholder={t('accountNumberPlaceholder')}
             />
             {formik.touched.account_number && formik.errors.account_number && (
               <p className="text-sm text-red-500">{formik.errors.account_number}</p>
@@ -200,29 +202,29 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
 
           {/* IBAN */}
           <div className="space-y-2">
-            <Label htmlFor="iban">رقم IBAN</Label>
+            <Label htmlFor="iban">{t('iban')}</Label>
             <Input
               id="iban"
               name="iban"
               value={formik.values.iban}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              placeholder="مثال: AE070331234567890123456"
+              placeholder={t('ibanPlaceholder')}
             />
           </div>
 
           {/* Branch */}
           <div className="space-y-2">
-            <Label htmlFor="branch_id">الفرع</Label>
+            <Label htmlFor="branch_id">{t('branch')}</Label>
             <Select 
               value={formik.values.branch_id || "none"} 
               onValueChange={(value) => formik.setFieldValue('branch_id', value === "none" ? "" : value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر الفرع" />
+                <SelectValue placeholder={t('selectBranch')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">بدون فرع</SelectItem>
+                <SelectItem value="none">{t('noBranch')}</SelectItem>
                 {branches.map((branch) => (
                   <SelectItem key={branch.id} value={branch.id.toString()}>
                     {isRTL ? branch.name_ar : branch.name_en}
@@ -234,7 +236,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
 
           {/* Current Balance */}
           <div className="space-y-2">
-            <Label htmlFor="current_balance">الرصيد الحالي</Label>
+            <Label htmlFor="current_balance">{t('currentBalance')}</Label>
             <Input
               id="current_balance"
               name="current_balance"
@@ -244,7 +246,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={formik.touched.current_balance && formik.errors.current_balance ? 'border-red-500' : ''}
-              placeholder="0.00"
+              placeholder={t('balancePlaceholder')}
             />
             {formik.touched.current_balance && formik.errors.current_balance && (
               <p className="text-sm text-red-500">{formik.errors.current_balance}</p>
@@ -253,17 +255,17 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
 
           {/* Status */}
           <div className="space-y-2">
-            <Label htmlFor="status">الحالة</Label>
+            <Label htmlFor="status">{t('status')}</Label>
             <Select 
               value={formik.values.status} 
               onValueChange={(value) => formik.setFieldValue('status', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر الحالة" />
+                <SelectValue placeholder={t('selectStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">نشط</SelectItem>
-                <SelectItem value="inactive">غير نشط</SelectItem>
+                <SelectItem value="active">{t('active')}</SelectItem>
+                <SelectItem value="inactive">{t('inactive')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -276,14 +278,14 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
               onClick={handleClose}
               className="flex-1"
             >
-              إلغاء
+              {t('cancel')}
             </Button>
             <Button 
               type="submit" 
               disabled={isLoading || !formik.isValid}
               className="flex-1"
             >
-              {isLoading ? 'جاري التحديث...' : 'تحديث'}
+              {isLoading ? t('saving') : t('save')}
             </Button>
           </div>
         </form>

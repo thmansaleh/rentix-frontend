@@ -138,11 +138,6 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
       return;
     }
 
-    if (!formData.bank_account_id) {
-      toast.error(t('pleaseSelectBank'));
-      return;
-    }
-
     if (items.length === 0 || items.every(item => !item.description || !item.amount)) {
       toast.error(t('pleaseAddOneItem'));
       return;
@@ -291,7 +286,7 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
 
             {/* Bank Account Selection */}
             <div className="space-y-2">
-              <Label htmlFor="bank_account_id">{t('bankAccountRequired')}</Label>
+              <Label htmlFor="bank_account_id">{t('bankAccount')}</Label>
               <Select
                 value={formData.bank_account_id || undefined}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, bank_account_id: value }))}

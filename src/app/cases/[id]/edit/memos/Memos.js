@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Loader2, Plus, Pen, Trash2 } from "lucide-react"
+import { useTranslations } from "@/hooks/useTranslations"
 import { useCaseMemos } from "./hooks/useCaseMemos"
 import AddMemoModal from "./AddMemoModal"
 import EditMemoModal from "./EditMemoModal"
@@ -27,19 +28,7 @@ const formatDate = (dateString) => {
   }
 }
 
-// Helper function to get status badge
-const getStatusBadge = (status) => {
-  const statusMap = {
-    "Draft": { className: "bg-gray-100 text-gray-800", label: "مسودة" },
-    "Approved": { className: "bg-green-100 text-green-800", label: "معتمد" },
-    "Pending Approval": { className: "bg-yellow-100 text-yellow-800", label: "في انتظار الموافقة" },
-    "Submitted to Court": { className: "bg-blue-100 text-blue-800", label: "مقدم للمحكمة" },
-    "Rejected": { className: "bg-red-100 text-red-800", label: "مرفوض" }
-  }
-  
-  const statusInfo = statusMap[status] || { className: "bg-gray-100 text-gray-800", label: status }
-  return <Badge className={statusInfo.className}>{statusInfo.label}</Badge>
-}
+// Helper function to get status badge (moved inside component to access translations)
 
 // Helper function to render approval status
 const getApprovalIcon = (isApproved) => {
@@ -47,6 +36,7 @@ const getApprovalIcon = (isApproved) => {
 }
 
 function Memos({ caseId }) {
+  const { t } = useTranslations()
   const { memos, isLoading, error, mutate } = useCaseMemos(caseId)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -56,6 +46,20 @@ function Memos({ caseId }) {
   
   // Get employee role from Redux
   const employeeRole = useSelector((state) => state.auth.roleEn)
+
+  // Helper function to get status badge with translations
+  const getStatusBadge = (status) => {
+    const statusMap = {
+      "Draft": { className: "bg-gray-100 text-gray-800", label: t('memos.statusDraft') },
+      "Approved": { className: "bg-green-100 text-green-800", label: t('memos.statusApproved') },
+      "Pending Approval": { className: "bg-yellow-100 text-yellow-800", label: t('memos.statusPendingApproval') },
+      "Submitted to Court": { className: "bg-blue-100 text-blue-800", label: t('memos.statusSubmittedToCourt') },
+      "Rejected": { className: "bg-red-100 text-red-800", label: t('memos.statusRejected') }
+    }
+    
+    const statusInfo = statusMap[status] || { className: "bg-gray-100 text-gray-800", label: status }
+    return <Badge className={statusInfo.className}>{statusInfo.label}</Badge>
+  }
 
   const handleMemoAdded = () => {
     // Refresh the memos list after successful addition
@@ -105,7 +109,7 @@ function Memos({ caseId }) {
   if (error) {
     return (
       <div className="text-center py-8 text-red-500">
-        حدث خطأ أثناء تحميل المذكرات
+        {t('memos.errorLoadingMemos')}
       </div>
     )
   }
@@ -115,33 +119,33 @@ function Memos({ caseId }) {
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>المذكرات</CardTitle>
+            <CardTitle>{t('memos.title')}</CardTitle>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              إضافة مذكرة
+              {t('memos.addMemo')}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {memos.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              لا توجد مذكرات
+              {t('memos.noMemos')}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-center">العنوان</TableHead>
-                    <TableHead className="text-center">تاريخ التقديم</TableHead>
-                    <TableHead className="text-center">الحالة</TableHead>
-                    <TableHead className="text-center">موافقة المحامي</TableHead>
-                    <TableHead className="text-center">موافقة السكرتير</TableHead>
-                    <TableHead className="text-center">موافقة المستشار</TableHead>
-                    <TableHead className="text-center">موافقة المدير</TableHead>
-                    <TableHead className="text-center">تم الإنشاء بواسطة</TableHead>
-                    <TableHead className="text-center">تاريخ الإنشاء</TableHead>
-                    <TableHead className="text-center">الإجراءات</TableHead>
+                    <TableHead className="text-center">{t('memos.memoTitle')}</TableHead>
+                    <TableHead className="text-center">{t('memos.submissionDate')}</TableHead>
+                    <TableHead className="text-center">{t('memos.status')}</TableHead>
+                    <TableHead className="text-center">{t('memos.lawyerApproval')}</TableHead>
+                    <TableHead className="text-center">{t('memos.secretaryApproval')}</TableHead>
+                    <TableHead className="text-center">{t('memos.consultantApproval')}</TableHead>
+                    <TableHead className="text-center">{t('memos.adminApproval')}</TableHead>
+                    <TableHead className="text-center">{t('memos.createdBy')}</TableHead>
+                    <TableHead className="text-center">{t('memos.createdAt')}</TableHead>
+                    <TableHead className="text-center">{t('memos.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -189,7 +193,7 @@ function Memos({ caseId }) {
                             size="sm"
                             onClick={() => handleEditClick(memo.id)}
                             className="h-8 w-8 p-0"
-                            title="تعديل"
+                            title={t('memos.edit')}
                           >
                             <Pen className="h-4 w-4" />
                           </Button>
@@ -198,7 +202,7 @@ function Memos({ caseId }) {
                             size="sm"
                             onClick={() => handleDeleteClick(memo.id, memo.title)}
                             className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            title="حذف"
+                            title={t('memos.delete')}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

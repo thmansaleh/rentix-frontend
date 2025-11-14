@@ -102,8 +102,8 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4 bg-cover bg-center bg-no-repeat bg-fixed w-full" style={{ backgroundImage: "url('/background.jpg')", backgroundSize: 'cover' }} dir="rtl">
-      <div className="w-full max-w-md mx-auto">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat w-full" style={{ backgroundImage: "url('/background.jpg')", backgroundSize: 'cover', backgroundAttachment: 'scroll' }} dir="rtl">
+      <div className="w-full max-w-md">
        
 
         {/* Login Card */}

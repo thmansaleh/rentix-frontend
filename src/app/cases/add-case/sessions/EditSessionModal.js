@@ -317,7 +317,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
             {/* Has Ruling Switch */}
             <div className="flex items-center justify-between space-x-2 space-x-reverse p-3 border rounded-lg">
               <Label htmlFor="edit-hasRuling" className="cursor-pointer">
-                حكم صادر
+                {t('sessions.hasRuling')}
               </Label>
               <Switch
                 id="edit-hasRuling"
@@ -330,10 +330,10 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
             {formData.hasRuling && (
               <>
                 <div className="space-y-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <Label htmlFor="edit-ruling">منطوق الحكم</Label>
+                  <Label htmlFor="edit-ruling">{t('sessions.ruling')}</Label>
                   <Textarea
                     id="edit-ruling"
-                    placeholder="أدخل منطوق الحكم"
+                    placeholder={t('sessions.rulingPlaceholder')}
                     value={formData.ruling}
                     onChange={(e) => handleInputChange("ruling", e.target.value)}
                     rows={3}
@@ -343,7 +343,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
 
                 {/* Ruling Date */}
                 <div className="space-y-2">
-                  <Label htmlFor="edit-rulingDate">تاريخ صدور الحكم</Label>
+                  <Label htmlFor="edit-rulingDate">{t('sessions.rulingDate')}</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button type="button"
@@ -357,7 +357,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
                         {formData.rulingDate ? (
                           format(new Date(formData.rulingDate), "PPP", { locale: ar })
                         ) : (
-                          <span>اختر تاريخ صدور الحكم</span>
+                          <span>{t('sessions.selectRulingDate')}</span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -375,7 +375,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
                 {/* Legal Period Selection */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <Label htmlFor="edit-legalPeriod">المدة القانونية</Label>
+                    <Label htmlFor="edit-legalPeriod">{t('sessions.legalPeriod')}</Label>
                     <Button 
                       type="button" 
                       variant="outline" 
@@ -383,7 +383,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
                       onClick={handleAddLegalPeriod}
                     >
                       <Plus className="h-4 w-4 mr-1" />
-                      إضافة مدة جديدة
+                      {t('sessions.addNewPeriod')}
                     </Button>
                   </div>
                   <Select 
@@ -391,7 +391,7 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
                     onValueChange={(value) => handleInputChange("legalPeriodId", value)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="اختر المدة القانونية" />
+                      <SelectValue placeholder={t('sessions.selectLegalPeriod')} />
                     </SelectTrigger>
                     <SelectContent>
                       {legalPeriods.map((period) => (
@@ -399,11 +399,11 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
                           <div className="flex flex-col">
                             <span className="font-medium">{period.name}</span>
                             <span className="text-xs text-muted-foreground">
-                              {period.objection_days && `التظلم: ${period.objection_days} يوم`}
+                              {period.objection_days && `${t('sessions.objectionLabel')}: ${period.objection_days} ${t('sessions.daysLabel')}`}
                               {period.objection_days && (period.appeal_days || period.cassation_days) && ' - '}
-                              {period.appeal_days && `الاستئناف: ${period.appeal_days} يوم`}
+                              {period.appeal_days && `${t('sessions.appealLabel')}: ${period.appeal_days} ${t('sessions.daysLabel')}`}
                               {period.appeal_days && period.cassation_days && ' - '}
-                              {period.cassation_days && `الطعن: ${period.cassation_days} يوم`}
+                              {period.cassation_days && `${t('sessions.cassationLabel')}: ${period.cassation_days} ${t('sessions.daysLabel')}`}
                             </span>
                           </div>
                         </SelectItem>
@@ -415,13 +415,13 @@ function EditSessionModal({ open, onOpenChange, onUpdate, session, t }) {
                   {selectedPeriod && (
                     <div className="text-sm text-muted-foreground bg-gray-50 p-2 rounded border">
                       {selectedPeriod.objection_days && (
-                        <div>التظلم: {selectedPeriod.objection_days} يوم</div>
+                        <div>{t('sessions.objectionLabel')}: {selectedPeriod.objection_days} {t('sessions.daysLabel')}</div>
                       )}
                       {selectedPeriod.appeal_days && (
-                        <div>الاستئناف: {selectedPeriod.appeal_days} يوم</div>
+                        <div>{t('sessions.appealLabel')}: {selectedPeriod.appeal_days} {t('sessions.daysLabel')}</div>
                       )}
                       {selectedPeriod.cassation_days && (
-                        <div>الطعن: {selectedPeriod.cassation_days} يوم</div>
+                        <div>{t('sessions.cassationLabel')}: {selectedPeriod.cassation_days} {t('sessions.daysLabel')}</div>
                       )}
                     </div>
                   )}

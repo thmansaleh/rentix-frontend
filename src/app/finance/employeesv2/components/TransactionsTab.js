@@ -19,6 +19,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 
 const TransactionsTab = () => {
   const t = useTranslations('employeeFinance.transactions');
+  const tCommon = useTranslations('common');
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showPrintModal, setShowPrintModal] = useState(false);
@@ -385,13 +386,13 @@ const TransactionsTab = () => {
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleDelete(transaction.id)}
                                   className="bg-red-600 hover:bg-red-700"
                                   disabled={deleteLoading}
                                 >
-                                  {deleteLoading ? 'جاري الحذف...' : 'حذف'}
+                                  {deleteLoading ? tCommon('deleting') : tCommon('delete')}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>

@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
 import { TextStyle } from '@tiptap/extension-text-style'
+import { FontSize } from 'tiptap-extension-font-size'
 import { Color } from '@tiptap/extension-color'
 import '@/styles/editor.css'
 import { 
@@ -19,13 +20,14 @@ import {
   AlignJustify,
   Undo,
   Redo,
-  Heading1,
-  Heading2
+  Type,
+  Printer,
+  Download
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-const MenuBar = ({ editor }) => {
+const MenuBar = ({ editor, onPrint, onDownload }) => {
   if (!editor) {
     return null
   }
@@ -34,6 +36,30 @@ const MenuBar = ({ editor }) => {
 
   return (
     <div className="border-b border-gray-200 bg-gray-50 p-2 flex flex-wrap gap-1 rounded-t-md">
+      {/* Print & Download */}
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onPrint}
+        className={buttonClass}
+        title="طباعة"
+      >
+        <Printer className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onDownload}
+        className={buttonClass}
+        title="تحميل"
+      >
+        <Download className="h-4 w-4" />
+      </Button>
+
+      <div className="w-px h-8 bg-gray-300 mx-1" />
+
       {/* Undo/Redo */}
       <Button
         type="button"
@@ -103,33 +129,24 @@ const MenuBar = ({ editor }) => {
 
       <div className="w-px h-8 bg-gray-300 mx-1" />
 
-      {/* Headings */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={cn(
-          buttonClass,
-          editor.isActive('heading', { level: 1 }) && 'bg-gray-200'
-        )}
-        title="عنوان 1"
+      {/* Font Size */}
+      <select
+        onChange={(e) => editor.chain().focus().setFontSize(e.target.value).run()}
+        value={editor.getAttributes('textStyle').fontSize || '16px'}
+        className="h-8 px-2 text-sm border border-gray-300 rounded bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        title="حجم الخط"
       >
-        <Heading1 className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={cn(
-          buttonClass,
-          editor.isActive('heading', { level: 2 }) && 'bg-gray-200'
-        )}
-        title="عنوان 2"
-      >
-        <Heading2 className="h-4 w-4" />
-      </Button>
+        <option value="12px">12</option>
+        <option value="14px">14</option>
+        <option value="16px">16</option>
+        <option value="18px">18</option>
+        <option value="20px">20</option>
+        <option value="24px">24</option>
+        <option value="28px">28</option>
+        <option value="32px">32</option>
+        <option value="36px">36</option>
+        <option value="48px">48</option>
+      </select>
 
       <div className="w-px h-8 bg-gray-300 mx-1" />
 
@@ -226,6 +243,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
       StarterKit,
       Underline,
       TextStyle,
+      FontSize,
       Color,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -250,12 +268,135 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
     editor.setEditable(!disabled)
   }
 
+  // Print function
+  const handlePrint = () => {
+    const printWindow = window.open('', '', 'width=800,height=600')
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html dir="rtl">
+      <head>
+        <title>طباعة</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+          }
+          @media print {
+            body { margin: 0; }
+          }
+        </style>
+      </head>
+      <body>
+        ${editor.getHTML()}
+      </body>
+      </html>
+    `)
+    printWindow.document.close()
+    printWindow.focus()
+    setTimeout(() => {
+      printWindow.print()
+      printWindow.close()
+    }, 250)
+  }
+
+  // Download function - directly downloads as PDF
+  const handleDownload = async () => {
+    const content = editor.getHTML()
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-')
+    
+    // Create a container for the content
+    const container = document.createElement('div')
+    container.style.direction = 'rtl'
+    container.style.textAlign = 'right'
+    container.style.fontFamily = 'Arial, sans-serif'
+    container.style.padding = '20px'
+    container.innerHTML = content
+    
+    // Add container to body temporarily (required for html2canvas)
+    container.style.position = 'absolute'
+    container.style.left = '-9999px'
+    document.body.appendChild(container)
+    
+    try {
+      // Check if html2canvas is available
+      if (typeof window.html2canvas !== 'undefined' && typeof window.jspdf !== 'undefined') {
+        const canvas = await window.html2canvas(container, {
+          scale: 2,
+          useCORS: true,
+          logging: false
+        })
+        
+        const imgData = canvas.toDataURL('image/png')
+        const pdf = new window.jspdf.jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        })
+        
+        const imgWidth = 210
+        const pageHeight = 297
+        const imgHeight = (canvas.height * imgWidth) / canvas.width
+        let heightLeft = imgHeight
+        let position = 0
+        
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+        heightLeft -= pageHeight
+        
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight
+          pdf.addPage()
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+          heightLeft -= pageHeight
+        }
+        
+        pdf.save(`document-${timestamp}.pdf`)
+      } else {
+        // Fallback: Download as HTML if libraries not available
+        console.warn('PDF libraries not loaded, falling back to HTML download')
+        const blob = new Blob([`
+          <!DOCTYPE html>
+          <html dir="rtl">
+          <head>
+            <meta charset="UTF-8">
+            <title>المستند</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+                direction: rtl;
+                text-align: right;
+              }
+            </style>
+          </head>
+          <body>
+            ${content}
+          </body>
+          </html>
+        `], { type: 'text/html' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `document-${timestamp}.html`
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      alert('حدث خطأ أثناء إنشاء PDF. الرجاء المحاولة مرة أخرى.')
+    } finally {
+      // Remove temporary container
+      document.body.removeChild(container)
+    }
+  }
+
   return (
     <div className={cn(
       "border rounded-md overflow-hidden bg-white",
       disabled && "opacity-60 cursor-not-allowed"
     )}>
-      <MenuBar editor={editor} />
+      <MenuBar editor={editor} onPrint={handlePrint} onDownload={handleDownload} />
       <EditorContent 
         editor={editor} 
         className={cn(
