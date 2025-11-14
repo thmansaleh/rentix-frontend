@@ -13,7 +13,6 @@ import { updateBankAccountLog } from '@/app/services/api/bankAccounts';
 
 function EditLogModal({ isOpen, onClose, log, onSuccess }) {
   const t = useTranslations('BankAccountLogs');
-  if (!isOpen) return null;
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     type: '',
@@ -23,6 +22,9 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
   const [existingAttachments, setExistingAttachments] = useState([]);
   const [newAttachments, setNewAttachments] = useState([]);
   const [attachmentsToDelete, setAttachmentsToDelete] = useState([]);
+
+  // Early return after all hooks are declared
+  if (!isOpen || !log) return null;
 
   useEffect(() => {
     if (log && isOpen) {
@@ -93,8 +95,6 @@ function EditLogModal({ isOpen, onClose, log, onSuccess }) {
       setSubmitting(false);
     }
   };
-
-  if (!log) return null;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50" onClick={onClose}>
