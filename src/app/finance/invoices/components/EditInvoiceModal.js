@@ -282,7 +282,7 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
               </Select>
             </div>
 
-            {/* Bank Account Selection */}
+            {/* Bank Account Selection - Optional */}
             <div className="space-y-2">
               <Label htmlFor="bank_account_id">{t('bankAccount')}</Label>
               <Select

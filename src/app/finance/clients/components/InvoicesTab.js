@@ -83,7 +83,7 @@ export default function InvoicesTab({ clientId, clientName }) {
       </div>
 
       {invoicesList.length === 0 ? (
-        <div className="border rounded-lg p-8 text-center text-gray-500">
+        <div className="border rounded-lg p-8 text-center ">
           {t("invoices.noInvoices")}
         </div>
       ) : (
@@ -153,7 +153,7 @@ export default function InvoicesTab({ clientId, clientName }) {
                 <TableRow key={invoice.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-gray-500" />
+                      <FileText className="h-4 w-4 " />
                       {invoice.invoice_number || "-"}
                     </div>
                   </TableCell>
@@ -165,7 +165,7 @@ export default function InvoicesTab({ clientId, clientName }) {
                     {invoice.bank_name ? (
                       <div className="text-sm">
                         <div>{invoice.bank_name}</div>
-                        <div className="text-gray-500">{invoice.account_number}</div>
+                        <div className="">{invoice.account_number}</div>
                       </div>
                     ) : "-"}
                   </TableCell>

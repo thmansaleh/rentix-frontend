@@ -210,10 +210,12 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
             )}
           </div>
 
-          {/* Bank Account Selection - Only show in Add mode */}
+          {/* Bank Account Selection - Only show in Add mode - Optional */}
           {!isEditMode && (
             <div className="space-y-2">
-              <Label htmlFor="bank_account_id">{t('bankAccount')}</Label>
+              <Label htmlFor="bank_account_id">
+                {t('bankAccount')} <span className="text-gray-400 text-sm">({t('optional')})</span>
+              </Label>
               <Select 
                 value={formik.values.bank_account_id} 
                 onValueChange={(value) => formik.setFieldValue('bank_account_id', value)}

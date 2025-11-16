@@ -610,9 +610,9 @@ export default function PrintDepositReceiptModal({ isOpen, onClose, deposit, cli
           {/* Header Section */}
           <div className="header-section">
             <div className="company-info">
-              <div className="company-name">مكتب محمد بني هاشم للمحاماة والاستشارات القانونية</div>
+              <div className="company-name">مكتب Lexcora للمحاماة والاستشارات القانونية</div>
               <div style={{ fontSize: '12px', marginBottom: '15px' }}>
-                Mohammed Bani Hashem Law Firm & Legal Consultations
+                Lexcora Law office & Legal Consultations
               </div>
               <div className="receipt-title">
                 سند استلام / RECEIPT VOUCHER

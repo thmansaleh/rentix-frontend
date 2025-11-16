@@ -284,9 +284,9 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
               </Select>
             </div>
 
-            {/* Bank Account Selection */}
+            {/* Bank Account Selection - Optional */}
             <div className="space-y-2">
-              <Label htmlFor="bank_account_id">{t('bankAccount')}</Label>
+              <Label htmlFor="bank_account_id">{t('bankAccount')} </Label>
               <Select
                 value={formData.bank_account_id || undefined}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, bank_account_id: value }))}

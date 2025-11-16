@@ -8,7 +8,7 @@ export default function PageHeader({ title, description, icon: Icon = Users }) {
       </div>
       <div>
         <h1 className="text-2xl font-bold">{title}</h1>
-        <p className="text-sm text-gray-500">{description}</p>
+        <p className="text-sm ">{description}</p>
       </div>
     </div>
   );

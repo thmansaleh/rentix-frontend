@@ -18,28 +18,28 @@ export default function ClientsTable({ clients, onViewClient, translations: t })
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50/50">
+                <TableRow className="">
                   <TableHead>
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-500" />
+                      <User className="h-4 w-4 " />
                       {t("name")}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-gray-500" />
+                      <DollarSign className="h-4 w-4 " />
                       {t("balance")}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-gray-500" />
+                      <Phone className="h-4 w-4 " />
                       {t("phone")}
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center gap-2">
-                      <Flag className="h-4 w-4 text-gray-500" />
+                      <Flag className="h-4 w-4 " />
                       {t("nationality")}
                     </div>
                   </TableHead>
@@ -50,8 +50,8 @@ export default function ClientsTable({ clients, onViewClient, translations: t })
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12">
                     <div className="flex flex-col items-center gap-2">
-                      <Users className="h-12 w-12 text-gray-300" />
-                      <p className="text-gray-500">{t("noData")}</p>
+                      <Users className="h-12 w-12 " />
+                      <p className="">{t("noData")}</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -69,28 +69,28 @@ export default function ClientsTable({ clients, onViewClient, translations: t })
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50/50">
+              <TableRow className="">
                 <TableHead>
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-gray-500" />
+                    <User className="h-4 w-4 " />
                     {t("name")}
                   </div>
                 </TableHead>
                 <TableHead>
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-500" />
+                    <DollarSign className="h-4 w-4 " />
                     {t("balance")}
                   </div>
                 </TableHead>
                 <TableHead>
                   <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-gray-500" />
+                    <Phone className="h-4 w-4 " />
                     {t("phone")}
                   </div>
                 </TableHead>
                 <TableHead>
                   <div className="flex items-center gap-2">
-                    <Flag className="h-4 w-4 text-gray-500" />
+                    <Flag className="h-4 w-4 " />
                     {t("nationality")}
                   </div>
                 </TableHead>
@@ -121,8 +121,8 @@ export default function ClientsTable({ clients, onViewClient, translations: t })
                       {client.balance || 0}
                     </span>
                   </TableCell>
-                  <TableCell className="text-gray-600">{client.phone || "-"}</TableCell>
-                  <TableCell className="text-gray-600">{client.nationality || "-"}</TableCell>
+                  <TableCell className="">{client.phone || "-"}</TableCell>
+                  <TableCell className="">{client.nationality || "-"}</TableCell>
                   <TableCell className="text-center">
                     <Button
                       variant="outline"

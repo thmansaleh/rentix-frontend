@@ -185,7 +185,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
         <>
           <CustomModalBody>
             {/* Invoice Header Info */}
-            <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-2 gap-4 p-4  rounded-lg">
               <div>
                 <label className="text-sm font-medium ">{t('invoiceNumber')}</label>
                 <p className="text-lg font-bold font-mono">{invoice.invoice_number}</p>
@@ -247,7 +247,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
               {invoice.items && invoice.items.length > 0 ? (
                 <div className="space-y-2">
                   {invoice.items.map((item, index) => (
-                    <div key={item.id || index} className="flex justify-between items-start p-3 bg-gray-50 rounded">
+                    <div key={item.id || index} className="flex justify-between items-start p-3  rounded">
                       <div className="flex-1">
                         <span className="font-medium ">{index + 1}. </span>
                         <span>{item.description}</span>
@@ -259,7 +259,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   ))}
                   
                   {/* Subtotal */}
-                  <div className="flex justify-between items-center p-3 bg-gray-100 rounded">
+                  <div className="flex justify-between items-center p-3  rounded">
                     <span className="font-medium">{t('subtotal')}</span>
                     <span className="font-semibold">
                       {formatCurrency(
@@ -271,7 +271,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   
                   {/* VAT */}
                   {invoice.vat > 0 && (
-                    <div className="flex justify-between items-center p-3 bg-gray-100 rounded">
+                    <div className="flex justify-between items-center p-3  rounded">
                       <span className="font-medium">{t('vatAmount').replace('{vat}', invoice.vat)}</span>
                       <span className="font-semibold">
                         {formatCurrency(
@@ -331,7 +331,7 @@ export default function ShowInvoiceModal({ isOpen, onClose, invoiceId }) {
                   {invoice.attachments.map((attachment) => (
                     <div 
                       key={attachment.id} 
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between p-3  rounded border border-gray-200 hover:bg-gray-100 transition-colors"
                     >
                       <div className="flex items-center gap-3 flex-1">
                         {getFileIcon(attachment.attachment_name)}

@@ -10,7 +10,7 @@ import { getExpensesByClientId } from "@/app/services/api/employeeCashTransactio
 import AddExpenseModal from "./AddExpenseModal";
 import EditExpenseModal from "./EditExpenseModal";
 import DeleteExpenseModal from "./DeleteExpenseModal";
-import ExpenseDetailsModal from "../../employeesv2/components/ExpenseDetailsModal";
+import ExpenseDetailsModal from "../../employees/components/ExpenseDetailsModal";
 
 export default function ExpensesTab({ clientId, clientName, clientBalance }) {
   const { t } = useTranslations();
