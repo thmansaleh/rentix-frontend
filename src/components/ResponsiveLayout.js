@@ -74,7 +74,7 @@ const ResponsiveLayout = ({ children }) => {
         <div className="flex-1 overflow-auto px-3 md:px-4 lg:px-6 py-3 md:py-4 relative">
           {children}
           
-          {/* <button
+          <button
             onClick={() => setIsChatOpen(true)}
             className={`fixed bottom-6 ${isRTL ? 'left-6' : 'right-6'} z-50 p-4 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 dark:from-purple-500 dark:to-blue-500 hover:from-purple-700 hover:to-blue-700 dark:hover:from-purple-600 dark:hover:to-blue-600 shadow-lg hover:shadow-2xl transition-all duration-300 group animate-in fade-in slide-in-from-bottom-4`}
             aria-label={isRTL ? "مساعد الذكاء الاصطناعي" : "AI Assistant"}
@@ -86,7 +86,7 @@ const ResponsiveLayout = ({ children }) => {
             <span className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 animate-ping opacity-75"></span>
             
             <span className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400/50 to-blue-400/50 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></span>
-          </button> */}
+          </button>
 
           <LegalChatPopup 
             isOpen={isChatOpen} 

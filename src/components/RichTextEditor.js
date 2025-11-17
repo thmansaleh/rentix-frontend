@@ -1,6 +1,7 @@
 "use client"
 
 import { useEditor, EditorContent } from '@tiptap/react'
+import { useEffect } from 'react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
@@ -21,13 +22,12 @@ import {
   Undo,
   Redo,
   Type,
-  Printer,
-  Download
+  Printer
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-const MenuBar = ({ editor, onPrint, onDownload }) => {
+const MenuBar = ({ editor, onPrint }) => {
   if (!editor) {
     return null
   }
@@ -36,7 +36,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
 
   return (
     <div className="border-b border-gray-200 bg-gray-50 p-2 flex flex-wrap gap-1 rounded-t-md">
-      {/* Print & Download */}
+      {/* Print */}
       <Button
         type="button"
         variant="ghost"
@@ -46,16 +46,6 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         title="طباعة"
       >
         <Printer className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={onDownload}
-        className={buttonClass}
-        title="تحميل"
-      >
-        <Download className="h-4 w-4" />
       </Button>
 
       <div className="w-px h-8 bg-gray-300 mx-1" />
@@ -259,14 +249,18 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
   })
 
   // Update editor content when value prop changes externally
-  if (editor && value !== editor.getHTML()) {
-    editor.commands.setContent(value || '')
-  }
+  useEffect(() => {
+    if (editor && value !== undefined && value !== editor.getHTML()) {
+      editor.commands.setContent(value || '', false)
+    }
+  }, [editor, value])
 
   // Update editable state when disabled prop changes
-  if (editor && editor.isEditable === disabled) {
-    editor.setEditable(!disabled)
-  }
+  useEffect(() => {
+    if (editor && editor.isEditable === disabled) {
+      editor.setEditable(!disabled)
+    }
+  }, [editor, disabled])
 
   // Print function
   const handlePrint = () => {
@@ -301,102 +295,12 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
     }, 250)
   }
 
-  // Download function - directly downloads as PDF
-  const handleDownload = async () => {
-    const content = editor.getHTML()
-    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-')
-    
-    // Create a container for the content
-    const container = document.createElement('div')
-    container.style.direction = 'rtl'
-    container.style.textAlign = 'right'
-    container.style.fontFamily = 'Arial, sans-serif'
-    container.style.padding = '20px'
-    container.innerHTML = content
-    
-    // Add container to body temporarily (required for html2canvas)
-    container.style.position = 'absolute'
-    container.style.left = '-9999px'
-    document.body.appendChild(container)
-    
-    try {
-      // Check if html2canvas is available
-      if (typeof window.html2canvas !== 'undefined' && typeof window.jspdf !== 'undefined') {
-        const canvas = await window.html2canvas(container, {
-          scale: 2,
-          useCORS: true,
-          logging: false
-        })
-        
-        const imgData = canvas.toDataURL('image/png')
-        const pdf = new window.jspdf.jsPDF({
-          orientation: 'portrait',
-          unit: 'mm',
-          format: 'a4'
-        })
-        
-        const imgWidth = 210
-        const pageHeight = 297
-        const imgHeight = (canvas.height * imgWidth) / canvas.width
-        let heightLeft = imgHeight
-        let position = 0
-        
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
-        
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight
-          pdf.addPage()
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-          heightLeft -= pageHeight
-        }
-        
-        pdf.save(`document-${timestamp}.pdf`)
-      } else {
-        // Fallback: Download as HTML if libraries not available
-        console.warn('PDF libraries not loaded, falling back to HTML download')
-        const blob = new Blob([`
-          <!DOCTYPE html>
-          <html dir="rtl">
-          <head>
-            <meta charset="UTF-8">
-            <title>المستند</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                padding: 20px;
-                direction: rtl;
-                text-align: right;
-              }
-            </style>
-          </head>
-          <body>
-            ${content}
-          </body>
-          </html>
-        `], { type: 'text/html' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `document-${timestamp}.html`
-        a.click()
-        URL.revokeObjectURL(url)
-      }
-    } catch (error) {
-      console.error('Error generating PDF:', error)
-      alert('حدث خطأ أثناء إنشاء PDF. الرجاء المحاولة مرة أخرى.')
-    } finally {
-      // Remove temporary container
-      document.body.removeChild(container)
-    }
-  }
-
   return (
     <div className={cn(
       "border rounded-md overflow-hidden bg-white",
       disabled && "opacity-60 cursor-not-allowed"
     )}>
-      <MenuBar editor={editor} onPrint={handlePrint} onDownload={handleDownload} />
+      <MenuBar editor={editor} onPrint={handlePrint} />
       <EditorContent 
         editor={editor} 
         className={cn(
