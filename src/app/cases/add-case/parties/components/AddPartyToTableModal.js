@@ -114,15 +114,16 @@ const AddPartyToTableModal = ({ children, selectedParties = [] }) => {
 
   const handleAddParty = () => {
     if (selectedParty && selectedPartyData) {
-      // Add files to the party data
-      const partyWithFiles = {
+      // Add files and type (role) to the party data
+      const partyWithTypeAndFiles = {
         ...selectedPartyData,
+        type: selectedPartyType, // This is "client" or "opponent" for the case_parties table
         files: partyFiles // Add files array to each party
       };
       
       // Check if party is already in the table
       if (!currentSelectedParties.some(p => p.id === selectedPartyData.id)) {
-        const updatedParties = [...currentSelectedParties, partyWithFiles];
+        const updatedParties = [...currentSelectedParties, partyWithTypeAndFiles];
         
         // Update the form state directly using Formik
         setFieldValue('selectedParties', updatedParties);

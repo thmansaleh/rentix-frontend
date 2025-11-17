@@ -102,7 +102,7 @@ function Parties() {
                 {selectedParties.map((party) => (
                   <TableRow key={party.id}>
                     <TableCell className="font-medium text-center" >{party.name}</TableCell>
-                    <TableCell className='text-center'>{getPartyTypeBadge(party.party_type)}</TableCell>
+                    <TableCell className='text-center'>{getPartyTypeBadge(party.type)}</TableCell>
                     <TableCell className='text-center'>{party.phone}</TableCell>
                     <TableCell className='text-center'>{party.email || t('parties.notSpecified')}</TableCell>
                     <TableCell className='text-center'>

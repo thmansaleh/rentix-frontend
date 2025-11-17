@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Loader2, Copy, Check, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelector } from 'react-redux';
@@ -115,28 +114,29 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
       />
       
       {/* Modal Card - Centered */}
-      <Card className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl h-[600px] flex flex-col shadow-2xl border-2 overflow-hidden animate-in zoom-in-95 duration-200">
+      <Card className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl h-[80vh] max-h-[600px] flex flex-col shadow-2xl border-2 overflow-hidden animate-in zoom-in-95 duration-200">
+        {/* Close Button - Positioned at top corner (RTL aware) */}
+        <Button
+          onClick={onClose}
+          variant="ghost"
+          size="icon"
+          className={`absolute top-2 ${isRTL ? 'left-2' : 'right-2'} z-10 h-8 w-8 rounded-full bg-background/80 hover:bg-accent border shadow-sm`}
+          aria-label="Close chat"
+        >
+          <X size={18} />
+        </Button>
+
         {/* Header */}
-        <div className="bg-background border-b p-4 flex items-center justify-between">
+        <div className={`bg-background border-b p-4 ${isRTL ? 'pl-12' : 'pr-12'}`}>
           <div className="flex items-center gap-2">
             <Sparkles size={20} className="text-purple-600 dark:text-purple-400 animate-pulse" />
             <h2 className="text-lg font-semibold text-foreground">{isRTL ? 'المساعد القانوني' : 'Legal Assistant'}</h2>
           </div>
-          <Button
-            onClick={onClose}
-            variant="ghost"
-            size="icon"
-            className="hover:bg-accent"
-            aria-label="Close chat"
-          >
-            <X size={20} />
-          </Button>
         </div>
 
-      {/* Messages Container */}
-      <ScrollArea className="flex-1 p-4 bg-background"
-        dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="space-y-4">
+        {/* Messages Container - with proper overflow scroll */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
+          <div className="space-y-4">
           {messages.length === 0 && (
             <div className="text-center text-muted-foreground mt-8">
               <Sparkles className="mx-auto mb-2 text-purple-500" size={32} />
@@ -212,11 +212,11 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
           )}
           
           <div ref={messagesEndRef} />
+          </div>
         </div>
-      </ScrollArea>
 
-      {/* Input Area */}
-      <div className="p-4 border-t bg-background">
+        {/* Input Area */}
+        <div className="p-4 border-t bg-background flex-shrink-0">
         <div className="flex gap-2" dir={isRTL ? 'rtl' : 'ltr'}>
           <Input
             type="text"
