@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelector } from 'react-redux';
 import { selectUser } from '@/redux/slices/authSlice';
+import { chatWithLegalAssistant } from '@/app/services/api/legalAssistant';
 
 const LegalChatPopup = ({ isOpen, onClose }) => {
   const { isRTL } = useLanguage();
@@ -54,24 +55,12 @@ const LegalChatPopup = ({ isOpen, onClose }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/legal-assistant', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: userMessage.content,
-          userName: userName,
-          userId: user?.id || user?.job_id,
-          history: messages,
-        }),
+      const data = await chatWithLegalAssistant({
+        message: userMessage.content,
+        userName: userName,
+        userId: user?.id || user?.job_id,
+        history: messages,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
-
-      const data = await response.json();
 
       const assistantMessage = {
         id: Date.now() + 1,
