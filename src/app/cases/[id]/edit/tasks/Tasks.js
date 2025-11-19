@@ -166,9 +166,10 @@ function Tasks({ caseId }) {
   }
 
   const priorityOptions = [
-    { value: "high", label: t('tasks.priorityHigh'), color: "bg-red-100 text-red-800" },
-    { value: "normal", label: t('tasks.priorityNormal'), color: "bg-blue-100 text-blue-800" },
-    { value: "low", label: t('tasks.priorityLow'), color: "bg-green-100 text-green-800" }
+    { value: "low", label: t('tasks.priorityLow'), color: "bg-green-100 text-green-800" },
+    { value: "medium", label: t('tasks.priorityMedium'), color: "bg-blue-100 text-blue-800" },
+    { value: "high", label: t('tasks.priorityHigh'), color: "bg-yellow-100 text-yellow-800" },
+    { value: "urgent", label: t('tasks.priorityUrgent'), color: "bg-red-100 text-red-800" }
   ]
 
   const taskTypeOptions = [

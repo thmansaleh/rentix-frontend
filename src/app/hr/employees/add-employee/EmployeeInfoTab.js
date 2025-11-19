@@ -111,12 +111,12 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
     <div className="space-y-8">
       {/* Basic Information Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">المعلومات الأساسية</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.basicInformationSection')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.name')} required>
             <Input 
               name="name" 
-              placeholder="مثال: أحمد محمد" 
+              placeholder={t('employees.namePlaceholder')} 
               value={form.name} 
               onChange={handleChange} 
             />
@@ -125,40 +125,19 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.employeeNumber')} required>
             <Input 
               name="employeeNumber" 
-              placeholder="مثال: EMP001" 
+              placeholder={t('employees.employeeNumberPlaceholder')} 
               value={form.employeeNumber} 
               onChange={handleChange} 
               
             />
           </FormField>
 
-          {/* <FormField label={t('employees.username')} required>
-            <Input 
-              name="username" 
-              placeholder="مثال: ahmed.mohamed" 
-              value={form.username} 
-              onChange={handleChange}
-              disabled
-            />
-          </FormField> */}
-          
-          {/* Password - Only visible for Admin */}
-          {/* {isAdmin && (
-            <FormField label={t('employees.password') || 'كلمة المرور'}>
-              <Input 
-                name="password" 
-                type="password"
-                placeholder="مثال: ********" 
-                value={form.password || ''} 
-                onChange={handleChange} 
-              />
-            </FormField>
-          )}
-           */}
+        
+        
           <FormField label={t('employees.email')} >
             <Input 
               name="email" 
-              placeholder="مثال: ahmed@example.com" 
+              placeholder={t('employees.emailPlaceholder')} 
               value={form.email} 
               onChange={handleChange} 
             />
@@ -167,7 +146,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.phoneNumber')} required>
             <Input 
               name="phoneNumber" 
-              placeholder="0500000000" 
+              placeholder={t('employees.phonePlaceholder')} 
               type="tel"
               value={form.phoneNumber} 
               onChange={handleChange} 
@@ -178,7 +157,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
 
       {/* Organizational Information Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">المعلومات التنظيمية</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.organizationalInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.selectRole')} required>
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.roleId} onValueChange={value => setForm(f => ({ ...f, roleId: value }))}>
@@ -270,7 +249,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
 
       {/* Employment Details Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">تفاصيل التوظيف</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.employmentDetails')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.contractType') || 'نوع العقد'}>
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.contractType} onValueChange={value => setForm(f => ({ ...f, contractType: value }))}>
@@ -278,8 +257,8 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                 <SelectValue placeholder={t('employees.contractType') || 'نوع العقد'} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="كامل" className="cursor-pointer">كامل</SelectItem>
-                <SelectItem value="جزئي" className="cursor-pointer">جزئي</SelectItem>
+                <SelectItem value="كامل" className="cursor-pointer">{t('employees.contractTypeFull')}</SelectItem>
+                <SelectItem value="جزئي" className="cursor-pointer">{t('employees.contractTypePartial')}</SelectItem>
               </SelectContent>
             </Select>
           </FormField>
@@ -290,10 +269,10 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                 <SelectValue placeholder={t('employees.payType') || 'طريقة الدفع'} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="كاش" className="cursor-pointer">كاش</SelectItem>
-                <SelectItem value="تحويل بنكي" className="cursor-pointer">تحويل بنكي</SelectItem>
-                <SelectItem value="شيك" className="cursor-pointer">شيك</SelectItem>
-                <SelectItem value="wps" className="cursor-pointer">WPS</SelectItem>
+                <SelectItem value="كاش" className="cursor-pointer">{t('employees.payTypeCash')}</SelectItem>
+                <SelectItem value="تحويل بنكي" className="cursor-pointer">{t('employees.payTypeBankTransfer')}</SelectItem>
+                <SelectItem value="شيك" className="cursor-pointer">{t('employees.payTypeCheck')}</SelectItem>
+                <SelectItem value="wps" className="cursor-pointer">{t('employees.payTypeWPS')}</SelectItem>
               </SelectContent>
             </Select>
           </FormField>
@@ -347,12 +326,12 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
 
       {/* Financial Information Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">المعلومات المالية</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.financialInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.basicSalary')}>
             <Input 
               name="basicSalary" 
-              placeholder="مثال: 5000" 
+              placeholder={t('employees.basicSalaryPlaceholder')} 
               type="number"
               value={form.basicSalary} 
               onChange={handleChange} 
@@ -362,7 +341,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.housingAllowance') || 'بدل السكن'}>
             <Input 
               name="housingAllowance" 
-              placeholder="مثال: 1000" 
+              placeholder={t('employees.allowancePlaceholder')} 
               type="number"
               value={form.housingAllowance} 
               onChange={handleChange} 
@@ -372,7 +351,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.transportationAllowance') || 'بدل المواصلات'}>
             <Input 
               name="transportationAllowance" 
-              placeholder="مثال: 500" 
+              placeholder={t('employees.allowancePlaceholder')} 
               type="number"
               value={form.transportationAllowance} 
               onChange={handleChange} 
@@ -382,7 +361,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.anotherAllowance') || 'بدل آخر'}>
             <Input 
               name="anotherAllowance" 
-              placeholder="مثال: 300" 
+              placeholder={t('employees.allowancePlaceholder')} 
               type="number"
               value={form.anotherAllowance} 
               onChange={handleChange} 
@@ -393,12 +372,12 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
 
       {/* Bank Information Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">المعلومات البنكية</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.bankInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.bankName') || 'اسم البنك'}>
             <Input 
               name="bankName" 
-              placeholder="مثال: بنك الإمارات دبي الوطني" 
+              placeholder={t('employees.bankNamePlaceholder')} 
               value={form.bankName} 
               onChange={handleChange} 
             />
@@ -407,7 +386,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.accountNumber') || 'رقم الحساب'}>
             <Input 
               name="accountNumber" 
-              placeholder="مثال: 1234567890" 
+              placeholder={t('employees.accountNumberPlaceholder')} 
               value={form.accountNumber} 
               onChange={handleChange} 
             />
@@ -416,7 +395,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.iban') || 'رقم الآيبان'}>
             <Input 
               name="iban" 
-              placeholder="مثال: AE070331234567890123456" 
+              placeholder={t('employees.ibanPlaceholder')} 
               value={form.iban} 
               onChange={handleChange} 
             />
@@ -426,12 +405,12 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
 
       {/* Document Information Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">معلومات الوثائق</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.documentsInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.identityNumber')}>
             <Input 
               name="identityNumber" 
-              placeholder="مثال: 784-1234-1234567-1" 
+              placeholder={t('employees.identityNumberPlaceholder')} 
               value={form.identityNumber} 
               onChange={handleChange} 
             />
@@ -440,7 +419,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
           <FormField label={t('employees.passportNumber')}>
             <Input 
               name="passportNumber" 
-              placeholder="مثال: A12345678" 
+              placeholder={t('employees.passportNumberPlaceholder')} 
               value={form.passportNumber} 
               onChange={handleChange} 
             />
@@ -450,7 +429,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
 
       {/* Expiry Dates Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">تواريخ انتهاء الصلاحية</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">{t('employees.expiryDates')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <FormField label={t('employees.identityExpiryDate')}>
             <DatePickerField
@@ -512,10 +491,10 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
 
-          <FormField label="انتهاء صلاحية محامي/مندوب">
+          <FormField label={t('employees.registrationExpiryDate')}>
             <DatePickerField
               name="registrationExpirationDate"
-              placeholder="انتهاء صلاحية محامي/مندوب"
+              placeholder={t('employees.registrationExpiryDate')}
               value={form.registrationExpirationDate}
               onChange={handleChange}
               isRTL={isRTL}

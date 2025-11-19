@@ -13,21 +13,21 @@ function TimeManagementTab({ employeeId }) {
 
   return <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="attendance" className="w-full mt-4">
     <TabsList
-      className="bg-white rounded-none shadow-none border-b border-b-blue-400 p-1 flex flex-wrap gap-1">
+      className="bg-white dark:bg-gray-800 rounded-none shadow-none border-b border-b-blue-400 dark:border-b-blue-600 p-1 flex flex-wrap gap-1">
       <TabsTrigger
-            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white  px-3 py-1 text-sm font-medium transition"
+            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:text-gray-300 px-3 py-1 text-sm font-medium transition"
        value="attendance">{t('employees.timeManagementTabs.attendance')}</TabsTrigger>
       <TabsTrigger
-            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white  px-3 py-1 text-sm font-medium transition"
+            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:text-gray-300 px-3 py-1 text-sm font-medium transition"
        value="deductions">{t('employees.timeManagementTabs.deductions')}</TabsTrigger>
       <TabsTrigger
-            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white  px-3 py-1 text-sm font-medium transition"
+            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:text-gray-300 px-3 py-1 text-sm font-medium transition"
        value="annual-leave">{t('employees.timeManagementTabs.annualLeave')}</TabsTrigger>
       <TabsTrigger
-            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white  px-3 py-1 text-sm font-medium transition"
+            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:text-gray-300 px-3 py-1 text-sm font-medium transition"
         value="sick-leave">{t('employees.timeManagementTabs.sickLeave')}</TabsTrigger>
       <TabsTrigger
-            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white  px-3 py-1 text-sm font-medium transition"
+            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:text-gray-300 px-3 py-1 text-sm font-medium transition"
        value="other-leave">{t('employees.timeManagementTabs.otherLeave')}</TabsTrigger>
     </TabsList>
     <TabsContent value="attendance">

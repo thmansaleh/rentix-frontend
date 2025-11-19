@@ -52,8 +52,8 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
   const [reasonText, setReasonText] = useState('');
 
   const degreeOptions = [
-    { value: 'appeal', label: 'استئناف' },
-    { value: 'cassation', label: 'طعن' },
+    { value: 'appeal', label: t('appealDecisionModal.degrees.appeal') },
+    { value: 'cassation', label: t('appealDecisionModal.degrees.cassation') },
   ];
 
   const handleAppealInputChange = (field, value) => {
@@ -65,7 +65,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
 
   const handleSubmit = async () => {
     if (!caseId) {
-      toast.error('معرف القضية مفقود');
+      toast.error(t('appealDecisionModal.caseIdMissing'));
       return;
     }
 
@@ -75,7 +75,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
       if (decisionType === 'appealed') {
         // Validate appeal form
         if (!appealFormData.degree || !appealFormData.case_number || !appealFormData.year || !appealFormData.referral_date) {
-          toast.error('يرجى ملء جميع الحقول المطلوبة');
+          toast.error(t('appealDecisionModal.fillAllRequiredFields'));
           setIsLoading(false);
           return;
         }
@@ -92,12 +92,12 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
         };
 
         await api.post('/case-degrees', caseDegreeData);
-        toast.success('تم إضافة درجة القضية بنجاح');
+        toast.success(t('appealDecisionModal.caseDegreeAddedSuccessfully'));
         
       } else {
         // Validate reason text
         if (!reasonText.trim()) {
-          toast.error('يرجى إدخال سبب عدم الطعن أو الاستئناف');
+          toast.error(t('appealDecisionModal.enterReasonRequired'));
           setIsLoading(false);
           return;
         }
@@ -106,7 +106,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
         await api.patch(`/cases/${caseId}/additional-note`, {
           additional_note: reasonText
         });
-        toast.success('تم تحديث القضية بنجاح');
+        toast.success(t('appealDecisionModal.caseUpdatedSuccessfully'));
       }
 
       // Reset form
@@ -129,7 +129,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
       onClose();
     } catch (error) {
       console.error('Error saving appeal decision:', error);
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء الحفظ');
+      toast.error(error.response?.data?.message || t('appealDecisionModal.errorSaving'));
     } finally {
       setIsLoading(false);
     }
@@ -156,10 +156,10 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
-             الاستئناف والطعن
+            {t('appealDecisionModal.title')}
           </DialogTitle>
           <DialogDescription className={isRTL ? 'text-right' : 'text-left'}>
-            اختر ما إذا تم الاستئناف/الطعن أو لم يتم
+            {t('appealDecisionModal.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -167,7 +167,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
           {/* Toggle Buttons */}
           <div className="space-y-2">
             <Label className={isRTL ? 'text-right block' : 'text-left block'}>
-              اختر الحالة *
+              {t('appealDecisionModal.selectStatusRequired')}
             </Label>
             <div className="grid grid-cols-2 gap-2">
               <Button
@@ -180,8 +180,8 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
                 )}
               >
                 <div className="text-center w-full">
-                  <div className="font-semibold">تم الاستئناف والطعن</div>
-                  <div className="text-xs mt-1 opacity-90">إضافة درجة قضائية جديدة</div>
+                  <div className="font-semibold">{t('appealDecisionModal.appealed')}</div>
+                  <div className="text-xs mt-1 opacity-90">{t('appealDecisionModal.appealedDescription')}</div>
                 </div>
               </Button>
               <Button
@@ -194,8 +194,8 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
                 )}
               >
                 <div className="text-center w-full">
-                  <div className="font-semibold">لم يتم الاستئناف والطعن</div>
-                  <div className="text-xs mt-1 opacity-90">توضيح السبب</div>
+                  <div className="font-semibold">{t('appealDecisionModal.notAppealed')}</div>
+                  <div className="text-xs mt-1 opacity-90">{t('appealDecisionModal.notAppealedDescription')}</div>
                 </div>
               </Button>
             </div>
@@ -208,7 +208,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               {/* Degree Select */}
               <div className="space-y-2">
                 <Label htmlFor="degree" className={isRTL ? 'text-right block' : 'text-left block'}>
-                  الدرجة *
+                  {t('appealDecisionModal.degreeRequired')}
                 </Label>
                 <Select
                   value={appealFormData.degree}
@@ -216,7 +216,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
                   dir={isRTL ? 'rtl' : 'ltr'}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="اختر الدرجة" />
+                    <SelectValue placeholder={t('appealDecisionModal.selectDegree')} />
                   </SelectTrigger>
                   <SelectContent>
                     {degreeOptions.map((option) => (
@@ -231,14 +231,14 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               {/* Case Number Input */}
               <div className="space-y-2">
                 <Label htmlFor="case_number" className={isRTL ? 'text-right block' : 'text-left block'}>
-                  رقم القضية *
+                  {t('appealDecisionModal.caseNumberRequired')}
                 </Label>
                 <Input
                   id="case_number"
                   type="text"
                   value={appealFormData.case_number}
                   onChange={(e) => handleAppealInputChange('case_number', e.target.value)}
-                  placeholder="أدخل رقم القضية"
+                  placeholder={t('appealDecisionModal.enterCaseNumber')}
                   className={isRTL ? 'text-right' : 'text-left'}
                 />
               </div>
@@ -246,14 +246,14 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               {/* Year Input */}
               <div className="space-y-2">
                 <Label htmlFor="year" className={isRTL ? 'text-right block' : 'text-left block'}>
-                  السنة *
+                  {t('appealDecisionModal.yearRequired')}
                 </Label>
                 <Input
                   id="year"
                   type="number"
                   value={appealFormData.year}
                   onChange={(e) => handleAppealInputChange('year', e.target.value)}
-                  placeholder="أدخل السنة"
+                  placeholder={t('appealDecisionModal.enterYear')}
                   min="1900"
                   max="2099"
                   className={isRTL ? 'text-right' : 'text-left'}
@@ -263,7 +263,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               {/* Referral Date Input */}
               <div className="space-y-2">
                 <Label htmlFor="referral_date" className={isRTL ? 'text-right block' : 'text-left block'}>
-                  تاريخ الإحالة *
+                  {t('appealDecisionModal.referralDateRequired')}
                 </Label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -280,7 +280,7 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
                       {appealFormData.referral_date ? (
                         format(appealFormData.referral_date, "PPP", { locale: language === 'ar' ? ar : undefined })
                       ) : (
-                        <span>اختر تاريخ الإحالة</span>
+                        <span>{t('appealDecisionModal.selectReferralDate')}</span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -299,14 +299,14 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               {/* Client Status Input */}
               <div className="space-y-2">
                 <Label htmlFor="client_status" className={isRTL ? 'text-right block' : 'text-left block'}>
-                  صفة الموكل
+                  {t('appealDecisionModal.clientStatus')}
                 </Label>
                 <Input
                   id="client_status"
                   type="text"
                   value={appealFormData.client_status}
                   onChange={(e) => handleAppealInputChange('client_status', e.target.value)}
-                  placeholder="أدخل صفة الموكل"
+                  placeholder={t('appealDecisionModal.enterClientStatus')}
                   className={isRTL ? 'text-right' : 'text-left'}
                 />
               </div>
@@ -314,14 +314,14 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
               {/* Opponent Status Input */}
               <div className="space-y-2">
                 <Label htmlFor="opponent_status" className={isRTL ? 'text-right block' : 'text-left block'}>
-                  صفة الخصم
+                  {t('appealDecisionModal.opponentStatus')}
                 </Label>
                 <Input
                   id="opponent_status"
                   type="text"
                   value={appealFormData.opponent_status}
                   onChange={(e) => handleAppealInputChange('opponent_status', e.target.value)}
-                  placeholder="أدخل صفة الخصم"
+                  placeholder={t('appealDecisionModal.enterOpponentStatus')}
                   className={isRTL ? 'text-right' : 'text-left'}
                 />
               </div>
@@ -330,13 +330,13 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
             // Reason Text Area
             <div className="space-y-2">
               <Label htmlFor="reason" className={isRTL ? 'text-right block' : 'text-left block'}>
-                سبب عدم الطعن أو الاستئناف *
+                {t('appealDecisionModal.reasonRequired')}
               </Label>
               <Textarea
                 id="reason"
                 value={reasonText}
                 onChange={(e) => setReasonText(e.target.value)}
-                placeholder="أدخل السبب..."
+                placeholder={t('appealDecisionModal.enterReason')}
                 rows={6}
                 className={cn("resize-none", isRTL ? 'text-right' : 'text-left')}
               />
@@ -353,11 +353,11 @@ const AppealDecisionModal = ({ isOpen, onClose, caseId, onSuccess }) => {
             className={`${isRTL ? 'ml-auto' : 'mr-auto'}`}
           >
             <CircleX className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-            إلغاء
+            {t('appealDecisionModal.cancel')}
           </Button>
           <Button type="button" disabled={isLoading} onClick={handleSubmit}>
             <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-            {isLoading ? 'جاري الحفظ...' : 'حفظ'}
+            {isLoading ? t('appealDecisionModal.saving') : t('appealDecisionModal.save')}
           </Button>
         </DialogFooter>
       </DialogContent>

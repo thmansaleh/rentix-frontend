@@ -214,7 +214,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           {!isEditMode && (
             <div className="space-y-2">
               <Label htmlFor="bank_account_id">
-                {t('bankAccount')} <span className="text-gray-400 text-sm">({t('optional')})</span>
+                {t('bankAccount')} <span className=" text-sm">({t('optional')})</span>
               </Label>
               <Select 
                 value={formik.values.bank_account_id} 
@@ -284,7 +284,7 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
                   {selectedFiles.map((file, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-2 bg-gray-50 rounded border"
+                      className="flex items-center justify-between p-2  rounded border"
                     >
                       <span className="text-sm truncate flex-1">
                         {file.name}

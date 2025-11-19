@@ -102,7 +102,7 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
               </p>
 
               {/* Invoice Details */}
-              <div className="p-4 bg-gray-50 rounded-lg space-y-2">
+              <div className="p-4  rounded-lg space-y-2">
                 <div className="flex justify-between">
                   <span className="font-medium ">{t('invoiceNumber')}:</span>
                   <span className="font-bold font-mono">{invoice.invoice_number}</span>

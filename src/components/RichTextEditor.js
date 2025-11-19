@@ -35,7 +35,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
   const buttonClass = "h-8 w-8 p-0"
 
   return (
-    <div className="border-b border-gray-200 bg-gray-50 p-2 flex flex-wrap gap-1 rounded-t-md">
+    <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-2 flex flex-wrap gap-1 rounded-t-md">
       {/* Print & Download */}
       <Button
         type="button"
@@ -58,7 +58,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         <Download className="h-4 w-4" />
       </Button>
 
-      <div className="w-px h-8 bg-gray-300 mx-1" />
+      <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
 
       {/* Undo/Redo */}
       <Button
@@ -84,7 +84,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         <Redo className="h-4 w-4" />
       </Button>
 
-      <div className="w-px h-8 bg-gray-300 mx-1" />
+      <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
 
       {/* Text Formatting */}
       <Button
@@ -94,7 +94,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={cn(
           buttonClass,
-          editor.isActive('bold') && 'bg-gray-200'
+          editor.isActive('bold') && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="غامق"
       >
@@ -107,7 +107,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().toggleItalic().run()}
         className={cn(
           buttonClass,
-          editor.isActive('italic') && 'bg-gray-200'
+          editor.isActive('italic') && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="مائل"
       >
@@ -120,20 +120,20 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().toggleUnderline().run()}
         className={cn(
           buttonClass,
-          editor.isActive('underline') && 'bg-gray-200'
+          editor.isActive('underline') && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="تسطير"
       >
         <UnderlineIcon className="h-4 w-4" />
       </Button>
 
-      <div className="w-px h-8 bg-gray-300 mx-1" />
+      <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
 
       {/* Font Size */}
       <select
         onChange={(e) => editor.chain().focus().setFontSize(e.target.value).run()}
         value={editor.getAttributes('textStyle').fontSize || '16px'}
-        className="h-8 px-2 text-sm border border-gray-300 rounded bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="h-8 px-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
         title="حجم الخط"
       >
         <option value="12px">12</option>
@@ -148,7 +148,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         <option value="48px">48</option>
       </select>
 
-      <div className="w-px h-8 bg-gray-300 mx-1" />
+      <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
 
       {/* Lists */}
       <Button
@@ -158,7 +158,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={cn(
           buttonClass,
-          editor.isActive('bulletList') && 'bg-gray-200'
+          editor.isActive('bulletList') && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="قائمة نقطية"
       >
@@ -171,14 +171,14 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={cn(
           buttonClass,
-          editor.isActive('orderedList') && 'bg-gray-200'
+          editor.isActive('orderedList') && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="قائمة مرقمة"
       >
         <ListOrdered className="h-4 w-4" />
       </Button>
 
-      <div className="w-px h-8 bg-gray-300 mx-1" />
+      <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1" />
 
       {/* Text Alignment */}
       <Button
@@ -188,7 +188,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().setTextAlign('left').run()}
         className={cn(
           buttonClass,
-          editor.isActive({ textAlign: 'left' }) && 'bg-gray-200'
+          editor.isActive({ textAlign: 'left' }) && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="محاذاة لليسار"
       >
@@ -201,7 +201,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().setTextAlign('center').run()}
         className={cn(
           buttonClass,
-          editor.isActive({ textAlign: 'center' }) && 'bg-gray-200'
+          editor.isActive({ textAlign: 'center' }) && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="محاذاة للوسط"
       >
@@ -214,7 +214,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().setTextAlign('right').run()}
         className={cn(
           buttonClass,
-          editor.isActive({ textAlign: 'right' }) && 'bg-gray-200'
+          editor.isActive({ textAlign: 'right' }) && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="محاذاة لليمين"
       >
@@ -227,7 +227,7 @@ const MenuBar = ({ editor, onPrint, onDownload }) => {
         onClick={() => editor.chain().focus().setTextAlign('justify').run()}
         className={cn(
           buttonClass,
-          editor.isActive({ textAlign: 'justify' }) && 'bg-gray-200'
+          editor.isActive({ textAlign: 'justify' }) && 'bg-gray-200 dark:bg-gray-700'
         )}
         title="ضبط"
       >
@@ -393,18 +393,20 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
 
   return (
     <div className={cn(
-      "border rounded-md overflow-hidden bg-white",
+      "border border-gray-300 dark:border-gray-700 rounded-md overflow-hidden bg-white dark:bg-gray-900",
       disabled && "opacity-60 cursor-not-allowed"
     )}>
       <MenuBar editor={editor} onPrint={handlePrint} onDownload={handleDownload} />
       <EditorContent 
         editor={editor} 
         className={cn(
-          "prose prose-sm max-w-none p-3 min-h-[150px] focus:outline-none",
+          "prose prose-sm dark:prose-invert max-w-none p-3 min-h-[150px] focus:outline-none",
           "prose-headings:my-2 prose-p:my-1 prose-ul:my-1 prose-ol:my-1",
           "[&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[150px]",
           "[&_.ProseMirror]:focus:outline-none",
           "[&_.ProseMirror]:text-right [&_.ProseMirror]:dir-rtl",
+          "[&_.ProseMirror]:text-gray-900 dark:[&_.ProseMirror]:text-gray-100",
+          "dark:text-gray-100",
           disabled && "pointer-events-none"
         )}
         placeholder={placeholder}

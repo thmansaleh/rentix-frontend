@@ -220,14 +220,14 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
         variant="outline"
       >
         <Edit className="w-4 h-4" />
-        تعديل البيانات
+        {t('employees.editEmployee')}
       </Button>
 
       {/* Modal */}
       <Modal isOpen={isOpen} onClose={handleClose}>
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold">تعديل بيانات الموظف</h2>
+          <h2 className="text-xl font-semibold">{t('employees.editEmployee')}</h2>
           <button 
             onClick={handleClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -241,13 +241,13 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
           {isLoading && (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <span className="mr-2">جاري تحميل البيانات...</span>
+              <span className="mr-2">{t('common.loading')}</span>
             </div>
           )}
 
           {error && (
             <div className="flex items-center justify-center py-8 text-destructive">
-              <p>حدث خطأ أثناء تحميل البيانات</p>
+              <p>{t('common.errorLoading')}</p>
             </div>
           )}
 
@@ -275,7 +275,7 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
             className="px-6"
           >
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSaving ? (t('buttons.saving') || 'جاري الحفظ...') : (t('buttons.save') || 'حفظ')}
+            {isSaving ? t('common.saving') : t('common.save')}
           </Button>
         </div>
       </Modal>

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { CalendarIcon, Plus, CircleX, FileText, Image, FileIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -134,53 +135,35 @@ function EditPetitionModal({
     onClose()
   }
 
-  if (!isOpen) return null
-
   return (
-    <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-50 transition-opacity backdrop-blur-sm"
-        onClick={handleClose}
-      />
-      
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
-        <div 
-          className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl transform overflow-hidden rounded-2xl bg-white shadow-xl transition-all max-h-[95vh] flex flex-col"
-          onClick={(e) => e.stopPropagation()}
-        >
-            {/* Header */}
-            <div className="flex-shrink-0 z-10 flex items-center justify-between bg-white px-4 sm:px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 truncate pr-4">
-                {title}
-              </h3>
-              <button
-                onClick={handleClose}
-                className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
-              >
-                <CircleX className="h-5 w-5" />
-              </button>
-            </div>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-md sm:max-w-lg lg:max-w-xl max-h-[95vh] p-0 overflow-hidden flex flex-col dark:bg-gray-900 dark:border-gray-700">
+        {/* Header */}
+        <DialogHeader className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <DialogTitle className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
+            {title}
+          </DialogTitle>
+        </DialogHeader>
 
-            {/* Body - Scrollable */}
-            <div className="flex-1 overflow-y-auto scrollbar-thin">
-              <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
-                {/* Submission Date */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    {t('petitions.submissionDate')}
-                    <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal border hover:border-blue-300 transition-colors h-10 text-sm",
-                          !formData.submissionDate && "text-muted-foreground"
-                        )}
-                      >
+        {/* Body - Scrollable */}
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+            {/* Submission Date */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('petitions.submissionDate')}
+                <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal border hover:border-blue-300 dark:hover:border-blue-600 transition-colors h-10 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100",
+                      !formData.submissionDate && "text-muted-foreground"
+                    )}
+                  >
                         <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                         <span className="truncate">
                           {formData.submissionDate ? (
@@ -202,60 +185,61 @@ function EditPetitionModal({
                   </Popover>
                 </div>
                 
-                {/* Order Type */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    {t('petitions.orderType')}
-                    <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Input
-                    placeholder={t('petitions.orderTypePlaceholder')}
-                    value={formData.orderType}
-                    onChange={(e) => handleInputChange("orderType", e.target.value)}
-                    className="w-full border hover:border-blue-300 focus:border-blue-500 transition-colors h-10 text-sm"
-                  />
-                </div>
+            {/* Order Type */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('petitions.orderType')}
+                <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <Input
+                placeholder={t('petitions.orderTypePlaceholder')}
+                value={formData.orderType}
+                onChange={(e) => handleInputChange("orderType", e.target.value)}
+                className="w-full border hover:border-blue-300 dark:hover:border-blue-600 focus:border-blue-500 dark:focus:border-blue-400 transition-colors h-10 text-sm"
+              />
+            </div>
                 
-                {/* Judge Decision */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium text-gray-700">
-                    {t('petitions.judgeDecision')}
-                    <span className="text-red-500 ml-1">*</span>
+            {/* Judge Decision */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('petitions.judgeDecision')}
+                <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <RadioGroup
+                value={formData.judgeDecision === null ? "" : formData.judgeDecision.toString()}
+                onValueChange={(value) => handleInputChange("judgeDecision", value === "true")}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+              >
+                <div className="flex items-center space-x-3 p-3 border dark:border-gray-600 rounded-lg hover:border-green-300 dark:hover:border-green-600 transition-colors cursor-pointer dark:bg-gray-800">
+                  <RadioGroupItem value="true" id="edit-approved" className="text-green-600" />
+                  <Label htmlFor="edit-approved" className="text-sm font-medium cursor-pointer flex-1 dark:text-gray-200">
+                    {t('petitions.approved') || 'موافق'}
                   </Label>
-                  <RadioGroup
-                    value={formData.judgeDecision === null ? "" : formData.judgeDecision.toString()}
-                    onValueChange={(value) => handleInputChange("judgeDecision", value === "true")}
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-                  >
-                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:border-green-300 transition-colors cursor-pointer">
-                      <RadioGroupItem value="true" id="edit-approved" className="text-green-600" />
-                      <Label htmlFor="edit-approved" className="text-sm font-medium cursor-pointer flex-1">
-                        {t('petitions.approved') || '?????'}
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:border-red-300 transition-colors cursor-pointer">
-                      <RadioGroupItem value="false" id="edit-rejected" className="text-red-600" />
-                      <Label htmlFor="edit-rejected" className="text-sm font-medium cursor-pointer flex-1">
-                        {t('petitions.rejected') || '?????'}
-                      </Label>
-                    </div>
-                  </RadioGroup>
                 </div>
-
-                {/* Appeal Date */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    {t('petitions.appealDate')}
+                <div className="flex items-center space-x-3 p-3 border dark:border-gray-600 rounded-lg hover:border-red-300 dark:hover:border-red-600 transition-colors cursor-pointer dark:bg-gray-800">
+                  <RadioGroupItem value="false" id="edit-rejected" className="text-red-600" />
+                  <Label htmlFor="edit-rejected" className="text-sm font-medium cursor-pointer flex-1 dark:text-gray-200">
+                    {t('petitions.rejected') || 'مرفوض'}
                   </Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal border hover:border-blue-300 transition-colors h-10 text-sm",
-                          !formData.appealDate && "text-muted-foreground"
-                        )}
-                      >
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Appeal Date */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('petitions.appealDate')}
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal border hover:border-blue-300 dark:hover:border-blue-600 transition-colors h-10 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100",
+                      !formData.appealDate && "text-muted-foreground"
+                    )}
+                  >
                         <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                         <span className="truncate">
                           {formData.appealDate ? (
@@ -277,33 +261,33 @@ function EditPetitionModal({
                   </Popover>
                 </div>
                 
-                {/* File Upload Section */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium text-gray-700">
-                    {t('petitions.attachFiles')}
-                  </Label>
-                  
-                  {/* Enhanced File Upload Area */}
-                  <div
-                    className={cn(
-                      "border-2 border-dashed rounded-lg p-4 sm:p-6 text-center transition-all cursor-pointer",
-                      isDragOver
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-                    )}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onClick={() => document.getElementById('editPetitionFileUpload').click()}
-                  >
-                    <Plus className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-gray-400" />
-                    <p className="text-sm text-gray-600 mb-1">
-                      {t('files.dragAndDrop')}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      PDF, DOC, TXT, ?? ????
-                    </p>
-                  </div>
+            {/* File Upload Section */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('petitions.attachFiles')}
+              </Label>
+              
+              {/* Enhanced File Upload Area */}
+              <div
+                className={cn(
+                  "border-2 border-dashed rounded-lg p-4 sm:p-6 text-center transition-all cursor-pointer",
+                  isDragOver
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
+                    : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800"
+                )}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById('editPetitionFileUpload').click()}
+              >
+                <Plus className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-gray-400 dark:text-gray-500" />
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  {t('files.dragAndDrop')}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  PDF, DOC, TXT, أو صورة
+                </p>
+              </div>
 
                   {/* Hidden File Input */}
                   <input
@@ -315,61 +299,63 @@ function EditPetitionModal({
                     accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
                   />
 
-                  {/* Display Selected Files */}
-                  {formData.files.length > 0 && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700">
-                        {t('files.uploadedFiles')} ({formData.files.length})
-                      </Label>
-                      <div className="max-h-32 sm:max-h-36 overflow-y-auto border border-gray-200 rounded-lg scrollbar-thin">
-                        <div className="p-3 space-y-2">
-                          {formData.files.map((file, index) => (
-                            <div key={file.name + index} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg border">
-                              <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
-                                <div className="flex-shrink-0">
-                                  {getFileIcon(file.type)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">{file.name}</p>
-                                  <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
-                                </div>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeFile(index)}
-                                className="flex-shrink-0 text-red-600 hover:text-red-800 hover:bg-red-50 p-1"
-                              >
-                                <CircleX className="h-4 w-4" />
-                              </Button>
+              {/* Display Selected Files */}
+              {formData.files.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('files.uploadedFiles')} ({formData.files.length})
+                  </Label>
+                  <div className="max-h-32 sm:max-h-36 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg scrollbar-thin">
+                    <div className="p-3 space-y-2">
+                      {formData.files.map((file, index) => (
+                        <div key={file.name + index} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                          <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+                            <div className="flex-shrink-0 text-gray-600 dark:text-gray-400">
+                              {getFileIcon(file.type)}
                             </div>
-                          ))}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate dark:text-gray-200">{file.name}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">{formatFileSize(file.size)}</p>
+                            </div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFile(index)}
+                            className="flex-shrink-0 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 p-1"
+                          >
+                            <CircleX className="h-4 w-4" />
+                          </Button>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Footer - Sticky */}
-            <div className="flex-shrink-0 bg-white border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
-              <Button 
-                variant="outline" 
-                onClick={handleClose}
-              >
-                {t('petitions.cancel')}
-              </Button>
-              <Button 
-                onClick={handleSubmit}
-                disabled={!formData.submissionDate || !formData.orderType || formData.judgeDecision === null}
-              >
-                {t('petitions.update')}
-              </Button>
+              )}
             </div>
           </div>
-      </div>
-    </>
+        </div>
+
+        {/* Footer */}
+        <DialogFooter className="border-t border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0">
+          <Button 
+            type="button"
+            variant="outline" 
+            onClick={handleClose}
+          >
+            {t('petitions.cancel')}
+          </Button>
+          <Button 
+            type="button"
+            onClick={handleSubmit}
+            disabled={!formData.submissionDate || !formData.orderType || formData.judgeDecision === null}
+          >
+            {t('petitions.update')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 

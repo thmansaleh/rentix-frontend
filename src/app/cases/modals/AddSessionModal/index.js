@@ -38,24 +38,24 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
     <div className="fixed inset-0 z-[20] flex items-center justify-center">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative bg-white w-full max-w-2xl mx-4 h-[90vh] flex flex-col  rounded-lg shadow-2xl">
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-2xl mx-4 h-[90vh] flex flex-col rounded-lg shadow-2xl dark:shadow-gray-950/50 border dark:border-gray-800">
         {/* Header */}
-        <div className={`pb-4 border-b bg-gradient-to-r  rounded-t-lg p-6 ${isRtl ? "text-right" : "text-left"}`}>
+        <div className={`pb-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800 rounded-t-lg p-6 ${isRtl ? "text-right" : "text-left"}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Calendar className="h-5 w-5 " />
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold ">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                   {isRtl ? "إضافة جلسة" : "Add Session"}
                 </h2>
-                <p className="text-sm  mt-1">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   {isRtl 
                     ? "أدخل معلومات الجلسة الجديدة أدناه"
                     : "Enter the new session information below"}
@@ -67,7 +67,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0 rounded-full "
+              className="h-8 w-8 p-0 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
             >
               <CircleX className="h-4 w-4" />
             </Button>
@@ -77,7 +77,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
         {/* Form wrapper */}
         <form onSubmit={formik.handleSubmit} className="flex-1 flex flex-col min-h-0">
           {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto min-h-0 p-6">
+          <div className="flex-1 overflow-y-auto min-h-0 p-6 bg-gray-50 dark:bg-gray-900">
             <div className="space-y-6">
               {/* Basic Information Section */}
               <SessionBasicInfo formik={formik} isRtl={isRtl} />
@@ -107,14 +107,14 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
           </div>
 
           {/* Fixed Footer */}
-          <div className="border-t  rounded-b-lg">
+          <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-b-lg p-6">
             <div className="flex justify-end gap-3">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
                 disabled={isLoading}
-                className="flex items-center gap-2 px-6"
+                // className="flex items-center gap-2 px-6 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <CircleX className="h-4 w-4" />
                 {isRtl ? "إلغاء" : "Cancel"}
@@ -122,7 +122,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                // className="flex items-center gap-2 px-6 "
+                // className="flex items-center gap-2 px-6 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
               >
                 <Save className="h-4 w-4" />
                 {isUploading

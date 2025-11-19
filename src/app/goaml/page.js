@@ -140,12 +140,12 @@ const GoAmlPage = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-              <Shield className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br  flex items-center justify-center shadow-lg">
+              <Shield className="w-6 h-6 " />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{t('goaml.title')}</h1>
-              <p className="text-gray-600 mt-1">{t('goaml.description')}</p>
+              <h1 className="text-2xl font-bold ">{t('goaml.title')}</h1>
+              <p className=" mt-1">{t('goaml.description')}</p>
             </div>
           </div>
         </div>
@@ -178,7 +178,7 @@ const GoAmlPage = () => {
         <CardHeader className="gap-4 md:flex md:flex-row md:items-center md:justify-between">
           <CardTitle className="flex items-center justify-between w-full md:w-auto">
             <span>{t('goaml.recordsList')}</span>
-            <span className="text-sm font-normal text-gray-500">
+            <span className="text-sm font-normal ">
               {filteredRecords.length} {t('goaml.recordsCount')}
             </span>
           </CardTitle>
@@ -195,10 +195,10 @@ const GoAmlPage = () => {
         <CardContent>
           {isLoading ? (
             <div className="flex justify-center items-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 "></div>
             </div>
           ) : filteredRecords.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 ">
               {searchTerm ? t('goaml.noSearchResults') : t('goaml.noRecords')}
             </div>
           ) : (

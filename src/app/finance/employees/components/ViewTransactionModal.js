@@ -193,11 +193,8 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
         }
       }
       
-      console.log('Final parsed attachments:', attachments);
-      console.log('Attachments count:', attachments.length);
     } catch (e) {
       console.error('Error parsing attachments:', e);
-      console.error('Transaction attachments value:', transaction.attachments);
     }
   }
 
@@ -301,7 +298,7 @@ const ViewTransactionModal = ({ isOpen, onClose, transactionId }) => {
                 {attachments.map((attachment) => (
                   <div
                     key={attachment.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors"
+                    className="flex items-center justify-between p-3  rounded-lg border  transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">

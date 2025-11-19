@@ -121,7 +121,7 @@ const SaveCaseButton = ({
   const isButtonDisabled = isLoading || disabled || isSubmitting;
 
   return (
-      <div className="max-w-7xl sticky  bottom-0 left-0 right-0 z-10 h-20 bg-white w-full flex items-center justify-between">
+      <div className="max-w-7xl sticky  bottom-0 left-0 right-0 z-10 h-20  w-full flex items-center justify-between">
       
 
         {/* Action buttons */}
