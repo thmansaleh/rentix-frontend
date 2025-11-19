@@ -35,13 +35,9 @@ const MenuBar = ({ editor, onPrint }) => {
   const buttonClass = "h-8 w-8 p-0"
 
   return (
-<<<<<<< HEAD
-    <div className="border-b border-gray-200 bg-gray-50 p-2 flex flex-wrap gap-1 rounded-t-md">
-      {/* Print */}
-=======
+
     <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-2 flex flex-wrap gap-1 rounded-t-md">
       {/* Print & Download */}
->>>>>>> vercel
       <Button
         type="button"
         variant="ghost"
