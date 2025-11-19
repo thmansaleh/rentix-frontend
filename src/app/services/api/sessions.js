@@ -38,11 +38,6 @@ export const getJudicialDecisions = async (params = {}) => {
 }
 
 export const createSession = async (sessionData) => {
-  const sessionFiles = sessionData.files || [];
-  if (sessionFiles && sessionFiles.length > 0) {
-    const uploadedFiles = await uploadFiles(sessionFiles);
-    sessionData.files = uploadedFiles;
-  }
   const response = await api.post("/sessions", sessionData);
   return response.data;
 };

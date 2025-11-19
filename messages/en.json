@@ -1138,6 +1138,7 @@
     "clickToUpload": "Click to upload files",
     "supportedFormats": "PDF, DOC, DOCX, images",
     "selectedFiles": "Selected Files",
+    "existingDocuments": "Existing Documents",
     "noFiles": "No attachments",
     "filesCount": "{count} files",
     "file": "file",

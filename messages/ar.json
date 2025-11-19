@@ -1138,6 +1138,7 @@
     "clickToUpload": "انقر لتحميل الملفات",
     "supportedFormats": "PDF, DOC, DOCX, images",
     "selectedFiles": "الملفات المحددة",
+    "existingDocuments": "المستندات الموجودة",
     "noFiles": "لا توجد مرفقات",
     "filesCount": "{count} ملفات",
     "file": "ملف",

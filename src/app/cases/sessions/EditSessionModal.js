@@ -390,15 +390,15 @@ const EditSessionModal = ({
         />
         
         {/* Modal */}
-        <div className="relative w-full max-w-2xl mx-4 bg-white rounded-lg shadow-2xl p-8">
+        <div className="relative w-full max-w-2xl mx-4 bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8">
           <div className="text-center">
-            <div className="text-red-600 mb-4">
+            <div className="text-red-600 dark:text-red-400 mb-4">
               <Calendar className="h-8 w-8 mx-auto" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
               {t('sessions.failedToLoadSessionData')}
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
               {t('sessions.errorLoadingSession')}
             </p>
             <Button onClick={onClose}>
@@ -420,19 +420,19 @@ const EditSessionModal = ({
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-2xl mx-4 h-[90vh] flex flex-col bg-white rounded-lg shadow-2xl">
+      <div className="relative w-full max-w-2xl mx-4 h-[90vh] flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-2xl">
         {/* Header */}
-        <div className={`pb-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg p-6 ${isRtl ? "text-right" : "text-left"}`}>
+        <div className={`pb-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-700 rounded-t-lg p-6 ${isRtl ? "text-right" : "text-left"}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Calendar className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                   {t('sessions.editSession')}
                 </h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {t('sessions.updateSessionInfo')}
                 </p>
               </div>
@@ -442,7 +442,7 @@ const EditSessionModal = ({
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0 rounded-full hover:bg-gray-200"
+              className="h-8 w-8 p-0 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               <CircleX className="h-4 w-4" />
             </Button>
@@ -456,16 +456,16 @@ const EditSessionModal = ({
             <div className="space-y-6">
                   {/* Basic Information Section */}
                   <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <h3 className="text-md font-medium text-gray-900">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-700">
+                  <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <h3 className="text-md font-medium text-gray-900 dark:text-gray-100">
                     {t('sessions.basicInformation')}
                   </h3>
                 </div>
 
                 {/* Decision Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="decision" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="decision" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('sessions.decision')}
                   </Label>
                   <Input
@@ -488,7 +488,7 @@ const EditSessionModal = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Session Date Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="session_date" className="text-sm font-medium text-gray-700">
+                    <Label htmlFor="session_date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {t('sessions.sessionDate')} *
                     </Label>
                     <Popover>
@@ -529,7 +529,7 @@ const EditSessionModal = ({
 
                   {/* Session Time Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="session_time" className="text-sm font-medium text-gray-700">
+                    <Label htmlFor="session_time" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {t('sessions.sessionTime')} *
                     </Label>
                     <Input
@@ -551,7 +551,7 @@ const EditSessionModal = ({
 
                 {/* Note Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="note" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="note" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('sessions.notes')}
                   </Label>
                   <Textarea
@@ -572,7 +572,7 @@ const EditSessionModal = ({
 
                 {/* Link Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="link" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="link" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('sessions.link')}
                   </Label>
                   <Input
@@ -595,9 +595,9 @@ const EditSessionModal = ({
 
               {/* Session Settings Section */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <Settings className="h-4 w-4 text-gray-500" />
-                  <h3 className="text-md font-medium text-gray-900">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-700">
+                  <Settings className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <h3 className="text-md font-medium text-gray-900 dark:text-gray-100">
                     {t('sessions.sessionSettings')}
                   </h3>
                 </div>
@@ -605,23 +605,23 @@ const EditSessionModal = ({
                 {/* Session Status Switch */}
                 <div className={cn(
                   "p-4 rounded-lg",
-                  formik.values.is_judgment_reserved ? "bg-red-50 border-2 border-red-200" : "bg-gray-50"
+                  formik.values.is_judgment_reserved ? "bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800" : "bg-gray-50 dark:bg-gray-700"
                 )}>
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <Label 
                         htmlFor="status" 
-                        className="text-sm font-medium text-gray-700"
+                        className="text-sm font-medium text-gray-700 dark:text-gray-300"
                       >
                         {t('sessions.sessionStatus')}
                       </Label>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {formik.values.status 
                           ? t('sessions.sessionIsActive')
                           : t('sessions.sessionIsInactive')
                         }
                         {formik.values.is_judgment_reserved && (
-                          <span className="block text-red-600 font-medium mt-1">
+                          <span className="block text-red-600 dark:text-red-400 font-medium mt-1">
                             {isRtl ? "تم تعطيل الجلسة تلقائياً بسبب حجز الحكم" : "Session auto-disabled due to judgment reserved"}
                           </span>
                         )}
@@ -641,16 +641,16 @@ const EditSessionModal = ({
                 {/* Session Options - Using Switches */}
                 <div className="space-y-3">
                   {/* Expert Session Switch */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <Label 
                           htmlFor="is_expert_session" 
-                          className="text-sm font-medium text-gray-700"
+                          className="text-sm font-medium text-gray-700 dark:text-gray-300"
                         >
                           {t('sessions.expertSession')}
                         </Label>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {formik.values.is_expert_session 
                             ? t('sessions.thisIsExpertSession')
                             : t('sessions.notExpertSession')
@@ -668,16 +668,16 @@ const EditSessionModal = ({
                   </div>
 
                   {/* Judgment Reserved Switch */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <Label 
                           htmlFor="is_judgment_reserved" 
-                          className="text-sm font-medium text-gray-700"
+                          className="text-sm font-medium text-gray-700 dark:text-gray-300"
                         >
                           {t('sessions.judgmentReserved')}
                         </Label>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {formik.values.is_judgment_reserved 
                             ? t('sessions.judgmentIsReserved')
                             : t('sessions.judgmentNotReserved')
@@ -704,16 +704,16 @@ const EditSessionModal = ({
 
                   {/* Judgment Deferred Switch - Only show when Judgment Reserved is checked */}
                   {formik.values.is_judgment_reserved && (
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
                           <Label 
                             htmlFor="is_judgment_deferred" 
-                            className="text-sm font-medium text-gray-700"
+                            className="text-sm font-medium text-gray-700 dark:text-gray-300"
                           >
                             {t('sessions.judgmentDeferred')}
                           </Label>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {formik.values.is_judgment_deferred 
                               ? t('sessions.judgmentIsDeferred')
                               : t('sessions.judgmentNotDeferred')
@@ -732,16 +732,16 @@ const EditSessionModal = ({
                   )}
 
                   {/* Has Ruling Switch */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <Label 
                           htmlFor="has_ruling" 
-                          className="text-sm font-medium text-gray-700"
+                          className="text-sm font-medium text-gray-700 dark:text-gray-300"
                         >
                           {isRtl ? "حكم صادر" : "Has Ruling"}
                         </Label>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {formik.values.has_ruling 
                             ? (isRtl ? "يوجد حكم صادر" : "Ruling has been issued")
                             : (isRtl ? "لا يوجد حكم" : "No ruling issued")
@@ -760,11 +760,11 @@ const EditSessionModal = ({
                   
                   {/* Ruling Text and Legal Period - Show when has_ruling is true */}
                   {formik.values.has_ruling && (
-                    <div className="space-y-4 pl-4 border-l-4 border-blue-200">
+                    <div className="space-y-4 pl-4 border-l-4 border-blue-200 dark:border-blue-800">
                       {/* Ruling Textarea */}
                       <div className="space-y-2">
-                        <Label htmlFor="ruling" className="text-sm font-medium text-gray-700">
-                          {isRtl ? "منطوق الحكم" : "Ruling Text"} <span className="text-red-500">*</span>
+                        <Label htmlFor="ruling" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {isRtl ? "منطوق الحكم" : "Ruling Text"} <span className="text-red-500 dark:text-red-400">*</span>
                         </Label>
                         <Textarea
                           id="ruling"
@@ -787,8 +787,8 @@ const EditSessionModal = ({
 
                       {/* Ruling Date */}
                       <div className="space-y-2">
-                        <Label htmlFor="ruling_date" className="text-sm font-medium text-gray-700">
-                          {isRtl ? "تاريخ صدور الحكم" : "Ruling Date"} <span className="text-red-500">*</span>
+                        <Label htmlFor="ruling_date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {isRtl ? "تاريخ صدور الحكم" : "Ruling Date"} <span className="text-red-500 dark:text-red-400">*</span>
                         </Label>
                         <Popover>
                           <PopoverTrigger asChild>
@@ -826,8 +826,8 @@ const EditSessionModal = ({
 
                       {/* Legal Period Select */}
                       <div className="space-y-2">
-                        <Label htmlFor="legal_period_id" className="text-sm font-medium text-gray-700">
-                          {isRtl ? "المدة القانونية" : "Legal Period"} <span className="text-red-500">*</span>
+                        <Label htmlFor="legal_period_id" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {isRtl ? "المدة القانونية" : "Legal Period"} <span className="text-red-500 dark:text-red-400">*</span>
                         </Label>
                         <div className="flex items-center gap-2">
                           <Select
@@ -879,16 +879,16 @@ const EditSessionModal = ({
 
               {/* File Upload Section */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <Plus className="h-4 w-4 text-gray-500" />
-                  <h3 className="text-md font-medium text-gray-900">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-700">
+                  <Plus className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <h3 className="text-md font-medium text-gray-900 dark:text-gray-100">
                     {t('sessions.uploadFiles')}
                   </h3>
                 </div>
 
                 {/* File Drop Zone */}
                 <div
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                  className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors cursor-pointer bg-white dark:bg-gray-700"
                   onDrop={handleFileDrop}
                   onDragOver={handleDragOver}
                   onClick={() => document.getElementById('file-input').click()}
@@ -902,11 +902,11 @@ const EditSessionModal = ({
                     className="hidden"
                   />
                   <div className="flex flex-col items-center gap-2">
-                    <Plus className="h-8 w-8 text-gray-400" />
-                    <p className="text-sm text-gray-600">
+                    <Plus className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       {t('sessions.clickOrDragFiles')}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
                       {t('sessions.pdfDocTxtImages')}
                     </p>
                   </div>
@@ -914,9 +914,9 @@ const EditSessionModal = ({
 
                 {/* Selected Files Display */}
                 {selectedFiles.length > 0 && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-sm font-medium text-gray-900">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {t('sessions.selectedFiles')} ({selectedFiles.length})
                       </h4>
                       <Button
@@ -933,14 +933,14 @@ const EditSessionModal = ({
                       {selectedFiles.map((file, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between p-2 bg-white rounded border"
+                          className="flex items-center justify-between p-2 bg-white dark:bg-gray-600 rounded border border-gray-200 dark:border-gray-500"
                         >
                           <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-blue-600" />
-                            <span className="text-sm text-gray-700 truncate">
+                            <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                            <span className="text-sm text-gray-700 dark:text-gray-200 truncate">
                               {file.name}
                             </span>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
                               ({(file.size / 1024 / 1024).toFixed(2)} MB)
                             </span>
                           </div>
@@ -962,24 +962,24 @@ const EditSessionModal = ({
 
               {/* Session Documents Section */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <FileText className="h-4 w-4 text-gray-500" />
-                  <h3 className="text-md font-medium text-gray-900">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-700">
+                  <FileText className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <h3 className="text-md font-medium text-gray-900 dark:text-gray-100">
                     {t('sessions.sessionDocuments')}
                   </h3>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                   {sessionLoading ? (
                     <div className="flex items-center justify-center py-6">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                      <span className="ml-2 text-sm text-gray-600">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 dark:border-blue-400"></div>
+                      <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">
                         {t('sessions.loadingDocuments')}
                       </span>
                     </div>
                   ) : sessionError ? (
                     <div className="text-center py-6">
-                      <p className="text-sm text-red-500">
+                      <p className="text-sm text-red-500 dark:text-red-400">
                         {t('sessions.failedToLoadDocuments')}
                       </p>
                     </div>
@@ -988,24 +988,24 @@ const EditSessionModal = ({
                       {session.documents.map((document) => (
                         <div
                           key={document.id}
-                          className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+                          className="flex items-center justify-between p-3 bg-white dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-500 hover:border-gray-300 dark:hover:border-gray-400 transition-colors"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                              <FileText className="h-4 w-4 text-blue-600" />
+                            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                              <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                             </div>
                             <div>
-                              <h4 className="text-sm font-medium text-gray-900">
+                              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {document.document_name}
                               </h4>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {t('sessions.uploadedOn')} {" "}
                                 {new Date(document.created_at).toLocaleDateString(
                                   isRtl ? "ar" : "en"
                                 )}
                               </p>
                               {document.uploaded_by && (
-                                <p className="text-xs text-gray-400">
+                                <p className="text-xs text-gray-400 dark:text-gray-500">
                                   {t('sessions.by')} {document.uploaded_by}
                                 </p>
                               )}
@@ -1046,8 +1046,8 @@ const EditSessionModal = ({
                     </div>
                   ) : (
                     <div className="text-center py-6">
-                      <FileText className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500">
+                      <FileText className="h-8 w-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {t('sessions.noDocumentsFound')}
                       </p>
                     </div>
@@ -1058,7 +1058,7 @@ const EditSessionModal = ({
           </div>
 
           {/* Fixed Footer */}
-          <div className="border-t border-gray-100 p-6 bg-white rounded-b-lg">
+          <div className="border-t border-gray-100 dark:border-gray-700 p-6 bg-white dark:bg-gray-800 rounded-b-lg">
             <div className="flex justify-end gap-3">
                 <Button
                   type="button"

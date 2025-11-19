@@ -113,7 +113,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                disabled={isLoading}
+                disabled={isLoading || isUploading}
                 // className="flex items-center gap-2 px-6 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <CircleX className="h-4 w-4" />
@@ -121,7 +121,7 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
               </Button>
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || isUploading}
                 // className="flex items-center gap-2 px-6 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
               >
                 <Save className="h-4 w-4" />
