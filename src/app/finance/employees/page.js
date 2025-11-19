@@ -24,7 +24,7 @@ function EmployeeCashTransactionsPage() {
         </div>
 
         {/* Tabs */}
-        <Tabs dir="rtl" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs dir={isRTL ? 'rtl' : 'ltr'} value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="transactions">{t('tabs.transactions')}</TabsTrigger>
             <TabsTrigger value="expenses">{t('tabs.expenses')}</TabsTrigger>

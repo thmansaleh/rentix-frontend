@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { format } from 'date-fns';
@@ -28,11 +28,18 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
   const [isUploading, setIsUploading] = useState(false);
   const [legalPeriods, setLegalPeriods] = useState([]);
   const [isAddLegalPeriodOpen, setIsAddLegalPeriodOpen] = useState(false);
+  
+  // Track uploaded files to prevent re-upload
+  const uploadedFilesRef = useRef([]);
+  const isSubmittingRef = useRef(false);
 
   // Fetch legal periods when modal opens
   useEffect(() => {
     if (isOpen) {
       fetchLegalPeriods();
+      // Reset refs when modal opens
+      uploadedFilesRef.current = [];
+      isSubmittingRef.current = false;
     }
   }, [isOpen]);
 
@@ -143,14 +150,27 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
     },
     validationSchema,
     onSubmit: async (values) => {
+      // Prevent duplicate submissions
+      if (isSubmittingRef.current) {
+        console.log('Already submitting, ignoring duplicate submission');
+        return;
+      }
+      
+      isSubmittingRef.current = true;
       setIsLoading(true);
+      
       try {
-        // Upload files first if any are selected
-        let uploadedFiles = [];
-        if (selectedFiles.length > 0) {
+        // Upload files first if any are selected and not already uploaded
+        let uploadedFiles = uploadedFilesRef.current;
+        
+        if (selectedFiles.length > 0 && uploadedFilesRef.current.length === 0) {
           setIsUploading(true);
           try {
             uploadedFiles = await uploadFiles(selectedFiles, 'sessions');
+            // Store uploaded files in ref to prevent re-upload
+            uploadedFilesRef.current = uploadedFiles;
+            // Clear selected files immediately after successful upload
+            setSelectedFiles([]);
             toast.success(
               isRtl ? `تم رفع ${uploadedFiles.length} ملف بنجاح` : `Successfully uploaded ${uploadedFiles.length} files`,
               { position: "top-right", autoClose: 2000 }
@@ -160,7 +180,12 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
               isRtl ? "فشل في رفع الملفات" : "Failed to upload files",
               { position: "top-right", autoClose: 3000 }
             );
-            uploadedFiles = [];
+            setIsLoading(false);
+            setIsUploading(false);
+            isSubmittingRef.current = false;
+            return; // Stop submission if file upload fails
+          } finally {
+            setIsUploading(false);
           }
         }
 
@@ -206,10 +231,15 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
             }
           );
           
-          setSelectedFiles([]);
+          // Reset refs after successful submission
+          uploadedFilesRef.current = [];
+          isSubmittingRef.current = false;
+          
           formik.resetForm();
           onSessionAdded && onSessionAdded(response.data);
           onClose();
+        } else {
+          isSubmittingRef.current = false;
         }
       } catch (error) {
         // Check if it's a permission error (403)
@@ -222,6 +252,7 @@ export const useSessionForm = ({ isOpen, caseId, isRtl, onClose, onSessionAdded 
           position: "top-right",
           autoClose: 3000,
         });
+        isSubmittingRef.current = false;
       } finally {
         setIsLoading(false);
         setIsUploading(false);

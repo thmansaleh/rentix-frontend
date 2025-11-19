@@ -274,6 +274,34 @@ export default function EditMemoModal({ isOpen, onClose, memoId, onSuccess, empl
                 />
               </div>
 
+              {/* Existing Documents */}
+              {memo?.documents && memo.documents.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">{t('memos.existingDocuments')}:</Label>
+                  <div className="space-y-2 border rounded-lg p-3">
+                    {memo.documents.map((doc) => (
+                      <div
+                        key={doc.id}
+                        className="flex items-center justify-between gap-2 p-2 bg-muted/50 rounded-md"
+                      >
+                        <span className="text-sm truncate flex-1">
+                          {doc.document_name}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(doc.document_url, '_blank')}
+                          className="h-8 px-3"
+                        >
+                          {t('common.download')}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* File Upload */}
               <div className="space-y-2">
                 <Label>{t('memos.attachments')}</Label>

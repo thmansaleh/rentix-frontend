@@ -202,8 +202,8 @@ const CallLogsPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('callLogs.title')}</h1>
-          <p className="text-gray-600 mt-1">{t('callLogs.description')}</p>
+          <h1 className="text-2xl font-bold ">{t('callLogs.title')}</h1>
+          <p className=" mt-1">{t('callLogs.description')}</p>
         </div>
         <Button 
           onClick={() => setIsAddModalOpen(true)}
@@ -219,7 +219,7 @@ const CallLogsPage = () => {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2  w-4 h-4" />
               <Input
                 placeholder={t('callLogs.searchPlaceholder')}
                 value={searchTerm}
@@ -246,7 +246,7 @@ const CallLogsPage = () => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>{t('callLogs.callsList')}</span>
-            <span className="text-sm font-normal text-gray-500">
+            <span className="text-sm font-normal ">
               {pagination.totalRecords} {t('callLogs.totalCalls')}
             </span>
           </CardTitle>
@@ -268,7 +268,7 @@ const CallLogsPage = () => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
           ) : callLogs.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 ">
               {t('callLogs.noCalls')}
             </div>
           ) : (
@@ -355,7 +355,7 @@ const CallLogsPage = () => {
               {/* Pagination */}
               {pagination.totalPages > 1 && (
                 <div className="flex justify-between items-center mt-4">
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm ">
                     {t('callLogs.pagination.showing')} {((pagination.currentPage - 1) * pagination.limit) + 1} {t('callLogs.pagination.to')}{' '}
                     {Math.min(pagination.currentPage * pagination.limit, pagination.totalRecords)}{' '}
                     {t('callLogs.pagination.of')} {pagination.totalRecords} {t('callLogs.pagination.results')}
@@ -378,7 +378,7 @@ const CallLogsPage = () => {
                       .map((page, index, array) => (
                         <React.Fragment key={page}>
                           {index > 0 && array[index - 1] !== page - 1 && (
-                            <span className="px-2 py-1 text-gray-500">...</span>
+                            <span className="px-2 py-1 ">...</span>
                           )}
                           <Button
                             size="sm"

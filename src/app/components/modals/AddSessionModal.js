@@ -6,12 +6,15 @@ import * as Yup from 'yup';
 import { createSession } from '@/app/services/api/sessions';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import { uploadFiles, deleteUploadedFiles } from '@/../utils/fileUpload';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
+  DialogClose,
 } from '@/components/ui/dialog';
 import {
   Popover,
@@ -24,7 +27,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon, Plus, Minus } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Minus, FileText, FileImage, FileSpreadsheet } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -33,6 +36,59 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  // File handling functions
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(prev => [...prev, ...files]);
+  };
+
+  const removeFile = (indexToRemove) => {
+    setSelectedFiles(prev => prev.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const files = Array.from(e.dataTransfer.files);
+    setSelectedFiles(prev => [...prev, ...files]);
+  };
+
+  const getFileIcon = (filename) => {
+    const ext = filename.split('.').pop().toLowerCase();
+    if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+      return <FileImage className="w-5 h-5" />;
+    } else if (['xls', 'xlsx'].includes(ext)) {
+      return <FileSpreadsheet className="w-5 h-5" />;
+    }
+    return <FileText className="w-5 h-5" />;
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
+  const handleModalClose = () => {
+    setSelectedFiles([]);
+    setIsDragOver(false);
+    onClose();
+  };
 
   // Validation schema
   const validationSchema = Yup.object({
@@ -61,22 +117,50 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
 
   // Handle form submission
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    let uploadedFiles = [];
+    
     try {
       setIsSubmitting(true);
       
-      // Upload files to Google Storage first
-      let filesUrls = [];
+      // Step 1: Upload files to AWS S3 via backend API (if any)
       if (selectedFiles.length > 0) {
-        const uploadResult = await uploadFilesToGoogleStorage(selectedFiles);
-        if (uploadResult.success) {
-          filesUrls = uploadResult.urls;
-        } else {
-          toast.error(uploadResult.error || t('files.uploadError'));
-          return;
+        try {
+          // Show upload progress
+          toast.info(
+            language === 'ar' 
+              ? `جاري رفع ${selectedFiles.length} ملف...` 
+              : `Uploading ${selectedFiles.length} file(s)...`,
+            { autoClose: false, toastId: 'file-upload' }
+          );
+          
+          uploadedFiles = await uploadFiles(selectedFiles, 'sessions');
+          
+          // Dismiss upload progress toast
+          toast.dismiss('file-upload');
+          
+          console.log('Files uploaded successfully:', uploadedFiles);
+          
+          // Validate upload result
+          if (!Array.isArray(uploadedFiles) || uploadedFiles.length === 0) {
+            throw new Error(
+              language === 'ar' 
+                ? 'فشل رفع الملفات. يرجى المحاولة مرة أخرى.' 
+                : 'Failed to upload files. Please try again.'
+            );
+          }
+        } catch (uploadError) {
+          toast.dismiss('file-upload');
+          console.error('File upload error:', uploadError);
+          
+          const errorMessage = uploadError.message || 
+            (language === 'ar' ? 'فشل في رفع الملفات' : 'Failed to upload files');
+          
+          toast.error(errorMessage);
+          return; // Stop execution if file upload fails
         }
       }
       
-      // Combine date and time into a datetime string
+      // Step 2: Prepare session data
       const sessionDateTime = values.session_date && values.session_time 
         ? `${format(values.session_date, 'yyyy-MM-dd')}T${values.session_time}`
         : null;
@@ -88,55 +172,82 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
         link: values.link,
         is_expert_session: values.is_expert_session,
         note: values.note,
-        filesUrls: filesUrls
+        documents: uploadedFiles // Format: [{document_name, document_url}]
       };
 
-      console.log('Calling createSession with data:', sessionData); // Debug log
+      console.log('Creating session with data:', sessionData);
+      
+      // Step 3: Create session
       const response = await createSession(sessionData);
       
-      console.log('API Response:', response); // Debug log
+      console.log('API Response:', response);
       
-      // Check if response indicates failure (permission or other errors)
+      // Step 4: Handle response
       if (response?.success === false) {
-        console.log('Response success is false, showing error:', response?.message); // Debug log
+        // If session creation failed, clean up uploaded files
+        if (uploadedFiles.length > 0) {
+          console.log('Session creation failed, cleaning up uploaded files...');
+          const fileUrls = uploadedFiles.map(f => f.document_url);
+          await deleteUploadedFiles(fileUrls);
+        }
+        
         toast.error(response?.message || t('sessions.addError'));
         return;
       }
       
-      if (response.success) {
-        console.log('Session added successfully'); // Debug log
+      if (response.success || response.data) {
+        console.log('Session created successfully');
         toast.success(t('sessions.addSuccess'));
         resetForm();
         setSelectedFiles([]);
         onSessionAdded && onSessionAdded(response.data);
-        onClose();
+        handleModalClose();
+      } else {
+        // Unexpected response format
+        throw new Error('Unexpected response format');
       }
-    } catch (error) {
-      console.log('Caught error:', error); // Debug log
-      console.log('Error response:', error?.response); // Debug log
-      console.log('Error response data:', error?.response?.data); // Debug log
-      console.log('Error response status:', error?.response?.status); // Debug log
       
-      // Check if it's a permission error (403)
+    } catch (error) {
+      console.error('Error in handleSubmit:', error);
+      
+      // Clean up uploaded files if session creation failed
+      if (uploadedFiles.length > 0) {
+        console.log('Cleaning up uploaded files due to error...');
+        try {
+          const fileUrls = uploadedFiles.map(f => f.document_url);
+          await deleteUploadedFiles(fileUrls);
+        } catch (cleanupError) {
+          console.error('Failed to clean up uploaded files:', cleanupError);
+        }
+      }
+      
+      // Handle different error types
       const isPermissionError = error?.response?.status === 403;
       
       if (isPermissionError) {
-        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإضافة جلسة' : 'You do not have permission to add a session');
-        console.log('Permission error, showing:', permissionMessage); // Debug log
+        const permissionMessage = error?.response?.data?.message || 
+          (language === 'ar' ? 'ليس لديك صلاحية لإضافة جلسة' : 'You do not have permission to add a session');
         toast.error(permissionMessage);
       } else {
-        const generalMessage = error?.response?.data?.message || t('sessions.addError');
-        console.log('General error, showing:', generalMessage); // Debug log
+        const generalMessage = error?.response?.data?.message || 
+          error?.message || 
+          t('sessions.addError');
         toast.error(generalMessage);
       }
     } finally {
       setIsSubmitting(false);
       setSubmitting(false);
+      toast.dismiss('file-upload'); // Ensure progress toast is dismissed
     }
   };
 
+  const handleOpenChange = (open) => {
+    // Only reset state and call onClose when the dialog is closing
+    if (!open) handleModalClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={handleModalClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -345,27 +456,25 @@ const AddSessionModal = ({ isOpen, onClose, caseId, onSessionAdded }) => {
               </div>
 
               {/* Action Buttons */}
-              <div className={`flex gap-3 pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <DialogFooter className={`gap-3 pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
                   className="flex-1"
                 >
-                  {isSubmitting 
-                    ? t('common.saving')
-                    : t('sessions.addSession')
-                  }
+                  {isSubmitting ? t('common.saving') : t('sessions.addSession')}
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleModalClose}
-                  disabled={isSubmitting}
-                  className="flex-1"
-                >
-                  {t('common.cancel')}
-                </Button>
-              </div>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isSubmitting}
+                    className="flex-1"
+                  >
+                    {t('common.cancel')}
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
             </Form>
           )}
         </Formik>

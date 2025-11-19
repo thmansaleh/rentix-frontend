@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
   FileText, 
   Download, 
@@ -176,7 +177,7 @@ export default function FormsPage() {
       form.document_for.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t(`forms.types.${form.document_for.replace(/ /g, '_')}`).toLowerCase().includes(searchTerm.toLowerCase())
     
-    const matchesType = !selectedType || form.document_for === selectedType
+    const matchesType = !selectedType || selectedType === 'all' || form.document_for === selectedType
     
     return matchesSearch && matchesType
   })
@@ -209,10 +210,10 @@ export default function FormsPage() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <CardTitle className="text-2xl font-bold text-gray-900">
+              <CardTitle className="text-2xl font-bold ">
                 {isArabic ? 'النماذج والوثائق' : 'Forms & Documents'}
               </CardTitle>
-              <p className="text-gray-600 mt-1">
+              <p className=" mt-1">
                 {isArabic ? 'تصفح وتحميل النماذج المطلوبة للموارد البشرية' : 'Browse and download required HR forms'}
               </p>
             </div>
@@ -231,7 +232,7 @@ export default function FormsPage() {
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4`} />
+              <Search className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2  w-4 h-4`} />
               <Input
                 placeholder={isArabic ? 'البحث في النماذج...' : 'Search forms...'}
                 value={searchTerm}
@@ -240,19 +241,20 @@ export default function FormsPage() {
               />
             </div>
             <div className="relative min-w-[200px]">
-              <Filter className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4`} />
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className={`w-full ${isArabic ? 'pr-10' : 'pl-10'} py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-              >
-                <option value="">{isArabic ? 'جميع الأنواع' : 'All Types'}</option>
-                {uniqueTypes.map(type => (
-                  <option key={type} value={type}>
-                    {t(`forms.types.${type.replace(/ /g, '_')}`)}
-                  </option>
-                ))}
-              </select>
+              <Filter className={`absolute ${isArabic ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2  w-4 h-4 pointer-events-none z-10`} />
+              <Select value={selectedType} onValueChange={setSelectedType}>
+                <SelectTrigger className={`w-full ${isArabic ? 'pr-10' : 'pl-10'}`}>
+                  <SelectValue placeholder={t('forms.allTypes')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('forms.allTypes')}</SelectItem>
+                  {uniqueTypes.map(type => (
+                    <SelectItem key={type} value={type}>
+                      {t(`forms.types.${type.replace(/ /g, '_')}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
@@ -263,11 +265,11 @@ export default function FormsPage() {
         <CardContent className="pt-6">
           {filteredForms.length === 0 ? (
             <div className="text-center py-12">
-              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <FileText className="w-12 h-12  mx-auto mb-4" />
+              <h3 className="text-lg font-medium  mb-2">
                 {isArabic ? 'لا توجد نماذج' : 'No forms found'}
               </h3>
-              <p className="text-gray-600">
+              <p className="">
                 {isArabic ? 'لم يتم العثور على نماذج تطابق البحث' : 'No forms match your search criteria'}
               </p>
             </div>

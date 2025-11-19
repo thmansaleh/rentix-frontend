@@ -43,21 +43,21 @@ function DeletePetitionModal({
 
         {petitionData && (
           <div className="py-4 space-y-2">
-            <div className="bg-gray-50 p-3 rounded-md space-y-2">
+            <div className=" p-3 rounded-md space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="font-medium text-gray-600">{t('petitions.id')}:</span>
-                <span className="text-gray-900">{petitionData.id}</span>
+                <span className="font-medium ">{t('petitions.id')}:</span>
+                <span className="">{petitionData.id}</span>
               </div>
               {petitionData.type && (
                 <div className="flex justify-between text-sm">
-                  <span className="font-medium text-gray-600">{t('petitions.type')}:</span>
-                  <span className="text-gray-900">{petitionData.type}</span>
+                  <span className="font-medium ">{t('petitions.type')}:</span>
+                  <span className="">{petitionData.type}</span>
                 </div>
               )}
               {petitionData.date && (
                 <div className="flex justify-between text-sm">
-                  <span className="font-medium text-gray-600">{t('petitions.date')}:</span>
-                  <span className="text-gray-900">
+                  <span className="font-medium ">{t('petitions.date')}:</span>
+                  <span className="">
                     {new Date(petitionData.date).toLocaleDateString()}
                   </span>
                 </div>

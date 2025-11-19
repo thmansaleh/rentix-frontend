@@ -13,10 +13,10 @@ import { cn } from '@/lib/utils';
 
 export default function SessionBasicInfo({ formik, isRtl }) {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-        <Calendar className="h-4 w-4 text-gray-500" />
-        <h3 className="text-md font-medium text-gray-900">
+    <div className="space-y-4 bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="flex items-center gap-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+        <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <h3 className="text-md font-medium text-gray-900 dark:text-gray-100">
           {isRtl ? "المعلومات الأساسية" : "Basic Information"}
         </h3>
       </div>
@@ -25,7 +25,7 @@ export default function SessionBasicInfo({ formik, isRtl }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Session Date Field */}
         <div className="space-y-2">
-          <Label htmlFor="session_date" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="session_date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             {isRtl ? "تاريخ الجلسة" : "Session Date"} *
           </Label>
           <Popover>
@@ -66,7 +66,7 @@ export default function SessionBasicInfo({ formik, isRtl }) {
 
         {/* Session Time Field */}
         <div className="space-y-2">
-          <Label htmlFor="session_time" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="session_time" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             {isRtl ? "وقت الجلسة" : "Session Time"} *
           </Label>
           <Input
@@ -88,7 +88,7 @@ export default function SessionBasicInfo({ formik, isRtl }) {
 
       {/* Note Field */}
       <div className="space-y-2">
-        <Label htmlFor="note" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="note" className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {isRtl ? "ملاحظات" : "Notes"}
         </Label>
         <Textarea
@@ -109,7 +109,7 @@ export default function SessionBasicInfo({ formik, isRtl }) {
 
       {/* Link Field */}
       <div className="space-y-2">
-        <Label htmlFor="link" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="link" className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {isRtl ? "الرابط" : "Link"}
         </Label>
         <Input

@@ -5,8 +5,10 @@ import Meetings from '../potential-clients/meetings/Meetings'
 import { AddMeetingModal } from './AddMeetingModal'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
+import { useTranslations } from '@/hooks/useTranslations'
 
 function MeetingsPage() {
+  const { t } = useTranslations();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -21,7 +23,7 @@ function MeetingsPage() {
       className="gap-2"
     >
       <Plus className="h-4 w-4" />
-      إضافة موعد جديد
+      {t('meetings.addModal.title')}
     </Button>
   );
 

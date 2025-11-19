@@ -20,11 +20,11 @@ export default function RulingSection({
   if (!formik.values.has_ruling) return null;
 
   return (
-    <div className="space-y-4 pl-4 border-l-4 border-blue-200">
+    <div className="space-y-4 pl-4 border-l-4 border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-800 p-4 rounded-lg">
       {/* Ruling Textarea */}
       <div className="space-y-2">
-        <Label htmlFor="ruling" className="text-sm font-medium text-gray-700">
-          {isRtl ? "منطوق الحكم" : "Ruling Text"} <span className="text-red-500">*</span>
+        <Label htmlFor="ruling" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {isRtl ? "منطوق الحكم" : "Ruling Text"} <span className="text-red-500 dark:text-red-400">*</span>
         </Label>
         <Textarea
           id="ruling"
@@ -47,8 +47,8 @@ export default function RulingSection({
 
       {/* Ruling Date */}
       <div className="space-y-2">
-        <Label htmlFor="ruling_date" className="text-sm font-medium text-gray-700">
-          {isRtl ? "تاريخ صدور الحكم" : "Ruling Date"} <span className="text-red-500">*</span>
+        <Label htmlFor="ruling_date" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {isRtl ? "تاريخ صدور الحكم" : "Ruling Date"} <span className="text-red-500 dark:text-red-400">*</span>
         </Label>
         <Popover>
           <PopoverTrigger asChild>
@@ -87,8 +87,8 @@ export default function RulingSection({
       {/* Legal Period Select */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Label htmlFor="legal_period_id" className="text-sm font-medium text-gray-700">
-            {isRtl ? "المدة القانونية" : "Legal Period"} <span className="text-red-500">*</span>
+          <Label htmlFor="legal_period_id" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {isRtl ? "المدة القانونية" : "Legal Period"} <span className="text-red-500 dark:text-red-400">*</span>
           </Label>
           <Button
             type="button"

@@ -1,18 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CustomModal } from '@/components/ui/custom-modal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import { Edit, Trash2, Printer, Calendar, Eye, Download } from 'lucide-react';
+import { Edit, Trash2, Printer, Calendar, Eye, Download, ChevronDown, X } from 'lucide-react';
 import { getAllEmployeeCashTransactions, deleteEmployeeCashTransaction } from '@/app/services/api/employeeCashTransactions';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const EmployeeStatementModal = ({ 
   isOpen, 
@@ -47,7 +51,7 @@ const EmployeeStatementModal = ({
 
   const fetchTransactions = async () => {
     if (!employeeId || !dateFrom || !dateTo) {
-      toast.error('يرجى تحديد التواريخ');
+      toast.error(t('dateRequired') || 'يرجى تحديد التواريخ');
       return;
     }
 
@@ -63,11 +67,11 @@ const EmployeeStatementModal = ({
       if (response.success) {
         setTransactions(response.data || []);
       } else {
-        toast.error('حدث خطأ في تحميل المعاملات');
+        toast.error(t('loadError') || 'حدث خطأ في تحميل المعاملات');
       }
     } catch (error) {
       console.error('Error fetching transactions:', error);
-      toast.error('حدث خطأ في تحميل المعاملات');
+      toast.error(t('loadError') || 'حدث خطأ في تحميل المعاملات');
     } finally {
       setLoading(false);
     }
@@ -140,7 +144,7 @@ const EmployeeStatementModal = ({
 
   const handlePrintStatement = () => {
     if (transactions.length === 0) {
-      toast.error('لا توجد بيانات للطباعة');
+      toast.error(t('noDataToExport'));
       return;
     }
 
@@ -406,38 +410,73 @@ const EmployeeStatementModal = ({
   };
 
   return (
-    <CustomModal
-      isOpen={isOpen}
-      onClose={handleClose}
-      title={`${t('title')} - ${employeeName}`}
-      size="xl"
-    >
-      <div className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-[95vw] w-full h-[95vh] p-0 gap-0">
+        <DialogHeader className="px-6 py-4 border-b shrink-0">
+          <DialogTitle className="text-xl font-semibold">
+            {t('title')} - {employeeName}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <div className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
           {/* Date Range Filter */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4  rounded-lg">
             <div className="space-y-2">
               <Label htmlFor="dateFrom" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 {t('dateFrom')}
               </Label>
-              <Input
-                id="dateFrom"
-                type="date"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !dateFrom && "text-muted-foreground"
+                    )}
+                  >
+                    {dateFrom ? format(new Date(dateFrom), "PPP") : t('dateFrom')}
+                    <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    mode="single"
+                    selected={dateFrom ? new Date(dateFrom) : undefined}
+                    onSelect={(date) => setDateFrom(date ? format(date, 'yyyy-MM-dd') : '')}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
               <Label htmlFor="dateTo" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 {t('dateTo')}
               </Label>
-              <Input
-                id="dateTo"
-                type="date"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !dateTo && "text-muted-foreground"
+                    )}
+                  >
+                    {dateTo ? format(new Date(dateTo), "PPP") : t('dateTo')}
+                    <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    mode="single"
+                    selected={dateTo ? new Date(dateTo) : undefined}
+                    onSelect={(date) => setDateTo(date ? format(date, 'yyyy-MM-dd') : '')}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="flex items-end">
               <Button 
@@ -459,7 +498,7 @@ const EmployeeStatementModal = ({
                 className="flex items-center gap-2"
               >
                 <Printer className="h-4 w-4" />
-                طباعة
+                {t('print')}
               </Button>
               <Button 
                 onClick={handleExportToExcel}
@@ -551,7 +590,7 @@ const EmployeeStatementModal = ({
                               size="sm"
                               onClick={() => {
                                 onViewTransaction(transaction.id);
-                                handleClose();
+                                setTimeout(() => handleClose(), 100);
                               }}
                               className="hover:bg-green-50"
                               title={t('view')}
@@ -564,7 +603,7 @@ const EmployeeStatementModal = ({
                               size="sm"
                               onClick={() => {
                                 onViewExpense(transaction.id);
-                                handleClose();
+                                setTimeout(() => handleClose(), 100);
                               }}
                               className="hover:bg-green-50"
                               title={t('view')}
@@ -580,7 +619,7 @@ const EmployeeStatementModal = ({
                               size="sm"
                               onClick={() => {
                                 onEditTransaction(transaction);
-                                handleClose();
+                                setTimeout(() => handleClose(), 100);
                               }}
                               className="hover:bg-blue-50"
                               title={t('edit')}
@@ -596,7 +635,7 @@ const EmployeeStatementModal = ({
                               size="sm"
                               onClick={() => {
                                 onEditExpense(transaction);
-                                handleClose();
+                                setTimeout(() => handleClose(), 100);
                               }}
                               className="hover:bg-blue-50"
                               title={t('edit')}
@@ -612,7 +651,7 @@ const EmployeeStatementModal = ({
                               size="sm"
                               onClick={() => {
                                 onPrintTransaction(transaction);
-                                handleClose();
+                                setTimeout(() => handleClose(), 100);
                               }}
                               className="hover:bg-purple-50"
                               title={t('print')}
@@ -642,7 +681,7 @@ const EmployeeStatementModal = ({
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                <AlertDialogCancel>{t('modal.cancel')}</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleDelete(transaction)}
                                   className="bg-red-600 hover:bg-red-700"
@@ -662,13 +701,15 @@ const EmployeeStatementModal = ({
           )}
 
           {/* Close Button */}
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end pt-4 border-t mt-4">
             <Button variant="outline" onClick={handleClose}>
               {t('close')}
             </Button>
           </div>
-      </div>
-    </CustomModal>
+        </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
