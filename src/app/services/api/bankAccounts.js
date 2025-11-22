@@ -61,3 +61,9 @@ export const deleteBankAccountLog = async (id) => {
   const response = await api.delete(`/bank-accounts/logs/${id}`);
   return response.data;
 };
+
+// Get bank account statistics
+export const getBankAccountStatistics = async (params = {}) => {
+  const response = await api.get('/bank-accounts/statistics', { params });
+  return response.data;
+};

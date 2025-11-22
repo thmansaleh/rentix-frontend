@@ -16,6 +16,8 @@ import EmployeeStatementModal from './EmployeeStatementModal';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
 import { useTranslations } from '@/hooks/useTranslations';
+import { isPending } from '@reduxjs/toolkit';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const TransactionsTab = () => {
   const t = useTranslations('employeeFinance.transactions');
@@ -29,7 +31,8 @@ const TransactionsTab = () => {
   const [printTransactionId, setPrintTransactionId] = useState(null);
   const [statementEmployee, setStatementEmployee] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  
+    const { language } = useLanguage();
+
   // Pagination & Filter states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -133,8 +136,20 @@ const TransactionsTab = () => {
         toast.error(t('deleteError'));
       }
     } catch (error) {
-      console.error('Error deleting transaction:', error);
-      toast.error(t('deleteError'));
+      isPermissionError = error?.response?.status === 403;
+      if (isPermissionError) {
+        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف هذه العهدة' : 'You do not have permission to delete this transaction');
+        toast.error(permissionMessage, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        toast.error(t('deleteError'));
+      }
     } finally {
       setDeleteLoading(false);
     }

@@ -15,7 +15,7 @@ import { getBranches } from '@/app/services/api/branches';
 import { toast } from 'react-toastify';
 
 const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
-  const { isRTL } = useLanguage();
+  const { isRTL, language } = useLanguage();
   const t = useTranslations('AddBankAccount');
   const [branches, setBranches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,8 +79,22 @@ const AddAccountModal = ({ isOpen, onClose, onSuccess }) => {
           toast.error(response.message || t('errorAddingAccount'));
         }
       } catch (error) {
+                // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403;
+        if (isPermissionError) {
+          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لاضافة هذا الحساب' : 'You do not have permission to add this account');
+          toast.error(permissionMessage, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.error(t('errorAddingAccount'));
+        }
 
-        toast.error(t('errorAddingAccountGeneric'));
       } finally {
         setIsLoading(false);
       }

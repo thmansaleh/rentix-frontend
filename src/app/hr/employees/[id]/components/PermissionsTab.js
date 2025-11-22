@@ -159,12 +159,12 @@ const PermissionsTab = ({ employeeId }) => {
     try {
       await assignPermissionsToEmployee(employeeId, updatedPermissions);
       
-      toast.success(t('roles.permissionsSavedSuccessfully'));
+      toast.success(t('messages.permissionsSavedSuccessfully'));
       
       // Revalidate the permissions data
       mutate(`/permissions/employee/${employeeId}`);
     } catch (error) {
-      toast.error(t('roles.errorSavingPermissions'));
+      toast.error(t('messages.errorSavingPermissions'));
     } finally {
       setIsSaving(false);
     }

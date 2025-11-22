@@ -17,10 +17,11 @@ import TransactionModal from './TransactionModal';
 import ExpenseModal from './ExpenseModal';
 import EmployeeStatementModal from './EmployeeStatementModal';
 import PrintTransactionModal from './PrintTransactionModal';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const AllTransactionsTab = () => {
   const t = useTranslations('employeeFinance.allTransactions');
-  
+  const { isRTL } = useLanguage();
   // Modal states
   const [showViewModal, setShowViewModal] = useState(false);
   const [showExpenseDetailsModal, setShowExpenseDetailsModal] = useState(false);
@@ -259,7 +260,7 @@ const AllTransactionsTab = () => {
                     <TableHead>{t('status')}</TableHead>
                     <TableHead>{t('addedBy')}</TableHead>
                     <TableHead>{t('addedAt')}</TableHead>
-                    <TableHead className="text-center">الإجراءات</TableHead>
+                    <TableHead className="text-center">{isRTL ? 'الإجراءات' : 'Actions'}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

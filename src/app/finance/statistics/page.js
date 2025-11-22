@@ -3,9 +3,9 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import BankAccountsOverview from './components/BankAccountsOverview';
-import LastInvoices from './components/LastInvoices';
-import Transactions from './components/Transactions';
+import Invoices from './components/Invoices';
+import EmployeeTransactions from './components/EmployeeTransactions';
+import BankAccountsTransactions from './components/BankAccountsTransactions';
 
 const FinanceStatisticsPage = () => {
   const { isRTL, language } = useLanguage();
@@ -24,14 +24,17 @@ const FinanceStatisticsPage = () => {
               : 'Comprehensive overview of the office financial status'}
           </CardDescription>
         </CardHeader>
+        <CardContent className='space-y-6'>
+          <BankAccountsTransactions />
+          <div className="border-t my-6"></div>
+          <Invoices />
+          <div className="border-t my-6"></div>
+          <EmployeeTransactions />
+        </CardContent>
       </Card>
+      
 
-      <Transactions />
-      {/* Bank Accounts Overview */}
-      <BankAccountsOverview />
 
-      {/* Last Invoices */}
-      <LastInvoices />
     </div>
   );
 };

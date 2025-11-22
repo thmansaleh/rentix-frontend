@@ -14,6 +14,7 @@ import ExpenseModal from './ExpenseModal';
 import ExpenseDetailsModal from './ExpenseDetailsModal';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const ExpensesTab = () => {
   const t = useTranslations('employeeFinance.expenses');
@@ -23,7 +24,7 @@ const ExpensesTab = () => {
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [selectedExpenseId, setSelectedExpenseId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  
+const {  language } = useLanguage();
   // Pagination & Filter states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -117,8 +118,20 @@ const ExpensesTab = () => {
         toast.error(t('deleteError'));
       }
     } catch (error) {
-      console.error('Error deleting expense:', error);
-      toast.error(t('deleteError'));
+      const isPermissionError = error?.response?.status === 403;
+      if (isPermissionError) {
+        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف هذه العهدة' : 'You do not have permission to delete this transaction');
+        toast.error(permissionMessage, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        toast.error(t('deleteError'));
+      }
     } finally {
       setDeleteLoading(false);
     }

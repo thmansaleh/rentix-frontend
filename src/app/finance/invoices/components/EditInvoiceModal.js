@@ -20,11 +20,14 @@ import useSWR from "swr";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess }) {
   const t = useTranslations('invoices');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(null);
+    const { language } = useLanguage();
+  
   const [formData, setFormData] = useState({
     client_id: "",
     branch_id: "",
@@ -95,8 +98,20 @@ export default function EditInvoiceModal({ isOpen, onClose, invoiceId, onSuccess
         onClose();
       }
     } catch (error) {
-
-      toast.error(t('createError'));
+      const isPermissionError = error?.response?.status === 403;
+      if (isPermissionError) {
+        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لتعديل هذه الفاتورة' : 'You do not have permission to edit this invoice');
+        toast.error(permissionMessage, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        toast.error(t('updateError'));
+      }
       onClose();
     } finally {
       setLoading(false);

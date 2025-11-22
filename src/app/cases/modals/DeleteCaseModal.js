@@ -73,58 +73,58 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/70 backdrop-blur-sm p-4"
       onClick={handleOverlayClick}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
       <div
-        className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-red-100 bg-red-50 flex-shrink-0">
+        <div className="flex items-center justify-between p-6 border-b border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-950/50 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-100 rounded-full">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
+            <div className="p-2 bg-red-100 dark:bg-red-900/50 rounded-full">
+              <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
             </div>
-            <h2 className="text-xl font-semibold text-red-900">
+            <h2 className="text-xl font-semibold text-red-900 dark:text-red-200">
               {language === 'ar' ? 'تأكيد الحذف' : 'Confirm Deletion'}
             </h2>
           </div>
           <button
             onClick={onClose}
             disabled={isDeleting}
-            className="p-1 hover:bg-red-100 rounded-full transition-colors disabled:opacity-50"
+            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full transition-colors disabled:opacity-50"
           >
-            <X className="w-5 h-5 text-red-600" />
+            <X className="w-5 h-5 text-red-600 dark:text-red-400" />
           </button>
         </div>
 
         {/* Content */}
         <div className="p-6 space-y-4 overflow-y-auto flex-1">
-          <p className="text-gray-700">
+          <p className="text-gray-700 dark:text-gray-300">
             {language === 'ar' 
               ? 'هل أنت متأكد من حذف هذه القضية؟ هذا الإجراء لا يمكن التراجع عنه.' 
               : 'Are you sure you want to delete this case? This action cannot be undone.'}
           </p>
           
           {caseData && (
-            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   {language === 'ar' ? 'رقم القضية:' : 'Case Number:'}
                 </span>
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-gray-900 dark:text-gray-100">
                   {caseData.case_number}
                 </span>
               </div>
               
               {caseData.file_number && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
                     {language === 'ar' ? 'رقم الملف:' : 'File Number:'}
                   </span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-900 dark:text-gray-100">
                     {caseData.file_number}
                   </span>
                 </div>
@@ -132,10 +132,10 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
               
               {caseData.topic && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
                     {language === 'ar' ? 'الموضوع:' : 'Topic:'}
                   </span>
-                  <span className="font-semibold text-gray-900 truncate max-w-[200px]">
+                  <span className="font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[200px]">
                     {caseData.topic}
                   </span>
                 </div>
@@ -143,13 +143,13 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
             </div>
           )}
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-800 font-semibold mb-2">
+          <div className="bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800/50 rounded-lg p-4">
+            <p className="text-sm text-yellow-800 dark:text-yellow-400 font-semibold mb-2">
               {language === 'ar' 
                 ? '⚠️ تحذير: سيتم حذف جميع البيانات التالية:' 
                 : '⚠️ Warning: The following data will be permanently deleted:'}
             </p>
-            <ul className="text-sm text-yellow-800 list-disc list-inside space-y-1">
+            <ul className="text-sm text-yellow-800 dark:text-yellow-400 list-disc list-inside space-y-1">
               <li>{language === 'ar' ? 'جميع وثائق القضية' : 'All case documents'}</li>
               <li>{language === 'ar' ? 'وثائق الموظفين' : 'Employee documents'}</li>
               <li>{language === 'ar' ? 'وثائق المحكمة' : 'Court documents'}</li>
@@ -161,7 +161,7 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
               <li>{language === 'ar' ? 'التنفيذات ووثائقها' : 'Executions and their documents'}</li>
               <li>{language === 'ar' ? 'الأوامر القضائية ووثائقها' : 'Judicial orders and their documents'}</li>
             </ul>
-            <p className="text-sm text-yellow-800 mt-3 font-semibold">
+            <p className="text-sm text-yellow-800 dark:text-yellow-400 mt-3 font-semibold">
               {language === 'ar' 
                 ? 'سيتم حذف جميع الملفات من التخزين السحابي ولا يمكن استرجاعها.' 
                 : 'All files will be permanently deleted from cloud storage and cannot be recovered.'}
@@ -170,7 +170,7 @@ const DeleteCaseModal = ({ isOpen, onClose, caseData, onSuccess }) => {
         </div>
 
         {/* Footer */}
-        <div className={`flex gap-3 p-6 border-t bg-gray-50 flex-shrink-0 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+        <div className={`flex gap-3 p-6 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex-shrink-0 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
           <Button
             variant="outline"
             onClick={onClose}

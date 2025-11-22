@@ -20,11 +20,14 @@ import useSWR from "swr";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultClientId }) {
   const t = useTranslations('invoices');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(new Date());
+        const { language } = useLanguage();
+
   const [formData, setFormData] = useState({
     client_id: "",
     branch_id: "",
@@ -176,8 +179,20 @@ export default function AddInvoiceModal({ isOpen, onClose, onSuccess, defaultCli
         toast.error(response.error || t('createError'));
       }
     } catch (error) {
-
-      toast.error(error.response?.data?.error || t('createError'));
+const isPermissionError = error?.response?.status === 403;
+      if (isPermissionError) {
+        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لإضافة هذه الفاتورة' : 'You do not have permission to add this invoice');
+        toast.error(permissionMessage, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        toast.error(error.response?.data?.error || t('createError'));
+      }
     } finally {
       setIsSubmitting(false);
     }

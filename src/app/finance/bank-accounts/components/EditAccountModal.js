@@ -61,8 +61,22 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
           toast.error(response.message || t('errorUpdatingAccount'));
         }
       } catch (error) {
+        // Check if it's a permission error (403)
+        const isPermissionError = error?.response?.status === 403;
+        if (isPermissionError) {
+          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لتحديث هذا الحساب' : 'You do not have permission to update this account');
+          toast.error(permissionMessage, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.error(t('errorUpdatingAccount'));
+        }
 
-        toast.error(t('errorUpdatingAccountGeneric'));
       } finally {
         setIsLoading(false);
       }

@@ -71,8 +71,21 @@ function BankAccountsPage() {
         toast.error(t('errorDeletingAccount'));
       }
     } catch (error) {
+        const isPermissionError = error?.response?.status === 403;
+        if (isPermissionError) {
+          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف هذا الحساب' : 'You do not have permission to delete this account');
+          toast.error(permissionMessage, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.error(t('errorDeletingAccount'));
+        }
 
-      toast.error(t('errorDeletingAccount'));
     } finally {
       setDeleteLoading(false);
     }

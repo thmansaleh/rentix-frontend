@@ -7,12 +7,14 @@ import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui
 import { toast } from "react-toastify";
 import { getInvoiceById, deleteInvoice } from "@/app/services/api/invoices";
 import { useTranslations } from "@/hooks/useTranslations";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSuccess }) {
   const t = useTranslations('invoices');
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const { language } = useLanguage();
 
   useEffect(() => {
     if (isOpen && invoiceId) {
@@ -53,8 +55,20 @@ export default function DeleteInvoiceModal({ isOpen, onClose, invoiceId, onSucce
         toast.error(response.error || t('deleteError'));
       }
     } catch (error) {
-
-      toast.error(error.response?.data?.error || t('deleteError'));
+      const isPermissionError = error?.response?.status === 403;
+      if (isPermissionError) {
+        const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحذف هذه الفاتورة' : 'You do not have permission to delete this invoice');
+        toast.error(permissionMessage, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        toast.error(error.response?.data?.error || t('deleteError'));
+      }
     } finally {
       setDeleting(false);
     }

@@ -16,9 +16,11 @@ import { getBankAccountLogs, createBankAccountLog, deleteBankAccountLog } from '
 import ViewLogDetailsModal from './ViewLogDetailsModal';
 import EditLogModal from './EditLogModal';
 import * as XLSX from 'xlsx';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
   const t = useTranslations('BankAccountLogs');
+  const { language } = useLanguage();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -204,8 +206,21 @@ function BankAccountLogsModal({ isOpen, onClose, accountId, accountName }) {
         toast.error(response.error || t('errorAddingLog'));
       }
     } catch (error) {
-      console.error('Error creating log:', error);
-      toast.error(t('errorAddingLog'));
+        const isPermissionError = error?.response?.status === 403;
+        if (isPermissionError) {
+          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لاضافة هذا السجل' : 'You do not have permission to add this log');
+          toast.error(permissionMessage, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.error(t('errorAddingLog'));
+        }
+      
     } finally {
       setSubmitting(false);
     }

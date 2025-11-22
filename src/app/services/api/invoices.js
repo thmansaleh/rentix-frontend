@@ -57,3 +57,9 @@ export const uploadInvoiceAttachments = async (invoiceId, formData) => {
   });
   return response.data;
 };
+
+// Get invoice statistics
+export const getInvoiceStatistics = async (params = {}) => {
+  const response = await api.get('/invoices/statistics', { params });
+  return response.data;
+};

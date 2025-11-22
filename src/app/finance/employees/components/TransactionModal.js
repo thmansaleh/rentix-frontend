@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import { X, Upload } from 'lucide-react';
 
 const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, transactionData = null }) => {
-  const { isRTL } = useLanguage();
+  const { isRTL, language } = useLanguage();
   const t = useTranslations('employeeFinance.modal');
   const tTransactions = useTranslations('employeeFinance.transactions');
   const [employees, setEmployees] = useState([]);
@@ -27,7 +27,6 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const isEditMode = !!transactionId;
-
   // Fetch employees and bank accounts on component mount
   useEffect(() => {
     const fetchData = async () => {
@@ -131,8 +130,20 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           toast.error(response.message || t('saveError'));
         }
       } catch (error) {
-        console.error('Error saving transaction:', error);
-        toast.error(t('saveError'));
+        const isPermissionError = error?.response?.status === 403;
+        if (isPermissionError) {
+          const permissionMessage = error?.response?.data?.message || (language === 'ar' ? 'ليس لديك صلاحية لحفظ هذه العهدة' : 'You do not have permission to save this transaction');
+          toast.error(permissionMessage, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.error(t('saveError'));
+        }
       } finally {
         setIsLoading(false);
       }
@@ -214,7 +225,6 @@ const TransactionModal = ({ isOpen, onClose, onSuccess, transactionId = null, tr
           {!isEditMode && (
             <div className="space-y-2">
               <Label htmlFor="bank_account_id">
-                {t('bankAccount')} <span className=" text-sm">({t('optional')})</span>
               </Label>
               <Select 
                 value={formik.values.bank_account_id} 

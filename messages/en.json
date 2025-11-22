@@ -1783,7 +1783,21 @@
     "statusCancelled": "Cancelled",
     "approve": "Approve",
     "approveInvoice": "Approve Invoice",
-    "approveInvoiceMessage": "Are you sure you want to approve invoice {invoiceNumber} with amount {amount}? This will change the status to approved."
+    "approveInvoiceMessage": "Are you sure you want to approve invoice {invoiceNumber} with amount {amount}? This will change the status to approved.",
+    "totalAmount": "Total Invoices",
+    "approvedInvoices": "Approved Invoices",
+    "pendingInvoices": "Pending Invoices",
+    "rejectedInvoices": "Rejected Invoices",
+    "averageAmount": "Average Invoice Value",
+    "invoices": "Invoices",
+    "perInvoice": "Per Invoice",
+    "statistics": "Invoice Statistics",
+    "showingInvoices": "Showing invoices for the selected period",
+    "selectTimePeriod": "Select time period",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "last3Months": "Last 3 months",
+    "noDataAvailable": "No data available for the selected period"
   },
   "fines": {
     "title": "Fines Management",
@@ -3264,5 +3278,31 @@
     "errorUpdatingLog": "Error updating log",
     "logDeletedSuccess": "Log deleted successfully",
     "errorDeletingLog": "Error deleting log"
+  },
+  "employeeTransactions": {
+    "credit": "Advances",
+    "debit": "Expenses",
+    "totalCredits": "Total Advances",
+    "totalDebits": "Total Expenses",
+    "netBalance": "Net Balance",
+    "netDescription": "Advances - Expenses",
+    "totalTransactions": "Total Transactions",
+    "completeTransactions": "Complete Transactions",
+    "transaction": "Transaction",
+    "statistics": "Employee Transactions Statistics",
+    "showingTransactions": "Showing transactions for the selected period",
+    "selectTimePeriod": "Select time period",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "last3Months": "Last 3 months",
+    "loadingData": "Loading data...",
+    "noDataAvailable": "No data available for the selected period"
+  },
+  "bankTransactions": {
+    "title": "Bank Account Transactions",
+    "description": "Showing deposits and withdrawals for the selected month",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "loading": "Loading statistics..."
   }
 }

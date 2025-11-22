@@ -2331,7 +2331,21 @@
     "statusCancelled": "ملغاة",
     "approve": "موافقة",
     "approveInvoice": "الموافقة على الفاتورة",
-    "approveInvoiceMessage": "هل أنت متأكد من الموافقة على الفاتورة {invoiceNumber} بمبلغ {amount}؟ سيتم تغيير الحالة إلى موافق عليها."
+    "approveInvoiceMessage": "هل أنت متأكد من الموافقة على الفاتورة {invoiceNumber} بمبلغ {amount}؟ سيتم تغيير الحالة إلى موافق عليها.",
+    "totalAmount": "إجمالي الفواتير",
+    "approvedInvoices": "الفواتير المعتمدة",
+    "pendingInvoices": "الفواتير المعلقة",
+    "rejectedInvoices": "الفواتير المرفوضة",
+    "averageAmount": "متوسط قيمة الفاتورة",
+    "invoices": "فاتورة",
+    "perInvoice": "لكل فاتورة",
+    "statistics": "إحصائيات الفواتير",
+    "showingInvoices": "عرض الفواتير للفترة المحددة",
+    "selectTimePeriod": "اختر الفترة الزمنية",
+    "last7Days": "آخر 7 أيام",
+    "last30Days": "آخر 30 يوم",
+    "last3Months": "آخر 3 أشهر",
+    "noDataAvailable": "لا توجد بيانات متاحة للفترة المحددة"
   },
   "financeStatistics": {
     "title": "الإحصائيات المالية",
@@ -2853,5 +2867,31 @@
     "errorUpdatingLog": "حدث خطأ في تحديث السجل",
     "logDeletedSuccess": "تم حذف السجل بنجاح",
     "errorDeletingLog": "حدث خطأ في حذف السجل"
+  },
+  "employeeTransactions": {
+    "credit": "عهد",
+    "debit": "مصروفات",
+    "totalCredits": "إجمالي العهد",
+    "totalDebits": "إجمالي المصروفات",
+    "netBalance": "الصافي",
+    "netDescription": "العهد - المصروفات",
+    "totalTransactions": "إجمالي المعاملات",
+    "completeTransactions": "معاملات كاملة",
+    "transaction": "معاملة",
+    "statistics": "إحصائيات عهد الموظفين",
+    "showingTransactions": "عرض المعاملات للفترة المحددة",
+    "selectTimePeriod": "اختر الفترة الزمنية",
+    "last7Days": "آخر 7 أيام",
+    "last30Days": "آخر 30 يوم",
+    "last3Months": "آخر 3 أشهر",
+    "loadingData": "جار تحميل البيانات...",
+    "noDataAvailable": "لا توجد بيانات متاحة للفترة المحددة"
+  },
+  "bankTransactions": {
+    "title": "معاملات الحسابات البنكية",
+    "description": "عرض الإيداعات والسحوبات للشهر المحدد",
+    "deposits": "إيداعات",
+    "withdrawals": "سحوبات",
+    "loading": "جاري تحميل الإحصائيات..."
   }
 }
