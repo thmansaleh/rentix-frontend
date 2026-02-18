@@ -1,5 +1,11 @@
 import api from "./axiosInstance";
 
+// Get all payments with pagination and filters
+export const getPayments = async (params = {}) => {
+  const response = await api.get("/payments", { params });
+  return response.data;
+};
+
 // Get all payments for a contract
 export const getPaymentsByContractId = async (contractId) => {
   const response = await api.get(`/payments/contract/${contractId}`);

@@ -73,3 +73,8 @@ export const deletePayment = async (id) => {
   const response = await api.delete(`/payments/${id}`);
   return response.data;
 };
+
+export const getPaymentStatistics = async (params = {}) => {
+  const response = await api.get('/payments/statistics', { params });
+  return response.data;
+};

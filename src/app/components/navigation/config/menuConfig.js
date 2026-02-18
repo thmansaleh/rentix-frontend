@@ -88,7 +88,15 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       type: 'category',
       submenu: [
         { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote },
+        { id: 'finance/invoices', label: t('navigation.invoices'), icon: FileText },
+        { id: 'finance/expenses', label: t('navigation.expenses'), icon: DollarSign },
       ]
+    },
+     {
+      id: 'statistics',
+      label: t('navigation.statistics'),
+      icon: BarChartIcon,
+      type: 'link'
     },
     {
       id: 'settings',

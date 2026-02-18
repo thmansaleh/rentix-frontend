@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { formatAmount, formatDateLocale } from "../utils/formatters";
 import { getPaymentMethodLabel } from "../utils/helpers";
-import { printPaymentReceipt } from "../utils/printPaymentReceipt";
+import { printPaymentReceipt } from "@/app/finance/payments/printPaymentReceipt";
 
 /**
  * Payment history table inside InvoiceDetailDialog.

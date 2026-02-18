@@ -386,6 +386,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                           </Popover>
                           <ErrorMessage name="customer_id" component="div" className="text-red-500 text-xs mt-1" />
                         </div>
+<div className="flex items-center gap-x-4 flex-wrap">
 
                         {/* Car Selection */}
                         <div>
@@ -482,6 +483,8 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                             </SelectContent>
                           </Select>
                         </div>
+</div>
+
                       </div>
                     </CardContent>
                   </Card>

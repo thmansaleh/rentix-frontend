@@ -20,9 +20,9 @@ import { getInvoiceById, deletePayment } from "@/app/services/api/invoices";
 import InfoRow from "./InfoRow";
 import InvoiceTotals from "./InvoiceTotals";
 import PaymentHistory from "./PaymentHistory";
-import ViewPaymentModal from "./ViewPaymentModal";
-import PaymentDialog from "./PaymentDialog";
-import DeletePaymentDialog from "./DeletePaymentDialog";
+import ViewPaymentModal from "@/app/finance/payments/ViewPaymentModal";
+import PaymentDialog from "@/app/finance/payments/PaymentDialog";
+import DeletePaymentDialog from "@/app/finance/payments/DeletePaymentDialog";
 
 import { formatAmount, formatDateLocale } from "../utils/formatters";
 import { getStatusVariant, getStatusLabel, getInvoiceBranchName } from "../utils/helpers";
