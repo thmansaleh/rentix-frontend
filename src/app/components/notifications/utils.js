@@ -7,7 +7,8 @@ import {
   Clipboard,
   User,
   Calendar,
-  FileText
+  FileText,
+  Car
 } from 'lucide-react'
 
 /**
@@ -43,6 +44,8 @@ export const getRelatedIcon = (relatedType) => {
       return <Calendar className="h-3 w-3" />
     case 'memo':
       return <FileText className="h-3 w-3" />
+    case 'car':
+      return <Car className="h-3 w-3" />
     default:
       return null
   }

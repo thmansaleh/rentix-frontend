@@ -9,6 +9,7 @@ import ExternalLinksMenu from '@/app/components/ExternalLinksMenu';
 import SearchBar from '@/app/components/search';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { appConfig } from '@/lib/appConfig';
 
 /**
  * Mobile Header Component
@@ -33,9 +34,9 @@ const MobileHeader = ({ onMenuToggle }) => {
 
         {/* Logo/Title */}
         <div className="flex items-center gap-2 flex-1">
-          <img src="/log_in_card_logo.png" alt="Logo" className="w-7 h-7 object-cover" />
+          <img src={appConfig.logo} alt="Logo" className="w-7 h-7 object-cover" />
           <h1 className="text-gray-900 dark:text-white font-bold text-base sm:text-lg">
-            LEXCORA
+            {appConfig.name}
           </h1>
         </div>
 

@@ -1,344 +1,156 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useTranslations } from '@/hooks/useTranslations';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2, Plus, Eye, Printer } from 'lucide-react';
-import { getAllInvoices } from '@/app/services/api/invoices';
-import AddInvoiceModal from './components/AddInvoiceModal';
-import EditInvoiceModal from './components/EditInvoiceModal';
-import ShowInvoiceModal from './components/ShowInvoiceModal';
-import DeleteInvoiceModal from './components/DeleteInvoiceModal';
-import PrintInvoiceModal from './components/PrintInvoiceModal';
-import ExportButtons from '@/components/ui/export-buttons';
-import { toast } from 'react-toastify';
-import useSWR from 'swr';
+import React from "react";
+import { FileText, Loader2, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useTranslations } from "@/hooks/useTranslations";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Pagination } from "@/components/Pagination";
 
-function InvoicesPage() {
+import { useInvoices } from "./hooks/useInvoices";
+import { getStatusVariant } from "./utils/helpers";
+
+import InvoicesPageHeader from "./components/InvoicesPageHeader";
+import InvoicesSummaryCards from "./components/InvoicesSummaryCards";
+import InvoicesFilterBar from "./components/InvoicesFilterBar";
+import InvoicesTable from "./components/InvoicesTable";
+import InvoiceDialog from "./components/InvoiceDialog";
+import InvoiceDetailDialog from "./components/InvoiceDetailDialog";
+import DeleteInvoiceDialog from "./components/DeleteInvoiceDialog";
+
+export default function InvoicesPage() {
+  const t = useTranslations("invoices");
   const { isRTL, language } = useLanguage();
-  const t = useTranslations('invoices');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showPrintModal, setShowPrintModal] = useState(false);
-  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
 
-  // Fetch invoices using SWR
-  const { data: invoicesData, error, mutate } = useSWR('/invoices', getAllInvoices);
-
-  const invoices = invoicesData?.data || [];
-  const loading = !invoicesData && !error;
-
-  const handleEdit = (invoiceId) => {
-    setSelectedInvoiceId(invoiceId);
-    setShowEditModal(true);
-  };
-
-  const handleView = (invoiceId) => {
-    setSelectedInvoiceId(invoiceId);
-    setShowViewModal(true);
-  };
-
-  const handleDelete = (invoiceId) => {
-    setSelectedInvoiceId(invoiceId);
-    setShowDeleteModal(true);
-  };
-
-  const handlePrint = (invoiceId) => {
-    setSelectedInvoiceId(invoiceId);
-    setShowPrintModal(true);
-  };
-
-  const handleSuccess = () => {
-    mutate(); // Refresh the list
-  };
-
-  const formatCurrency = (amount, currency = 'AED') => {
-    return new Intl.NumberFormat('ar-AE', {
-      style: 'currency',
-      currency: currency
-    }).format(amount);
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('ar-AE');
-  };
-
-  const getStatusBadge = (status) => {
-    const statusConfig = {
-      pending: { label: t('statusPending'), variant: 'secondary' },
-      approved: { label: t('statusApproved'), variant: 'success' },
-      rejected: { label: t('statusRejected'), variant: 'destructive' }
-    };
-
-    const config = statusConfig[status] || statusConfig.pending;
-    
-    return (
-      <Badge variant={config.variant}>
-        {config.label}
-      </Badge>
-    );
-  };
-
-  // Column configuration for export
-  const invoiceColumnConfig = {
-    invoice_number: {
-      en: 'Invoice Number',
-      ar: 'رقم الفاتورة',
-      dataKey: 'invoice_number'
-    },
-    invoice_date: {
-      en: 'Date',
-      ar: 'التاريخ',
-      dataKey: 'invoice_date',
-      type: 'date'
-    },
-    client_name: {
-      en: 'Client',
-      ar: 'الموكل',
-      dataKey: 'client_name'
-    },
-    branch_name: {
-      en: 'Branch',
-      ar: 'الفرع',
-      dataKey: 'branch_name'
-    },
-    bank_name: {
-      en: 'Bank Account',
-      ar: 'الحساب البنكي',
-      dataKey: 'bank_name',
-      formatter: (value, item) => item.bank_name ? `${item.bank_name} - ${item.account_number}` : '-'
-    },
-    amount: {
-      en: 'Amount',
-      ar: 'المبلغ',
-      dataKey: 'amount',
-      formatter: (value, item) => `${value} ${item.currency || 'AED'}`
-    },
-    vat: {
-      en: 'VAT %',
-      ar: 'ضريبة القيمة المضافة %',
-      dataKey: 'vat'
-    },
-    currency: {
-      en: 'Currency',
-      ar: 'العملة',
-      dataKey: 'currency'
-    },
-    status: {
-      en: 'Status',
-      ar: 'الحالة',
-      dataKey: 'status',
-      type: 'status',
-      statusMap: {
-        pending: { en: 'Pending', ar: 'قيد الانتظار' },
-        approved: { en: 'Approved', ar: 'معتمدة' },
-        rejected: { en: 'Rejected', ar: 'مرفوضة' }
-      }
-    },
-    created_by_name: {
-      en: 'Created By',
-      ar: 'أضيف بواسطة',
-      dataKey: 'created_by_name'
-    }
-  };
+  const {
+    invoices,
+    loading,
+    branches,
+    companySettings,
+    stats,
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    branchFilter,
+    setBranchFilter,
+    handleSearch,
+    currentPage,
+    totalPages,
+    handlePageChange,
+    invoiceDialogOpen,
+    setInvoiceDialogOpen,
+    editingInvoice,
+    detailDialogOpen,
+    setDetailDialogOpen,
+    selectedInvoiceId,
+    deleteDialogOpen,
+    setDeleteDialogOpen,
+    deletingInvoice,
+    handleAddNew,
+    handleEdit,
+    handleView,
+    handleDeleteClick,
+    handleDeleteConfirm,
+    handleInvoiceSaved,
+    refreshData,
+  } = useInvoices(t);
 
   return (
-    <div className="p-6" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {t('pageTitle')}
-          </h1>
-        </div>
+    <div className="space-y-6 p-4 md:p-6" dir={isRTL ? "rtl" : "ltr"}>
+      {/* Header */}
+      <InvoicesPageHeader t={t} onAddNew={handleAddNew} />
 
-        {/* Invoices Card */}
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center flex-wrap gap-3">
-              <CardTitle>{t('listTitle')}</CardTitle>
-              <div className="flex items-center gap-2 flex-wrap">
-                <ExportButtons
-                  data={invoices}
-                  columnConfig={invoiceColumnConfig}
-                  language={language}
-                  exportName="invoices"
-                  sheetName={language === 'ar' ? 'الفواتير' : 'Invoices'}
-                />
-                <Button 
-                  onClick={() => setShowAddModal(true)}
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  {t('addNewInvoice')}
-                </Button>
-              </div>
+      {/* Summary cards */}
+      <InvoicesSummaryCards stats={stats} language={language} t={t} />
+
+      {/* Filters */}
+      <InvoicesFilterBar
+        searchTerm={searchTerm}
+        onSearchTermChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        branchFilter={branchFilter}
+        onBranchFilterChange={setBranchFilter}
+        branches={branches}
+        onSearch={handleSearch}
+        language={language}
+        isRTL={isRTL}
+        t={t}
+      />
+
+      {/* Table */}
+      <Card>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="ms-2 text-muted-foreground">{t("loading")}</span>
             </div>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              
-              <div className="flex items-center justify-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <span className={isRTL ? "mr-3" : "ml-3"}>{t('loading')}</span>
-              </div>
-            ) : invoices.length === 0 ? (
-              <div className="text-center p-8">
-                <p className=" mb-4">{t('noInvoices')}</p>
-                <Button onClick={() => setShowAddModal(true)}>
-                  {t('addNewInvoice')}
-                </Button>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t('invoiceNumber')}</TableHead>
-                      <TableHead>{t('date')}</TableHead>
-                      <TableHead>{t('clientName')}</TableHead>
-                      <TableHead>{t('branchName')}</TableHead>
-                      <TableHead>{t('bankAccount')}</TableHead>
-                      <TableHead>{t('amount')}</TableHead>
-                      <TableHead>{t('vatPercent')}</TableHead>
-                      <TableHead>{t('status')}</TableHead>
-                      <TableHead>{t('createdBy')}</TableHead>
-                      <TableHead>{t('actions')}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {invoices.map((invoice) => (
-                      <TableRow key={invoice.id}>
-                        <TableCell className="font-medium font-mono">
-                          {invoice.invoice_number}
-                        </TableCell>
-                        <TableCell>
-                          {formatDate(invoice.invoice_date)}
-                        </TableCell>
-                        <TableCell>
-                          {invoice.client_name || '-'}
-                        </TableCell>
-                        <TableCell>
-                          {invoice.branch_name || '-'}
-                        </TableCell>
-                        <TableCell>
-                          {invoice.bank_name ? (
-                            <div className="text-xs">
-                              <div className="font-medium">{invoice.bank_name}</div>
-                              <div className="">{invoice.account_number}</div>
-                            </div>
-                          ) : '-'}
-                        </TableCell>
-                        <TableCell className="font-semibold">
-                          {formatCurrency(invoice.amount, invoice.currency)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {invoice.vat ? `${invoice.vat}%` : '-'}
-                        </TableCell>
-                        <TableCell>
-                          {getStatusBadge(invoice.status)}
-                        </TableCell>
-                        <TableCell>
-                          {invoice.created_by_name || '-'}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleView(invoice.id)}
-                              title={t('view')}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handlePrint(invoice.id)}
-                              title={t('print')}
-                            >
-                              <Printer className="h-4 w-4 text-blue-600" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(invoice.id)}
-                              title={t('edit')}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDelete(invoice.id)}
-                              title={t('delete')}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-600" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          ) : invoices.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <FileText className="text-muted-foreground mb-4 h-12 w-12" />
+              <p className="text-muted-foreground text-lg">
+                {t("noInvoicesFound")}
+              </p>
+              <Button onClick={handleAddNew} variant="outline" className="mt-4">
+                <Plus className="me-2 h-4 w-4" />
+                {t("addFirstInvoice")}
+              </Button>
+            </div>
+          ) : (
+            <InvoicesTable
+              invoices={invoices}
+              language={language}
+              isRTL={isRTL}
+              onView={handleView}
+              onEdit={handleEdit}
+              onDelete={handleDeleteClick}
+              statusVariant={getStatusVariant}
+              t={t}
+              companySettings={companySettings}
+            />
+          )}
+        </CardContent>
+      </Card>
 
-        {/* Modals */}
-        <AddInvoiceModal
-          isOpen={showAddModal}
-          onClose={() => setShowAddModal(false)}
-          onSuccess={handleSuccess}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
         />
+      )}
 
-        <EditInvoiceModal
-          isOpen={showEditModal}
-          onClose={() => {
-            setShowEditModal(false);
-            setSelectedInvoiceId(null);
-          }}
-          invoiceId={selectedInvoiceId}
-          onSuccess={handleSuccess}
-        />
+      {/* Dialogs */}
+      <InvoiceDialog
+        open={invoiceDialogOpen}
+        onOpenChange={setInvoiceDialogOpen}
+        invoice={editingInvoice}
+        onSaved={handleInvoiceSaved}
+        language={language}
+        isRTL={isRTL}
+      />
 
-        <ShowInvoiceModal
-          isOpen={showViewModal}
-          onClose={() => {
-            setShowViewModal(false);
-            setSelectedInvoiceId(null);
-          }}
-          invoiceId={selectedInvoiceId}
-        />
+      <InvoiceDetailDialog
+        open={detailDialogOpen}
+        onOpenChange={setDetailDialogOpen}
+        invoiceId={selectedInvoiceId}
+        onRefresh={refreshData}
+        language={language}
+        isRTL={isRTL}
+        companySettings={companySettings}
+      />
 
-        <DeleteInvoiceModal
-          isOpen={showDeleteModal}
-          onClose={() => {
-            setShowDeleteModal(false);
-            setSelectedInvoiceId(null);
-          }}
-          invoiceId={selectedInvoiceId}
-          onSuccess={handleSuccess}
-        />
-
-        <PrintInvoiceModal
-          isOpen={showPrintModal}
-          onClose={() => {
-            setShowPrintModal(false);
-            setSelectedInvoiceId(null);
-          }}
-          invoiceId={selectedInvoiceId}
-        />
-      </div>
+      <DeleteInvoiceDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        invoice={deletingInvoice}
+        onConfirm={handleDeleteConfirm}
+        language={language}
+      />
     </div>
   );
 }
-
-export default InvoicesPage;

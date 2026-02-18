@@ -71,7 +71,7 @@ function Header() {
       </header>
 
       {/* Quick Actions Bar - Below Header */}
-      <QuickActionsBar />
+      {/* <QuickActionsBar /> */}
     </>
   )
 }

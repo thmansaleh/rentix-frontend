@@ -99,11 +99,37 @@ const SearchResultItem = ({
             </div>
             <div className="flex flex-col gap-0.5 min-w-0">
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                {item.name || (isRTL ? 'بدون اسم' : 'Unnamed')}
+                {item.full_name || (isRTL ? 'بدون اسم' : 'Unnamed')}
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                {item.phone || '-'}
+                {item.phone || item.email || '-'}
               </span>
+            </div>
+          </div>
+          {isRTL ? (
+            <ChevronLeft className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          ) : (
+            <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          )}
+        </>
+      );
+    }
+
+    if (searchType === 'cars') {
+      return (
+        <>
+          <div className="flex items-center gap-3 flex-1">
+            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                {item.brand} {item.model} {item.year ? `(${item.year})` : ''}
+              </span>
+              <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <span className="truncate">{isRTL ? 'لوحة:' : 'Plate:'} {item.plate_number}</span>
+                {item.color && <span className="truncate">{isRTL ? 'اللون:' : 'Color:'} {item.color}</span>}
+              </div>
             </div>
           </div>
           {isRTL ? (

@@ -13,7 +13,8 @@ import {
   FileText,
   Globe,
   Building2,
-  Gauge
+  Gauge,
+  ScrollText
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -90,6 +91,15 @@ const SettingsPage = () => {
       href: '/settings/performance',
       color: 'text-pink-600',
       bgColor: 'bg-pink-50 dark:bg-pink-950'
+    },
+    {
+      id: 'rental-terms',
+      title: language === 'ar' ? 'شروط وأحكام العقود' : 'Rental Terms & Conditions',
+      description: language === 'ar' ? 'إدارة الشروط والأحكام الخاصة بعقود التأجير' : 'Manage rental contract terms and conditions',
+      icon: ScrollText,
+      href: '/settings/rental-terms',
+      color: 'text-amber-600',
+      bgColor: 'bg-amber-50 dark:bg-amber-950'
     },
     {
       id: 'reports',

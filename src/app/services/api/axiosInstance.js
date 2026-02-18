@@ -18,9 +18,14 @@ const getCookie = (name) => {
   return null;
 };
 
-// Request interceptor to add auth token to all requests
+// Request interceptor to add auth token and tenant code to all requests
 api.interceptors.request.use(
   (config) => {
+    // Add tenant code from hostname
+    if (typeof window !== 'undefined') {
+      config.headers['x-tenant-code'] = window.location.hostname.split('.')[0];
+    }
+
     let token = getCookie('authToken');
     
     // Fallback to localStorage if cookie doesn't exist

@@ -7,7 +7,20 @@ const nextConfig = {
   
   // Add font optimization
   images: {
-    domains: ['fonts.gstatic.com', 'fonts.googleapis.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'fonts.gstatic.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'fonts.googleapis.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.r2.cloudflarestorage.com',
+      },
+    ],
   },
   
   // Add headers for language detection

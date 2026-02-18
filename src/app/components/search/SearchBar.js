@@ -11,6 +11,7 @@ import SearchResults from './SearchResults';
 import { useSearchAPI } from './useSearchAPI';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
 import { useClickOutside } from './useClickOutside';
+import { ViewCarModal } from '@/app/cars/ViewCarModal';
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +20,8 @@ const SearchBar = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchType, setSearchType] = useState('system');
   const [isSearching, setIsSearching] = useState(false);
+  const [isCarModalOpen, setIsCarModalOpen] = useState(false);
+  const [selectedCarId, setSelectedCarId] = useState(null);
   
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -84,21 +87,21 @@ const SearchBar = () => {
   function handleItemClick(item) {
     if (!item) return;
 
-    let route = '';
-    
     if (searchType === 'system') {
-      route = item.route;
-    } else if (searchType === 'cases') {
-      route = `/cases/${item.id}/edit`;
-    } else if (searchType === 'parties') {
-      route = `/parties/${item.id}`;
+      router.push(item.route);
+      setSearchQuery('');
+      setIsOpen(false);
     } else if (searchType === 'clients') {
-      route = `/parties/${item.id}`;
+      router.push(`/customers/${item.id}`);
+      setSearchQuery('');
+      setIsOpen(false);
+    } else if (searchType === 'cars') {
+      // Open modal for cars instead of routing
+      setSelectedCarId(item.id);
+      setIsCarModalOpen(true);
+      setSearchQuery('');
+      setIsOpen(false);
     }
-
-    router.push(route);
-    setSearchQuery('');
-    setIsOpen(false);
   }
 
   const handleClear = () => {
@@ -108,12 +111,10 @@ const SearchBar = () => {
 
   const getPlaceholder = () => {
     switch (searchType) {
-      case 'cases':
-        return isRTL ? 'ابحث برقم الملف أو رقم القضية...' : 'Search by file or case number...';
-      case 'parties':
-        return isRTL ? 'ابحث عن خصم...' : 'Search for party...';
       case 'clients':
-        return isRTL ? 'ابحث عن موكل...' : 'Search for client...';
+        return isRTL ? 'ابحث عن عميل...' : 'Search for client...';
+      case 'cars':
+        return isRTL ? 'ابحث عن سيارة...' : 'Search for car...';
       default:
         return t('common.searchPages');
     }
@@ -153,8 +154,18 @@ const SearchBar = () => {
         onMouseEnter={setSelectedIndex}
         isRTL={isRTL}
         lang={lang}
-        t={t}
+    t={t}
       />
+      {/* Car View Modal */}
+      <ViewCarModal
+        isOpen={isCarModalOpen}
+        onClose={() => {
+          setIsCarModalOpen(false);
+          setSelectedCarId(null);
+        }}
+        carId={selectedCarId}
+      />
+    
     </div>
   );
 };

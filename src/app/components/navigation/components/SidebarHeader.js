@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { CircleX, Sparkles } from 'lucide-react';
+import { appConfig } from '@/lib/appConfig';
 
 /**
  * Sidebar Header Component
@@ -22,7 +23,7 @@ const SidebarHeader = ({ isRTL, isMobile, onClose }) => {
             <Image 
               height={56} 
               width={56} 
-              src="/log_in_card_logo.png" 
+              src={appConfig.logo} 
               alt="Law Office Logo" 
               className="w-full h-full object-contain drop-shadow-sm" 
             />
@@ -33,12 +34,12 @@ const SidebarHeader = ({ isRTL, isMobile, onClose }) => {
         <div className="flex-1 min-w-0 transition-all duration-300">
           <div className="flex items-center gap-2 mb-1">
             <h1 className="font-bold text-xl tracking-tight bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
-              LEXCORA
+              {appConfig.name}
             </h1>
             <Sparkles className="w-4 h-4 text-primary/60 animate-pulse" />
           </div>
           <p className="text-xs text-sidebar-foreground/60 font-medium tracking-wide">
-            {isRTL ? 'نظام إدارة متكامل' : 'Legal Management System'}
+            {isRTL ? appConfig.description.ar : appConfig.description.en}
           </p>
         </div>
 

@@ -21,7 +21,10 @@ import {
   BarChartIcon,
   Users2,
   Building2,
-  Gauge
+  Gauge,
+  Car,
+  Globe,
+  AlertTriangle
 } from 'lucide-react';
 
 export const getMenuItems = (t, userRole = null, userDepartment = null, permissions = []) => {
@@ -32,36 +35,36 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: LayoutDashboard,
       type: 'link'
     },
+   
+    
     {
-      id: 'casesManagement',
-      label: t('navigation.casesManagement'),
-      icon: Scale,
-      type: 'category',
-      submenu: [
-        { id: 'cases', label: t('navigation.cases'), icon: Scale },
-        { id: 'cases/add-case', label: t('navigation.addCaseFile'), icon: FolderPlus },
-        { id: 'cases/sessions', label: t('navigation.sessions'), icon: Calendar },
-        { id: 'cases/judicial-decisions', label: t('navigation.judicialDecisions'), icon: CheckCircle },
-      ]
+      id: 'cars',
+      label: t('navigation.cars'),
+      icon: Car,
+      type: 'link'
     },
     {
-      id: 'clientsManagement',
-      label: t('navigation.clientsManagement'),
-      icon: Users,
-      type: 'category',
-      submenu: [
-        { id: 'parties', label: t('navigation.parties'), icon: Users },
-        { id: 'potential-clients', label: t('navigation.potentialClients'), icon: UserRoundPlus },
-        { id: 'meetings', label: t('navigation.meetings'), icon: Calendar },
-        { id: 'call-logs', label: t('navigation.callLogs'), icon: Phone },
-        { id: 'goaml', label: t('navigation.goaml'), icon: Shield },
-        { id: 'client-forms', label: t('navigation.forms'), icon: FileText },
-      ]
+      id: 'clients',
+      label: t('navigation.customers'),
+      icon: Users2,
+      type: 'link'
     },
     {
-      id: 'approvals',
-      label: t('navigation.approvalsCenter'),
-      icon: CheckCircle,
+      id: 'contracts',
+      label: t('navigation.contracts'),
+      icon: FileText,
+      type: 'link'
+    },
+    {
+      id: 'accidents',
+      label: t('navigation.accidents'),
+      icon: AlertTriangle,
+      type: 'link'
+    },
+    {
+      id: 'website',
+      label: t('navigation.website'),
+      icon: Globe,
       type: 'link'
     },
     {
@@ -84,11 +87,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: DollarSign,
       type: 'category',
       submenu: [
-        { id: 'finance/clients', label: t('navigation.financeClients'), icon: Users },
-        { id: 'finance/invoices', label: t('navigation.invoices'), icon: List },
         { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote },
-        { id: 'finance/statistics', label: t('navigation.statistics'), icon: BarChartIcon },
-        { id: 'finance/employees', label: t('navigation.employeesStatements'), icon: Users2     },
       ]
     },
     {
@@ -97,8 +96,10 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: Settings2,
       type: 'category',
       submenu: [
+        { id: 'settings/company', label: t('navigation.company'), icon: Building2 },
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
         { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
+        { id: 'settings/rental-terms', label: t('navigation.rentalTerms'), icon: ScrollText },
         // { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
         { id: 'logs', label: t('navigation.logs'), icon: Clock },
       ]

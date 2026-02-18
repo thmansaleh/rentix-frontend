@@ -2,6 +2,7 @@
 import  { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Eye, EyeOff, Lock, User, Loader2, Scale } from 'lucide-react';
+import { appConfig } from '@/lib/appConfig';
 
 // shadcn/ui components
 import { Button } from '@/components/ui/button';
@@ -110,10 +111,10 @@ export default function Page() {
         <Card className="shadow-lg bg-white/10 backdrop-blur-sm">
         <CardHeader className="flex items-center flex-col ">
              <div className="mx-auto  ">
-            <Image height='60' width='60' src="/log_in_card_logo.png" alt="Law Office Logo" className="w-full h-full object-contain" />
+            <Image height='60' width='60' src={appConfig.logo} alt="Law Office Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-white text-center mb-1">
-            LEXCORA
+            {appConfig.name}
           </h1>
           </CardHeader>
           
@@ -211,10 +212,10 @@ export default function Page() {
           </CardContent>
           <CardFooter className="flex flex-col items-center space-y-1">
             <p className="text-white text-xs font-medium">
-              Lexcora ERP system by Almstkshf.com
+              {appConfig.footerText.en}
             </p>
             <p className="text-white text-xs">
-              For technical support: rased@almstkshf.com | Call: 0585952035
+              {appConfig.supportText.en}
             </p>
           </CardFooter>
         </Card>

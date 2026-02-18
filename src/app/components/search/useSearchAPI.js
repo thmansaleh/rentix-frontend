@@ -21,7 +21,7 @@ export const useSearchAPI = () => {
         });
       }
 
-      // Use API service for cases, parties, and clients
+      // Use API service for clients and cars
       return await performAPISearch(searchQuery, searchType);
     } catch (error) {
       console.error('Search error:', error);

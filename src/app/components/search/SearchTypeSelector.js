@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { LayoutGrid, Folder, Users, UserCheck, ChevronDown } from 'lucide-react';
+import { LayoutGrid, Folder, Users, UserCheck, ChevronDown, Car } from 'lucide-react';
 
 const SearchTypeSelector = ({ searchType, setSearchType, isRTL }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,22 +15,16 @@ const SearchTypeSelector = ({ searchType, setSearchType, isRTL }) => {
       icon: LayoutGrid
     },
     { 
-      value: 'cases', 
-      labelAr: 'الملفات', 
-      labelEn: 'Cases',
-      icon: Folder
-    },
-    { 
-      value: 'parties', 
-      labelAr: 'خصم', 
-      labelEn: 'Opponent',
-      icon: Users
-    },
-    { 
       value: 'clients', 
-      labelAr: 'موكل', 
-      labelEn: 'Client',
+      labelAr: 'العملاء', 
+      labelEn: 'Clients',
       icon: UserCheck
+    },
+    { 
+      value: 'cars', 
+      labelAr: 'السيارات', 
+      labelEn: 'Cars',
+      icon: Car
     }
   ];
 
