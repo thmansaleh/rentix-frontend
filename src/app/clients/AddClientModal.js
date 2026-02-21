@@ -68,7 +68,9 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
     passport_issue_date: "",
     passport_expiry_date: "",
     address: "",
-    branch_id: ""
+    branch_id: "",
+    nationality: "",
+    date_of_birth: ""
   };
 
   const validationSchema = Yup.object({
@@ -122,6 +124,8 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
         passport_expiry_date: values.passport_expiry_date || null,
         address: values.address || null,
         branch_id: values.branch_id,
+        nationality: values.nationality || null,
+        date_of_birth: values.date_of_birth || null,
         ...uploadedUrls
       };
 
@@ -297,6 +301,28 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
                         name="address"
                         placeholder={t('clients.add.fields.addressPlaceholder')}
                         rows={3}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="nationality">{t('clients.add.fields.nationality')}</Label>
+                      <Field
+                        as={Input}
+                        id="nationality"
+                        name="nationality"
+                        placeholder={t('clients.add.fields.nationalityPlaceholder')}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="date_of_birth">{t('clients.add.fields.dateOfBirth')}</Label>
+                      <DatePicker
+                        date={values.date_of_birth ? new Date(values.date_of_birth) : undefined}
+                        onDateChange={(date) => {
+                          setFieldValue("date_of_birth", date ? date.toISOString().split('T')[0] : "");
+                        }}
+                        placeholder={t('clients.add.fields.selectDateOfBirth')}
+                        maxDate={new Date()}
                       />
                     </div>
                   </div>

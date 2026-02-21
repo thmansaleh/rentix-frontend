@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { TabsContent } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -109,7 +108,7 @@ function AboutTab() {
 
   if (loading) {
     return (
-      <TabsContent value="about">
+      <div>
         <div className="p-6 space-y-6">
           <div className="flex items-center gap-3">
             <Loader2 className="h-7 w-7 text-primary animate-spin" />
@@ -118,12 +117,12 @@ function AboutTab() {
             </div>
           </div>
         </div>
-      </TabsContent>
+      </div>
     );
   }
 
   return (
-    <TabsContent value="about">
+    <div>
       <form onSubmit={formik.handleSubmit}>
         <div className="p-6 space-y-6">
           <div className="flex items-center gap-3">
@@ -395,7 +394,7 @@ function AboutTab() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              {t('website.aboutSection.lastUpdated')}: {new Date().toLocaleDateString('ar-SA')}
+              {t('website.aboutSection.lastUpdated')}: {new Date().toLocaleDateString('ar-AE')}
             </div>
             <Button 
               type="submit"
@@ -417,7 +416,7 @@ function AboutTab() {
           </div>
         </div>
       </form>
-    </TabsContent>
+    </div>
   );
 }
 

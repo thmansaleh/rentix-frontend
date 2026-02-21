@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import useSWR from 'swr';
-import { TabsContent } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -281,7 +280,7 @@ function ContactTab() {
 
   if (isLoading) {
     return (
-      <TabsContent value="contact">
+      <div>
         <div className="p-6 space-y-6">
           <Skeleton className="h-8 w-48" />
           <div className="grid gap-6 md:grid-cols-2">
@@ -298,12 +297,12 @@ function ContactTab() {
             ))}
           </div>
         </div>
-      </TabsContent>
+      </div>
     );
   }
 
   return (
-    <TabsContent value="contact">
+    <div>
       <div className="p-6 space-y-6">
         <div className="flex items-center gap-3">
           <Phone className="h-7 w-7 text-primary" />
@@ -607,7 +606,7 @@ function ContactTab() {
           </Button>
         </div>
       </div>
-    </TabsContent>
+    </div>
   );
 }
 

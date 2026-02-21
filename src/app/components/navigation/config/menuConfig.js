@@ -65,7 +65,12 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       id: 'website',
       label: t('navigation.website'),
       icon: Globe,
-      type: 'link'
+      type: 'category',
+      submenu: [
+        { id: 'website/manage/about', label: t('navigation.aboutUs'), icon: Globe },
+        { id: 'website/manage/contact', label: t('navigation.contactUs'), icon: Phone },
+        { id: 'website/manage/bookings', label: t('navigation.bookings'), icon: Calendar },
+      ]
     },
     {
       id: 'humanResources',

@@ -86,7 +86,7 @@ export function BasicInfoTab({ carData, t }) {
               </Label>
               <p className="text-base font-semibold text-primary">
                 {carData.car_price
-                  ? `$${parseFloat(carData.car_price).toLocaleString()}`
+                  ? `${parseFloat(carData.car_price).toLocaleString()}`
                   : "-"}
               </p>
             </div>
@@ -97,7 +97,7 @@ export function BasicInfoTab({ carData, t }) {
               </Label>
               <p className="text-base font-semibold text-primary">
                 {carData.daily_price
-                  ? `$${parseFloat(carData.daily_price).toFixed(2)}/day`
+                  ? `${parseFloat(carData.daily_price).toFixed(2)}/day`
                   : "-"}
               </p>
             </div>

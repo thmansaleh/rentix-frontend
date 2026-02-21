@@ -137,6 +137,8 @@ export function EditClientModal({ isOpen, onClose, onSuccess, customerId }) {
         address: values.address || null,
         branch_id: values.branch_id,
         is_blacklisted: values.is_blacklisted,
+        nationality: values.nationality || null,
+        date_of_birth: values.date_of_birth || null,
         ...finalDocuments
       };
 
@@ -246,7 +248,9 @@ export function EditClientModal({ isOpen, onClose, onSuccess, customerId }) {
     passport_expiry_date: customerData.passport_expiry_date || "",
     address: customerData.address || "",
     branch_id: customerData.branch_id?.toString() || "",
-    is_blacklisted: customerData.is_blacklisted || false
+    is_blacklisted: customerData.is_blacklisted || false,
+    nationality: customerData.nationality || "",
+    date_of_birth: customerData.date_of_birth || ""
   };
 
   return (
@@ -365,6 +369,28 @@ export function EditClientModal({ isOpen, onClose, onSuccess, customerId }) {
                           name="address"
                           placeholder={t('clients.edit.fields.addressPlaceholder')}
                           rows={3}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="nationality">{t('clients.edit.fields.nationality')}</Label>
+                        <Field
+                          as={Input}
+                          id="nationality"
+                          name="nationality"
+                          placeholder={t('clients.edit.fields.nationalityPlaceholder')}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="date_of_birth">{t('clients.edit.fields.dateOfBirth')}</Label>
+                        <DatePicker
+                          date={values.date_of_birth ? new Date(values.date_of_birth) : undefined}
+                          onDateChange={(date) => {
+                            setFieldValue("date_of_birth", date ? date.toISOString().split('T')[0] : "");
+                          }}
+                          placeholder={t('clients.edit.fields.selectDateOfBirth')}
+                          maxDate={new Date()}
                         />
                       </div>
 

@@ -61,13 +61,20 @@ api.interceptors.response.use(
                             error.config.url?.includes('/verify');
       
       if (!token || isAuthEndpoint) {
-        // Clear auth data
-        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('authToken');
-          // Redirect to login if not already there
-          if (!window.location.pathname.includes('/login')) {
-            window.location.href = '/login';
+        // Don't redirect if we're on a public website route (not admin manage)
+        const isWebsiteRoute = typeof window !== 'undefined' && 
+          window.location.pathname.startsWith('/website') &&
+          !window.location.pathname.startsWith('/website/manage');
+        
+        if (!isWebsiteRoute) {
+          // Clear auth data
+          document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('authToken');
+            // Redirect to login if not already there
+            if (!window.location.pathname.includes('/login')) {
+              window.location.href = '/login';
+            }
           }
         }
       } else {

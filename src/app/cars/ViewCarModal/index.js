@@ -12,12 +12,16 @@ import {
   Wrench,
   AlertTriangle,
   Image as ImageIcon,
+  FileText,
 } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ViewAccidentModal } from "../../accidents/ViewAccidentModal";
 import { EditAccidentModal } from "../../accidents/EditAccidentModal";
 import { DeleteAccidentModal } from "../../accidents/DeleteAccidentModal";
+import { ViewContractModal } from "../../contracts/ViewContractModal";
+import { EditContractModal } from "../../contracts/EditContractModal";
+import { AddContractModal } from "../../contracts/AddContractModal";
 
 import { useCarData } from "./useCarData";
 import { BasicInfoTab } from "./BasicInfoTab";
@@ -25,6 +29,7 @@ import { RegistrationTab } from "./RegistrationTab";
 import { InsuranceTab } from "./InsuranceTab";
 import { MaintenanceTab } from "./MaintenanceTab";
 import { AccidentsTab } from "./AccidentsTab";
+import { ContractsTab } from "./ContractsTab";
 import { FilesTab } from "./FilesTab";
 
 export function ViewCarModal({ isOpen, onClose, carId }) {
@@ -39,6 +44,8 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
     documents,
     accidents,
     reloadAccidents,
+    contracts,
+    reloadContracts,
     selectedAccidentId,
     setSelectedAccidentId,
     selectedAccident,
@@ -49,6 +56,14 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
     setIsEditAccidentOpen,
     isDeleteAccidentOpen,
     setIsDeleteAccidentOpen,
+    selectedContractId,
+    setSelectedContractId,
+    isViewContractOpen,
+    setIsViewContractOpen,
+    isEditContractOpen,
+    setIsEditContractOpen,
+    isAddContractOpen,
+    setIsAddContractOpen,
   } = useCarData({ isOpen, carId, t });
 
   if (loading) {
@@ -70,7 +85,7 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
       <CustomModal isOpen={isOpen} onClose={onClose} title={t("cars.carDetails")} size="xl">
         <CustomModalBody className="h-[70vh] overflow-y-auto">
           <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="basic" className="w-full h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-6 mb-6 flex-shrink-0">
+            <TabsList className="grid w-full grid-cols-7 mb-6 flex-shrink-0">
               <TabsTrigger value="basic">
                 <Car className="w-4 h-4 mr-2" />
                 {t("cars.tabs.basic")}
@@ -100,6 +115,15 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
                 <ImageIcon className="w-4 h-4 mr-2" />
                 {t("cars.tabs.files")}
               </TabsTrigger>
+              <TabsTrigger value="contracts">
+                <FileText className="w-4 h-4 mr-2" />
+                {isRTL ? "العقود" : "Contracts"}
+                {contracts.length > 0 && (
+                  <Badge variant="secondary" className="ms-2 text-xs px-1.5 py-0">
+                    {contracts.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
             </TabsList>
 
             <BasicInfoTab carData={carData} t={t} />
@@ -123,6 +147,20 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
               }}
             />
             <FilesTab photos={photos} documents={documents} t={t} />
+            <ContractsTab
+              contracts={contracts}
+              isRTL={isRTL}
+              onViewContract={(id) => {
+                setSelectedContractId(id);
+                setIsViewContractOpen(true);
+              }}
+              onEditContract={(id) => {
+                setSelectedContractId(id);
+                setIsEditContractOpen(true);
+              }}
+              onAddContract={() => setIsAddContractOpen(true)}
+              onReloadContracts={reloadContracts}
+            />
           </Tabs>
         </CustomModalBody>
 
@@ -168,6 +206,40 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
           setIsDeleteAccidentOpen(false);
           setSelectedAccident(null);
           reloadAccidents();
+        }}
+      />
+
+      {/* Contract Modals */}
+      <ViewContractModal
+        isOpen={isViewContractOpen}
+        onClose={() => {
+          setIsViewContractOpen(false);
+          setSelectedContractId(null);
+        }}
+        contractId={selectedContractId}
+      />
+
+      <EditContractModal
+        isOpen={isEditContractOpen}
+        onClose={() => {
+          setIsEditContractOpen(false);
+          setSelectedContractId(null);
+        }}
+        contractId={selectedContractId}
+        onSuccess={() => {
+          setIsEditContractOpen(false);
+          setSelectedContractId(null);
+          reloadContracts();
+        }}
+      />
+
+      <AddContractModal
+        isOpen={isAddContractOpen}
+        onClose={() => setIsAddContractOpen(false)}
+        defaultCarId={carId}
+        onSuccess={() => {
+          setIsAddContractOpen(false);
+          reloadContracts();
         }}
       />
     </>

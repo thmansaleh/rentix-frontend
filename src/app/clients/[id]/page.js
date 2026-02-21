@@ -315,6 +315,16 @@ export default function ClientDetailPage({ params }) {
                   value={customer.branch_name} 
                   icon={Building} 
                 />
+                <InfoField 
+                  label={t('clients.view.fields.nationality')} 
+                  value={customer.nationality} 
+                  icon={Globe} 
+                />
+                <InfoField 
+                  label={t('clients.view.fields.dateOfBirth')} 
+                  value={formatDate(customer.date_of_birth)} 
+                  icon={Calendar} 
+                />
                 <div className="md:col-span-2">
                   <InfoField 
                     label={t('clients.view.fields.address')} 

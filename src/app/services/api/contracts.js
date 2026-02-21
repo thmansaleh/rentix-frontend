@@ -12,6 +12,12 @@ export const getContractsByCustomerId = async (customerId) => {
   return response.data;
 };
 
+// Get contracts by car ID
+export const getContractsByCarId = async (carId) => {
+  const response = await api.get(`/contracts/car/${carId}`);
+  return response.data;
+};
+
 // Get contract by ID
 export const getContractById = async (id) => {
   const response = await api.get(`/contracts/${id}`);

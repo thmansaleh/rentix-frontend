@@ -28,7 +28,7 @@ import useSWR from 'swr';
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export function AddContractModal({ isOpen, onClose, onSuccess }) {
+export function AddContractModal({ isOpen, onClose, onSuccess, defaultCarId }) {
   const { t } = useTranslations();
     const {isRTL} = useLanguage();
   
@@ -83,19 +83,21 @@ export function AddContractModal({ isOpen, onClose, onSuccess }) {
     }
   }, [isOpen]);
 
+  const defaultCar = defaultCarId ? cars.find((c) => c.id.toString() === defaultCarId.toString()) : null;
+
   const initialValues = {
     customer_id: "",
-    car_id: "",
+    car_id: defaultCarId ? defaultCarId.toString() : "",
     branch_id: "",
     start_date: "",
     start_time: "",
     end_date: "",
     end_time: "",
     km_allowed: "",
-    km_taken_start: "",
+    km_taken_start: defaultCar?.mileage ?? "",
     km_return_end: "",
     petrol_at_take: "100",
-    daily_price: "",
+    daily_price: defaultCar?.daily_price ?? "",
     total_amount: "",
     paid_amount: "0",
     insurance_amount: "",
@@ -198,6 +200,7 @@ export function AddContractModal({ isOpen, onClose, onSuccess }) {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
+        enableReinitialize
       >
         {({ values, setFieldValue, isSubmitting }) => (
           <Form>

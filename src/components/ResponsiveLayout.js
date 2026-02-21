@@ -24,11 +24,14 @@ const ResponsiveLayout = ({ children }) => {
     setIsClient(true);
   }, []);
 
-  // Check if we're on the login page
+  // Check if we're on the login page or public website routes
   const isLoginPage = pathname === '/login';
+  // Public website: /website/* but NOT the admin-manage sub-routes
+  const isWebsitePage = (pathname === '/website' || pathname.startsWith('/website/'))
+    && !pathname.startsWith('/website/manage');
 
-  // Don't show sidebar and header if not authenticated or on login page
-  const showLayout = isAuth && !isLoginPage;
+  // Don't show sidebar and header if not authenticated, on login page, or on public website
+  const showLayout = isAuth && !isLoginPage && !isWebsitePage;
 
   // Handler to toggle mobile sidebar from mobile header
   const handleMobileMenuToggle = useCallback(() => {
