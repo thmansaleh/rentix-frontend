@@ -37,7 +37,6 @@ import { EditExpenseModal } from "./EditExpenseModal";
 import { ViewExpenseModal } from "./ViewExpenseModal";
 import { DeleteExpenseModal } from "./DeleteExpenseModal";
 import { getExpenses, getExpenseCategories } from "../../services/api/expenses";
-import { getBranches } from "../../services/api/branches";
 import useSWR from "swr";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -61,7 +60,6 @@ export default function ExpensesPage() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("");
-  const [branchFilter, setBranchFilter] = useState("");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -70,7 +68,6 @@ export default function ExpensesPage() {
     startDate: null,
     endDate: null,
     categoryId: "",
-    branchId: "",
     paymentMethod: "",
   });
 
@@ -79,7 +76,6 @@ export default function ExpensesPage() {
       startDate: startDate ? startDate.toISOString().split("T")[0] : null,
       endDate: endDate ? endDate.toISOString().split("T")[0] : null,
       categoryId: categoryFilter,
-      branchId: branchFilter,
       paymentMethod: paymentMethodFilter,
     });
     setCurrentPage(1);
@@ -93,7 +89,6 @@ export default function ExpensesPage() {
       startDate: appliedFilters.startDate || undefined,
       endDate: appliedFilters.endDate || undefined,
       categoryId: appliedFilters.categoryId || undefined,
-      branchId: appliedFilters.branchId || undefined,
       paymentMethod: appliedFilters.paymentMethod || undefined,
     };
     return ["expenses", JSON.stringify(params)];
@@ -121,16 +116,12 @@ export default function ExpensesPage() {
     totalAmount: 0,
   };
 
-  // Fetch categories and branches for filter dropdowns
+  // Fetch categories for filter dropdown
   const { data: categoriesData } = useSWR("expense-categories", getExpenseCategories, {
-    revalidateOnFocus: false,
-  });
-  const { data: branchesData } = useSWR("branches", getBranches, {
     revalidateOnFocus: false,
   });
 
   const categories = categoriesData?.data || [];
-  const branches = branchesData?.data || [];
 
   // Handlers
   const handleView = (expenseId) => {
@@ -156,13 +147,11 @@ export default function ExpensesPage() {
     setStartDate(null);
     setEndDate(null);
     setCategoryFilter("");
-    setBranchFilter("");
     setPaymentMethodFilter("");
     setAppliedFilters({
       startDate: null,
       endDate: null,
       categoryId: "",
-      branchId: "",
       paymentMethod: "",
     });
     setCurrentPage(1);
@@ -172,7 +161,6 @@ export default function ExpensesPage() {
     appliedFilters.startDate ||
     appliedFilters.endDate ||
     appliedFilters.categoryId ||
-    appliedFilters.branchId ||
     appliedFilters.paymentMethod;
 
   // Format helpers
@@ -286,24 +274,6 @@ export default function ExpensesPage() {
               </SelectContent>
             </Select>
 
-            {/* Branch Filter */}
-            <Select
-              value={branchFilter}
-              onValueChange={(val) => setBranchFilter(val === "all" ? "" : val)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t("expenses.allBranches")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("expenses.allBranches")}</SelectItem>
-                {branches.map((branch) => (
-                  <SelectItem key={branch.id} value={String(branch.id)}>
-                    {isArabic ? branch.name_ar : branch.name_en}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             {/* Payment Method Filter */}
             <Select
               value={paymentMethodFilter}
@@ -332,6 +302,7 @@ export default function ExpensesPage() {
             {/* Apply & Clear Filters */}
             <div className="flex items-center gap-2">
               <Button
+              variant="outline"
                 onClick={applyFilters}
                 className="flex items-center gap-2"
               >
@@ -340,7 +311,7 @@ export default function ExpensesPage() {
               </Button>
               {hasActiveFilters && (
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   onClick={clearFilters}
                   className="flex items-center gap-2 text-red-600 hover:text-red-700"
                 >
@@ -434,7 +405,7 @@ export default function ExpensesPage() {
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="icon"
                           onClick={() => handleView(expense.expense_id)}
                           title={t("expenses.viewExpense")}
@@ -442,7 +413,7 @@ export default function ExpensesPage() {
                           <Eye className="w-4 h-4 text-blue-600 hover:text-blue-700" />
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="icon"
                           onClick={() => handleEdit(expense.expense_id)}
                           title={t("expenses.editExpense")}
@@ -450,7 +421,7 @@ export default function ExpensesPage() {
                           <Edit className="w-4 h-4 text-amber-600 hover:text-amber-700" />
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="icon"
                           onClick={() => handleDelete(expense)}
                           title={t("expenses.deleteExpenseTitle")}

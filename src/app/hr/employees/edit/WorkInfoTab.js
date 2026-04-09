@@ -6,7 +6,7 @@ import { Building } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const WorkInfoTab = ({ formData, handleInputChange, departments, roles, branches, managers, employeeId }) => {
+const WorkInfoTab = ({ formData, handleInputChange, departments, roles, managers, employeeId }) => {
   const { t } = useTranslations();
   const { language } = useLanguage();
 
@@ -98,13 +98,6 @@ const WorkInfoTab = ({ formData, handleInputChange, departments, roles, branches
           value={formData.role_id}
           options={roles}
           required 
-        />
-        <FormField 
-          label={t('employees.branch')} 
-          name="branch_id" 
-          type="select"
-          value={formData.branch_id}
-          options={branches}
         />
         <FormField 
           label={t('employees.directManager')} 

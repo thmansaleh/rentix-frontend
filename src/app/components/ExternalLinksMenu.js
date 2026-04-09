@@ -148,8 +148,14 @@ function ExternalLinksMenu() {
           <Button 
             variant="ghost" 
             size="icon"
+            className="relative"
           >
             <LinkIcon className="h-5 w-5" />
+            {links.length > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                {links.length}
+              </span>
+            )}
           </Button>
         </DropdownMenuTrigger>
         

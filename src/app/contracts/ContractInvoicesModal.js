@@ -28,7 +28,7 @@ import {
   getInvoicesByContractId,
   deleteInvoice,
 } from "@/app/services/api/invoices";
-import { getCompanySettings } from "@/app/services/api/companySettings";
+import { getTenantSettings } from "@/app/services/api/tenantSettings";
 import { getContractById } from "@/app/services/api/contracts";
 
 // Reuse invoice dialogs from the finance/invoices route
@@ -53,7 +53,7 @@ export default function ContractInvoicesModal({
 
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [companySettings, setCompanySettings] = useState(null);
+  const [tenantSettings, setTenantSettings] = useState(null);
   const [contractDetails, setContractDetails] = useState(null);
 
   // Sub-dialog states
@@ -86,8 +86,8 @@ export default function ContractInvoicesModal({
     if (!isOpen) return;
     (async () => {
       try {
-        const res = await getCompanySettings();
-        if (res.success) setCompanySettings(res.data);
+        const res = await getTenantSettings();
+        if (res.success) setTenantSettings(res.data);
       } catch (err) {
         console.error("Error loading company settings:", err);
       }
@@ -301,7 +301,7 @@ export default function ContractInvoicesModal({
                       <TableCell>
                         <div className="flex items-center justify-center gap-1">
                           <Button
-                            variant="ghost"
+                             variant="outline"
                             size="icon"
                             className="h-8 w-8"
                             onClick={() =>
@@ -312,7 +312,7 @@ export default function ContractInvoicesModal({
                             <Eye className="w-4 h-4 text-blue-600" />
                           </Button>
                           <Button
-                            variant="ghost"
+                             variant="outline"
                             size="icon"
                             className="h-8 w-8"
                             onClick={() => handleEditInvoice(invoice)}
@@ -321,7 +321,7 @@ export default function ContractInvoicesModal({
                             <Edit className="w-4 h-4 text-amber-600" />
                           </Button>
                           <Button
-                            variant="ghost"
+                             variant="outline"
                             size="icon"
                             className="h-8 w-8"
                             onClick={() => handleDeleteClick(invoice)}
@@ -357,7 +357,6 @@ export default function ContractInvoicesModal({
         isRTL={isRTL}
         defaultContractId={contractId}
         defaultCustomerId={contractDetails?.customer_id}
-        defaultBranchId={contractDetails?.branch_id}
       />
 
       {/* View Invoice Detail Dialog */}
@@ -368,7 +367,7 @@ export default function ContractInvoicesModal({
         onRefresh={loadInvoices}
         language={language}
         isRTL={isRTL}
-        companySettings={companySettings}
+        companySettings={tenantSettings}
       />
 
       {/* Delete Invoice Confirmation */}

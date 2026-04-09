@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Printer, X } from "lucide-react";
 import { getContractById } from "../services/api/contracts";
 import { getActiveRentalTerms } from "../services/api/rentalTerms";
-import { getCompanySettings } from "../services/api/companySettings";
+import { getTenantSettings } from "../services/api/tenantSettings";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -32,12 +32,13 @@ export function PrintContractModal({ isOpen, onClose, contractId }) {
         try {
           const termsData = await getActiveRentalTerms();
           setRentalTerms(termsData?.data || []);
+          console.log(termsData)
         } catch (error) {
           console.error("Error loading rental terms:", error);
           setRentalTerms([]);
         }
         try {
-          const settingsData = await getCompanySettings();
+          const settingsData = await getTenantSettings();
           setCompanyInfo(settingsData?.data || null);
         } catch (error) {
           console.error("Error loading company settings:", error);

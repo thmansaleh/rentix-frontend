@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
-import { getAllInvoices, deleteInvoice } from "@/app/services/api/invoices";
+import { getAllInvoices } from "@/app/services/api/invoices";
 import { getBranches } from "@/app/services/api/branches";
-import { getCompanySettings } from "@/app/services/api/companySettings";
+import { getTenantSettings } from "@/app/services/api/tenantSettings";
 import { ITEMS_PER_PAGE } from "../constants";
 
 const DEFAULT_FILTERS = { search: "", status: "all", branch_id: "all" };
@@ -14,7 +14,7 @@ export function useInvoices(translations) {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [branches, setBranches] = useState([]);
-  const [companySettings, setCompanySettings] = useState(null);
+  const [tenantSettings, setTenantSettings] = useState(null);
 
   // --- Filter state (local, not yet sent) ---
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,8 +61,8 @@ export function useInvoices(translations) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await getCompanySettings();
-        if (res.success) setCompanySettings(res.data);
+        const res = await getTenantSettings();
+        if (res.success) setTenantSettings(res.data);
       } catch (err) {
         console.error("Error fetching company settings:", err);
       }
@@ -140,53 +140,6 @@ export function useInvoices(translations) {
     fetchInvoices(page, activeFilters);
   };
 
-  // ===== CRUD handlers =====
-  const handleAddNew = () => {
-    setEditingInvoice(null);
-    setInvoiceDialogOpen(true);
-  };
-
-  const handleEdit = (invoice) => {
-    setEditingInvoice(invoice);
-    setInvoiceDialogOpen(true);
-  };
-
-  const handleView = (invoiceId) => {
-    setSelectedInvoiceId(invoiceId);
-    setDetailDialogOpen(true);
-  };
-
-  const handleDeleteClick = (invoice) => {
-    setDeletingInvoice(invoice);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!deletingInvoice) return;
-    try {
-      const result = await deleteInvoice(deletingInvoice.invoice_id);
-      if (result.success) {
-        toast.success(translations("deleteSuccess"));
-        fetchInvoices(currentPage, activeFilters);
-        fetchStats();
-      } else {
-        toast.error(result.message || translations("deleteError"));
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || translations("deleteError"));
-    } finally {
-      setDeleteDialogOpen(false);
-      setDeletingInvoice(null);
-    }
-  };
-
-  const handleInvoiceSaved = () => {
-    setInvoiceDialogOpen(false);
-    setEditingInvoice(null);
-    fetchInvoices(currentPage, activeFilters);
-    fetchStats();
-  };
-
   const refreshData = () => {
     fetchInvoices(currentPage, activeFilters);
     fetchStats();
@@ -197,7 +150,6 @@ export function useInvoices(translations) {
     invoices,
     loading,
     branches,
-    companySettings,
     stats,
 
     // Filters
@@ -207,32 +159,15 @@ export function useInvoices(translations) {
     setStatusFilter,
     branchFilter,
     setBranchFilter,
-    handleSearch,
 
     // Pagination
     currentPage,
     totalPages,
     totalCount,
-    handlePageChange,
-
-    // Dialog state
-    invoiceDialogOpen,
-    setInvoiceDialogOpen,
-    editingInvoice,
-    detailDialogOpen,
-    setDetailDialogOpen,
-    selectedInvoiceId,
-    deleteDialogOpen,
-    setDeleteDialogOpen,
-    deletingInvoice,
 
     // Actions
-    handleAddNew,
-    handleEdit,
-    handleView,
-    handleDeleteClick,
-    handleDeleteConfirm,
-    handleInvoiceSaved,
+    handleSearch,
+    handlePageChange,
     refreshData,
   };
 }

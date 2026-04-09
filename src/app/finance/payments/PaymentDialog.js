@@ -28,14 +28,52 @@ import {
   createPayment,
   updatePayment,
 } from "@/app/services/api/payments";
+import { getAllBankAccounts } from "@/app/services/api/bankAccounts";
+import useSWR from "swr";
 
 const PAYMENT_METHODS = [
   { value: "cash", labelAr: "نقداً", labelEn: "Cash" },
   { value: "card", labelAr: "بطاقة", labelEn: "Card" },
   { value: "bank_transfer", labelAr: "تحويل بنكي", labelEn: "Bank Transfer" },
-  { value: "online", labelAr: "أونلاين", labelEn: "Online" },
-  { value: "wallet", labelAr: "محفظة", labelEn: "Wallet" },
+  { value: "cheque", labelAr: "شيك", labelEn: "Cheque" },
 ];
+
+// Prefix used to embed cheque details inside the notes field
+const CHEQUE_PREFIX = "[CHEQUE]";
+
+/**
+ * Encode cheque details into a string prepended to notes.
+ * Format: [CHEQUE] bank:<name>|date:<date>|number:<num>\n<rest of notes>
+ */
+function encodeChequeNotes(chequeBankName, chequeDate, chequeNumber, notes) {
+  const chequeStr = `${CHEQUE_PREFIX} bank:${chequeBankName}|date:${chequeDate}|number:${chequeNumber}`;
+  return notes ? `${chequeStr}\n${notes}` : chequeStr;
+}
+
+/**
+ * Parse cheque details out of a notes string.
+ * Returns { chequeBankName, chequeDate, chequeNumber, notes }
+ */
+function decodeChequeNotes(rawNotes) {
+  if (!rawNotes || !rawNotes.startsWith(CHEQUE_PREFIX)) {
+    return { chequeBankName: "", chequeDate: "", chequeNumber: "", notes: rawNotes || "" };
+  }
+  const lines = rawNotes.split("\n");
+  const chequeStr = lines[0].replace(CHEQUE_PREFIX, "").trim();
+  const rest = lines.slice(1).join("\n");
+  const parts = Object.fromEntries(
+    chequeStr.split("|").map((p) => {
+      const idx = p.indexOf(":");
+      return [p.slice(0, idx).trim(), p.slice(idx + 1).trim()];
+    })
+  );
+  return {
+    chequeBankName: parts.bank || "",
+    chequeDate: parts.date || "",
+    chequeNumber: parts.number || "",
+    notes: rest,
+  };
+}
 
 export default function PaymentDialog({
   open,
@@ -50,6 +88,24 @@ export default function PaymentDialog({
   const [submitting, setSubmitting] = useState(false);
   const isEditing = !!payment;
 
+  // Fetch bank accounts for dropdown
+  const { data: accountsData } = useSWR(
+    open ? "bank-accounts-list" : null,
+    getAllBankAccounts,
+    { revalidateOnFocus: false }
+  );
+  const bankAccounts = accountsData?.data || [];
+
+  // Determine which account to auto-select based on payment method
+  const getDefaultAccountId = (method) => {
+    const matching = bankAccounts.filter(
+      (a) =>
+        a.status === "active" &&
+        (method === "cash" ? a.account_type === "cash" : a.account_type !== "cash")
+    );
+    return matching.length > 0 ? String(matching[0].id) : "";
+  };
+
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
       .min(0.01, language === "ar" ? "المبلغ مطلوب" : "Amount must be greater than 0")
@@ -60,7 +116,13 @@ export default function PaymentDialog({
     payment_date: Yup.string().required(
       language === "ar" ? "التاريخ مطلوب" : "Date is required"
     ),
+    account_id: Yup.string().required(
+      language === "ar" ? "الحساب البنكي مطلوب" : "Bank account is required"
+    ),
   });
+
+  // Decode cheque details from notes if editing a cheque payment
+  const decoded = decodeChequeNotes(payment?.notes || "");
 
   const initialValues = {
     amount: payment?.amount || "",
@@ -69,16 +131,36 @@ export default function PaymentDialog({
     payment_date: payment?.payment_date
       ? new Date(payment.payment_date).toISOString().split("T")[0]
       : new Date().toISOString().split("T")[0],
-    notes: payment?.notes || "",
+    notes: payment?.payment_method === "cheque" ? decoded.notes : (payment?.notes || ""),
+    account_id: payment?.account_id
+      ? String(payment.account_id)
+      : getDefaultAccountId(payment?.payment_method || "cash"),
+    // Cheque-specific fields
+    chequeBankName: payment?.payment_method === "cheque" ? decoded.chequeBankName : "",
+    chequeDate: payment?.payment_method === "cheque" ? decoded.chequeDate : "",
+    chequeNumber: payment?.payment_method === "cheque" ? decoded.chequeNumber : "",
   };
 
   const handleSubmit = async (values) => {
     setSubmitting(true);
     try {
+      // Embed cheque details into notes when payment method is cheque
+      const finalNotes =
+        values.payment_method === "cheque"
+          ? encodeChequeNotes(
+              values.chequeBankName,
+              values.chequeDate,
+              values.chequeNumber,
+              values.notes
+            )
+          : values.notes;
+
       const payload = {
         ...values,
         amount: parseFloat(values.amount),
         invoice_id: invoiceId,
+        account_id: values.account_id ? parseInt(values.account_id) : null,
+        notes: finalNotes,
       };
 
       let result;
@@ -121,7 +203,33 @@ export default function PaymentDialog({
           onSubmit={handleSubmit}
           enableReinitialize
         >
-          {({ errors, touched, setFieldValue, values }) => (
+          {({ errors, touched, setFieldValue, values }) => {
+            // Filter accounts: cash method → cash accounts, others → bank accounts
+            const filteredAccounts = bankAccounts.filter(
+              (a) =>
+                a.status === "active" &&
+                (values.payment_method === "cash"
+                  ? a.account_type === "cash"
+                  : a.account_type !== "cash")
+            );
+
+            // Auto-select first account when method changes
+            const autoSelectAccount = (method) => {
+              const matching = bankAccounts.filter(
+                (a) =>
+                  a.status === "active" &&
+                  (method === "cash"
+                    ? a.account_type === "cash"
+                    : a.account_type !== "cash")
+              );
+              if (matching.length > 0) {
+                setFieldValue("account_id", String(matching[0].id));
+              } else {
+                setFieldValue("account_id", "");
+              }
+            };
+
+            return (
             <Form className="space-y-4">
               {/* Amount */}
               <div className="space-y-2">
@@ -145,7 +253,16 @@ export default function PaymentDialog({
                 <Label>{t("method")} *</Label>
                 <Select
                   value={values.payment_method}
-                  onValueChange={(v) => setFieldValue("payment_method", v)}
+                  onValueChange={(v) => {
+                    setFieldValue("payment_method", v);
+                    autoSelectAccount(v);
+                    // Clear cheque fields when switching away from cheque
+                    if (v !== "cheque") {
+                      setFieldValue("chequeBankName", "");
+                      setFieldValue("chequeDate", "");
+                      setFieldValue("chequeNumber", "");
+                    }
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -194,6 +311,83 @@ export default function PaymentDialog({
                 />
               </div>
 
+              {/* Bank Account */}
+              <div className="space-y-2">
+                <Label>
+                  {language === "ar" ? "الحساب البنكي" : "Bank Account"} *
+                </Label>
+                <Select
+                  value={values.account_id}
+                  onValueChange={(v) => setFieldValue("account_id", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={
+                        language === "ar"
+                          ? "اختر حساب بنكي"
+                          : "Select bank account"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredAccounts.map((account) => (
+                        <SelectItem
+                          key={account.id}
+                          value={String(account.id)}
+                        >
+                          {account.bank_name} - {account.account_name} ({account.account_number})
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                {errors.account_id && touched.account_id && (
+                  <p className="text-sm text-destructive">
+                    {errors.account_id}
+                  </p>
+                )}
+              </div>
+
+              {/* Cheque Details (shown only when payment method is cheque) */}
+              {values.payment_method === "cheque" && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="chequeBankName">
+                      {t("cheque.bankName") || (language === "ar" ? "اسم البنك" : "Bank Name")} *
+                    </Label>
+                    <Field
+                      as={Input}
+                      id="chequeBankName"
+                      name="chequeBankName"
+                      placeholder={language === "ar" ? "اسم البنك" : "Bank name"}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="chequeDate">
+                      {t("cheque.chequeDate") || (language === "ar" ? "تاريخ الشيك" : "Cheque Date")} *
+                    </Label>
+                    <Field
+                      as={Input}
+                      id="chequeDate"
+                      name="chequeDate"
+                      type="date"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="chequeNumber">
+                      {t("cheque.chequeNumber") || (language === "ar" ? "رقم الشيك" : "Cheque Number")} *
+                    </Label>
+                    <Field
+                      as={Input}
+                      id="chequeNumber"
+                      name="chequeNumber"
+                      placeholder={language === "ar" ? "رقم الشيك" : "Cheque number"}
+                    />
+                  </div>
+                </>
+              )}
+
               {/* Notes */}
               <div className="space-y-2">
                 <Label htmlFor="notes">
@@ -228,7 +422,8 @@ export default function PaymentDialog({
                 </Button>
               </DialogFooter>
             </Form>
-          )}
+          );
+          }}
         </Formik>
       </DialogContent>
     </Dialog>

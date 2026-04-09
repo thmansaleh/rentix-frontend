@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 // Routes that are publicly accessible without authentication
 // Note: /website/manage/* is NOT public — it requires admin login
-const PUBLIC_ROUTES = ['/login', '/website'];
+const PUBLIC_ROUTES = ['/login', '/website', '/account-suspended'];
 const ADMIN_ONLY_PREFIXES = ['/website/manage'];
 
 /**

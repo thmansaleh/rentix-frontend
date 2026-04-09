@@ -14,7 +14,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { Save, AlertCircle, CheckCircle2, Building2, Target, Eye, Heart, Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { getCompanySettings, updateCompanySettings } from '@/app/services/api/companySettings';
+import { getTenantSettings, updateTenantSettings } from '@/app/services/api/tenantSettings';
 
 function AboutTab() {
   const {t} = useTranslations();
@@ -61,7 +61,7 @@ function AboutTab() {
     onSubmit: async (values) => {
       setMessage(null);
       try {
-        const response = await updateCompanySettings(values);
+        const response = await updateTenantSettings(values);
         
         if (response.success) {
           setMessage(t('website.aboutSection.saveSuccess'));
@@ -80,7 +80,7 @@ function AboutTab() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getCompanySettings();
+        const response = await getTenantSettings();
         if (response.success && response.data) {
           const data = response.data;
           formik.setValues({

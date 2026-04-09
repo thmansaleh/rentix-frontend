@@ -20,24 +20,24 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import useSWR from 'swr';
 
-export function AddAccidentModal({ isOpen, onClose, onSuccess }) {
+export function AddAccidentModal({ isOpen, onClose, onSuccess, defaultCarId }) {
   const { t } = useTranslations();
   const { language } = useLanguage();
   const isRTL = language === 'ar';
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Fetch cars, customers, and contracts
-  const { data: carsData } = useSWR('cars', () => getCars());
-  const { data: customersData } = useSWR('customers', () => getCustomers());
-  const { data: contractsData } = useSWR('contracts', () => getContracts());
+  // Fetch cars, customers, and contracts — only when modal is open
+  const { data: carsData } = useSWR(isOpen ? 'cars' : null, () => getCars());
+  const { data: customersData } = useSWR(isOpen ? 'customers' : null, () => getCustomers());
+  const { data: contractsData } = useSWR(isOpen ? 'contracts' : null, () => getContracts());
 
   const cars = carsData?.data || [];
   const customers = customersData?.data || [];
   const contracts = contractsData || [];
 
   const initialValues = {
-    car_id: "",
+    car_id: defaultCarId || "",
     customer_id: "",
     contract_id: "",
     accident_datetime: "",
@@ -243,13 +243,13 @@ export function AddAccidentModal({ isOpen, onClose, onSuccess }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="police_report_number">
-                      {isRTL ? 'رقم محضر الشرطة' : 'Police Report Number'}
+                      {isRTL ? 'رقم تقرير الشرطة' : 'Police Report Number'}
                     </Label>
                     <Field
                       as={Input}
                       id="police_report_number"
                       name="police_report_number"
-                      placeholder={isRTL ? 'أدخل رقم المحضر' : 'Enter report number'}
+                      placeholder={isRTL ? 'أدخل رقم التقرير' : 'Enter report number'}
                     />
                   </div>
 

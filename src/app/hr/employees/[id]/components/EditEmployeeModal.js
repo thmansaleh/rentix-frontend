@@ -182,7 +182,11 @@ export default function EditEmployeeModal({ employeeId, onUpdate }) {
     setIsSaving(true);
     
     try {
-      const response = await updateEmployee(employeeId, form);
+      const submitData = { ...form };
+      if (!submitData.password || submitData.password.trim() === '') {
+        delete submitData.password;
+      }
+      const response = await updateEmployee(employeeId, submitData);
       
       if (response.success) {
         toast.success(t('messages.employeeUpdatedSuccessfully') || 'Employee updated successfully!');

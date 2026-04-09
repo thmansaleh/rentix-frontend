@@ -12,6 +12,7 @@ import { useSearchAPI } from './useSearchAPI';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
 import { useClickOutside } from './useClickOutside';
 import { ViewCarModal } from '@/app/cars/ViewCarModal';
+import { ViewClientModal } from '@/app/clients/ViewClientModal';
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,6 +23,8 @@ const SearchBar = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isCarModalOpen, setIsCarModalOpen] = useState(false);
   const [selectedCarId, setSelectedCarId] = useState(null);
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState(null);
   
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -92,7 +95,8 @@ const SearchBar = () => {
       setSearchQuery('');
       setIsOpen(false);
     } else if (searchType === 'clients') {
-      router.push(`/customers/${item.id}`);
+      setSelectedClientId(item.id);
+      setIsClientModalOpen(true);
       setSearchQuery('');
       setIsOpen(false);
     } else if (searchType === 'cars') {
@@ -164,6 +168,15 @@ const SearchBar = () => {
           setSelectedCarId(null);
         }}
         carId={selectedCarId}
+      />
+      {/* Client View Modal */}
+      <ViewClientModal
+        isOpen={isClientModalOpen}
+        onClose={() => {
+          setIsClientModalOpen(false);
+          setSelectedClientId(null);
+        }}
+        customerId={selectedClientId}
       />
     
     </div>

@@ -11,22 +11,22 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getBankAccountById, updateBankAccount } from '@/app/services/api/bankAccounts';
-import { getBranches } from '@/app/services/api/branches';
 import { toast } from 'react-toastify';
 
 const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
   const { isRTL } = useLanguage();
   const t = useTranslations('EditBankAccount');
-  const [branches, setBranches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [accountType, setAccountType] = useState('bank');
+
+  const isBankAccount = accountType === 'bank';
 
   const validationSchema = Yup.object({
-    bank_name: Yup.string().required(t('bankNameRequired')),
+    bank_name: Yup.string().optional(),
     account_name: Yup.string().required(t('accountNameRequired')),
-    account_number: Yup.string().required(t('accountNumberRequired')),
+    account_number: Yup.string().optional(),
     iban: Yup.string().optional(),
-    branch_id: Yup.number().nullable(),
     current_balance: Yup.number().min(0, t('balanceNegativeError')).default(0),
     status: Yup.string().oneOf(['active', 'inactive']).default('active')
   });
@@ -37,7 +37,6 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
       account_name: '',
       account_number: '',
       iban: '',
-      branch_id: '',
       current_balance: 0,
       status: 'active'
     },
@@ -47,7 +46,7 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
       try {
         const accountData = {
           ...values,
-          branch_id: values.branch_id || null,
+          account_type: accountType,
           current_balance: parseFloat(values.current_balance) || 0
         };
         
@@ -83,24 +82,6 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
     },
   });
 
-  // Fetch branches on component mount
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const response = await getBranches();
-        if (response.success) {
-          setBranches(response.data);
-        }
-      } catch (error) {
-
-      }
-    };
-    
-    if (isOpen) {
-      fetchBranches();
-    }
-  }, [isOpen]);
-
   // Fetch account data when modal opens and accountId is available
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -112,12 +93,12 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
         
         if (response.success) {
           const accountData = response.data;
+          setAccountType(accountData.account_type || 'bank');
           formik.setValues({
             bank_name: accountData.bank_name || '',
             account_name: accountData.account_name || '',
             account_number: accountData.account_number || '',
             iban: accountData.iban || '',
-            branch_id: accountData.branch_id ? accountData.branch_id.toString() : '',
             current_balance: accountData.current_balance || 0,
             status: accountData.status || 'active'
           });
@@ -163,22 +144,24 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
         </DialogHeader>
         
         <form onSubmit={formik.handleSubmit} className="space-y-4">
-          {/* Bank Name */}
-          <div className="space-y-2">
-            <Label htmlFor="bank_name">{t('bankName')} *</Label>
-            <Input
-              id="bank_name"
-              name="bank_name"
-              value={formik.values.bank_name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={formik.touched.bank_name && formik.errors.bank_name ? 'border-red-500' : ''}
-              placeholder={t('bankNamePlaceholder')}
-            />
-            {formik.touched.bank_name && formik.errors.bank_name && (
-              <p className="text-sm text-red-500">{formik.errors.bank_name}</p>
-            )}
-          </div>
+          {/* Bank Name - bank only */}
+          {isBankAccount && (
+            <div className="space-y-2">
+              <Label htmlFor="bank_name">{t('bankName')} *</Label>
+              <Input
+                id="bank_name"
+                name="bank_name"
+                value={formik.values.bank_name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={formik.touched.bank_name && formik.errors.bank_name ? 'border-red-500' : ''}
+                placeholder={t('bankNamePlaceholder')}
+              />
+              {formik.touched.bank_name && formik.errors.bank_name && (
+                <p className="text-sm text-red-500">{formik.errors.bank_name}</p>
+              )}
+            </div>
+          )}
 
           {/* Account Name */}
           <div className="space-y-2">
@@ -197,56 +180,39 @@ const EditAccountModal = ({ isOpen, onClose, onSuccess, accountId }) => {
             )}
           </div>
 
-          {/* Account Number */}
-          <div className="space-y-2">
-            <Label htmlFor="account_number">{t('accountNumber')} *</Label>
-            <Input
-              id="account_number"
-              name="account_number"
-              value={formik.values.account_number}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={formik.touched.account_number && formik.errors.account_number ? 'border-red-500' : ''}
-              placeholder={t('accountNumberPlaceholder')}
-            />
-            {formik.touched.account_number && formik.errors.account_number && (
-              <p className="text-sm text-red-500">{formik.errors.account_number}</p>
-            )}
-          </div>
+          {/* Account Number - bank only */}
+          {isBankAccount && (
+            <div className="space-y-2">
+              <Label htmlFor="account_number">{t('accountNumber')} *</Label>
+              <Input
+                id="account_number"
+                name="account_number"
+                value={formik.values.account_number}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={formik.touched.account_number && formik.errors.account_number ? 'border-red-500' : ''}
+                placeholder={t('accountNumberPlaceholder')}
+              />
+              {formik.touched.account_number && formik.errors.account_number && (
+                <p className="text-sm text-red-500">{formik.errors.account_number}</p>
+              )}
+            </div>
+          )}
 
-          {/* IBAN */}
-          <div className="space-y-2">
-            <Label htmlFor="iban">{t('iban')}</Label>
-            <Input
-              id="iban"
-              name="iban"
-              value={formik.values.iban}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder={t('ibanPlaceholder')}
-            />
-          </div>
-
-          {/* Branch */}
-          <div className="space-y-2">
-            <Label htmlFor="branch_id">{t('branch')}</Label>
-            <Select 
-              value={formik.values.branch_id || "none"} 
-              onValueChange={(value) => formik.setFieldValue('branch_id', value === "none" ? "" : value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t('selectBranch')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t('noBranch')}</SelectItem>
-                {branches.map((branch) => (
-                  <SelectItem key={branch.id} value={branch.id.toString()}>
-                    {isRTL ? branch.name_ar : branch.name_en}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* IBAN - bank only */}
+          {isBankAccount && (
+            <div className="space-y-2">
+              <Label htmlFor="iban">{t('iban')}</Label>
+              <Input
+                id="iban"
+                name="iban"
+                value={formik.values.iban}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                placeholder={t('ibanPlaceholder')}
+              />
+            </div>
+          )}
 
           {/* Current Balance */}
           <div className="space-y-2">

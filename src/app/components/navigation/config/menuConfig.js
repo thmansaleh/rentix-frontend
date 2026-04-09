@@ -24,7 +24,10 @@ import {
   Gauge,
   Car,
   Globe,
-  AlertTriangle
+  AlertTriangle,
+  Receipt,
+  Eye,
+  CreditCard
 } from 'lucide-react';
 
 export const getMenuItems = (t, userRole = null, userDepartment = null, permissions = []) => {
@@ -36,29 +39,28 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       type: 'link'
     },
    
-    
-    {
-      id: 'cars',
-      label: t('navigation.cars'),
-      icon: Car,
-      type: 'link'
-    },
-    {
+      {
       id: 'clients',
       label: t('navigation.customers'),
       icon: Users2,
       type: 'link'
     },
     {
+      id: 'fleet',
+      label: t('navigation.cars'),
+      icon: Car,
+      type: 'category',
+      submenu: [
+        { id: 'cars', label: t('navigation.cars'), icon: Car },
+        { id: 'accidents', label: t('navigation.accidents'), icon: AlertTriangle },
+        { id: 'fines', label: t('navigation.fines'), icon: Receipt },
+      ]
+    },
+  
+    {
       id: 'contracts',
       label: t('navigation.contracts'),
       icon: FileText,
-      type: 'link'
-    },
-    {
-      id: 'accidents',
-      label: t('navigation.accidents'),
-      icon: AlertTriangle,
       type: 'link'
     },
     {
@@ -67,6 +69,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       icon: Globe,
       type: 'category',
       submenu: [
+        { id: 'website/cars', label: t('navigation.reviews'), icon: Eye },
         { id: 'website/manage/about', label: t('navigation.aboutUs'), icon: Globe },
         { id: 'website/manage/contact', label: t('navigation.contactUs'), icon: Phone },
         { id: 'website/manage/bookings', label: t('navigation.bookings'), icon: Calendar },
@@ -80,9 +83,8 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       submenu: [
         { id: 'hr/employees', label: t('navigation.employees'), icon: Users },
         { id: 'hr/requests', label: t('navigation.requests'), icon: FileText },
-        { id: 'hr/assets', label: t('navigation.assets'), icon: Package },
         { id: 'hr/forms', label: t('navigation.forms'), icon: ScrollText },
-        { id: 'hr/events', label: t('navigation.events'), icon: Calendar },
+        // { id: 'hr/events', label: t('navigation.events'), icon: Calendar },
         { id: 'hr/notifications', label: t('navigation.notifications'), icon: Bell },
       ]
     },
@@ -94,14 +96,19 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       submenu: [
         { id: 'finance/bank-accounts', label: t('navigation.bankAccounts'), icon: Banknote },
         { id: 'finance/invoices', label: t('navigation.invoices'), icon: FileText },
+        { id: 'finance/payments', label: t('navigation.payments'), icon: CreditCard },
         { id: 'finance/expenses', label: t('navigation.expenses'), icon: DollarSign },
       ]
     },
-     {
-      id: 'statistics',
-      label: t('navigation.statistics'),
+    {
+      id: 'reports',
+      label: t('navigation.reportsCategory'),
       icon: BarChartIcon,
-      type: 'link'
+      type: 'category',
+      submenu: [
+        { id: 'reports/reports', label: t('navigation.reports'), icon: FileText },
+        { id: 'reports/statistics', label: t('navigation.statistics'), icon: BarChartIcon },
+      ]
     },
     {
       id: 'settings',
@@ -113,6 +120,8 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
         { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
         { id: 'settings/rental-terms', label: t('navigation.rentalTerms'), icon: ScrollText },
+        { id: 'settings/assets', label: t('navigation.assets'), icon: Package },
+
         // { id: 'settings/performance', label: t('navigation.performance'), icon: Gauge },
         { id: 'logs', label: t('navigation.logs'), icon: Clock },
       ]

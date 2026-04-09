@@ -3,49 +3,44 @@
 import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui/custom-modal";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import {
   Loader2,
   Car,
   FileCheck,
-  Shield,
   Wrench,
   AlertTriangle,
   Image as ImageIcon,
   FileText,
+  Receipt,
+  Wallet,
 } from "lucide-react";
+import { useSWRConfig } from "swr";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ViewAccidentModal } from "../../accidents/ViewAccidentModal";
 import { EditAccidentModal } from "../../accidents/EditAccidentModal";
 import { DeleteAccidentModal } from "../../accidents/DeleteAccidentModal";
-import { ViewContractModal } from "../../contracts/ViewContractModal";
-import { EditContractModal } from "../../contracts/EditContractModal";
 import { AddContractModal } from "../../contracts/AddContractModal";
 
 import { useCarData } from "./useCarData";
 import { BasicInfoTab } from "./BasicInfoTab";
 import { RegistrationTab } from "./RegistrationTab";
-import { InsuranceTab } from "./InsuranceTab";
 import { MaintenanceTab } from "./MaintenanceTab";
 import { AccidentsTab } from "./AccidentsTab";
 import { ContractsTab } from "./ContractsTab";
 import { FilesTab } from "./FilesTab";
+import { FinesTab } from "./FinesTab";
 
 export function ViewCarModal({ isOpen, onClose, carId }) {
   const { t } = useTranslations();
   const { isRTL } = useLanguage();
+  const { mutate } = useSWRConfig();
 
   const {
     loading,
     carData,
-    setCarData,
-    photos,
-    documents,
-    accidents,
-    reloadAccidents,
-    contracts,
-    reloadContracts,
+    activeTab,
+    setActiveTab,
     selectedAccidentId,
     setSelectedAccidentId,
     selectedAccident,
@@ -56,15 +51,9 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
     setIsEditAccidentOpen,
     isDeleteAccidentOpen,
     setIsDeleteAccidentOpen,
-    selectedContractId,
-    setSelectedContractId,
-    isViewContractOpen,
-    setIsViewContractOpen,
-    isEditContractOpen,
-    setIsEditContractOpen,
     isAddContractOpen,
     setIsAddContractOpen,
-  } = useCarData({ isOpen, carId, t });
+  } = useCarData({ isOpen, carId });
 
   if (loading) {
     return (
@@ -84,8 +73,8 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
     <>
       <CustomModal isOpen={isOpen} onClose={onClose} title={t("cars.carDetails")} size="xl">
         <CustomModalBody className="h-[70vh] overflow-y-auto">
-          <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="basic" className="w-full h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-7 mb-6 flex-shrink-0">
+          <Tabs dir={isRTL ? "rtl" : "ltr"} value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
+            <TabsList className="grid w-full grid-cols-8 mb-6 flex-shrink-0">
               <TabsTrigger value="basic">
                 <Car className="w-4 h-4 mr-2" />
                 {t("cars.tabs.basic")}
@@ -94,22 +83,13 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
                 <FileCheck className="w-4 h-4 mr-2" />
                 {t("cars.tabs.registration")}
               </TabsTrigger>
-              <TabsTrigger value="insurance">
-                <Shield className="w-4 h-4 mr-2" />
-                {t("cars.tabs.insurance")}
-              </TabsTrigger>
               <TabsTrigger value="maintenance">
                 <Wrench className="w-4 h-4 mr-2" />
-                {t("cars.tabs.maintenance")}
+                {isRTL ? "الصيانة" : "Maintenance"}
               </TabsTrigger>
               <TabsTrigger value="accidents">
                 <AlertTriangle className="w-4 h-4 mr-2" />
                 {isRTL ? "الحوادث" : "Accidents"}
-                {accidents.length > 0 && (
-                  <Badge variant="destructive" className="ms-2 text-xs px-1.5 py-0">
-                    {accidents.length}
-                  </Badge>
-                )}
               </TabsTrigger>
               <TabsTrigger value="files">
                 <ImageIcon className="w-4 h-4 mr-2" />
@@ -118,20 +98,24 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
               <TabsTrigger value="contracts">
                 <FileText className="w-4 h-4 mr-2" />
                 {isRTL ? "العقود" : "Contracts"}
-                {contracts.length > 0 && (
-                  <Badge variant="secondary" className="ms-2 text-xs px-1.5 py-0">
-                    {contracts.length}
-                  </Badge>
-                )}
+              </TabsTrigger>
+              <TabsTrigger value="fines">
+                <Receipt className="w-4 h-4 mr-2" />
+                {isRTL ? "المخالفات" : "Fines"}
               </TabsTrigger>
             </TabsList>
 
             <BasicInfoTab carData={carData} t={t} />
             <RegistrationTab carData={carData} t={t} />
-            <InsuranceTab carData={carData} t={t} />
-            <MaintenanceTab carData={carData} t={t} onCarUpdated={(updated) => setCarData(updated)} />
+            <MaintenanceTab
+              carId={carId}
+              isActive={activeTab === "maintenance"}
+              isRTL={isRTL}
+              t={t}
+            />
             <AccidentsTab
-              accidents={accidents}
+              carId={carId}
+              isActive={activeTab === "accidents"}
               isRTL={isRTL}
               onViewAccident={(id) => {
                 setSelectedAccidentId(id);
@@ -146,21 +130,20 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
                 setIsDeleteAccidentOpen(true);
               }}
             />
-            <FilesTab photos={photos} documents={documents} t={t} />
+            <FilesTab photos={carData?.photos || []} documents={carData?.documents || []} t={t} />
             <ContractsTab
-              contracts={contracts}
+              carId={carId}
+              isActive={activeTab === "contracts"}
               isRTL={isRTL}
-              onViewContract={(id) => {
-                setSelectedContractId(id);
-                setIsViewContractOpen(true);
-              }}
-              onEditContract={(id) => {
-                setSelectedContractId(id);
-                setIsEditContractOpen(true);
-              }}
               onAddContract={() => setIsAddContractOpen(true)}
-              onReloadContracts={reloadContracts}
+              carStatus={carData?.status}
             />
+            <FinesTab
+              carId={carData?.id}
+              isActive={activeTab === "fines"}
+              isRTL={isRTL}
+            />
+          
           </Tabs>
         </CustomModalBody>
 
@@ -191,7 +174,7 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
         onSuccess={() => {
           setIsEditAccidentOpen(false);
           setSelectedAccidentId(null);
-          reloadAccidents();
+          mutate(`car-accidents-${carId}`);
         }}
       />
 
@@ -205,41 +188,18 @@ export function ViewCarModal({ isOpen, onClose, carId }) {
         onSuccess={() => {
           setIsDeleteAccidentOpen(false);
           setSelectedAccident(null);
-          reloadAccidents();
+          mutate(`car-accidents-${carId}`);
         }}
       />
 
       {/* Contract Modals */}
-      <ViewContractModal
-        isOpen={isViewContractOpen}
-        onClose={() => {
-          setIsViewContractOpen(false);
-          setSelectedContractId(null);
-        }}
-        contractId={selectedContractId}
-      />
-
-      <EditContractModal
-        isOpen={isEditContractOpen}
-        onClose={() => {
-          setIsEditContractOpen(false);
-          setSelectedContractId(null);
-        }}
-        contractId={selectedContractId}
-        onSuccess={() => {
-          setIsEditContractOpen(false);
-          setSelectedContractId(null);
-          reloadContracts();
-        }}
-      />
-
       <AddContractModal
         isOpen={isAddContractOpen}
         onClose={() => setIsAddContractOpen(false)}
         defaultCarId={carId}
         onSuccess={() => {
           setIsAddContractOpen(false);
-          reloadContracts();
+          mutate(`car-contracts-${carId}`);
         }}
       />
     </>

@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 import { updateContract, getContractById, getContractAttachments, addContractAttachment, deleteContractAttachment } from "../services/api/contracts";
 import { getCars } from "../services/api/cars";
 import { getCustomers } from "../services/api/customers";
-import { getBranches } from "../services/api/branches";
+
 import { uploadFiles } from "../../../utils/fileUpload";
 import useSWR from 'swr';
 import { cn } from "@/lib/utils";
@@ -33,7 +33,6 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
   const [initialValues, setInitialValues] = useState({
     customer_id: "",
     car_id: "",
-    branch_id: "",
     start_date: "",
     start_time: "",
     end_date: "",
@@ -47,7 +46,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
     paid_amount: "0",
     insurance_amount: "",
     status: "draft",
-    notes: ""
+    notes: "",
   });
 
   const [customerSearch, setCustomerSearch] = useState("");
@@ -58,11 +57,9 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
   const [existingAttachments, setExistingAttachments] = useState([]);
   const [isLoadingAttachments, setIsLoadingAttachments] = useState(false);
 
-  // Fetch cars and branches
-  const { data: carsData } = useSWR('cars', getCars);
-  const { data: branchesData } = useSWR('branches', getBranches);
+  // Fetch cars — only when modal is open
+  const { data: carsData } = useSWR(isOpen ? 'cars' : null, () => getCars());
   const cars = carsData?.data || carsData || [];
-  const branches = branchesData?.data || branchesData || [];
 
   // Load initial customers (default 10)
   useEffect(() => {
@@ -105,7 +102,6 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
       setInitialValues({
         customer_id: "",
         car_id: "",
-        branch_id: "",
         start_date: "",
         start_time: "",
         end_date: "",
@@ -133,7 +129,6 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
       setInitialValues({
         customer_id: contract.customer_id || "",
         car_id: contract.car_id || "",
-        branch_id: contract.branch_id || "",
         start_date: contract.start_date || "",
         start_time: contract.start_time || "",
         end_date: contract.end_date || "",
@@ -209,7 +204,6 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
       const contractData = {
         customer_id: parseInt(values.customer_id),
         car_id: parseInt(values.car_id),
-        branch_id: values.branch_id ? parseInt(values.branch_id) : null,
         start_date: values.start_date,
         start_time: values.start_time || null,
         end_date: values.end_date,
@@ -228,6 +222,22 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
 
       await updateContract(contractId, contractData);
 
+      // Build updated fields for local cache update (avoids extra API call)
+      const selectedCustomer = searchedCustomers.find(c => c.id.toString() === values.customer_id.toString());
+      const selectedCar = cars.find(c => c.id.toString() === values.car_id.toString());
+      const updatedFields = {
+        id: contractId,
+        ...contractData,
+        ...(selectedCustomer && {
+          customer_name: selectedCustomer.full_name || '',
+          customer_phone: selectedCustomer.phone || '',
+        }),
+        ...(selectedCar && {
+          car_details: `${selectedCar.brand} ${selectedCar.model} ${selectedCar.year}`.trim(),
+          plate_number: selectedCar.plate_number || '',
+        }),
+      };
+
       // Upload new attachments if any
       if (selectedAttachments.length > 0) {
         try {
@@ -245,7 +255,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
           toast.warning("Contract updated but some attachments failed to upload");
           resetForm();
           setSelectedAttachments([]);
-          onSuccess();
+          onSuccess(updatedFields);
           onClose();
           return;
         }
@@ -255,7 +265,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
 
       resetForm();
       setSelectedAttachments([]);
-      onSuccess();
+      onSuccess(updatedFields);
       onClose();
     } catch (error) {
       console.error("Error updating contract:", error);
@@ -282,14 +292,10 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
           <Form>
             <CustomModalBody className="h-[70vh] overflow-y-auto">
               <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="basic" className="w-full h-full flex flex-col">
-                <TabsList className="grid w-full grid-cols-5 mb-6 flex-shrink-0">
+                <TabsList className="grid w-full grid-cols-4 mb-6 flex-shrink-0">
                   <TabsTrigger value="basic">
                     <User className="w-4 h-4 mr-2" />
                     {t('contracts.editModal.tabs.basicInfo')}
-                  </TabsTrigger>
-                  <TabsTrigger value="dates">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {t('contracts.editModal.tabs.dates')}
                   </TabsTrigger>
                   <TabsTrigger value="vehicle">
                     <Gauge className="w-4 h-4 mr-2" />
@@ -445,25 +451,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                           <ErrorMessage name="car_id" component="div" className="text-red-500 text-xs mt-1" />
                         </div>
 
-                        {/* Branch Selection */}
-                        <div>
-                          <Label htmlFor="branch_id" className="text-sm font-medium">{t('contracts.addModal.branch')}</Label>
-                          <Select
-                            value={values.branch_id?.toString()}
-                            onValueChange={(value) => setFieldValue("branch_id", value)}
-                          >
-                            <SelectTrigger className="mt-2">
-                              <SelectValue placeholder={t('contracts.editModal.selectBranchOptional')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {branches.map((branch) => (
-                                <SelectItem key={branch.id} value={branch.id.toString()}>
-                                  {branch.name_ar || branch.name_en || branch.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
+
 
                         {/* Status */}
                         <div>
@@ -489,19 +477,6 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                     </CardContent>
                   </Card>
 
-                  <Card className="border-2">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <FileText className="w-5 h-5 text-primary" />
-                        <Label className="text-lg font-semibold">{t('contracts.editModal.notes')}</Label>
-                      </div>
-                      <Field name="notes" as={Textarea} rows={4} placeholder={t('contracts.editModal.additionalNotes')} />
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                {/* Dates & Times Tab */}
-                <TabsContent value="dates" className="space-y-6 flex-1 overflow-y-auto">
                   <Card className="border-2">
                     <CardContent className="p-6 space-y-4">
                       <div className="flex items-center gap-2 mb-4">
@@ -603,6 +578,16 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                       )}
                     </CardContent>
                   </Card>
+
+                  <Card className="border-2">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <FileText className="w-5 h-5 text-primary" />
+                        <Label className="text-lg font-semibold">{t('contracts.editModal.notes')}</Label>
+                      </div>
+                      <Field name="notes" as={Textarea} rows={4} placeholder={t('contracts.editModal.additionalNotes')} />
+                    </CardContent>
+                  </Card>
                 </TabsContent>
 
                 {/* Vehicle Details Tab */}
@@ -630,7 +615,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                       </div>
                     </CardContent>
                   </Card>
-
+<div className="flex gap-x-8">
                   <Card className="border-2">
                     <CardContent className="p-6 space-y-4">
                       <div className="flex items-center gap-2 mb-4">
@@ -658,6 +643,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                       </div>
                     </CardContent>
                   </Card>
+                  </div>
                 </TabsContent>
 
                 {/* Payment Tab */}
@@ -758,7 +744,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                                 <div className="flex items-center gap-1">
                                   <Button
                                     type="button"
-                                    variant="ghost"
+                                     variant="outline"
                                     size="sm"
                                     onClick={() => window.open(attachment.attachment_url, '_blank')}
                                     title={t('contracts.editModal.download')}
@@ -767,7 +753,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                                   </Button>
                                   <Button
                                     type="button"
-                                    variant="ghost"
+                                     variant="outline"
                                     size="sm"
                                     onClick={() => handleDeleteAttachment(attachment.id)}
                                     title={t('contracts.editModal.delete')}
@@ -845,7 +831,7 @@ export function EditContractModal({ isOpen, onClose, onSuccess, contractId }) {
                               </div>
                               <Button
                                 type="button"
-                                variant="ghost"
+                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
                                   setSelectedAttachments(prev => prev.filter((_, i) => i !== index));

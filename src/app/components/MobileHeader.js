@@ -6,6 +6,7 @@ import ThemeSwitcher from '@/components/ThemeSwitcher';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import NotificationMenu from '@/app/components/notifications/NotificationMenu';
 import ExternalLinksMenu from '@/app/components/ExternalLinksMenu';
+import { AiHeaderButton } from '@/app/components/ai';
 import SearchBar from '@/app/components/search';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -53,6 +54,9 @@ const MobileHeader = ({ onMenuToggle }) => {
 
           {/* Notifications - Only icon on mobile */}
           <NotificationMenu />
+
+          {/* AI Assistant */}
+          <AiHeaderButton />
 
           {/* External Links */}
           <ExternalLinksMenu />

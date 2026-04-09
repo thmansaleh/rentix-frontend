@@ -1,8 +1,8 @@
 import { User, Eye, Shield, List, Edit, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import PermissionsDialog from './PermissionsDialog';
 import EditEmployeeDialog from './edit/EditEmployeeDialog';
 import ActivityLogModal from './ActivityLogModal';
+import ViewEmployeeDialog from './ViewEmployeeDialog';
 import { useTranslations } from '@/hooks/useTranslations';
 import { deleteEmployee } from '@/app/services/api/employees';
 import { toast } from 'react-toastify';
@@ -10,7 +10,6 @@ import { useState } from 'react';
 
 export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEmployeeUpdate }) {
   const { t } = useTranslations();
-  const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteEmployee = async () => {
@@ -28,9 +27,9 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
       
       if (response.success) {
         toast.success(isArabic ? 'تم حذف الموظف بنجاح' : 'Employee deleted successfully');
-        // Refresh the employee list
+        // Remove from local cache
         if (onEmployeeUpdate) {
-          onEmployeeUpdate();
+          onEmployeeUpdate(employee.id);
         }
       } else {
         toast.error(response.message || (isArabic ? 'حدث خطأ أثناء حذف الموظف' : 'Error deleting employee'));
@@ -66,13 +65,17 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
         {employee.lastLogin || '-'}
       </td> */}
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2 items-center">
-        <button 
-          onClick={() => router.push(`./employees/${employee?.id}`)}
-          className="p-2 rounded-full hover:bg-muted transition-colors"
-          title={t('employees.viewDetails')}
-        >
-          <Eye className="w-5 h-5 text-muted-foreground hover:text-foreground" />
-        </button>
+        <ViewEmployeeDialog
+          employeeId={employee?.id}
+          trigger={
+            <button 
+              className="p-2 rounded-full hover:bg-muted transition-colors"
+              title={t('employees.viewDetails')}
+            >
+              <Eye className="w-5 h-5 text-muted-foreground hover:text-foreground" />
+            </button>
+          }
+        />
         {/* <EditEmployeeDialog
           employeeId={employee?.id}
           onSuccess={onEmployeeUpdate}

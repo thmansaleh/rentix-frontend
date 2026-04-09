@@ -21,6 +21,7 @@ export function DatePicker({
   disabled = false,
   minDate,
   maxDate,
+  captionLayout = "dropdown",
   ...props
 }) {
   return (
@@ -46,6 +47,7 @@ export function DatePicker({
           mode="single"
           selected={date}
           onSelect={onDateChange}
+          captionLayout={captionLayout}
           disabled={(date) => {
             if (disabled) return true
             if (minDate && date < minDate) return true

@@ -11,10 +11,10 @@ export default function InvoicesPageHeader({ t, onAddNew }) {
         <h1 className="text-2xl font-bold tracking-tight">{t("pageTitle")}</h1>
         <p className="text-muted-foreground text-sm">{t("pageDescription")}</p>
       </div>
-      <Button onClick={onAddNew} className="gap-2">
+      {/* <Button onClick={onAddNew} className="gap-2">
         <Plus className="h-4 w-4" />
         {t("addNewInvoice")}
-      </Button>
+      </Button> */}
     </div>
   );
 }

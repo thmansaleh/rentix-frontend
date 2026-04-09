@@ -29,7 +29,7 @@ const MenuItem = React.memo(({
           px-4 
           py-3 
           text-sidebar-foreground 
-          hover:text-sidebdar-foreground 
+          hover:text-sidebar-foreground 
           rounded-xl 
           cursor-pointer
           transition-all 

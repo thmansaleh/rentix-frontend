@@ -1,14 +1,44 @@
 import api from "./axiosInstance";
 
 // Get all cars
-export const getCars = async () => {
-  const response = await api.get("/cars");
+export const getCars = async (params = {}) => {
+  const response = await api.get("/cars", { params });
+  return response.data;
+};
+
+// Get available cars for public website (no auth required)
+export const getPublicCars = async () => {
+  const response = await api.get("/cars/public");
   return response.data;
 };
 
 // Get car by ID
 export const getCarById = async (id) => {
   const response = await api.get(`/cars/${id}`);
+  return response.data;
+};
+
+// Get maintenance history for a car
+export const getCarMaintenance = async (id) => {
+  const response = await api.get(`/cars/${id}/maintenance`);
+  return response.data;
+};
+
+// Create a maintenance record
+export const createCarMaintenance = async (id, data) => {
+  const response = await api.post(`/cars/${id}/maintenance`, data);
+  return response.data;
+};
+
+// Update a maintenance record
+export const updateCarMaintenance = async (id, recordId, data) => {
+  const response = await api.put(`/cars/${id}/maintenance/${recordId}`, data);
+  return response.data;
+};
+
+// Delete a maintenance record
+export const deleteCarMaintenance = async (id, recordId) => {
+  const response = await api.delete(`/cars/${id}/maintenance/${recordId}`);
   return response.data;
 };
 

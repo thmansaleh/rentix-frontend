@@ -12,6 +12,30 @@ import { formatAmount, formatDateLocale } from "../invoices/utils/formatters";
 import { getPaymentMethodLabel } from "../invoices/utils/helpers";
 import { printPaymentReceipt } from "./printPaymentReceipt";
 import { getPaymentById } from "../../services/api/payments";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+const CHEQUE_PREFIX = "[CHEQUE]";
+
+function decodeChequeNotes(rawNotes) {
+  if (!rawNotes || !rawNotes.startsWith(CHEQUE_PREFIX)) {
+    return null;
+  }
+  const lines = rawNotes.split("\n");
+  const chequeStr = lines[0].replace(CHEQUE_PREFIX, "").trim();
+  const rest = lines.slice(1).join("\n");
+  const parts = Object.fromEntries(
+    chequeStr.split("|").map((p) => {
+      const idx = p.indexOf(":");
+      return [p.slice(0, idx).trim(), p.slice(idx + 1).trim()];
+    })
+  );
+  return {
+    bankName: parts.bank || "",
+    chequeDate: parts.date || "",
+    chequeNumber: parts.number || "",
+    notes: rest,
+  };
+}
 
 const InfoRow = ({ label, value }) => (
   <div className="space-y-1">
@@ -22,40 +46,32 @@ const InfoRow = ({ label, value }) => (
 
 /**
  * Modal displaying read-only details of a single payment.
- *
- * Supports two modes:
- *  1) Invoice context: pass `payment` object + `invoice` + `language` etc.
- *  2) Payments page:   pass `paymentId` + `isOpen`/`onClose` (will fetch data).
+ * Fetches all data (payment + invoice details + company settings) internally.
+ * Only requires: paymentId, isOpen/open, onClose.
  */
 export default function ViewPaymentModal({
-  // Common
   onClose,
-  language,
-  isRTL,
-  companySettings,
-  // Mode 1 — invoice context (payment object passed directly)
   open,
-  payment: paymentProp,
-  invoice,
-  // Mode 2 — payments page (fetch by ID)
   isOpen,
   paymentId,
 }) {
   const modalOpen = open ?? isOpen ?? false;
+  const { language } = useLanguage();
   const lang = language || "en";
+  const isRTL = lang === "ar";
 
-  const [fetchedPayment, setFetchedPayment] = useState(null);
+  const [payment, setPayment] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (modalOpen && paymentId && !paymentProp) {
+    if (modalOpen && paymentId) {
       loadPayment();
     }
   }, [modalOpen, paymentId]);
 
   useEffect(() => {
     if (!modalOpen) {
-      setFetchedPayment(null);
+      setPayment(null);
     }
   }, [modalOpen]);
 
@@ -63,7 +79,7 @@ export default function ViewPaymentModal({
     setIsLoading(true);
     try {
       const res = await getPaymentById(paymentId);
-      setFetchedPayment(res?.data || null);
+      setPayment(res?.data || null);
     } catch (error) {
       console.error("Error loading payment:", error);
     } finally {
@@ -71,7 +87,9 @@ export default function ViewPaymentModal({
     }
   };
 
-  const payment = paymentProp || fetchedPayment;
+  const handlePrint = () => {
+    printPaymentReceipt(payment.id);
+  };
 
   return (
     <CustomModal
@@ -129,6 +147,22 @@ export default function ViewPaymentModal({
                   label={lang === "ar" ? "بواسطة" : "Created By"}
                   value={payment.created_by_name || "-"}
                 />
+                {(payment.account_bank_name || payment.account_name) && (
+                  <InfoRow
+                    label={lang === "ar" ? "الحساب البنكي" : "Bank Account"}
+                    value={
+                      payment.account_bank_name
+                        ? `${payment.account_bank_name} - ${payment.account_name || ""}`
+                        : payment.account_name || "-"
+                    }
+                  />
+                )}
+                {payment.account_number && (
+                  <InfoRow
+                    label={lang === "ar" ? "رقم الحساب" : "Account Number"}
+                    value={payment.account_number}
+                  />
+                )}
                 {payment.created_at && (
                   <InfoRow
                     label={lang === "ar" ? "تاريخ الإنشاء" : "Created At"}
@@ -136,25 +170,50 @@ export default function ViewPaymentModal({
                   />
                 )}
               </div>
-              {payment.notes && (
-                <div className="rounded-md border p-3 text-sm">
-                  <span className="font-medium">
-                    {lang === "ar" ? "ملاحظات: " : "Notes: "}
-                  </span>
-                  {payment.notes}
-                </div>
-              )}
+              {payment.notes && (() => {
+                const cheque = decodeChequeNotes(payment.notes);
+                if (cheque) {
+                  return (
+                    <>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 border rounded-md p-3">
+                        <InfoRow
+                          label={lang === "ar" ? "اسم البنك (شيك)" : "Bank Name (Cheque)"}
+                          value={cheque.bankName || "-"}
+                        />
+                        <InfoRow
+                          label={lang === "ar" ? "رقم الشيك" : "Cheque Number"}
+                          value={cheque.chequeNumber || "-"}
+                        />
+                        <InfoRow
+                          label={lang === "ar" ? "تاريخ الشيك" : "Cheque Date"}
+                          value={cheque.chequeDate || "-"}
+                        />
+                      </div>
+                      {cheque.notes && (
+                        <div className="rounded-md border p-3 text-sm">
+                          <span className="font-medium">
+                            {lang === "ar" ? "ملاحظات: " : "Notes: "}
+                          </span>
+                          {cheque.notes}
+                        </div>
+                      )}
+                    </>
+                  );
+                }
+                return (
+                  <div className="rounded-md border p-3 text-sm">
+                    <span className="font-medium">
+                      {lang === "ar" ? "ملاحظات: " : "Notes: "}
+                    </span>
+                    {payment.notes}
+                  </div>
+                );
+              })()}
             </div>
           </CustomModalBody>
 
           <CustomModalFooter>
-            <Button
-              type="button"
-              variant="default"
-              onClick={() =>
-                printPaymentReceipt(payment, invoice || {}, { companySettings })
-              }
-            >
+            <Button type="button" variant="default" onClick={handlePrint}>
               <Printer className="me-2 h-4 w-4" />
               {lang === "ar" ? "طباعة إيصال" : "Print Receipt"}
             </Button>
@@ -167,3 +226,4 @@ export default function ViewPaymentModal({
     </CustomModal>
   );
 }
+

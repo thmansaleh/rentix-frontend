@@ -145,15 +145,12 @@ function NotificationMenu() {
         >
           <Bell className="h-5 w-5" />
           {totalAlertCount > 0 && (
-            <>
-              <Badge 
-                variant="destructive" 
-                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0 min-w-5 animate-bounce"
-              >
-                {totalAlertCount > 99 ? '99+' : totalAlertCount}
-              </Badge>
-              <span className="absolute -top-1 -right-1 h-5 w-5 bg-destructive rounded-full animate-ping opacity-75" />
-            </>
+            <Badge
+              variant="destructive"
+              className="absolute -top-1 -right-1 h-5 min-w-5 rounded-full px-1 py-0 text-[10px] font-bold leading-none"
+            >
+              {totalAlertCount > 99 ? '99+' : totalAlertCount}
+            </Badge>
           )}
         </Button>
       </DropdownMenuTrigger>
@@ -226,6 +223,8 @@ function NotificationMenu() {
                             {isArabic ? 'العداد:' : 'Mileage:'} {car.mileage?.toLocaleString()} {isArabic ? 'كم' : 'KM'}
                             {' | '}
                             {isArabic ? 'القادم:' : 'Next:'} {car.next_oil_change_km?.toLocaleString()} {isArabic ? 'كم' : 'KM'}
+                            {car.oil_type && <>{' | '}{isArabic ? 'نوع الزيت:' : 'Oil:'} {car.oil_type}</>}
+                            {car.garage_name && <>{' | '}{isArabic ? 'الورشة:' : 'Garage:'} {car.garage_name}</>}
                           </p>
                         </div>
                       </div>
@@ -282,6 +281,8 @@ function NotificationMenu() {
                           </p>
                           <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                             {isArabic ? 'تاريخ الصيانة القادمة:' : 'Next maintenance:'} {new Date(car.next_maintenance_date).toLocaleDateString(isArabic ? 'ar-AE' : 'en-US')}
+                            {car.maintenance_type && <>{' | '}{isArabic ? 'النوع:' : 'Type:'} {car.maintenance_type}</>}
+                            {car.garage_name && <>{' | '}{isArabic ? 'الورشة:' : 'Garage:'} {car.garage_name}</>}
                           </p>
                         </div>
                       </div>

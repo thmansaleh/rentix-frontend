@@ -1,8 +1,8 @@
 import api from "./axiosInstance";
 
 // Get all contracts
-export const getContracts = async () => {
-  const response = await api.get("/contracts");
+export const getContracts = async (params = {}) => {
+  const response = await api.get("/contracts", { params });
   return response.data;
 };
 

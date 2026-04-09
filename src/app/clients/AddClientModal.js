@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui/custom-modal";
@@ -8,23 +8,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Loader2, Save, Upload, X, User, IdCard, FileText, MapPin } from "lucide-react";
 import { toast } from "react-toastify";
 import { createCustomer } from "../services/api/customers";
-import { getBranches } from "../services/api/branches";
 import { uploadFiles } from "../../../utils/fileUpload";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { CountryCombobox } from "@/components/ui/country-combobox";
 
 export function AddClientModal({ isOpen, onClose, onSuccess }) {
   const { t } = useTranslations();
   const { isRTL } = useLanguage();
-  const [branches, setBranches] = useState([]);
-  const [loadingBranches, setLoadingBranches] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState({
     emirates_id_front: null,
     emirates_id_back: null,
@@ -33,26 +30,6 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
     passport_front: null,
     passport_back: null
   });
-
-  useEffect(() => {
-    if (isOpen) {
-      fetchBranches();
-    }
-  }, [isOpen]);
-
-  const fetchBranches = async () => {
-    try {
-      setLoadingBranches(true);
-      const response = await getBranches();
-      // API returns { success: true, data: [...] }
-      setBranches(response.data?.data || response.data || []);
-    } catch (error) {
-      console.error("Error fetching branches:", error);
-      toast.error(t('clients.add.error'));
-    } finally {
-      setLoadingBranches(false);
-    }
-  };
 
   const initialValues = {
     full_name: "",
@@ -68,16 +45,14 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
     passport_issue_date: "",
     passport_expiry_date: "",
     address: "",
-    branch_id: "",
-    nationality: "",
+    nationality_id: "",
     date_of_birth: ""
   };
 
   const validationSchema = Yup.object({
     full_name: Yup.string().required(t('clients.add.validation.fullNameRequired')),
     phone: Yup.string().required(t('clients.add.validation.phoneRequired')),
-    email: Yup.string().email(t('clients.add.validation.emailInvalid')).nullable(),
-    branch_id: Yup.string().required(t('clients.add.validation.branchRequired'))
+    email: Yup.string().email(t('clients.add.validation.emailInvalid')).nullable()
   });
 
   const handleFileSelect = (fieldName, e) => {
@@ -123,13 +98,12 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
         passport_issue_date: values.passport_issue_date || null,
         passport_expiry_date: values.passport_expiry_date || null,
         address: values.address || null,
-        branch_id: values.branch_id,
-        nationality: values.nationality || null,
+        nationality_id: values.nationality_id || null,
         date_of_birth: values.date_of_birth || null,
         ...uploadedUrls
       };
 
-      await createCustomer(customerData);
+      const result = await createCustomer(customerData);
       toast.success(t('clients.add.success'));
       resetForm();
       setSelectedFiles({
@@ -140,7 +114,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
         passport_front: null,
         passport_back: null
       });
-      onSuccess?.();
+      onSuccess?.(result.data);
       onClose();
     } catch (error) {
       console.error("Error adding client:", error);
@@ -164,7 +138,7 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
           </div>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={() => removeFile(fieldName)}
           >
@@ -267,29 +241,6 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
                       <ErrorMessage name="email" component="p" className="text-red-500 text-xs" />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="branch_id">
-                        {t('clients.add.fields.branch')} <span className="text-red-500">*</span>
-                      </Label>
-                      <Select
-                        value={values.branch_id}
-                        onValueChange={(value) => setFieldValue("branch_id", value)}
-                        disabled={loadingBranches}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={loadingBranches ? t('clients.add.fields.loadingBranches') : t('clients.add.fields.selectBranch')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {branches.map((branch) => (
-                            <SelectItem key={branch.id} value={branch.id.toString()}>
-                              {branch.name_ar || branch.name_en}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <ErrorMessage name="branch_id" component="p" className="text-red-500 text-xs" />
-                    </div>
-
                     <div className="md:col-span-2 space-y-2">
                       <Label htmlFor="address">
                         <MapPin className="w-4 h-4 inline mr-1" />
@@ -305,12 +256,13 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="nationality">{t('clients.add.fields.nationality')}</Label>
-                      <Field
-                        as={Input}
-                        id="nationality"
-                        name="nationality"
+                      <Label htmlFor="nationality_id">{t('clients.add.fields.nationality')}</Label>
+                      <CountryCombobox
+                        value={values.nationality_id}
+                        onValueChange={(val) => setFieldValue('nationality_id', val)}
                         placeholder={t('clients.add.fields.nationalityPlaceholder')}
+                        searchPlaceholder={t('clients.add.fields.searchCountry') || 'Search country...'}
+                        emptyMessage={t('clients.add.fields.noCountryFound') || 'No country found.'}
                       />
                     </div>
 

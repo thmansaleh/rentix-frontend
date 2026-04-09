@@ -46,6 +46,7 @@ export function printInvoice(invoice, { isRTL, language, t, companySettings }) {
   const companyAddressEn = companySettings?.address_en || "";
   const companyCR = companySettings?.commercial_register || "";
   const companyVAT = companySettings?.vat_number || "";
+  const companyTRN = companySettings?.trn_number || "";
 
   const statusColors = getStatusColors(invoice.status);
   const bilingualStatus = getBilingualStatus(invoice.status);
@@ -89,9 +90,10 @@ export function printInvoice(invoice, { isRTL, language, t, companySettings }) {
 
         /* ── Header ── */
         .header {
-          display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
+          align-items: center;
+          gap: 16px;
           padding-bottom: 20px;
           border-bottom: 3px solid #111827;
           margin-bottom: 24px;
@@ -100,6 +102,12 @@ export function printInvoice(invoice, { isRTL, language, t, companySettings }) {
           display: flex;
           flex-direction: column;
           gap: 4px;
+        }
+        .header-center {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
         }
         .header-right {
           text-align: right;
@@ -401,20 +409,24 @@ export function printInvoice(invoice, { isRTL, language, t, companySettings }) {
         <!-- ══ Header ══ -->
         <div class="header">
           <div class="header-left">
-            ${logoHtml}
             ${companyNameEn ? `<div class="company-name-en">${companyNameEn}</div>` : ""}
             <div class="company-sub">
               ${companyPhone ? `Tel: ${companyPhone}<br/>` : ""}
               ${companyEmail ? `${companyEmail}<br/>` : ""}
-              ${companyAddressEn ? `${companyAddressEn}` : ""}
+              ${companyAddressEn ? `${companyAddressEn}<br/>` : ""}
+              ${companyTRN ? `TRN: ${companyTRN}` : ""}
             </div>
+          </div>
+          <div class="header-center">
+            ${logoHtml}
           </div>
           <div class="header-right">
             ${companyNameAr ? `<div class="company-name-ar">${companyNameAr}</div>` : ""}
             <div class="company-sub" style="direction:rtl; text-align:right;">
               ${companyPhone ? `هاتف: ${companyPhone}<br/>` : ""}
               ${companyEmail ? `${companyEmail}<br/>` : ""}
-              ${companyAddressAr ? `${companyAddressAr}` : ""}
+              ${companyAddressAr ? `${companyAddressAr}<br/>` : ""}
+              ${companyTRN ? `الرقم الضريبي: ${companyTRN}` : ""}
             </div>
           </div>
         </div>

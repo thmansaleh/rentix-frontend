@@ -44,7 +44,6 @@ export default function AddEmployeeModal({ onAdd }) {
     password: "",
     roleId: "",
     departmentId: "",
-    branchId: "",
     status: 'active',
     permissions: [],
     identityNumber: "",
@@ -91,7 +90,6 @@ export default function AddEmployeeModal({ onAdd }) {
       // { field: 'email', message: t('validation.emailRequired') || 'Email is required' },
       { field: 'roleId', message: t('validation.roleRequired') || 'Role is required' },
       { field: 'departmentId', message: t('validation.departmentRequired') || 'Department is required' },
-      { field: 'branchId', message: t('validation.branchRequired') || 'Branch is required' },
       { field: 'phoneNumber', message: t('validation.phoneRequired') || 'Phone number is required' }
     ];
 

@@ -19,7 +19,7 @@ export function DeleteClientModal({ isOpen, onClose, onSuccess, customer }) {
       setIsDeleting(true);
       await deleteCustomer(customer.id);
       toast.success(t('clients.delete.success'));
-      onSuccess?.();
+      onSuccess?.(customer.id);
       onClose();
     } catch (error) {
       console.error("Error deleting client:", error);

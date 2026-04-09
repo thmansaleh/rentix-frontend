@@ -31,10 +31,10 @@ export function EditAccidentModal({ isOpen, onClose, accidentId, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [initialValues, setInitialValues] = useState(null);
 
-  // Fetch cars, customers, and contracts
-  const { data: carsData } = useSWR('cars', () => getCars());
-  const { data: customersData } = useSWR('customers', () => getCustomers());
-  const { data: contractsData } = useSWR('contracts', () => getContracts());
+  // Fetch cars, customers, and contracts — only when modal is open
+  const { data: carsData } = useSWR(isOpen ? 'cars' : null, () => getCars());
+  const { data: customersData } = useSWR(isOpen ? 'customers' : null, () => getCustomers());
+  const { data: contractsData } = useSWR(isOpen ? 'contracts' : null, () => getContracts());
 
   const cars = carsData?.data || [];
   const customers = customersData?.data || [];

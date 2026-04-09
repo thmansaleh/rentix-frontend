@@ -27,6 +27,8 @@ export function AddCarModal({ isOpen, onClose, onSuccess }) {
 
   const initialValues = {
     plate_number: "",
+    plate_source: "",
+    plate_code: "",
     brand: "",
     model: "",
     year: "",
@@ -54,7 +56,7 @@ export function AddCarModal({ isOpen, onClose, onSuccess }) {
     model: Yup.string(),
     year: Yup.number().min(1900).max(new Date().getFullYear() + 1),
     color: Yup.string(),
-    status: Yup.string().oneOf(['available', 'rented', 'maintenance', 'sold']),
+    status: Yup.string().oneOf(['available', 'rented', 'maintenance']),
     mileage: Yup.number().min(0),
     car_price: Yup.number().min(0),
     registration_start: Yup.date(),
@@ -107,6 +109,8 @@ export function AddCarModal({ isOpen, onClose, onSuccess }) {
     try {
       const carData = {
         plate_number: values.plate_number,
+        plate_source: values.plate_source || null,
+        plate_code: values.plate_code || null,
         brand: values.brand || null,
         model: values.model || null,
         year: values.year || null,
@@ -174,7 +178,7 @@ export function AddCarModal({ isOpen, onClose, onSuccess }) {
       resetForm();
       setSelectedPhotos([]);
       setSelectedDocuments([]);
-      onSuccess?.();
+      onSuccess?.(result.data);
       onClose();
     } catch (error) {
       console.error("Error adding car:", error);
@@ -240,6 +244,37 @@ export function AddCarModal({ isOpen, onClose, onSuccess }) {
                     </div>
 
                     <div className="space-y-2">
+                      <Label htmlFor="plate_source">{t('cars.plateSource')}</Label>
+                      <Select
+                        value={values.plate_source}
+                        onValueChange={(value) => setFieldValue("plate_source", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('cars.placeholders.plateSource')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Abu Dhabi">{t('cars.emirates.abuDhabi')}</SelectItem>
+                          <SelectItem value="Dubai">{t('cars.emirates.dubai')}</SelectItem>
+                          <SelectItem value="Sharjah">{t('cars.emirates.sharjah')}</SelectItem>
+                          <SelectItem value="Ajman">{t('cars.emirates.ajman')}</SelectItem>
+                          <SelectItem value="Umm Al Quwain">{t('cars.emirates.ummAlQuwain')}</SelectItem>
+                          <SelectItem value="Ras Al Khaimah">{t('cars.emirates.rasAlKhaimah')}</SelectItem>
+                          <SelectItem value="Fujairah">{t('cars.emirates.fujairah')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="plate_code">{t('cars.plateCode')}</Label>
+                      <Field
+                        as={Input}
+                        id="plate_code"
+                        name="plate_code"
+                        placeholder={t('cars.placeholders.plateCode')}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
                       <Label htmlFor="brand">{t('cars.brand')}</Label>
                       <Field
                         as={Input}
@@ -293,7 +328,6 @@ export function AddCarModal({ isOpen, onClose, onSuccess }) {
                           <SelectItem value="available">{t('cars.statusAvailable')}</SelectItem>
                           <SelectItem value="rented">{t('cars.statusRented')}</SelectItem>
                           <SelectItem value="maintenance">{t('cars.statusMaintenance')}</SelectItem>
-                          <SelectItem value="sold">{t('cars.statusSold')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -544,7 +578,7 @@ export function AddCarModal({ isOpen, onClose, onSuccess }) {
                                 </div>
                                 <Button
                                   type="button"
-                                  variant="ghost"
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => removePhoto(index)}
                                   className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -624,7 +658,7 @@ export function AddCarModal({ isOpen, onClose, onSuccess }) {
                                   </div>
                                   <Button
                                     type="button"
-                                    variant="ghost"
+                                    variant="outline"
                                     size="sm"
                                     onClick={() => removeDocument(index)}
                                     className="flex-shrink-0"

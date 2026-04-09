@@ -20,7 +20,6 @@ export default function InvoicesFilterBar({
   onStatusFilterChange,
   branchFilter,
   onBranchFilterChange,
-  branches,
   onSearch,
   language,
   isRTL,
@@ -73,18 +72,7 @@ export default function InvoicesFilterBar({
             placeholder={language === "ar" ? "اختر الفرع" : "Select Branch"}
           />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">
-            {language === "ar" ? "جميع الفروع" : "All Branches"}
-          </SelectItem>
-          {branches.map((branch) => (
-            <SelectItem key={branch.id} value={String(branch.id)}>
-              {language === "ar"
-                ? branch.name_ar || branch.name_en
-                : branch.name_en || branch.name_ar}
-            </SelectItem>
-          ))}
-        </SelectContent>
+ 
       </Select>
 
       {/* Search button */}

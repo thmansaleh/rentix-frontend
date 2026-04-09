@@ -1,9 +1,9 @@
 import api from "./axiosInstance";
 
 // Get all customers with search
-export const getCustomers = async (search = '') => {
-  const params = search ? { search } : {};
-  const response = await api.get("/customers", { params });
+export const getCustomers = async (search = '', params = {}) => {
+  const queryParams = search ? { search, ...params } : { ...params };
+  const response = await api.get("/customers", { params: queryParams });
   return response.data;
 };
 

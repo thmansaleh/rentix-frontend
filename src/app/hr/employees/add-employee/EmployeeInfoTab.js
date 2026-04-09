@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import { CalendarIcon, ChevronDownIcon } from "lucide-react";
+import { CalendarIcon, ChevronDownIcon, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/hooks/useTranslations";
 import { format } from "date-fns";
@@ -16,7 +16,7 @@ import useSWR from 'swr';
 import { getRoles } from '@/app/services/api/roles';
 import { getDepartments } from '@/app/services/api/departments';
 import { getEmployees } from '@/app/services/api/employees';
-import { getBranches } from '@/app/services/api/branches';
+
 
 // DatePickerField Component
 const DatePickerField = ({ name, placeholder, value, onChange, isRTL }) => {
@@ -86,6 +86,7 @@ const FormField = ({ label, children, required = false }) => (
 export default function EmployeeInfoTab({ form, handleChange, setForm }) {
   const { isRTL, language } = useLanguage();
   const { t } = useTranslations();
+  const [showPassword, setShowPassword] = useState(false);
 
   // Get employee role from Redux to check if user is admin
   const employeeRole = useSelector((state) => state.auth.roleEn);
@@ -103,9 +104,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
   const { data: employeesData, error: employeesError, isLoading: employeesLoading } = useSWR('/employees', getEmployees);
   const employees = employeesData ? employeesData.data : [];
 
-  // Fetch branches directly using SWR
-  const { data: branchesData, error: branchesError, isLoading: branchesLoading } = useSWR('/branches', getBranches);
-  const branches = branchesData?.success ? branchesData.data : [];
+
 
   return (
     <div className="space-y-8">
@@ -151,6 +150,27 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
               value={form.phoneNumber} 
               onChange={handleChange} 
             />
+          </FormField>
+
+          <FormField label={t('employees.password')}>
+            <div className="relative">
+              <Input
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder={t('employees.leaveEmptyToKeepCurrent') || 'Leave empty to keep current password'}
+                value={form.password || ''}
+                onChange={handleChange}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </FormField>
         </div>
       </div>
@@ -203,28 +223,9 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             </Select>
           </FormField>
           
-          <FormField label={t('employees.selectBranch')} required>
-            <Select dir={isRTL ? "rtl" : "ltr"} value={form.branchId} onValueChange={value => setForm(f => ({ ...f, branchId: value }))}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={t('employees.selectBranch')} />
-              </SelectTrigger>
-              <SelectContent>
-                {branchesLoading ? (
-                  <div className="p-2 text-center text-gray-500">{t('common.loading')}...</div>
-                ) : branchesError ? (
-                  <div className="p-2 text-center text-red-500">{t('common.error')}</div>
-                ) : (
-                  branches.map((branch) => (
-                    <SelectItem key={branch.id} value={branch.id} className="cursor-pointer">
-                      {language === 'ar' ? branch.name_ar : branch.name_en}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </FormField>
+
           
-          <FormField label={t('employees.selectDirectManager')}>
+          {/* <FormField label={t('employees.selectDirectManager')}>
             <Select dir={isRTL ? "rtl" : "ltr"} value={form.directManagerId} onValueChange={value => setForm(f => ({ ...f, directManagerId: value }))}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('employees.selectDirectManager')} />
@@ -243,7 +244,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
                 )}
               </SelectContent>
             </Select>
-          </FormField>
+          </FormField> */}
         </div>
       </div>
 
@@ -297,7 +298,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
           
-          <FormField label={t('employees.accountCloseDate') || 'تاريخ إغلاق الحساب'}>
+          {/* <FormField label={t('employees.accountCloseDate') || 'تاريخ إغلاق الحساب'}>
             <DatePickerField
               name="accountCloseDate"
               placeholder={t('employees.accountCloseDate') || 'تاريخ إغلاق الحساب'}
@@ -305,7 +306,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
               onChange={handleChange}
               isRTL={isRTL}
             />
-          </FormField>
+          </FormField> */}
 
           {/* Status Switcher - Only visible for Admin */}
           {isAdmin && (
@@ -491,7 +492,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
             />
           </FormField>
 
-          <FormField label={t('employees.registrationExpiryDate')}>
+          {/* <FormField label={t('employees.registrationExpiryDate')}>
             <DatePickerField
               name="registrationExpirationDate"
               placeholder={t('employees.registrationExpiryDate')}
@@ -499,7 +500,7 @@ export default function EmployeeInfoTab({ form, handleChange, setForm }) {
               onChange={handleChange}
               isRTL={isRTL}
             />
-          </FormField>
+          </FormField> */}
         </div>
       </div>
     </div>

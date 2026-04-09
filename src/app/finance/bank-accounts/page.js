@@ -20,7 +20,7 @@ function BankAccountsPage() {
   const t = useTranslations('BankAccountsPage');
   const [bankAccounts, setBankAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [addModalType, setAddModalType] = useState(null); // 'bank' | 'cash'
   const [showEditModal, setShowEditModal] = useState(false);
   const [showLogsModal, setShowLogsModal] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState(null);
@@ -112,139 +112,189 @@ function BankAccountsPage() {
           </h1>
         </div>
 
-        {/* Bank Accounts Card */}
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>{t('accountsList')}</CardTitle>
-              <Button 
-                onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                {t('addNewAccount')}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="flex items-center justify-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <span className="mr-3">{t('loading')}</span>
-              </div>
-            ) : bankAccounts.length === 0 ? (
-              <div className="text-center p-8">
-                <p className="text-gray-500 mb-4">{t('noAccountsFound')}</p>
-                <Button onClick={() => setShowAddModal(true)}>
-                  {t('addNewAccount')}
-                </Button>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t('bankName')}</TableHead>
-                    <TableHead>{t('accountName')}</TableHead>
-                    <TableHead>{t('accountNumber')}</TableHead>
-                    <TableHead>IBAN</TableHead>
-                    <TableHead>{t('branch')}</TableHead>
-                    <TableHead>{t('currentBalance')}</TableHead>
-                    <TableHead>{t('status')}</TableHead>
-                    <TableHead>{t('createdAt')}</TableHead>
-                    <TableHead>{t('actions')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {bankAccounts.map((account) => (
-                    <TableRow key={account.id}>
-                      <TableCell className="font-medium">
-                        {account.bank_name}
-                      </TableCell>
-                      <TableCell>{account.account_name}</TableCell>
-                      <TableCell className="font-mono">
-                        {account.account_number}
-                      </TableCell>
-                      <TableCell className="font-mono text-sm">
-                        {account.iban || '-'}
-                      </TableCell>
-                      <TableCell>
-                        {account.branch_name_ar || '-'}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(account.current_balance)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={account.status === 'active' ? 'default' : 'secondary'}
-                        >
-                          {account.status === 'active' ? t('active') : t('inactive')}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {formatDate(account.created_at)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewLogs(account)}
-                            title={t('viewLogs')}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(account.id)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                disabled={deleteLoading}
-                              >
-                                <Trash2 className="h-4 w-4" />
+        {loading ? (
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span className="mr-3">{t('loading')}</span>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Bank Accounts Card */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>{t('bankAccountsList')}</CardTitle>
+                  <Button
+                    onClick={() => setAddModalType('bank')}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {t('addNewAccount')}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {bankAccounts.filter(a => a.account_type === 'bank').length === 0 ? (
+                  <div className="text-center p-8">
+                    <p className="text-gray-500 mb-4">{t('noAccountsFound')}</p>
+                    <Button onClick={() => setAddModalType('bank')}>{t('addNewAccount')}</Button>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t('bankName')}</TableHead>
+                        <TableHead>{t('accountName')}</TableHead>
+                        <TableHead>{t('accountNumber')}</TableHead>
+                        <TableHead>IBAN</TableHead>
+                        <TableHead>{t('currentBalance')}</TableHead>
+                        <TableHead>{t('status')}</TableHead>
+                        <TableHead>{t('createdAt')}</TableHead>
+                        <TableHead>{t('actions')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {bankAccounts.filter(a => a.account_type === 'bank').map((account) => (
+                        <TableRow key={account.id}>
+                          <TableCell className="font-medium">{account.bank_name}</TableCell>
+                          <TableCell>{account.account_name}</TableCell>
+                          <TableCell className="font-mono">{account.account_number}</TableCell>
+                          <TableCell className="font-mono text-sm">{account.iban || '-'}</TableCell>
+                          <TableCell>{formatCurrency(account.current_balance)}</TableCell>
+                          <TableCell>
+                            <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
+                              {account.status === 'active' ? t('active') : t('inactive')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{formatDate(account.created_at)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Button variant="outline" size="sm" onClick={() => handleViewLogs(account)} title={t('viewLogs')}>
+                                <Eye className="h-4 w-4" />
                               </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>{t('confirmDelete')}</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  {t('deleteConfirmMessage', { accountName: account.account_name })}
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(account.id)}
-                                  className="bg-red-600 hover:bg-red-700"
-                                >
-                                  {t('delete')}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                              <Button variant="outline" size="sm" onClick={() => handleEdit(account.id)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="outline" size="sm" disabled={deleteLoading}>
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>{t('confirmDelete')}</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      {t('deleteConfirmMessage', { accountName: account.account_name })}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(account.id)} className="bg-red-600 hover:bg-red-700">
+                                      {t('delete')}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Cash Accounts Card */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>{t('cashAccountsList')}</CardTitle>
+                  {/* <Button
+                    onClick={() => setAddModalType('cash')}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {t('addNewCashAccount')}
+                  </Button> */}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {bankAccounts.filter(a => a.account_type === 'cash').length === 0 ? (
+                  <div className="text-center p-8">
+                    <p className="text-gray-500 mb-4">{t('noAccountsFound')}</p>
+                    <Button onClick={() => setAddModalType('cash')}>{t('addNewCashAccount')}</Button>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t('accountName')}</TableHead>
+                        <TableHead>{t('currentBalance')}</TableHead>
+                        {/* <TableHead>{t('status')}</TableHead> */}
+                        <TableHead>{t('createdAt')}</TableHead>
+                        <TableHead>{t('actions')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {bankAccounts.filter(a => a.account_type === 'cash').map((account) => (
+                        <TableRow key={account.id}>
+                          <TableCell>{account.account_name}</TableCell>
+                          <TableCell>{formatCurrency(account.current_balance)}</TableCell>
+                          {/* <TableCell>
+                            <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
+                              {account.status === 'active' ? t('active') : t('inactive')}
+                            </Badge>
+                          </TableCell> */}
+                          <TableCell>{formatDate(account.created_at)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Button variant="outline" size="sm" onClick={() => handleViewLogs(account)} title={t('viewLogs')}>
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              {/* <Button variant="outline" size="sm" onClick={() => handleEdit(account.id)}>
+                                <Edit className="h-4 w-4" />
+                              </Button> */}
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="outline" size="sm" disabled={deleteLoading}>
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>{t('confirmDelete')}</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      {t('deleteConfirmMessage', { accountName: account.account_name })}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(account.id)} className="bg-red-600 hover:bg-red-700">
+                                      {t('delete')}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Modals */}
         <AddAccountModal
-          isOpen={showAddModal}
-          onClose={() => setShowAddModal(false)}
+          isOpen={!!addModalType}
+          onClose={() => setAddModalType(null)}
           onSuccess={fetchBankAccounts}
+          accountType={addModalType || 'bank'}
         />
 
         <EditAccountModal

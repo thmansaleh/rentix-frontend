@@ -19,7 +19,7 @@ import { getInvoiceById, deletePayment } from "@/app/services/api/invoices";
 
 import InfoRow from "./InfoRow";
 import InvoiceTotals from "./InvoiceTotals";
-import PaymentHistory from "./PaymentHistory";
+import PaymentHistory from "../../payments/PaymentHistory";
 import ViewPaymentModal from "@/app/finance/payments/ViewPaymentModal";
 import PaymentDialog from "@/app/finance/payments/PaymentDialog";
 import DeletePaymentDialog from "@/app/finance/payments/DeletePaymentDialog";
@@ -272,7 +272,6 @@ export default function InvoiceDetailDialog({
               onEdit={handleEditPayment}
               onView={handleViewPayment}
               onDelete={handleDeletePaymentClick}
-              companySettings={companySettings}
             />
 
             {/* Footer */}
@@ -291,16 +290,12 @@ export default function InvoiceDetailDialog({
 
       {/* Sub-dialogs */}
       <ViewPaymentModal
-        open={viewPaymentModalOpen}
+        isOpen={viewPaymentModalOpen}
         onClose={() => {
           setViewPaymentModalOpen(false);
           setViewingPayment(null);
         }}
-        payment={viewingPayment}
-        invoice={invoice}
-        language={language}
-        isRTL={isRTL}
-        companySettings={companySettings}
+        paymentId={viewingPayment?.id}
       />
 
       <PaymentDialog

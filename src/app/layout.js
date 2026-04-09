@@ -13,6 +13,7 @@ import { Noto_Sans_Arabic } from 'next/font/google';
 import RouteGuard from "@/components/RouteGuard";
 import Script from 'next/script';
 import DynamicLayout from "@/components/DynamicLayout";
+import NavigationProgressBar from "@/components/NavigationProgressBar";
 
 const notoSansArabic = Noto_Sans_Arabic({
   subsets: ['arabic'],
@@ -32,12 +33,13 @@ export default function RootLayout({ children }) {
       >
         <Script 
           src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" 
-          strategy="beforeInteractive"
+          strategy="lazyOnload"
         />
         <Script 
           src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" 
-          strategy="beforeInteractive"
+          strategy="lazyOnload"
         />
+        <NavigationProgressBar />
         <LanguageProvider>
           <ThemeProvider>
             <SWRProvider>

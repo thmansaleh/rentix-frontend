@@ -12,9 +12,15 @@ export const getBookingById = async (id) => {
   return response.data;
 };
 
-// Create new booking
+// Create new booking (admin — requires auth)
 export const createBooking = async (bookingData) => {
   const response = await api.post("/bookings", bookingData);
+  return response.data;
+};
+
+// Create booking from public website (no auth required)
+export const createPublicBooking = async (bookingData) => {
+  const response = await api.post("/bookings/public", bookingData);
   return response.data;
 };
 

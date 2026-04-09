@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -16,11 +16,12 @@ import DesktopSidebar from './components/DesktopSidebar';
 // Import custom hooks and config
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 import { getMenuItems } from './config/menuConfig';
+import { startNavigation } from '@/components/NavigationProgressBar';
 
 const AppSidebar = ({ isMobileSidebarOpen, onMobileSidebarClose }) => {
   const [openSubmenus, setOpenSubmenus] = useState({});
-  const [activeItem, setActiveItem] = useState('/');
   const router = useRouter();
+  const pathname = usePathname();
   const sidebarRef = useRef(null);
   const dispatch = useDispatch();
   const isMobile = useIsMobile();
@@ -28,6 +29,12 @@ const AppSidebar = ({ isMobileSidebarOpen, onMobileSidebarClose }) => {
   const { t } = useTranslations();
   const { user, roleEn, departmentEn, permissions } = useAuth();
   const userRole = useUserRole(isRTL ? 'ar' : 'en');
+
+  // Derive active item from URL so it stays in sync on refresh and direct navigation
+  const activeItem = useMemo(() => {
+    const stripped = pathname?.replace(/^\//, '') ?? '';
+    return stripped === '' ? '/' : stripped;
+  }, [pathname]);
 
   // Memoized menu items configuration with user role and department for permission-based filtering
   const menuItems = useMemo(() => getMenuItems(t, roleEn, departmentEn, permissions), [t, roleEn, departmentEn, permissions]);
@@ -46,9 +53,9 @@ const AppSidebar = ({ isMobileSidebarOpen, onMobileSidebarClose }) => {
       toggleSubmenu(itemId);
       return;
     }
-    
-    // For link items, navigate normally
-    setActiveItem(itemId);
+
+    // For link items, navigate normally (activeItem derives from usePathname automatically)
+    startNavigation();
     router.push(`/${itemId === '/' ? '' : itemId}`);
     // Close mobile sidebar when navigating
     if (isMobile && onMobileSidebarClose) {
@@ -61,42 +68,34 @@ const AppSidebar = ({ isMobileSidebarOpen, onMobileSidebarClose }) => {
       await dispatch(logoutWithRedux());
       router.push('/login');
     } catch (error) {
-
+      console.error('Logout failed:', error);
     }
   }, [dispatch, router]);
 
-  const closeMobileSidebar = useCallback(() => {
-    if (onMobileSidebarClose) {
-      onMobileSidebarClose();
-    }
-  }, [onMobileSidebarClose]);
-
   // Custom keyboard navigation hook
-  useKeyboardNavigation(menuItems, activeItem, setActiveItem, handleNavClick);
+  useKeyboardNavigation(menuItems, activeItem, handleNavClick);
 
   // Handle click outside to close submenus on mobile
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-        if (window.innerWidth < 768) {
-          setOpenSubmenus({});
-          if (onMobileSidebarClose) {
-            onMobileSidebarClose();
-          }
+      if (isMobile && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setOpenSubmenus({});
+        if (onMobileSidebarClose) {
+          onMobileSidebarClose();
         }
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [onMobileSidebarClose]);
+  }, [isMobile, onMobileSidebarClose]);
 
   // Render mobile navigation
   if (isMobile) {
     return (
       <MobileSidebar 
         isOpen={isMobileSidebarOpen}
-        onClose={closeMobileSidebar}
+        onClose={onMobileSidebarClose}
         menuItems={menuItems}
         activeItem={activeItem}
         openSubmenus={openSubmenus}

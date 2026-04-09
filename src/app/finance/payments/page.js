@@ -40,7 +40,6 @@ import DeletePaymentDialog from "./DeletePaymentDialog";
 import { printPaymentReceipt } from "./printPaymentReceipt";
 import { getPayments } from "../../services/api/payments";
 import { getBranches } from "../../services/api/branches";
-import { getCompanySettings } from "../../services/api/companySettings";
 import useSWR from "swr";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -51,8 +50,7 @@ const PAYMENT_METHODS = [
   { value: "cash", labelAr: "نقداً", labelEn: "Cash" },
   { value: "card", labelAr: "بطاقة", labelEn: "Card" },
   { value: "bank_transfer", labelAr: "تحويل بنكي", labelEn: "Bank Transfer" },
-  { value: "online", labelAr: "أونلاين", labelEn: "Online" },
-  { value: "wallet", labelAr: "محفظة", labelEn: "Wallet" },
+  { value: "cheque", labelAr: "شيك", labelEn: "Cheque" },
 ];
 
 export default function PaymentsPage() {
@@ -141,14 +139,6 @@ export default function PaymentsPage() {
   });
   const branches = branchesData?.data || [];
 
-  // Fetch company settings for print
-  const { data: companySettingsData } = useSWR(
-    "company-settings",
-    getCompanySettings,
-    { revalidateOnFocus: false }
-  );
-  const companySettings = companySettingsData?.data || null;
-
   // Handlers
   const handleView = (payment) => {
     setSelectedPayment(payment);
@@ -190,7 +180,7 @@ export default function PaymentsPage() {
   };
 
   const handlePrint = (payment) => {
-    printPaymentReceipt(payment, {}, { companySettings });
+    printPaymentReceipt(payment.id);
   };
 
   const handlePageChange = (page) => {
@@ -430,6 +420,9 @@ export default function PaymentsPage() {
                     {isArabic ? "رقم الفاتورة" : "Invoice #"}
                   </TableHead>
                   <TableHead>{isArabic ? "الفرع" : "Branch"}</TableHead>
+                  <TableHead>
+                    {isArabic ? "الحساب البنكي" : "Bank Account"}
+                  </TableHead>
                   <TableHead>{t("contracts.payments.createdBy")}</TableHead>
                   <TableHead className="text-right">
                     {t("contracts.payments.actions")}
@@ -463,6 +456,11 @@ export default function PaymentsPage() {
                       {isArabic
                         ? payment.branch_name_ar
                         : payment.branch_name_en || "-"}
+                    </TableCell>
+                    <TableCell>
+                      {payment.account_bank_name
+                        ? `${payment.account_bank_name} - ${payment.account_name || ""}`
+                        : "-"}
                     </TableCell>
                     <TableCell>{payment.created_by_name || "-"}</TableCell>
                     <TableCell className="text-right">
@@ -541,15 +539,12 @@ export default function PaymentsPage() {
 
       {/* Modals */}
       <ViewPaymentModal
-        open={isViewModalOpen}
+        isOpen={isViewModalOpen}
         onClose={() => {
           setIsViewModalOpen(false);
           setSelectedPayment(null);
         }}
-        payment={selectedPayment}
-        language={language}
-        isRTL={isArabic}
-        companySettings={companySettings}
+        paymentId={selectedPayment?.id}
       />
 
       <PaymentDialog

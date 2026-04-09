@@ -12,6 +12,12 @@ export const getPaymentsByContractId = async (contractId) => {
   return response.data;
 };
 
+// Get all payments for a customer
+export const getPaymentsByCustomerId = async (customerId) => {
+  const response = await api.get(`/payments/customer/${customerId}`);
+  return response.data;
+};
+
 // Get payment by ID
 export const getPaymentById = async (id) => {
   const response = await api.get(`/payments/${id}`);

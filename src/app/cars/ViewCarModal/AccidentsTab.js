@@ -1,3 +1,5 @@
+import { useState } from "react";
+import useSWR from "swr";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,16 +13,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AlertTriangle, Eye, Edit, Trash2 } from "lucide-react";
+import { AlertTriangle, Eye, Edit, Trash2, Loader2, Plus } from "lucide-react";
+import { getAccidentsByCarId } from "../../services/api/accidents";
 import { formatDateTime } from "./utils";
+import { AddAccidentModal } from "../../accidents/AddAccidentModal";
 
 export function AccidentsTab({
-  accidents,
+  carId,
+  isActive,
   isRTL,
   onViewAccident,
   onEditAccident,
   onDeleteAccident,
 }) {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const { data: accidentsResponse, isLoading, mutate } = useSWR(
+    isActive && carId ? `car-accidents-${carId}` : null,
+    () => getAccidentsByCarId(carId),
+    { revalidateOnFocus: false }
+  );
+
+  const accidents = accidentsResponse?.data || [];
+
   return (
     <TabsContent value="accidents" className="space-y-4 flex-1 overflow-y-auto">
       <Card className="border-2">
@@ -31,14 +46,28 @@ export function AccidentsTab({
                 <AlertTriangle className="w-5 h-5 text-destructive" />
                 {isRTL ? "سجل الحوادث" : "Accident History"}
               </Label>
-              <p className="text-sm text-muted-foreground mt-1">
-                {accidents.length}{" "}
-                {isRTL ? "حادث مسجل" : "accident(s) recorded"}
-              </p>
+              {!isLoading && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {accidents.length}{" "}
+                  {isRTL ? "حادث مسجل" : "accident(s) recorded"}
+                </p>
+              )}
             </div>
+            <Button
+              size="sm"
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              {isRTL ? "إضافة حادث" : "Add Accident"}
+            </Button>
           </div>
 
-          {accidents.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          ) : accidents.length === 0 ? (
             <div className="text-center py-8 border-2 border-dashed rounded-lg">
               <AlertTriangle className="w-12 h-12 text-muted-foreground mx-auto mb-2 opacity-50" />
               <p className="text-sm text-muted-foreground">
@@ -166,6 +195,16 @@ export function AccidentsTab({
           )}
         </CardContent>
       </Card>
+
+      <AddAccidentModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        defaultCarId={carId}
+        onSuccess={() => {
+          mutate();
+          setIsAddModalOpen(false);
+        }}
+      />
     </TabsContent>
   );
 }

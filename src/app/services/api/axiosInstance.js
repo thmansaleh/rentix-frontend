@@ -1,90 +1,177 @@
 import axios from "axios";
+import { toast } from "react-toastify";
+
 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://law-backend-woad.vercel.app/api";
+
+// ─── In-memory token store (never in localStorage) ──────────────────
+let accessToken = null;
+
+export const setAccessToken = (token) => {
+  accessToken = token;
+};
+
+export const getAccessToken = () => accessToken;
+
+export const clearAccessToken = () => {
+  accessToken = null;
+};
+
+// ─── Axios Instance ─────────────────────────────────────────────────
 const api = axios.create({
   baseURL,
-  withCredentials: true,
-  timeout: 60000, // 60 seconds timeout for file uploads
+  withCredentials: true, // Always send cookies (refresh token is in httpOnly cookie)
+  timeout: 60000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Helper function to get cookie
-const getCookie = (name) => {
-  if (typeof document === 'undefined') return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return null;
-};
-
-// Request interceptor to add auth token and tenant code to all requests
+// ─── Request Interceptor ────────────────────────────────────────────
 api.interceptors.request.use(
   (config) => {
-    // Add tenant code from hostname
-    if (typeof window !== 'undefined') {
-      config.headers['x-tenant-code'] = window.location.hostname.split('.')[0];
-    }
-
-    let token = getCookie('authToken');
-    
-    // Fallback to localStorage if cookie doesn't exist
-    if (!token && typeof window !== 'undefined') {
-      token = localStorage.getItem('authToken');
-    }
-    
-    // Add token to Authorization header if it exists
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor to handle auth errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // If we get a 401 unauthorized error
-    if (error.response && error.response.status === 401) {
-      const token = getCookie('authToken') || (typeof window !== 'undefined' ? localStorage.getItem('authToken') : null);
-      
-      // Only redirect if:
-      // 1. There's no token at all (user is not logged in)
-      // 2. Or it's an authentication endpoint failing (token refresh, login, etc.)
-      const isAuthEndpoint = error.config.url?.includes('/auth/') || 
-                            error.config.url?.includes('/login') ||
-                            error.config.url?.includes('/verify');
-      
-      if (!token || isAuthEndpoint) {
-        // Don't redirect if we're on a public website route (not admin manage)
-        const isWebsiteRoute = typeof window !== 'undefined' && 
-          window.location.pathname.startsWith('/website') &&
-          !window.location.pathname.startsWith('/website/manage');
-        
-        if (!isWebsiteRoute) {
-          // Clear auth data
-          document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('authToken');
-            // Redirect to login if not already there
-            if (!window.location.pathname.includes('/login')) {
-              window.location.href = '/login';
-            }
-          }
-        }
-      } else {
-        // If we have a token but got 401, it might be a permission issue
-        // Let the component handle it (show error message instead of redirecting)
-        console.warn('401 error with valid token - might be a permission issue');
+    // Add tenant code from subdomain
+    if (typeof window !== "undefined") {
+      const parts = window.location.hostname.split(".");
+      if (parts.length > 1) {
+        config.headers["x-tenant-code"] = parts[0];
       }
     }
+
+    // Attach access token from memory (not localStorage, not cookies)
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// ─── Silent Refresh Logic ───────────────────────────────────────────
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// ─── Response Interceptor ───────────────────────────────────────────
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 403 — tenant/subscription blocking or permission error
+    if (error.response && error.response.status === 403) {
+      const data = error.response.data;
+      const blockingCodes = [
+        'TENANT_INACTIVE',
+        'NO_SUBSCRIPTION',
+        'SUBSCRIPTION_EXPIRED',
+        'TRIAL_EXPIRED',
+        'SUBSCRIPTION_PAST_DUE',
+      ];
+
+      if (data?.code && blockingCodes.includes(data.code)) {
+        // Redirect to a dedicated blocked page — avoid redirect loops
+        if (
+          typeof window !== "undefined" &&
+          !window.location.pathname.startsWith("/account-suspended")
+        ) {
+          window.location.href = `/account-suspended?reason=${data.code}`;
+        }
+      } else {
+        const language =
+          typeof window !== "undefined"
+            ? localStorage.getItem("language")
+            : null;
+        const message =
+          language === "en"
+            ? data?.messageEn ||
+              "You do not have permission to perform this action"
+            : data?.messageAr ||
+              "ليس لديك صلاحية للقيام بهذا الإجراء";
+        toast.error(message);
+      }
+    }
+
+    // 401 — access token expired → try silent refresh
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      // Don't try to refresh if we're already on the refresh or login endpoint
+      const isRefreshUrl = originalRequest.url?.includes("/auth/refresh");
+      const isLoginUrl = originalRequest.url?.includes("/auth/login");
+      if (isRefreshUrl || isLoginUrl) {
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        // Another refresh is in flight — queue this request
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Call refresh endpoint (refresh token sent automatically via httpOnly cookie)
+        const { data } = await axios.post(
+          `${baseURL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+
+        if (data.success && data.accessToken) {
+          setAccessToken(data.accessToken);
+          processQueue(null, data.accessToken);
+
+          // Retry the original request with new token
+          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+          return api(originalRequest);
+        } else {
+          processQueue(new Error("Refresh failed"), null);
+          handleForceLogout();
+          return Promise.reject(error);
+        }
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        handleForceLogout();
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
     return Promise.reject(error);
   }
 );
+
+// ─── Force Logout (clear everything and redirect) ───────────────────
+function handleForceLogout() {
+  clearAccessToken();
+
+  if (typeof window !== "undefined") {
+    const isWebsiteRoute =
+      window.location.pathname.startsWith("/website") &&
+      !window.location.pathname.startsWith("/website/manage");
+
+    if (!isWebsiteRoute && !window.location.pathname.includes("/login")) {
+      window.location.href = "/login";
+    }
+  }
+}
 
 export default api;

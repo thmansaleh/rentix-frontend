@@ -6,6 +6,7 @@ import NotificationMenu from '@/app/components/notifications/NotificationMenu'
 import ExternalLinksMenu from '@/app/components/ExternalLinksMenu'
 import SearchBar from '@/app/components/search'
 import QuickActionsBar from '@/app/components/QuickActionsBar'
+import { AiHeaderButton } from '@/app/components/ai'
 import React from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
 
@@ -37,6 +38,12 @@ function Header() {
               <div className="absolute inset-0 bg-blue-500/10 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
               <div className="relative">
                 <NotificationMenu />
+              </div>
+            </div>
+            <div className="relative group">
+              <div className="absolute inset-0 bg-purple-500/10 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+              <div className="relative">
+                <AiHeaderButton />
               </div>
             </div>
           </div>

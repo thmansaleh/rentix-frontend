@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui/custom-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Calendar, DollarSign, Building2, User, CreditCard, FileText, Tag } from "lucide-react";
+import { Loader2, Calendar, DollarSign, Building2, User, CreditCard, FileText, Tag, Landmark } from "lucide-react";
 import { getExpenseById } from "../../services/api/expenses";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -110,6 +110,15 @@ export function ViewExpenseModal({ isOpen, onClose, expenseId }) {
                 icon={CreditCard}
                 label={t("expenses.paymentMethod")}
                 value={getPaymentMethodLabel(expense.payment_method)}
+              />
+              <DetailRow
+                icon={Landmark}
+                label={isArabic ? "الحساب " : " Account"}
+                value={
+                  expense.payment_method==='cash'
+                    ? `${expense.account_name || t("expenses.cash")}`
+                    : "-"
+                }
               />
               <DetailRow
                 icon={User}

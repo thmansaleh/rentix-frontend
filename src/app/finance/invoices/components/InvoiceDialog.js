@@ -23,7 +23,6 @@ import {
   updateInvoice,
   getInvoiceById,
 } from "@/app/services/api/invoices";
-import { getBranches } from "@/app/services/api/branches";
 import { getCustomers } from "@/app/services/api/customers";
 import { getContractsByCustomerId } from "@/app/services/api/contracts";
 import InvoiceItemsTable from "./InvoiceItemsTable";
@@ -36,9 +35,6 @@ function buildValidationSchema(language) {
     issue_date: Yup.string().required(
       language === "ar" ? "تاريخ الفاتورة مطلوب" : "Invoice date is required"
     ),
-    branch_id: Yup.string().required(
-      language === "ar" ? "الفرع مطلوب" : "Branch is required"
-    ),
     contract_id: Yup.string().required(
       language === "ar" ? "العقد مطلوب" : "Contract is required"
     ),
@@ -49,7 +45,6 @@ const INITIAL_VALUES = {
   issue_date: new Date().toISOString().split("T")[0],
   due_date: "",
   customer_id: "",
-  branch_id: "",
   contract_id: "",
   tax_amount: 0,
   discount_amount: 0,
@@ -67,13 +62,11 @@ export default function InvoiceDialog({
   isRTL,
   defaultContractId,
   defaultCustomerId,
-  defaultBranchId,
 }) {
   const isFromContract = !!defaultContractId && !!defaultCustomerId;
   const t = useTranslations("invoices");
   const isEdit = !!invoice;
 
-  const [branches, setBranches] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [contracts, setContracts] = useState([]);
   const [loadingContracts, setLoadingContracts] = useState(false);
@@ -99,7 +92,6 @@ export default function InvoiceDialog({
         const payload = {
           ...values,
           customer_id: values.customer_id ? parseInt(values.customer_id) : null,
-          branch_id: values.branch_id ? parseInt(values.branch_id) : null,
           contract_id: values.contract_id ? parseInt(values.contract_id) : null,
           tax_amount: parseFloat(values.tax_amount) || 0,
           discount_amount: parseFloat(values.discount_amount) || 0,
@@ -141,15 +133,7 @@ export default function InvoiceDialog({
     (async () => {
       setLoadingData(true);
       try {
-        const [branchRes, customerRes] = await Promise.all([
-          getBranches(),
-          getCustomers(),
-        ]);
-        setBranches(
-          Array.isArray(branchRes)
-            ? branchRes
-            : branchRes?.data || branchRes?.branches || []
-        );
+        const customerRes = await getCustomers();
         setCustomers(
           Array.isArray(customerRes)
             ? customerRes
@@ -180,7 +164,6 @@ export default function InvoiceDialog({
                 ? new Date(d.due_date).toISOString().split("T")[0]
                 : "",
               customer_id: d.customer_id ? String(d.customer_id) : "",
-              branch_id: d.branch_id ? String(d.branch_id) : "",
               contract_id: d.contract_id ? String(d.contract_id) : "",
               tax_amount: d.tax_amount || 0,
               discount_amount: d.discount_amount || 0,
@@ -209,9 +192,6 @@ export default function InvoiceDialog({
       }
       if (defaultCustomerId) {
         formik.setFieldValue("customer_id", String(defaultCustomerId));
-      }
-      if (defaultBranchId) {
-        formik.setFieldValue("branch_id", String(defaultBranchId));
       }
       setItems([{ ...DEFAULT_INVOICE_ITEM }]);
     }
@@ -299,9 +279,9 @@ export default function InvoiceDialog({
               </FormField>
             </div>
 
-            {/* Customer & Branch — hidden when opened from contract context */}
+            {/* Customer — hidden when opened from contract context */}
             {!isFromContract && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4">
                 <FormField label={t("client")}>
                   <Select
                     value={formik.values.customer_id}
@@ -322,26 +302,7 @@ export default function InvoiceDialog({
                     </SelectContent>
                   </Select>
                 </FormField>
-                <FormField
-                  label={t("branchRequired")}
-                  error={formik.touched.branch_id && formik.errors.branch_id}
-                >
-                  <Select
-                    value={formik.values.branch_id}
-                    onValueChange={(v) => formik.setFieldValue("branch_id", v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("selectBranch")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {branches.map((b) => (
-                        <SelectItem key={b.id} value={String(b.id)}>
-                          {isRTL ? b.name_ar : b.name_en || b.name_ar}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormField>
+
               </div>
             )}
 

@@ -20,26 +20,26 @@ const DesktopSidebar = ({
   sidebarRef
 }) => {
   return (
-    <div dir={isRTL ? "rtl" : "ltr"} className="h-full" ref={sidebarRef}>
-      {/* Sidebar Container */}
-      <aside 
-        className={`
-          sidebar-transition 
-          w-64 
-          h-screen 
-          shadow-2xl 
-          relative 
-          flex 
-          flex-col
-          bg-sidebar
-          ${isRTL ? 'sidebar-right' : 'sidebar-left'}
-          transition-all 
-          duration-300 
-          ease-in-out
-        `}
-        role="navigation"
-        aria-label="Main navigation"
-      >
+    <aside 
+      dir={isRTL ? "rtl" : "ltr"}
+      ref={sidebarRef}
+      className={`
+        sidebar-transition 
+        w-64 
+        h-screen 
+        shadow-2xl 
+        relative 
+        flex 
+        flex-col
+        bg-sidebar
+        ${isRTL ? 'sidebar-right' : 'sidebar-left'}
+        transition-all 
+        duration-300 
+        ease-in-out
+      `}
+      role="navigation"
+      aria-label="Main navigation"
+    >
         {/* Logo Section */}
         <SidebarHeader isRTL={isRTL} />
         
@@ -60,8 +60,7 @@ const DesktopSidebar = ({
           isRTL={isRTL}
           onLogout={onLogout}
         />
-      </aside>
-    </div>
+    </aside>
   );
 };
 

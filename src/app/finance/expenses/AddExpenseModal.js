@@ -16,7 +16,7 @@ import {
 import { Loader2, Save } from "lucide-react";
 import { toast } from "react-toastify";
 import { createExpense, getExpenseCategories } from "../../services/api/expenses";
-import { getBranches } from "../../services/api/branches";
+import { getAllBankAccounts } from "../../services/api/bankAccounts";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -27,15 +27,15 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [branches, setBranches] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState([]);
   const [formData, setFormData] = useState({
     expense_date: new Date().toISOString().split("T")[0],
     category_id: "",
-    branch_id: "",
     amount: "",
     description: "",
     payment_method: "cash",
     recipient: "",
+    account_id: "",
   });
 
   useEffect(() => {
@@ -44,38 +44,80 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
       setFormData({
         expense_date: new Date().toISOString().split("T")[0],
         category_id: "",
-        branch_id: "",
         amount: "",
         description: "",
         payment_method: "cash",
         recipient: "",
+        account_id: "",
       });
     }
   }, [isOpen]);
 
   const loadData = async () => {
     try {
-      const [catRes, branchRes] = await Promise.all([
+      const [catRes, accRes] = await Promise.all([
         getExpenseCategories(),
-        getBranches(),
+        getAllBankAccounts(),
       ]);
       setCategories(catRes?.data || []);
-      setBranches(branchRes?.data || []);
+      const accounts = accRes?.data || [];
+      setBankAccounts(accounts);
     } catch (error) {
       console.error("Error loading data:", error);
     }
   };
 
+  // Filter accounts based on payment method
+  const getFilteredAccounts = () => {
+    return bankAccounts.filter(
+      (a) =>
+        a.status === "active" &&
+        (formData.payment_method === "cash"
+          ? a.account_type === "cash"
+          : a.account_type !== "cash")
+    );
+  };
+
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => {
+      const updated = { ...prev, [field]: value };
+      // Auto-select first matching account when payment method changes
+      if (field === "payment_method") {
+        const matching = bankAccounts.filter(
+          (a) =>
+            a.status === "active" &&
+            (value === "cash" ? a.account_type === "cash" : a.account_type !== "cash")
+        );
+        updated.account_id = matching.length > 0 ? String(matching[0].id) : "";
+      }
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.category_id || !formData.amount || !formData.branch_id || !formData.description) {
+    if (!formData.category_id || !formData.amount || !formData.description) {
       toast.error(t("expenses.fillRequired"));
       return;
+    }
+
+    // Check if selected account has sufficient balance
+    if (formData.account_id) {
+      const selectedAccount = bankAccounts.find(
+        (a) => String(a.id) === String(formData.account_id)
+      );
+      if (
+        selectedAccount &&
+        parseFloat(formData.amount) > parseFloat(selectedAccount.current_balance)
+      ) {
+        toast.error(
+          isArabic
+            ? `الرصيد غير كافٍ في الحساب المحدد. الرصيد المتاح: ${parseFloat(selectedAccount.current_balance).toLocaleString("ar")}`
+            : `Insufficient balance in the selected account. Available balance: ${parseFloat(selectedAccount.current_balance).toLocaleString("en")}`
+        );
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -83,6 +125,7 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
       await createExpense({
         ...formData,
         amount: parseFloat(formData.amount),
+        account_id: formData.account_id ? parseInt(formData.account_id) : null,
       });
       toast.success(t("expenses.createSuccess"));
       onSuccess?.();
@@ -136,26 +179,6 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
               </Select>
             </div>
 
-            {/* Branch */}
-            <div className="space-y-2">
-              <Label>{t("expenses.branch")}</Label>
-              <Select
-                value={formData.branch_id?.toString()}
-                onValueChange={(val) => handleChange("branch_id", parseInt(val))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("expenses.selectBranch")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {branches.map((branch) => (
-                    <SelectItem key={branch.id} value={branch.id.toString()}>
-                      {isArabic ? branch.name_ar : branch.name_en}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
             {/* Amount */}
             <div className="space-y-2">
               <Label>{t("expenses.amount")}</Label>
@@ -187,6 +210,41 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
                   <SelectItem value="cheque">{t("expenses.cheque")}</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Bank Account */}
+            <div className="space-y-2">
+              <Label>{isArabic ? "الحساب البنكي" : "Bank Account"}</Label>
+              <Select
+                value={formData.account_id?.toString()}
+                onValueChange={(val) => handleChange("account_id", val)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={isArabic ? "اختر حساب بنكي" : "Select bank account"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {getFilteredAccounts().map((account) => (
+                    <SelectItem key={account.id} value={String(account.id)}>
+                      {account.bank_name} - {account.account_name} ({account.account_number})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {/* Show available balance for selected account */}
+              {formData.account_id && (() => {
+                const acc = bankAccounts.find((a) => String(a.id) === String(formData.account_id));
+                if (!acc) return null;
+                const insufficient =
+                  formData.amount && parseFloat(formData.amount) > parseFloat(acc.current_balance);
+                return (
+                  <p className={`text-xs mt-1 ${insufficient ? "text-red-500 font-semibold" : "text-muted-foreground"}`}>
+                    {isArabic
+                      ? `الرصيد المتاح: ${parseFloat(acc.current_balance).toLocaleString("ar")}`
+                      : `Available balance: ${parseFloat(acc.current_balance).toLocaleString("en")}`}
+                    {insufficient && (isArabic ? " — الرصيد غير كافٍ" : " — Insufficient balance")}
+                  </p>
+                );
+              })()}
             </div>
 
             {/* Recipient */}

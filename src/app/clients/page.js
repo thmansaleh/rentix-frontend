@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -13,22 +12,25 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Users, Loader2, Search, Eye, Edit, Trash2, ShieldBan } from 'lucide-react';
+import { Plus, Users, Loader2, Search, Eye, Edit, Trash2, ShieldBan, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AddClientModal } from './AddClientModal';
 import { EditClientModal } from './EditClientModal';
 import { DeleteClientModal } from './DeleteClientModal';
+import { ViewClientModal } from './ViewClientModal';
 import { getCustomers } from '../services/api/customers';
 import { toast } from 'react-toastify';
 import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useDebounce } from '@/hooks/useDebounce';
 
 export default function ClientsPage() {
   const { t } = useTranslations();
-  const router = useRouter();
+  const { isRTL } = useLanguage();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [customers, setCustomers] = useState([]);
@@ -62,8 +64,21 @@ export default function ClientsPage() {
     setSearchQuery(searchTerm);
   };
 
+  const handleClientAdded = (newClient) => {
+    setCustomers(prev => [newClient, ...prev]);
+  };
+
+  const handleClientUpdated = (updatedClient) => {
+    setCustomers(prev => prev.map(c => c.id === updatedClient.id ? updatedClient : c));
+  };
+
+  const handleClientDeleted = (id) => {
+    setCustomers(prev => prev.filter(c => c.id !== id));
+  };
+
   const handleViewCustomer = (customerId) => {
-    router.push(`/clients/${customerId}`);
+    setSelectedCustomerId(customerId);
+    setIsViewModalOpen(true);
   };
 
   const handleEditCustomer = (customerId) => {
@@ -158,6 +173,7 @@ export default function ClientsPage() {
                 <TableRow>
                   <TableHead>{t('clients.table.name')}</TableHead>
                   <TableHead>{t('clients.table.phone')}</TableHead>
+                  <TableHead>{t('clients.table.nationality')}</TableHead>
                   <TableHead>{t('clients.table.status')}</TableHead>
                   <TableHead>{t('clients.table.joinDate')}</TableHead>
                   <TableHead className="text-right">{t('clients.table.actions')}</TableHead>
@@ -166,10 +182,21 @@ export default function ClientsPage() {
               <TableBody>
                 {customers.map((customer) => (
                   <TableRow key={customer.id}>
-                    <TableCell className="font-medium">
-                      {customer.full_name}
-                    </TableCell>
+                     {/* Name */}
+                      <TableCell className="py-4 pl-6">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0">
+                            <span className="text-xs font-semibold text-primary">
+                              <User className="w-4 h-4" />
+                            </span>
+                          </div>
+                          <span className="font-medium text-sm text-gray-900 dark:text-gray-100">
+                            {customer.full_name}
+                          </span>
+                        </div>
+                      </TableCell>
                     <TableCell>{customer.phone}</TableCell>
+                    <TableCell>{isRTL ? customer.nationality_ar : customer.nationality_en || '-'}</TableCell>
                     <TableCell>
                       {customer.is_blacklisted ? (
                         <Badge variant="destructive" className="flex items-center gap-1 w-fit">
@@ -186,7 +213,7 @@ export default function ClientsPage() {
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => handleViewCustomer(customer.id)}
                           className="h-8 w-8 p-0"
@@ -195,7 +222,7 @@ export default function ClientsPage() {
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => handleEditCustomer(customer.id)}
                           className="h-8 w-8 p-0"
@@ -204,7 +231,7 @@ export default function ClientsPage() {
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => handleDeleteCustomer(customer)}
                           className="h-8 w-8 p-0 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
@@ -240,14 +267,14 @@ export default function ClientsPage() {
       <AddClientModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSuccess={() => fetchCustomers(searchQuery)}
+        onSuccess={handleClientAdded}
       />
 
       {/* Edit Client Modal */}
       <EditClientModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onSuccess={() => fetchCustomers(searchQuery)}
+        onSuccess={handleClientUpdated}
         customerId={selectedCustomerId}
       />
 
@@ -255,8 +282,15 @@ export default function ClientsPage() {
       <DeleteClientModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onSuccess={() => fetchCustomers(searchQuery)}
+        onSuccess={handleClientDeleted}
         customer={selectedCustomer}
+      />
+
+      {/* View Client Modal */}
+      <ViewClientModal
+        isOpen={isViewModalOpen}
+        onClose={() => setIsViewModalOpen(false)}
+        customerId={selectedCustomerId}
       />
     </div>
   );

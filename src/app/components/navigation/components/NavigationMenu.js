@@ -14,10 +14,10 @@ const NavigationMenu = ({
   isRTL 
 }) => {
   return (
-    <nav className="flex-1 overflow-y-auto mt-6 px-4" role="menubar">
-      <ul className="space-y-2" role="none">
+    <nav className="flex-1 overflow-y-auto mt-6 px-4" aria-label="Main navigation">
+      <ul className="space-y-2">
         {menuItems.map((item) => (
-          <li key={item.id} role="none" className='cursor-pointer'>
+          <li key={item.id} className='cursor-pointer'>
             <MenuItem
               item={item}
               activeItem={activeItem}

@@ -1,4 +1,4 @@
-import api from "@/app/services/api/axiosInstance";
+import api, { getAccessToken } from "@/app/services/api/axiosInstance";
 
 /**
  * Upload files to Cloudflare R2 via backend API and return formatted result
@@ -31,20 +31,8 @@ export const uploadFiles = async (files, folder = 'documents') => {
     // Get the backend URL - use the axios instance's baseURL
     const backendUrl = api.defaults.baseURL || 'http://localhost:8080/api';
     
-    // Get auth token from cookie
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-      return null;
-    };
-    
-    let token = getCookie('authToken');
-    
-    // Fallback to localStorage if cookie doesn't exist
-    if (!token && typeof window !== 'undefined') {
-      token = localStorage.getItem('authToken');
-    }
+    // Get access token from memory
+    const token = getAccessToken();
 
     // Create AbortController for timeout
     const controller = new AbortController();
@@ -135,18 +123,8 @@ export const deleteUploadedFiles = async (fileUrls) => {
       return;
     }
 
-    // Get auth token
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-      return null;
-    };
-    
-    let token = getCookie('authToken');
-    if (!token && typeof window !== 'undefined') {
-      token = localStorage.getItem('authToken');
-    }
+    // Get access token from memory
+    const token = getAccessToken();
 
     const backendUrl = api.defaults.baseURL || 'http://localhost:8080/api';
 

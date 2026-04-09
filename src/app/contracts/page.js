@@ -1,123 +1,82 @@
 "use client";
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Plus, FileText, Loader2, Eye, Edit, Trash2, Printer, DollarSign, Receipt } from 'lucide-react';
-import { AddContractModal } from './AddContractModal';
-import { EditContractModal } from './EditContractModal';
-import { ViewContractModal } from './ViewContractModal';
-import { PrintContractModal } from './PrintContractModal';
-import ContractInvoicesModal from './ContractInvoicesModal';
-import { getContracts, deleteContract } from '../services/api/contracts';
 import useSWR from 'swr';
-import { toast } from 'react-toastify';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Plus, FileText, Search, SlidersHorizontal, X, CalendarIcon, Filter } from 'lucide-react';
+import { format } from 'date-fns';
 import { useTranslations } from '@/hooks/useTranslations';
+import { getContracts } from '../services/api/contracts';
+import { AddContractModal } from './AddContractModal';
+import ContractsTable from './ContractsTable';
+
+const EMPTY_FILTERS = { search: '', status: 'all', dateFrom: '', dateTo: '' };
 
 export default function ContractsPage() {
   const { t } = useTranslations();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-  const [isInvoicesModalOpen, setIsInvoicesModalOpen] = useState(false);
-  const [selectedContractId, setSelectedContractId] = useState(null);
-  const [selectedContractNumber, setSelectedContractNumber] = useState(null);
 
-  // Fetch contracts data
-  const { data: contractsData, error, isLoading, mutate } = useSWR('contracts', getContracts, {
-    revalidateOnFocus: false,
-  });
+  // Draft state — what the user is currently typing/selecting
+  const [draft, setDraft] = useState(EMPTY_FILTERS);
+
+  // Applied state — sent to the API when user clicks Apply
+  const [applied, setApplied] = useState(EMPTY_FILTERS);
+
+  // Build the SWR cache key from applied filters so it refetches on Apply
+  const swrKey = ['contracts', applied.search, applied.status, applied.dateFrom, applied.dateTo];
+
+  const buildParams = (f) => {
+    const params = {};
+    if (f.search) params.search = f.search;
+    if (f.status && f.status !== 'all') params.status = f.status;
+    if (f.dateFrom) params.date_from = f.dateFrom;
+    if (f.dateTo) params.date_to = f.dateTo;
+    return params;
+  };
+
+  const { data: contractsData, error, isLoading, mutate } = useSWR(
+    swrKey,
+    () => getContracts(buildParams(applied)),
+    { revalidateOnFocus: false }
+  );
 
   const contracts = contractsData || [];
 
-  // Handle view contract
-  const handleViewContract = (contractId) => {
-    setSelectedContractId(contractId);
-    setIsViewModalOpen(true);
+  const hasAppliedFilters =
+    applied.search || applied.status !== 'all' || applied.dateFrom || applied.dateTo;
+
+  const handleApply = () => {
+    setApplied({ ...draft });
   };
 
-  // Handle edit contract
-  const handleEditContract = (contractId) => {
-    setSelectedContractId(contractId);
-    setIsEditModalOpen(true);
+  const handleClear = () => {
+    setDraft(EMPTY_FILTERS);
+    setApplied(EMPTY_FILTERS);
   };
 
-  // Handle print contract
-  const handlePrintContract = (contractId) => {
-    setSelectedContractId(contractId);
-    setIsPrintModalOpen(true);
+  const handleContractAdded = (newContract) => {
+    mutate((current) => [newContract, ...(current || [])], { revalidate: false });
   };
 
-  // Handle view contract invoices
-  const handleViewInvoices = (contract) => {
-    setSelectedContractId(contract.id);
-    setSelectedContractNumber(contract.contract_number);
-    setIsInvoicesModalOpen(true);
+  const handleContractDeleted = (id) => {
+    mutate((current) => (current || []).filter(c => c.id !== id), { revalidate: false });
   };
 
- 
-
-  // Handle delete contract
-  const handleDeleteContract = async (contract) => {
-    if (!confirm(`${t('contracts.confirmDelete')}${contract.id}?`)) {
-      return;
-    }
-
-    try {
-      await deleteContract(contract.id);
-      toast.success(t('contracts.deleteSuccess'));
-      mutate();
-    } catch (error) {
-      console.error('Error deleting contract:', error);
-      toast.error(error.response?.data?.message || t('contracts.deleteError'));
-    }
-  };
-
-  // Get status badge variant and color
-  const getStatusVariant = (status) => {
-    const variants = {
-      draft: 'outline',
-      active: 'default',
-      completed: 'secondary',
-      cancelled: 'destructive',
-    };
-    return variants[status] || 'default';
-  };
-
-  const getStatusColor = (status) => {
-    const colors = {
-      draft: 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-800 dark:text-gray-300',
-      active: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-300',
-      completed: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-300',
-      cancelled: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900 dark:text-red-300',
-    };
-    return colors[status] || colors.draft;
-  };
-
-  // Format date
-  const formatDate = (date) => {
-    if (!date) return '-';
-    return new Date(date).toLocaleDateString();
-  };
-
-  // Format currency
-  const formatCurrency = (amount) => {
-    if (!amount) return '0.00';
-    return parseFloat(amount).toFixed(2);
-  };
-
-  const handleSuccess = () => {
-    mutate();
+  const handleContractUpdated = (updatedContract) => {
+    mutate(
+      (current) => (current || []).map(c => c.id === updatedContract.id ? updatedContract : c),
+      { revalidate: false }
+    );
   };
 
   return (
@@ -146,189 +105,133 @@ export default function ContractsPage() {
         </Button>
       </div>
 
-      {/* Contracts Table */}
-      <Card>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('contracts.contractNumber')}</TableHead>
-                <TableHead>{t('contracts.customerName')}</TableHead>
-                <TableHead>{t('contracts.carDetails')}</TableHead>
-                <TableHead>{t('contracts.startDate')}</TableHead>
-                <TableHead>{t('contracts.endDate')}</TableHead>
-                <TableHead>{t('contracts.pricePerDay')}</TableHead>
-                <TableHead>{t('contracts.totalAmount')}</TableHead>
-                <TableHead>{t('contracts.paidAmount')}</TableHead>
-                <TableHead>{t('contracts.status')}</TableHead>
-                <TableHead className="text-right">{t('contracts.actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8">
-                    <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>{t('contracts.loadingContracts')}</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
-                <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8 text-red-500">
-                    {t('contracts.errorLoading')}
-                  </TableCell>
-                </TableRow>
-              ) : contracts.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8 text-gray-500">
-                    {t('contracts.noContractsFound')}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                contracts.map((contract) => (
-                  <TableRow key={contract.id}>
-                    <TableCell className="font-medium">{contract.contract_number}</TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{contract.customer_name}</div>
-                        <div className="text-sm text-gray-500">{contract.customer_phone}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{contract.car_details}</div>
-                        <div className="text-sm text-gray-500">{contract.plate_number}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatDate(contract.start_date)}</TableCell>
-                    <TableCell>{formatDate(contract.end_date)}</TableCell>
-                    <TableCell> {formatCurrency(contract.daily_price)}</TableCell>
-                    <TableCell className="font-medium">AED {formatCurrency(contract.total_amount)}</TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium"> AED {formatCurrency(contract.paid_amount)}</div>
-                        {contract.total_amount && contract.paid_amount && (
-                          <div className="text-xs text-gray-500">
-                            {t('contracts.remainingAmount')}: AED {formatCurrency(contract.total_amount - contract.paid_amount)}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(contract.status)}>
-                        {contract.status === 'draft' && t('contracts.statusDraft')}
-                        {contract.status === 'active' && t('contracts.statusActive')}
-                        {contract.status === 'completed' && t('contracts.statusCompleted')}
-                        {contract.status === 'cancelled' && t('contracts.statusCancelled')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleViewContract(contract.id)}
-                          title={t('contracts.viewDetails')}
-                        >
-                          <Eye className="w-4 h-4 text-blue-600 hover:text-blue-700" />
-                        </Button>
-                      
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleViewInvoices(contract)}
-                          title={t('contracts.invoices.title')}
-                        >
-                          <Receipt className="w-4 h-4 text-emerald-600 hover:text-emerald-700" />
-                        </Button>
-                      
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handlePrintContract(contract.id)}
-                          title={t('contracts.print.title')}
-                        >
-                          <Printer className="w-4 h-4 text-purple-600 hover:text-purple-700" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditContract(contract.id)}
-                          title={t('contracts.edit')}
-                        >
-                          <Edit className="w-4 h-4 text-amber-600 hover:text-amber-700" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteContract(contract)}
-                          title={t('contracts.delete')}
-                        >
-                          <Trash2 className="w-4 h-4 text-red-600 hover:text-red-700" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+      {/* Search & Filter Bar */}
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm p-3 mb-4 flex flex-col gap-3">
+        {/* Row 1: Search + Status */}
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <Input
+              value={draft.search}
+              onChange={(e) => setDraft((d) => ({ ...d, search: e.target.value }))}
+              onKeyDown={(e) => e.key === 'Enter' && handleApply()}
+              placeholder={t('contracts.searchPlaceholder')}
+              className="pl-9 h-9 bg-gray-50 dark:bg-gray-800 border-0 rounded-lg focus-visible:ring-1 focus-visible:ring-primary"
+            />
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <SlidersHorizontal className="w-4 h-4 text-gray-400 shrink-0" />
+            <Select value={draft.status} onValueChange={(v) => setDraft((d) => ({ ...d, status: v }))}>
+              <SelectTrigger className="w-44 h-9 bg-gray-50 dark:bg-gray-800 border-0 rounded-lg focus:ring-1 focus:ring-primary text-sm">
+                <SelectValue placeholder={t('contracts.filterStatus')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('contracts.filterAll')}</SelectItem>
+                <SelectItem value="active">{t('contracts.statusActive')}</SelectItem>
+                <SelectItem value="completed">{t('contracts.statusCompleted')}</SelectItem>
+                <SelectItem value="draft">{t('contracts.statusDraft')}</SelectItem>
+                <SelectItem value="cancelled">{t('contracts.statusCancelled')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-      </Card>
 
-      {/* Add Contract Modal */}
+        {/* Row 2: Date range + Apply + Clear */}
+        <div className="flex flex-col sm:flex-row gap-2 items-center">
+          <div className="flex items-center gap-2 flex-1">
+            <CalendarIcon className="w-4 h-4 text-gray-400 shrink-0" />
+
+            {/* Date From picker */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-9 flex-1 min-w-0 justify-start text-left font-normal text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                >
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5 text-gray-400 shrink-0" />
+                  {draft.dateFrom
+                    ? format(new Date(draft.dateFrom), 'dd MMM yyyy')
+                    : <span className="text-gray-400">{t('contracts.filterDateFrom')}</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={draft.dateFrom ? new Date(draft.dateFrom) : undefined}
+                  onSelect={(date) =>
+                    setDraft((d) => ({ ...d, dateFrom: date ? format(date, 'yyyy-MM-dd') : '' }))
+                  }
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+
+            <span className="text-gray-400 text-sm shrink-0">–</span>
+
+            {/* Date To picker */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-9 flex-1 min-w-0 justify-start text-left font-normal text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                >
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5 text-gray-400 shrink-0" />
+                  {draft.dateTo
+                    ? format(new Date(draft.dateTo), 'dd MMM yyyy')
+                    : <span className="text-gray-400">{t('contracts.filterDateTo')}</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={draft.dateTo ? new Date(draft.dateTo) : undefined}
+                  onSelect={(date) =>
+                    setDraft((d) => ({ ...d, dateTo: date ? format(date, 'yyyy-MM-dd') : '' }))
+                  }
+                  disabled={(date) => draft.dateFrom ? date < new Date(draft.dateFrom) : false}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              size="sm"
+              onClick={handleApply}
+              disabled={isLoading}
+              className="h-9 px-4 flex items-center gap-1.5"
+            >
+              <Filter className="w-3.5 h-3.5" />
+              {t('contracts.applyFilter')}
+            </Button>
+            {hasAppliedFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClear}
+                className="h-9 px-3 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-1"
+              >
+                <X className="w-3.5 h-3.5" />
+                {t('contracts.clearFilters')}
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <ContractsTable
+        contracts={contracts}
+        isLoading={isLoading}
+        error={error}
+        onDelete={handleContractDeleted}
+        onUpdate={handleContractUpdated}
+      />
+
       <AddContractModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSuccess={handleSuccess}
+        onSuccess={handleContractAdded}
       />
-
-      {/* Edit Contract Modal */}
-      <EditContractModal
-        isOpen={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-          setSelectedContractId(null);
-        }}
-        onSuccess={handleSuccess}
-        contractId={selectedContractId}
-      />
-
-      {/* View Contract Modal */}
-      <ViewContractModal
-        isOpen={isViewModalOpen}
-        onClose={() => {
-          setIsViewModalOpen(false);
-          setSelectedContractId(null);
-        }}
-        contractId={selectedContractId}
-      />
-
-      {/* Print Contract Modal */}
-      <PrintContractModal
-        isOpen={isPrintModalOpen}
-        onClose={() => {
-          setIsPrintModalOpen(false);
-          setSelectedContractId(null);
-        }}
-        contractId={selectedContractId}
-      />
-
-      {/* Contract Invoices Modal */}
-      <ContractInvoicesModal
-        isOpen={isInvoicesModalOpen}
-        onClose={() => {
-          setIsInvoicesModalOpen(false);
-          setSelectedContractId(null);
-          setSelectedContractNumber(null);
-        }}
-        contractId={selectedContractId}
-        contractNumber={selectedContractNumber}
-      />
-
-     
     </div>
   );
 }

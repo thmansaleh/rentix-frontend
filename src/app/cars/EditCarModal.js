@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
-import { Loader2, Save, Upload, X, FileText, Image as ImageIcon, Car, FileCheck, Shield, Wrench, Calendar as CalendarIcon, Trash2 } from "lucide-react";
+import { Loader2, Save, Upload, X, FileText, Image as ImageIcon, Car, FileCheck, Shield, Calendar as CalendarIcon, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { getCarById, updateCar, getCarPhotos, getCarDocuments, addCarPhoto, addCarDocument, deleteCarPhoto, deleteCarDocument } from "../services/api/cars";
 import { uploadFiles } from "../../../utils/fileUpload";
@@ -67,7 +67,7 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
     model: Yup.string(),
     year: Yup.number().min(1900).max(new Date().getFullYear() + 1),
     color: Yup.string(),
-    status: Yup.string().oneOf(['available', 'rented', 'maintenance', 'sold']),
+    status: Yup.string().oneOf(['available', 'rented', 'maintenance']),
     mileage: Yup.number().min(0),
     car_price: Yup.number().min(0),
     registration_start: Yup.date(),
@@ -131,6 +131,8 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
       // Update car basic info
       const carUpdateData = {
         plate_number: values.plate_number,
+        plate_source: values.plate_source || null,
+        plate_code: values.plate_code || null,
         brand: values.brand || null,
         model: values.model || null,
         year: values.year || null,
@@ -145,14 +147,12 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
         insurance_policy_number: values.insurance_policy_number || null,
         insurance_start: values.insurance_start || null,
         insurance_end: values.insurance_end || null,
-        last_maintenance_date: values.last_maintenance_date || null,
-        next_maintenance_date: values.next_maintenance_date || null,
         daily_price: values.daily_price || null,
         description: values.description || null,
         notes: values.notes || null
       };
 
-      await updateCar(carId, carUpdateData);
+      const result = await updateCar(carId, carUpdateData);
 
       // Delete marked photos
       for (const photoId of photosToDelete) {
@@ -214,7 +214,7 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
       }
 
       toast.success(t('cars.messages.updateSuccess'));
-      onSuccess?.();
+      onSuccess?.(result.data);
       onClose();
     } catch (error) {
       console.error("Error updating car:", error);
@@ -236,6 +236,8 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
 
   const initialValues = {
     plate_number: carData.plate_number || "",
+    plate_source: carData.plate_source || "",
+    plate_code: carData.plate_code || "",
     brand: carData.brand || "",
     model: carData.model || "",
     year: carData.year || "",
@@ -250,8 +252,6 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
     insurance_policy_number: carData.insurance_policy_number || "",
     insurance_start: carData.insurance_start || "",
     insurance_end: carData.insurance_end || "",
-    last_maintenance_date: carData.last_maintenance_date || "",
-    next_maintenance_date: carData.next_maintenance_date || "",
     daily_price: carData.daily_price || "",
     description: carData.description || "",
     notes: carData.notes || ""
@@ -274,7 +274,7 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
           <Form>
             <CustomModalBody className="h-[70vh] overflow-y-auto">
               <Tabs dir={isRTL ? "rtl" : "ltr"} defaultValue="basic" className="w-full h-full flex flex-col">
-                <TabsList className="grid w-full grid-cols-5 mb-6 flex-shrink-0">
+                <TabsList className="grid w-full grid-cols-4 mb-6 flex-shrink-0">
                   <TabsTrigger value="basic">
                     <Car className="w-4 h-4 mr-2" />
                     {t('cars.tabs.basic')}
@@ -287,10 +287,7 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
                     <Shield className="w-4 h-4 mr-2" />
                     {t('cars.tabs.insurance')}
                   </TabsTrigger>
-                  <TabsTrigger value="maintenance">
-                    <Wrench className="w-4 h-4 mr-2" />
-                    {t('cars.tabs.maintenance')}
-                  </TabsTrigger>
+
                   <TabsTrigger value="files">
                     <ImageIcon className="w-4 h-4 mr-2" />
                     {t('cars.tabs.files')}
@@ -311,6 +308,37 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
                         placeholder={t('cars.placeholders.plateNumber')}
                       />
                       <ErrorMessage name="plate_number" component="p" className="text-red-500 text-xs" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="plate_source">{t('cars.plateSource')}</Label>
+                      <Select
+                        value={values.plate_source}
+                        onValueChange={(value) => setFieldValue("plate_source", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('cars.placeholders.plateSource')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Abu Dhabi">{t('cars.emirates.abuDhabi')}</SelectItem>
+                          <SelectItem value="Dubai">{t('cars.emirates.dubai')}</SelectItem>
+                          <SelectItem value="Sharjah">{t('cars.emirates.sharjah')}</SelectItem>
+                          <SelectItem value="Ajman">{t('cars.emirates.ajman')}</SelectItem>
+                          <SelectItem value="Umm Al Quwain">{t('cars.emirates.ummAlQuwain')}</SelectItem>
+                          <SelectItem value="Ras Al Khaimah">{t('cars.emirates.rasAlKhaimah')}</SelectItem>
+                          <SelectItem value="Fujairah">{t('cars.emirates.fujairah')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="plate_code">{t('cars.plateCode')}</Label>
+                      <Field
+                        as={Input}
+                        id="plate_code"
+                        name="plate_code"
+                        placeholder={t('cars.placeholders.plateCode')}
+                      />
                     </div>
 
                     <div className="space-y-2">
@@ -367,7 +395,6 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
                           <SelectItem value="available">{t('cars.statusAvailable')}</SelectItem>
                           <SelectItem value="rented">{t('cars.statusRented')}</SelectItem>
                           <SelectItem value="maintenance">{t('cars.statusMaintenance')}</SelectItem>
-                          <SelectItem value="sold">{t('cars.statusSold')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -519,34 +546,7 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
                   </div>
                 </TabsContent>
 
-                {/* Maintenance Tab */}
-                <TabsContent value="maintenance" className="space-y-4 flex-1 overflow-y-auto">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="last_maintenance_date">{t('cars.maintenanceTab.lastDate')}</Label>
-                      <DatePicker
-                        date={values.last_maintenance_date ? new Date(values.last_maintenance_date) : undefined}
-                        onDateChange={(date) => {
-                          setFieldValue("last_maintenance_date", date ? date.toISOString().split('T')[0] : "");
-                        }}
-                        placeholder={t('cars.placeholders.selectDate')}
-                        // maxDate={new Date()}
-                      />
-                    </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="next_maintenance_date">{t('cars.maintenanceTab.nextDate')}</Label>
-                      <DatePicker
-                        date={values.next_maintenance_date ? new Date(values.next_maintenance_date) : undefined}
-                        onDateChange={(date) => {
-                          setFieldValue("next_maintenance_date", date ? date.toISOString().split('T')[0] : "");
-                        }}
-                        placeholder={t('cars.placeholders.selectDate')}
-                        minDate={values.last_maintenance_date ? new Date(values.last_maintenance_date) : new Date()}
-                      />
-                    </div>
-                  </div>
-                </TabsContent>
 
                 {/* Files Tab */}
                 <TabsContent value="files" className="space-y-6 flex-1 overflow-y-auto">
@@ -647,7 +647,7 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
                                 </div>
                                 <Button
                                   type="button"
-                                  variant="ghost"
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => removeNewPhoto(index)}
                                   className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -722,7 +722,7 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
                                   </div>
                                   <Button
                                     type="button"
-                                    variant="ghost"
+                                    variant="outline"
                                     size="sm"
                                     onClick={() => markDocumentForDeletion(doc.id)}
                                   >
@@ -756,7 +756,7 @@ export function EditCarModal({ isOpen, onClose, onSuccess, carId }) {
                                   </div>
                                   <Button
                                     type="button"
-                                    variant="ghost"
+                                    variant="outline"
                                     size="sm"
                                     onClick={() => removeNewDocument(index)}
                                     className="flex-shrink-0"

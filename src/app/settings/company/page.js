@@ -9,12 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'react-toastify';
-import { getCompanySettings, updateCompanySettings } from '@/app/services/api/companySettings';
+import { getTenantSettings, updateTenantSettings } from '@/app/services/api/tenantSettings';
 import { Building2, Upload, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { uploadFile } from '../../../../utils/fileUpload';
 
-const CompanySettingsPage = () => {
+const TenantSettingsPage = () => {
   const { isRTL, language } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
@@ -31,6 +31,10 @@ const CompanySettingsPage = () => {
         companyNameArPlaceholder: 'أدخل اسم الشركة بالعربية',
         companyNameEn: 'اسم الشركة بالإنجليزية',
         companyNameEnPlaceholder: 'أدخل اسم الشركة بالإنجليزية',
+        trafficNumber: 'رقم المرور',
+        trafficNumberPlaceholder: 'أدخل رقم المرور',
+        trnNumber: 'الرقم الضريبي (TRN)',
+        trnNumberPlaceholder: 'أدخل الرقم الضريبي',
         logo: 'شعار الشركة',
         uploadLogo: 'تحميل شعار',
         changeLogo: 'تغيير الشعار',
@@ -55,6 +59,10 @@ const CompanySettingsPage = () => {
         companyNameArPlaceholder: 'Enter company name in Arabic',
         companyNameEn: 'Company Name (English)',
         companyNameEnPlaceholder: 'Enter company name in English',
+        trafficNumber: 'Traffic Number',
+        trafficNumberPlaceholder: 'Enter traffic number',
+        trnNumber: 'TRN Number',
+        trnNumberPlaceholder: 'Enter TRN number',
         logo: 'Company Logo',
         uploadLogo: 'Upload Logo',
         changeLogo: 'Change Logo',
@@ -79,6 +87,8 @@ const CompanySettingsPage = () => {
   const validationSchema = Yup.object({
     company_name_ar: Yup.string().required(t('companyNameArRequired')),
     company_name_en: Yup.string().required(t('companyNameEnRequired')),
+    traffic_number: Yup.string().nullable(),
+    trn_number: Yup.string().nullable(),
     logo_url: Yup.string().nullable()
   });
 
@@ -86,6 +96,8 @@ const CompanySettingsPage = () => {
     initialValues: {
       company_name_ar: '',
       company_name_en: '',
+      traffic_number: '',
+      trn_number: '',
       logo_url: ''
     },
     validationSchema,
@@ -108,7 +120,7 @@ const CompanySettingsPage = () => {
           }
         }
 
-        const response = await updateCompanySettings({
+        const response = await updateTenantSettings({
           ...values,
           logo_url: logoUrl
         });
@@ -138,12 +150,14 @@ const CompanySettingsPage = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await getCompanySettings();
+        const response = await getTenantSettings();
         if (response.success && response.data) {
-          const { company_name_ar, company_name_en, logo_url } = response.data;
+          const { company_name_ar, company_name_en, traffic_number, trn_number, logo_url } = response.data;
           formik.setValues({
             company_name_ar: company_name_ar || '',
             company_name_en: company_name_en || '',
+            traffic_number: traffic_number || '',
+            trn_number: trn_number || '',
             logo_url: logo_url || ''
           });
           if (logo_url) {
@@ -302,6 +316,34 @@ const CompanySettingsPage = () => {
               )}
             </div>
 
+            {/* Traffic Number */}
+            <div className="space-y-2">
+              <Label htmlFor="traffic_number">{t('trafficNumber')}</Label>
+              <Input
+                id="traffic_number"
+                name="traffic_number"
+                value={formik.values.traffic_number}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                placeholder={t('trafficNumberPlaceholder')}
+                dir="ltr"
+              />
+            </div>
+
+            {/* TRN Number */}
+            <div className="space-y-2">
+              <Label htmlFor="trn_number">{t('trnNumber')}</Label>
+              <Input
+                id="trn_number"
+                name="trn_number"
+                value={formik.values.trn_number}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                placeholder={t('trnNumberPlaceholder')}
+                dir="ltr"
+              />
+            </div>
+
             {/* Submit Button */}
             <div className="flex justify-end gap-4 pt-4">
               <Button
@@ -326,4 +368,4 @@ const CompanySettingsPage = () => {
   );
 };
 
-export default CompanySettingsPage;
+export default TenantSettingsPage;

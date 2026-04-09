@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getEmployeeById, updateEmployee, getEmployees } from '@/app/services/api/employees';
 import { getRoles } from '@/app/services/api/roles';
 import { getDepartments } from '@/app/services/api/departments';
-import { getBranches } from '@/app/services/api/branches';
+
 import { useTranslations } from '@/hooks/useTranslations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import PersonalInfoTab from './PersonalInfoTab';
@@ -54,13 +54,11 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
   // Fetch roles and departments for dropdowns
   const { data: rolesResponse, isLoading: rolesLoading } = useSWR('roles', getRoles);
   const { data: departmentsResponse, isLoading: departmentsLoading } = useSWR('departments', getDepartments);
-  const { data: branchesResponse, isLoading: branchesLoading } = useSWR('branches', getBranches);
   const { data: managersResponse, isLoading: managersLoading } = useSWR('managers', getEmployees);
 
   const employee = data?.data;
   const roles = rolesResponse?.success ? rolesResponse.data : [];
   const departments = departmentsResponse?.success ? departmentsResponse.data : [];
-  const branches = branchesResponse?.success ? branchesResponse.data : [];
   const managers = managersResponse?.success ? managersResponse.data : [];
 
   // Initialize form data when employee data is loaded
@@ -76,7 +74,6 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
         department_id: employee.department_id || '',
         eId: employee.eId || '',
         passport: employee.passport || '',
-        branch_id: employee.branch_id || '',
         direct_manager_id: employee.direct_manager_id || 'none',
         password: '', // Keep empty for security
         residence_end_date: employee.residence_end_date ? employee.residence_end_date.split('T')[0] : '',
@@ -265,7 +262,6 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
                         handleInputChange={handleInputChange}
                         departments={departments}
                         roles={roles}
-                        branches={branches}
                         managers={managers}
                         employeeId={employeeId}
                       />
@@ -296,7 +292,7 @@ const EditEmployeeDialog = ({ employeeId, trigger, onSuccess }) => {
                 <Button 
                   type="button"
                   onClick={handleSubmit}
-                  disabled={isSubmitting || rolesLoading || departmentsLoading || branchesLoading || managersLoading}
+                  disabled={isSubmitting || rolesLoading || departmentsLoading || managersLoading}
                   className="flex items-center gap-2"
                 >
                   {isSubmitting ? (

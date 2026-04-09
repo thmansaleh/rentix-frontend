@@ -3,9 +3,9 @@ import axiosInstance from './axiosInstance';
 const BASE_URL = '/accidents';
 
 // Get all accidents
-export const getAccidents = async () => {
+export const getAccidents = async (params = {}) => {
   try {
-    const response = await axiosInstance.get(BASE_URL);
+    const response = await axiosInstance.get(BASE_URL, { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching accidents:', error);

@@ -124,7 +124,7 @@ const BasicInfoTab = ({ employeeId }) => {
             <InfoRow label={t('employees.employeeNumber')} value={employee.job_id} />
             <InfoRow label={t('employees.identityNumber')} value={employee.eId} />
             <InfoRow label={t('employees.passportNumber')} value={employee.passport} />
-            <InfoRow label={t('employees.directManager')} value={employee.managerName} />
+            {/* <InfoRow label={t('employees.directManager')} value={employee.managerName} /> */}
             <InfoRow label={t('employees.role')} value={isRTL ? employee.role_ar : employee.role_en} />
           </CardContent>
         </Card>
@@ -162,7 +162,7 @@ const BasicInfoTab = ({ employeeId }) => {
             <InfoRow label={t('employees.firstDayOfWork')} value={formatDate(employee.fisrt_day_of_work)} />
             <InfoRow label={t('employees.lastLogin')} value={formatDate(employee.last_login)} />
             <InfoRow label={t('employees.accountActivationDate')} value={formatDate(employee.account_activation_date)} />
-            <InfoRow label={t('employees.accountCloseDate')} value={formatDate(employee.account_close_date)} />
+            {/* <InfoRow label={t('employees.accountCloseDate')} value={formatDate(employee.account_close_date)} /> */}
           </CardContent>
         </Card>
 

@@ -339,7 +339,7 @@ export default function LogsPage() {
                         </Badge>
                       </div>
                       <p className="text-sm text-gray-700 mb-2">
-                        {log.description}
+                        {language === 'ar' ? log.description_ar : log.description_en}
                       </p>
                     </div>
                   </div>

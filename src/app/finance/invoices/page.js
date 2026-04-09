@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { FileText, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,15 +9,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Pagination } from "@/components/Pagination";
 
 import { useInvoices } from "./hooks/useInvoices";
-import { getStatusVariant } from "./utils/helpers";
 
 import InvoicesPageHeader from "./components/InvoicesPageHeader";
 import InvoicesSummaryCards from "./components/InvoicesSummaryCards";
 import InvoicesFilterBar from "./components/InvoicesFilterBar";
 import InvoicesTable from "./components/InvoicesTable";
-import InvoiceDialog from "./components/InvoiceDialog";
-import InvoiceDetailDialog from "./components/InvoiceDetailDialog";
-import DeleteInvoiceDialog from "./components/DeleteInvoiceDialog";
 
 export default function InvoicesPage() {
   const t = useTranslations("invoices");
@@ -27,7 +23,6 @@ export default function InvoicesPage() {
     invoices,
     loading,
     branches,
-    companySettings,
     stats,
     searchTerm,
     setSearchTerm,
@@ -39,23 +34,11 @@ export default function InvoicesPage() {
     currentPage,
     totalPages,
     handlePageChange,
-    invoiceDialogOpen,
-    setInvoiceDialogOpen,
-    editingInvoice,
-    detailDialogOpen,
-    setDetailDialogOpen,
-    selectedInvoiceId,
-    deleteDialogOpen,
-    setDeleteDialogOpen,
-    deletingInvoice,
-    handleAddNew,
-    handleEdit,
-    handleView,
-    handleDeleteClick,
-    handleDeleteConfirm,
-    handleInvoiceSaved,
     refreshData,
   } = useInvoices(t);
+
+  const tableRef = useRef(null);
+  const handleAddNew = () => tableRef.current?.openAddNew();
 
   return (
     <div className="space-y-6 p-4 md:p-6" dir={isRTL ? "rtl" : "ltr"}>
@@ -101,15 +84,11 @@ export default function InvoicesPage() {
             </div>
           ) : (
             <InvoicesTable
+              ref={tableRef}
               invoices={invoices}
               language={language}
               isRTL={isRTL}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDelete={handleDeleteClick}
-              statusVariant={getStatusVariant}
-              t={t}
-              companySettings={companySettings}
+              onDataChange={refreshData}
             />
           )}
         </CardContent>
@@ -124,33 +103,6 @@ export default function InvoicesPage() {
         />
       )}
 
-      {/* Dialogs */}
-      <InvoiceDialog
-        open={invoiceDialogOpen}
-        onOpenChange={setInvoiceDialogOpen}
-        invoice={editingInvoice}
-        onSaved={handleInvoiceSaved}
-        language={language}
-        isRTL={isRTL}
-      />
-
-      <InvoiceDetailDialog
-        open={detailDialogOpen}
-        onOpenChange={setDetailDialogOpen}
-        invoiceId={selectedInvoiceId}
-        onRefresh={refreshData}
-        language={language}
-        isRTL={isRTL}
-        companySettings={companySettings}
-      />
-
-      <DeleteInvoiceDialog
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-        invoice={deletingInvoice}
-        onConfirm={handleDeleteConfirm}
-        language={language}
-      />
     </div>
   );
 }

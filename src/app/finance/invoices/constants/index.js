@@ -4,8 +4,6 @@ export const PAYMENT_METHODS = [
   { value: "cash", labelAr: "نقداً", labelEn: "Cash" },
   { value: "card", labelAr: "بطاقة", labelEn: "Card" },
   { value: "bank_transfer", labelAr: "تحويل بنكي", labelEn: "Bank Transfer" },
-  { value: "online", labelAr: "أونلاين", labelEn: "Online" },
-  { value: "wallet", labelAr: "محفظة", labelEn: "Wallet" },
 ];
 
 export const ITEM_TYPES = [

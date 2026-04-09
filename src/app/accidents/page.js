@@ -36,7 +36,7 @@ export default function AccidentsPage() {
   const [selectedAccident, setSelectedAccident] = useState(null);
 
   // Fetch accidents data
-  const { data: accidentsData, error, isLoading, mutate } = useSWR('accidents', getAccidents, {
+  const { data: accidentsData, error, isLoading, mutate } = useSWR('accidents',() => getAccidents(), {
     revalidateOnFocus: false,
   });
 

@@ -7,8 +7,8 @@ export const FILTER_OPTIONS = ['all', 'unread', 'read']
  * Notification refresh intervals (in milliseconds)
  */
 export const REFRESH_INTERVALS = {
-  NOTIFICATIONS: 30000, // 30 seconds
-  UNREAD_COUNT: 15000   // 15 seconds
+  NOTIFICATIONS: 1570000, // 15700000 seconds 
+  UNREAD_COUNT: 2000000   // 2000 seconds
 }
 
 /**

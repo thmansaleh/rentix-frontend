@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, AlertCircle, RefreshCw } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
+import { useLanguage } from '@/contexts/LanguageContext';
 import useSWR from 'swr';
 import { getAllLogs } from '@/app/services/api/logs';
 
@@ -71,6 +72,7 @@ const getActionLabel = (action) => {
 
 export default function LogsPage() {
   const { t } = useTranslations();
+  const { language } = useLanguage();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [page, setPage] = useState(1);
@@ -231,7 +233,7 @@ export default function LogsPage() {
                         </Badge>
                       </div>
                       <p className="text-sm text-gray-700 mb-2">
-                        {log.description}
+                        {language === 'ar' ? log.description_ar : log.description_en}
                       </p>
                     </div>
                   </div>

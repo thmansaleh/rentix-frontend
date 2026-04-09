@@ -262,10 +262,13 @@ export default function EmployeeTablePage() {
               </div>
 
               {/* Add Button */}
-              <AddEmployeeDialog onAdd={(newEmployee) => {
-                // You can handle adding the new employee here (e.g., update state or send to backend)
-                // Optionally revalidate the SWR data
-                mutate();
+              <AddEmployeeDialog onAdd={(response) => {
+                if (response?.success && response?.data) {
+                  mutate(
+                    current => ({ ...current, data: [response.data, ...(current?.data || [])] }),
+                    { revalidate: false }
+                  );
+                }
               }} />
             </div>
 
@@ -342,7 +345,10 @@ export default function EmployeeTablePage() {
                       employee={employee} 
                       StatusBadge={StatusBadge} 
                       isArabic={isArabic}
-                      onEmployeeUpdate={() => mutate()}
+                      onEmployeeUpdate={(deletedId) => mutate(
+                        current => ({ ...current, data: (current?.data || []).filter(e => e.id !== deletedId) }),
+                        { revalidate: false }
+                      )}
                     />
                   ))}
                 </tbody>

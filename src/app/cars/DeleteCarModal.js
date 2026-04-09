@@ -19,7 +19,7 @@ export function DeleteCarModal({ isOpen, onClose, onSuccess, car }) {
     try {
       await deleteCar(car.id);
       toast.success(t('cars.messages.deleteSuccess'));
-      onSuccess?.();
+      onSuccess?.(car.id);
       onClose();
     } catch (error) {
       console.error("Error deleting car:", error);
