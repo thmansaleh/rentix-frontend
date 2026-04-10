@@ -50,15 +50,6 @@ export const appLinks = [
     keywords: { ar: ['عقود', 'عقد', 'إيجار', 'اتفاقية'], en: ['contracts', 'agreements', 'rental', 'lease'] }
   },
 
-  // Meetings
-  {
-    id: 'meetings',
-    label: { ar: 'الاجتماعات', en: 'Meetings' },
-    route: '/meetings',
-    category: { ar: 'الاجتماعات', en: 'Meetings' },
-    keywords: { ar: ['اجتماعات', 'اجتماع', 'مواعيد', 'لقاء'], en: ['meetings', 'appointments', 'schedule'] }
-  },
-
   // Statistics
   {
     id: 'statistics',
