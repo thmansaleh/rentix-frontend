@@ -255,7 +255,7 @@ export default function ClientsPage() {
               <span>{t('clients.totalClients')}: {customers.length}</span>
               {searchQuery && (
                 <span className="text-primary">
-                  {t('clients.showingResultsFor')}: "{searchQuery}"
+                  {t('clients.showingResultsFor')}: &quot;{searchQuery}&quot;
                 </span>
               )}
             </div>

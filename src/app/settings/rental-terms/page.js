@@ -444,8 +444,8 @@ export default function RentalTermsPage() {
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {isRTL
-                ? <>سيتم حذف <span className="font-medium text-gray-700 dark:text-gray-300">"{selectedTerm?.title_ar}"</span> نهائياً</>
-                : <>Delete <span className="font-medium text-gray-700 dark:text-gray-300">"{selectedTerm?.title_en}"</span> permanently</>}
+                ? <>سيتم حذف <span className="font-medium text-gray-700 dark:text-gray-300">&quot;{selectedTerm?.title_ar}&quot;</span> نهائياً</>
+                : <>Delete <span className="font-medium text-gray-700 dark:text-gray-300">&quot;{selectedTerm?.title_en}&quot;</span> permanently</>}
             </p>
             <p className="text-xs text-red-400 mt-3 bg-red-50 dark:bg-red-900/20 rounded-lg px-3 py-2">
               {isRTL ? '⚠ لا يمكن التراجع عن هذا الإجراء' : '⚠ This action cannot be undone'}
