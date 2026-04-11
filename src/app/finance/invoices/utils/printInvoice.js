@@ -111,7 +111,6 @@ export function printInvoice(invoice, { isRTL, language, t, companySettings }) {
         }
         .header-right {
           text-align: right;
-          direction: rtl;
           display: flex;
           flex-direction: column;
           align-items: flex-end;

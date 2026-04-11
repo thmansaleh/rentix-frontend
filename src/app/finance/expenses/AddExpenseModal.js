@@ -13,12 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, Paperclip, X, File } from "lucide-react";
 import { toast } from "react-toastify";
-import { createExpense, getExpenseCategories } from "../../services/api/expenses";
+import { createExpense, addExpenseAttachment, getExpenseCategories } from "../../services/api/expenses";
 import { getAllBankAccounts } from "../../services/api/bankAccounts";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { uploadFiles } from "../../../../utils/fileUpload";
 
 export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
   const { t } = useTranslations();
@@ -28,6 +29,7 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [formData, setFormData] = useState({
     expense_date: new Date().toISOString().split("T")[0],
     category_id: "",
@@ -50,6 +52,7 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
         recipient: "",
         account_id: "",
       });
+      setSelectedFiles([]);
     }
   }, [isOpen]);
 
@@ -94,10 +97,27 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
     });
   };
 
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles((prev) => [...prev, ...files]);
+    e.target.value = "";
+  };
+
+  const removeFile = (index) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const formatFileSize = (bytes) => {
+    if (!bytes) return "";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.category_id || !formData.amount || !formData.description) {
+    if (!formData.category_id || !formData.amount ) {
       toast.error(t("expenses.fillRequired"));
       return;
     }
@@ -122,11 +142,38 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
 
     setIsSubmitting(true);
     try {
-      await createExpense({
+      const result = await createExpense({
         ...formData,
         amount: parseFloat(formData.amount),
         account_id: formData.account_id ? parseInt(formData.account_id) : null,
       });
+
+      const expenseId = result?.data?.expense_id;
+
+      // Upload and attach files if any were selected
+      if (selectedFiles.length > 0 && expenseId) {
+        try {
+          const uploaded = await uploadFiles(selectedFiles, "expenses");
+          await Promise.all(
+            uploaded.map((f) =>
+              addExpenseAttachment(expenseId, {
+                file_name: f.document_name,
+                file_path: f.document_url,
+                file_type: f.document_name.split(".").pop(),
+                file_size: null,
+              })
+            )
+          );
+        } catch (attachErr) {
+          console.error("Failed to upload attachments:", attachErr);
+          toast.warning(
+            isArabic
+              ? "تم إنشاء المصروف لكن فشل رفع بعض المرفقات"
+              : "Expense created but some attachments failed to upload"
+          );
+        }
+      }
+
       toast.success(t("expenses.createSuccess"));
       onSuccess?.();
       onClose();
@@ -265,8 +312,61 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }) {
                 onChange={(e) => handleChange("description", e.target.value)}
                 placeholder={t("expenses.descriptionPlaceholder")}
                 rows={3}
-                required
+                
               />
+            </div>
+
+            {/* Attachments */}
+            <div className="space-y-2 md:col-span-2">
+              <Label className="flex items-center gap-2">
+                <Paperclip className="h-4 w-4" />
+                {isArabic ? "المرفقات (اختياري)" : "Attachments (optional)"}
+              </Label>
+              <div className="flex items-center gap-2">
+                <label className="cursor-pointer">
+                  <span className="inline-flex items-center gap-2 px-3 py-2 text-sm border rounded-md hover:bg-muted transition-colors">
+                    <Paperclip className="h-4 w-4" />
+                    {isArabic ? "اختر ملفات" : "Choose files"}
+                  </span>
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileChange}
+                    accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                  />
+                </label>
+                {selectedFiles.length > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {selectedFiles.length} {isArabic ? "ملف محدد" : "file(s) selected"}
+                  </span>
+                )}
+              </div>
+              {selectedFiles.length > 0 && (
+                <div className="space-y-1 mt-2">
+                  {selectedFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between gap-2 px-3 py-2 rounded-md bg-muted text-sm"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <File className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <span className="truncate">{file.name}</span>
+                        <span className="text-xs text-muted-foreground shrink-0">
+                          {formatFileSize(file.size)}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="text-muted-foreground hover:text-destructive shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </CustomModalBody>

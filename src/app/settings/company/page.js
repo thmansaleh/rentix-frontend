@@ -87,8 +87,6 @@ const TenantSettingsPage = () => {
   const validationSchema = Yup.object({
     company_name_ar: Yup.string().required(t('companyNameArRequired')),
     company_name_en: Yup.string().required(t('companyNameEnRequired')),
-    traffic_number: Yup.string().nullable(),
-    trn_number: Yup.string().nullable(),
     logo_url: Yup.string().nullable()
   });
 
@@ -96,8 +94,6 @@ const TenantSettingsPage = () => {
     initialValues: {
       company_name_ar: '',
       company_name_en: '',
-      traffic_number: '',
-      trn_number: '',
       logo_url: ''
     },
     validationSchema,
@@ -152,12 +148,10 @@ const TenantSettingsPage = () => {
       try {
         const response = await getTenantSettings();
         if (response.success && response.data) {
-          const { company_name_ar, company_name_en, traffic_number, trn_number, logo_url } = response.data;
+          const { company_name_ar, company_name_en, logo_url } = response.data;
           formik.setValues({
             company_name_ar: company_name_ar || '',
             company_name_en: company_name_en || '',
-            traffic_number: traffic_number || '',
-            trn_number: trn_number || '',
             logo_url: logo_url || ''
           });
           if (logo_url) {
@@ -314,34 +308,6 @@ const TenantSettingsPage = () => {
               {formik.touched.company_name_en && formik.errors.company_name_en && (
                 <p className="text-sm text-red-500">{formik.errors.company_name_en}</p>
               )}
-            </div>
-
-            {/* Traffic Number */}
-            <div className="space-y-2">
-              <Label htmlFor="traffic_number">{t('trafficNumber')}</Label>
-              <Input
-                id="traffic_number"
-                name="traffic_number"
-                value={formik.values.traffic_number}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder={t('trafficNumberPlaceholder')}
-                dir="ltr"
-              />
-            </div>
-
-            {/* TRN Number */}
-            <div className="space-y-2">
-              <Label htmlFor="trn_number">{t('trnNumber')}</Label>
-              <Input
-                id="trn_number"
-                name="trn_number"
-                value={formik.values.trn_number}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder={t('trnNumberPlaceholder')}
-                dir="ltr"
-              />
             </div>
 
             {/* Submit Button */}

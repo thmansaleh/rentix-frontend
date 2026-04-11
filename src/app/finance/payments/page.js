@@ -39,7 +39,6 @@ import PaymentDialog from "./PaymentDialog";
 import DeletePaymentDialog from "./DeletePaymentDialog";
 import { printPaymentReceipt } from "./printPaymentReceipt";
 import { getPayments } from "../../services/api/payments";
-import { getBranches } from "../../services/api/branches";
 import useSWR from "swr";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -72,7 +71,6 @@ export default function PaymentsPage() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("");
-  const [branchFilter, setBranchFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -81,7 +79,6 @@ export default function PaymentsPage() {
     startDate: null,
     endDate: null,
     paymentMethod: "",
-    branchId: "",
     search: "",
   });
 
@@ -90,7 +87,6 @@ export default function PaymentsPage() {
       startDate: startDate ? startDate.toISOString().split("T")[0] : null,
       endDate: endDate ? endDate.toISOString().split("T")[0] : null,
       paymentMethod: paymentMethodFilter,
-      branchId: branchFilter,
       search: searchQuery,
     });
     setCurrentPage(1);
@@ -104,7 +100,6 @@ export default function PaymentsPage() {
       startDate: appliedFilters.startDate || undefined,
       endDate: appliedFilters.endDate || undefined,
       paymentMethod: appliedFilters.paymentMethod || undefined,
-      branchId: appliedFilters.branchId || undefined,
       search: appliedFilters.search || undefined,
     };
     return ["payments", JSON.stringify(params)];
@@ -132,12 +127,6 @@ export default function PaymentsPage() {
     total: 0,
     totalAmount: 0,
   };
-
-  // Fetch branches for filter dropdown
-  const { data: branchesData } = useSWR("branches", getBranches, {
-    revalidateOnFocus: false,
-  });
-  const branches = branchesData?.data || [];
 
   // Handlers
   const handleView = (payment) => {
@@ -191,13 +180,11 @@ export default function PaymentsPage() {
     setStartDate(null);
     setEndDate(null);
     setPaymentMethodFilter("");
-    setBranchFilter("");
     setSearchQuery("");
     setAppliedFilters({
       startDate: null,
       endDate: null,
       paymentMethod: "",
-      branchId: "",
       search: "",
     });
     setCurrentPage(1);
@@ -207,7 +194,6 @@ export default function PaymentsPage() {
     appliedFilters.startDate ||
     appliedFilters.endDate ||
     appliedFilters.paymentMethod ||
-    appliedFilters.branchId ||
     appliedFilters.search;
 
   // Format helpers
@@ -328,30 +314,6 @@ export default function PaymentsPage() {
                 {PAYMENT_METHODS.map((m) => (
                   <SelectItem key={m.value} value={m.value}>
                     {isArabic ? m.labelAr : m.labelEn}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Branch Filter */}
-            <Select
-              value={branchFilter}
-              onValueChange={(val) =>
-                setBranchFilter(val === "all" ? "" : val)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={isArabic ? "جميع الفروع" : "All Branches"}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {isArabic ? "جميع الفروع" : "All Branches"}
-                </SelectItem>
-                {branches.map((branch) => (
-                  <SelectItem key={branch.id} value={String(branch.id)}>
-                    {isArabic ? branch.name_ar : branch.name_en}
                   </SelectItem>
                 ))}
               </SelectContent>

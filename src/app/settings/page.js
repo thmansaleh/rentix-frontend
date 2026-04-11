@@ -3,6 +3,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   Settings2, 
+  Settings,
   User, 
   Shield, 
   Palette, 
@@ -82,6 +83,15 @@ const SettingsPage = () => {
       href: '/settings/branches',
       color: 'text-teal-600',
       bgColor: 'bg-teal-50 dark:bg-teal-950'
+    },
+    {
+      id: 'branch-settings',
+      title: language === 'ar' ? 'إعدادات الفروع' : 'Branch Settings',
+      description: language === 'ar' ? 'إدارة إعدادات كل فرع (سالك، المرور، الرقم الضريبي)' : 'Manage per-branch settings (Salik, Traffic, TRN)',
+      icon: Settings,
+      href: '/settings/branch-settings',
+      color: 'text-cyan-600',
+      bgColor: 'bg-cyan-50 dark:bg-cyan-950'
     },
     {
       id: 'performance',

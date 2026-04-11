@@ -49,3 +49,21 @@ export const createExpenseCategory = async (categoryData) => {
   const response = await api.post("/expenses/categories", categoryData);
   return response.data;
 };
+
+// Get expense attachments
+export const getExpenseAttachments = async (expenseId) => {
+  const response = await api.get(`/expenses/${expenseId}/attachments`);
+  return response.data;
+};
+
+// Add expense attachment
+export const addExpenseAttachment = async (expenseId, attachmentData) => {
+  const response = await api.post(`/expenses/${expenseId}/attachments`, attachmentData);
+  return response.data;
+};
+
+// Delete expense attachment
+export const deleteExpenseAttachment = async (attachmentId) => {
+  const response = await api.delete(`/expenses/attachments/${attachmentId}`);
+  return response.data;
+};

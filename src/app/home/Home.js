@@ -17,64 +17,36 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/* ─── Stat Card ─────────────────────────────────────────────────────────── */
-function StatCard({ label, value, icon: Icon, color, bg, accent }) {
+/* ─── Section Card ───────────────────────────────────────────────────────── */
+function SectionCard({ title, icon: Icon, iconBg, iconColor, gradientFrom, gradientTo, primaryLabel, primaryValue, primaryColor, stats }) {
   return (
-    <div
-      className="group relative flex flex-col gap-4 p-5 rounded-2xl bg-card border border-border/50
-                 hover:shadow-xl hover:border-border hover:-translate-y-1 transition-all duration-200 overflow-hidden cursor-default"
-    >
-      {/* Ambient corner glow */}
-      <div className={`absolute -top-5 -right-5 h-20 w-20 rounded-full ${bg} blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-300`} />
-
-      {/* Icon */}
-      <div className={`relative w-fit p-2.5 rounded-xl ${bg} group-hover:scale-110 transition-transform duration-200`}>
-        <Icon className={`h-5 w-5 ${color}`} />
+    <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm flex flex-col">
+      {/* Header */}
+      <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/50 bg-muted/20">
+        <div className={`p-1.5 rounded-lg ${iconBg}`}>
+          <Icon className={`h-4 w-4 ${iconColor}`} />
+        </div>
+        <p className="text-sm font-semibold text-foreground">{title}</p>
       </div>
 
-      {/* Value + label */}
-      <div className="relative">
-        <p className="text-2xl font-black text-foreground tabular-nums leading-none tracking-tight">
-          {value}
-        </p>
-        <p className="mt-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide leading-snug line-clamp-2">
-          {label}
-        </p>
-      </div>
-
-      {/* Bottom sliding accent bar */}
-      <div className={`absolute bottom-0 left-0 h-[2px] ${accent} w-0 group-hover:w-full transition-all duration-300 rounded-full`} />
-    </div>
-  );
-}
-
-/* ─── Section ────────────────────────────────────────────────────────────── */
-function Section({ title, cards, index }) {
-  const sectionStyles = [
-    { accent: "bg-blue-500",    badge: "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300",       dot: "bg-blue-500" },
-    { accent: "bg-orange-500",  badge: "bg-orange-50 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300",   dot: "bg-orange-500" },
-    { accent: "bg-emerald-500", badge: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300", dot: "bg-emerald-500" },
-    { accent: "bg-cyan-500",    badge: "bg-cyan-50 text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300",       dot: "bg-cyan-500" },
-    { accent: "bg-slate-500",   badge: "bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300",    dot: "bg-slate-500" },
-  ];
-  const style = sectionStyles[index % sectionStyles.length];
-
-  return (
-    <div className="space-y-3">
-      {/* Section header */}
-      <div className="flex items-center gap-3 px-0.5">
-        <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${style.badge}`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
-          {title}
-        </span>
-        <div className="flex-1 h-px bg-border/40" />
-      </div>
-
-      {/* Cards grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {cards.map((card, i) => (
-          <StatCard key={i} {...card} accent={style.accent} />
-        ))}
+      <div className="flex flex-col gap-3 px-5 py-4 flex-1">
+        <div className="flex items-center gap-4">
+          <div className={`shrink-0 h-14 w-14 rounded-2xl bg-gradient-to-br ${gradientFrom} ${gradientTo} flex items-center justify-center shadow-md`}>
+            <Icon className="h-6 w-6 text-white" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-muted-foreground mb-0.5">{primaryLabel}</p>
+            <p className={`text-2xl font-bold ${primaryColor} leading-tight tracking-tight`}>{primaryValue}</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/40">
+          {stats.map((stat, i) => (
+            <div key={i} className={`text-center ${i > 0 ? "border-l border-border/40" : ""}`}>
+              <p className={`text-base font-bold ${stat.color || ""}`}>{stat.value}</p>
+              <p className="text-xs text-muted-foreground leading-snug mt-0.5">{stat.label}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -329,6 +301,55 @@ function FinesSection({ isRTL, finesData, loading, error, onRefresh }) {
   );
 }
 
+/* ─── Cars Section ──────────────────────────────────────────────────────── */
+function CarsSection({ isRTL, carsData, t }) {
+  const total = carsData?.total || 0;
+  const rented = carsData?.rented || 0;
+  const available = carsData?.available || 0;
+  const maintenance = carsData?.maintenance || 0;
+
+  return (
+    <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm flex flex-col">
+      {/* Header */}
+      <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/50 bg-muted/20">
+        <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/60">
+          <Car className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+        </div>
+        <p className="text-sm font-semibold text-foreground">{t("dashboard.sections.cars")}</p>
+        <span className="ms-auto text-sm font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
+          {total}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-3 px-5 py-4 flex-1">
+        <div className="flex items-center gap-4">
+          <div className="shrink-0 h-14 w-14 rounded-2xl bg-gradient-to-br from-slate-500 to-slate-700 flex items-center justify-center shadow-md">
+            <Car className="h-6 w-6 text-white" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-muted-foreground mb-0.5">{t("dashboard.totalCars")}</p>
+            <p className="text-2xl font-bold text-slate-700 dark:text-slate-300 leading-tight tracking-tight">{total}</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/40">
+          <div className="text-center">
+            <p className="text-base font-bold text-blue-600">{rented}</p>
+            <p className="text-sm text-muted-foreground">{t("dashboard.rentedCars")}</p>
+          </div>
+          <div className="text-center border-x border-border/40">
+            <p className="text-base font-bold text-emerald-600">{available}</p>
+            <p className="text-sm text-muted-foreground">{t("dashboard.availableCars")}</p>
+          </div>
+          <div className="text-center">
+            <p className="text-base font-bold text-amber-600">{maintenance}</p>
+            <p className="text-sm text-muted-foreground">{t("dashboard.maintenanceCars")}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Home ───────────────────────────────────────────────────────────────── */
 function Home() {
   const { t } = useTranslations();
@@ -435,66 +456,34 @@ function Home() {
     </div>
   );
 
-  const sections = [
-    {
-      title: t("dashboard.sections.clientsContracts"),
-      cards: [
-        { label: t("dashboard.totalClients"), value: stats?.clients?.total || 0, icon: Users, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-950" },
-        { label: t("dashboard.totalContracts"), value: stats?.contracts?.total || 0, icon: FileText, color: "text-indigo-600", bg: "bg-indigo-50 dark:bg-indigo-950" },
-        { label: t("dashboard.activeContracts"), value: stats?.contracts?.active || 0, icon: FileCheck, color: "text-green-600", bg: "bg-green-50 dark:bg-green-950" },
-        { label: t("dashboard.contractsThisMonth"), value: stats?.contracts?.thisMonth || 0, icon: CalendarDays, color: "text-purple-600", bg: "bg-purple-50 dark:bg-purple-950" },
-      ],
-    },
-    {
-      title: t("dashboard.sections.invoices"),
-      cards: [
-        { label: t("dashboard.totalInvoices"), value: stats?.invoices?.total || 0, icon: Receipt, color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-950" },
-        { label: t("dashboard.paidInvoices"), value: stats?.invoices?.paid || 0, icon: CircleCheck, color: "text-green-600", bg: "bg-green-50 dark:bg-green-950" },
-        { label: t("dashboard.unpaidInvoices"), value: stats?.invoices?.unpaid || 0, icon: CircleX, color: "text-red-600", bg: "bg-red-50 dark:bg-red-950" },
-        { label: t("dashboard.invoicesPaidAmount"), value: formatCurrency(stats?.invoices?.paidAmount), icon: CircleDollarSign, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950" },
-      ],
-    },
-    {
-      title: t("dashboard.sections.payments"),
-      cards: [
-        { label: t("dashboard.totalPaymentsAmount"), value: formatCurrency(stats?.payments?.totalAmount), icon: BadgeDollarSign, color: "text-green-600", bg: "bg-green-50 dark:bg-green-950" },
-        { label: t("dashboard.totalCash"), value: formatCurrency(stats?.payments?.totalCash), icon: Banknote, color: "text-teal-600", bg: "bg-teal-50 dark:bg-teal-950" },
-        { label: t("dashboard.totalCredit"), value: formatCurrency(stats?.payments?.totalCredit), icon: CreditCard, color: "text-violet-600", bg: "bg-violet-50 dark:bg-violet-950" },
-        { label: t("dashboard.incomeToday"), value: formatCurrency(stats?.income?.today), icon: ArrowUpRight, color: "text-lime-600", bg: "bg-lime-50 dark:bg-lime-950" },
-      ],
-    },
-    {
-      title: t("dashboard.sections.income"),
-      cards: [
-        { label: t("dashboard.incomeThisMonth"), value: formatCurrency(stats?.income?.thisMonth), icon: TrendingUp, color: "text-cyan-600", bg: "bg-cyan-50 dark:bg-cyan-950" },
-        { label: t("dashboard.expensesThisMonth"), value: formatCurrency(stats?.expenses?.thisMonth), icon: ArrowDownRight, color: "text-red-600", bg: "bg-red-50 dark:bg-red-950" },
-        { label: t("dashboard.expensesToday"), value: formatCurrency(stats?.expenses?.today), icon: Clock, color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-950" },
-        { label: t("dashboard.totalExpenses"), value: formatCurrency(stats?.expenses?.total), icon: DollarSign, color: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-950" },
-      ],
-    },
-    {
-      title: t("dashboard.sections.cars"),
-      cards: [
-        { label: t("dashboard.totalCars"), value: stats?.cars?.total || 0, icon: Car, color: "text-slate-600", bg: "bg-slate-50 dark:bg-slate-950" },
-        { label: t("dashboard.rentedCars"), value: stats?.cars?.rented || 0, icon: CarFront, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-950" },
-        { label: t("dashboard.availableCars"), value: stats?.cars?.available || 0, icon: CircleCheck, color: "text-green-600", bg: "bg-green-50 dark:bg-green-950" },
-        { label: t("dashboard.maintenanceCars"), value: stats?.cars?.maintenance || 0, icon: Wrench, color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-950" },
-      ],
-    },
-  ];
+
 
   return (
     <div className="p-4 space-y-5">
       {/* Header */}
       <h1 className="text-base font-semibold text-foreground">{t("dashboard.title")}</h1>
  {/* Accounts: Bank + Cash + Salik side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <BankAccountsSection
-          title={t("dashboard.sections.bankAccounts")}
-          accounts={stats?.bankAccounts}
-          noDataLabel={t("dashboard.noBankAccounts")}
-          formatCurrency={formatCurrency}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+           <CarsSection
+          isRTL={language === "ar"}
+          carsData={stats?.cars}
           t={t}
+        />
+       <SectionCard
+          title={t("dashboard.sections.clientsContracts")}
+          icon={Users}
+          iconBg="bg-blue-100 dark:bg-blue-900/40"
+          iconColor="text-blue-600 dark:text-blue-400"
+          gradientFrom="from-blue-500"
+          gradientTo="to-indigo-600"
+          primaryLabel={t("dashboard.totalClients")}
+          primaryValue={stats?.clients?.total || 0}
+          primaryColor="text-blue-700 dark:text-blue-300"
+          stats={[
+            { label: t("dashboard.totalContracts"), value: stats?.contracts?.total || 0 },
+            { label: t("dashboard.activeContracts"), value: stats?.contracts?.active || 0, color: "text-emerald-600" },
+            { label: t("dashboard.contractsThisMonth"), value: stats?.contracts?.thisMonth || 0, color: "text-purple-600" },
+          ]}
         />
         <CashSection
           title={t("dashboard.sections.cash")}
@@ -511,23 +500,77 @@ function Home() {
           error={salikError}
           onRefresh={mutateSalik}
         />
-      <FinesSection
-        isRTL={language === "ar"}
-        finesData={finesData}
-        loading={finesLoading}
-        error={finesError}
-        onRefresh={mutateFines}
-      />
+        <FinesSection
+          isRTL={language === "ar"}
+          finesData={finesData}
+          loading={finesLoading}
+          error={finesError}
+          onRefresh={mutateFines}
+        />
+     
       </div>
 
    
 
   {/* Stat Sections */}
-<div className="space-y-6">
-  {sections.map((section, i) => (
-    <Section key={i} index={i} {...section} />
-  ))}
-</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+       
+          <BankAccountsSection
+          title={t("dashboard.sections.bankAccounts")}
+          accounts={stats?.bankAccounts}
+          noDataLabel={t("dashboard.noBankAccounts")}
+          formatCurrency={formatCurrency}
+          t={t}
+        />
+        <SectionCard
+          title={t("dashboard.sections.invoices")}
+          icon={Receipt}
+          iconBg="bg-orange-100 dark:bg-orange-900/40"
+          iconColor="text-orange-600 dark:text-orange-400"
+          gradientFrom="from-orange-400"
+          gradientTo="to-amber-600"
+          primaryLabel={t("dashboard.invoicesPaidAmount")}
+          primaryValue={formatCurrency(stats?.invoices?.paidAmount)}
+          primaryColor="text-orange-700 dark:text-orange-300"
+          stats={[
+            { label: t("dashboard.totalInvoices"), value: stats?.invoices?.total || 0 },
+            { label: t("dashboard.paidInvoices"), value: stats?.invoices?.paid || 0, color: "text-emerald-600" },
+            { label: t("dashboard.unpaidInvoices"), value: stats?.invoices?.unpaid || 0, color: "text-red-600" },
+          ]}
+        />
+        <SectionCard
+          title={t("dashboard.sections.payments")}
+          icon={BadgeDollarSign}
+          iconBg="bg-emerald-100 dark:bg-emerald-900/40"
+          iconColor="text-emerald-600 dark:text-emerald-400"
+          gradientFrom="from-emerald-400"
+          gradientTo="to-green-600"
+          primaryLabel={t("dashboard.totalPaymentsAmount")}
+          primaryValue={formatCurrency(stats?.payments?.totalAmount)}
+          primaryColor="text-emerald-700 dark:text-emerald-300"
+          stats={[
+            { label: t("dashboard.totalCash"), value: formatCurrency(stats?.payments?.totalCash), color: "text-teal-600" },
+            { label: t("dashboard.totalCredit"), value: formatCurrency(stats?.payments?.totalCredit), color: "text-violet-600" },
+            { label: t("dashboard.incomeToday"), value: formatCurrency(stats?.income?.today), color: "text-lime-600" },
+          ]}
+        />
+        <SectionCard
+          title={t("dashboard.sections.income")}
+          icon={TrendingUp}
+          iconBg="bg-cyan-100 dark:bg-cyan-900/40"
+          iconColor="text-cyan-600 dark:text-cyan-400"
+          gradientFrom="from-cyan-400"
+          gradientTo="to-blue-600"
+          primaryLabel={t("dashboard.incomeThisMonth")}
+          primaryValue={formatCurrency(stats?.income?.thisMonth)}
+          primaryColor="text-cyan-700 dark:text-cyan-300"
+          stats={[
+            { label: t("dashboard.expensesThisMonth"), value: formatCurrency(stats?.expenses?.thisMonth), color: "text-red-600" },
+            { label: t("dashboard.expensesToday"), value: formatCurrency(stats?.expenses?.today), color: "text-orange-600" },
+            { label: t("dashboard.totalExpenses"), value: formatCurrency(stats?.expenses?.total), color: "text-rose-600" },
+          ]}
+        />
+      </div>
 
      
 

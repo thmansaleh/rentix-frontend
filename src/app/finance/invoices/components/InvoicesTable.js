@@ -16,6 +16,7 @@ import {
 import { useTranslations } from "@/hooks/useTranslations";
 import { deleteInvoice } from "@/app/services/api/invoices";
 import { getTenantSettings } from "@/app/services/api/tenantSettings";
+import { getAllBranchSettings } from "@/app/services/api/branchSettings";
 import { formatAmount, formatDateShort } from "../utils/formatters";
 import { getStatusLabel, getStatusVariant } from "../utils/helpers";
 import { printInvoice } from "../utils/printInvoice";
@@ -30,6 +31,7 @@ const InvoicesTable = forwardRef(function InvoicesTable(
   const t = useTranslations("invoices");
 
   const [companySettings, setCompanySettings] = useState(null);
+  const [branchSettingsMap, setBranchSettingsMap] = useState({});
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
@@ -41,6 +43,13 @@ const InvoicesTable = forwardRef(function InvoicesTable(
     getTenantSettings().then((res) => {
       if (res.success) setCompanySettings(res.data);
     });
+    getAllBranchSettings().then((res) => {
+      if (res.success && res.data) {
+        const map = {};
+        res.data.forEach((bs) => { map[bs.branch_id] = bs; });
+        setBranchSettingsMap(map);
+      }
+    }).catch(() => {});
   }, []);
 
   useImperativeHandle(ref, () => ({
@@ -51,7 +60,11 @@ const InvoicesTable = forwardRef(function InvoicesTable(
   }));
 
   const handlePrint = (invoice) => {
-    printInvoice(invoice, { isRTL, language, t, companySettings });
+    const branchTrn = branchSettingsMap[invoice.branch_id]?.trn_number;
+    const settings = branchTrn
+      ? { ...companySettings, trn_number: branchTrn }
+      : companySettings;
+    printInvoice(invoice, { isRTL, language, t, companySettings: settings });
   };
 
   const handleView = (invoiceId) => {

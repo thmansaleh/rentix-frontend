@@ -18,6 +18,14 @@ export const getContractsByCarId = async (carId) => {
   return response.data;
 };
 
+// Get customer who was using a car on a specific date (for fine attribution)
+export const getCustomerByPlateAndDate = async (plateNo, plateCode, date) => {
+  const response = await api.get('/contracts/by-plate-date', {
+    params: { plateNo, plateCode, date },
+  });
+  return response.data;
+};
+
 // Get contract by ID
 export const getContractById = async (id) => {
   const response = await api.get(`/contracts/${id}`);

@@ -57,6 +57,7 @@ export async function printPaymentReceipt(paymentId) {
   const companyAddressEn = companySettings?.address_en       || "";
   const companyCR       = companySettings?.commercial_register || "";
   const companyVAT      = companySettings?.vat_number        || "";
+  const companyTRN      = companySettings?.trn_number         || "";
 
   const logoHtml = logoUrl
     ? `<img src="${logoUrl}" alt="Logo" class="logo" />`
@@ -101,39 +102,52 @@ export async function printPaymentReceipt(paymentId) {
 
     /* ══ HEADER ══ */
     .header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #111827;
+      margin-bottom: 24px;
+    }
+    .header-left {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding-bottom: 14px;
-      border-bottom: 3px double #000;
-      margin-bottom: 16px;
+      flex-direction: column;
+      gap: 4px;
     }
-    .logo {
-      max-height: 52px;
-      max-width: 140px;
-      object-fit: contain;
-      display: block;
-      margin-bottom: 6px;
-    }
-    .co-name-en {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-    .co-name-ar {
-      font-size: 15px;
-      font-weight: 700;
-      direction: rtl;
-    }
-    .co-sub {
-      font-size: 9.5px;
-      color: #444;
-      margin-top: 3px;
-      line-height: 1.7;
+    .header-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
     .header-right {
       text-align: right;
-      direction: rtl;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .logo {
+      max-height: 72px;
+      max-width: 180px;
+      object-fit: contain;
+    }
+    .co-name-en {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .co-name-ar {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      font-family: 'Segoe UI', Tahoma, 'Arial', sans-serif;
+    }
+    .co-sub {
+      font-size: 10.5px;
+      color: #6b7280;
+      line-height: 1.6;
     }
 
     /* ══ TITLE BAND ══ */
@@ -403,20 +417,24 @@ export async function printPaymentReceipt(paymentId) {
   <!-- ══ HEADER ══ -->
   <div class="header">
     <div class="header-left">
-      ${logoHtml}
       ${companyNameEn ? `<div class="co-name-en">${companyNameEn}</div>` : ""}
       <div class="co-sub">
-        ${companyPhone    ? `Tel: ${companyPhone}<br/>`  : ""}
-        ${companyEmail    ? `${companyEmail}<br/>`       : ""}
-        ${companyAddressEn ? `${companyAddressEn}`       : ""}
+        ${companyPhone     ? `Tel: ${companyPhone}<br/>`   : ""}
+        ${companyEmail     ? `${companyEmail}<br/>`        : ""}
+        ${companyAddressEn ? `${companyAddressEn}<br/>`    : ""}
+        ${companyTRN       ? `TRN: ${companyTRN}`         : ""}
       </div>
+    </div>
+    <div class="header-center">
+      ${logoHtml}
     </div>
     <div class="header-right">
       ${companyNameAr ? `<div class="co-name-ar">${companyNameAr}</div>` : ""}
       <div class="co-sub" style="direction:rtl; text-align:right;">
-        ${companyPhone     ? `هاتف: ${companyPhone}<br/>` : ""}
-        ${companyEmail     ? `${companyEmail}<br/>`        : ""}
-        ${companyAddressAr ? `${companyAddressAr}`         : ""}
+        ${companyPhone     ? `هاتف: ${companyPhone}<br/>`          : ""}
+        ${companyEmail     ? `${companyEmail}<br/>`                 : ""}
+        ${companyAddressAr ? `${companyAddressAr}<br/>`             : ""}
+        ${companyTRN       ? `الرقم الضريبي: ${companyTRN}`        : ""}
       </div>
     </div>
   </div>

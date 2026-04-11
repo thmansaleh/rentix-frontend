@@ -186,6 +186,13 @@ export const appLinks = [
     keywords: { ar: ['فروع', 'فرع', 'مكاتب', 'مواقع'], en: ['branches', 'offices', 'locations'] }
   },
   {
+    id: 'settings-branch-settings',
+    label: { ar: 'إعدادات الفروع', en: 'Branch Settings' },
+    route: '/settings/branch-settings',
+    category: { ar: 'الإعدادات', en: 'Settings' },
+    keywords: { ar: ['سالك', 'مرور', 'ضريبي', 'إعدادات فرع'], en: ['salik', 'traffic', 'trn', 'branch settings'] }
+  },
+  {
     id: 'settings-rental-terms',
     label: { ar: 'شروط الإيجار', en: 'Rental Terms' },
     route: '/settings/rental-terms',

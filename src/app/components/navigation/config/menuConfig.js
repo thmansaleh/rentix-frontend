@@ -119,6 +119,7 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
         { id: 'settings/company', label: t('navigation.company'), icon: Building2 },
         { id: 'settings/appearance', label: t('navigation.appearance'), icon: Palette },
         { id: 'settings/branches', label: t('navigation.branches'), icon: Building2 },
+        { id: 'settings/branch-settings', label: t('navigation.branchSettings'), icon: Settings2 },
         { id: 'settings/rental-terms', label: t('navigation.rentalTerms'), icon: ScrollText },
         { id: 'settings/assets', label: t('navigation.assets'), icon: Package },
 

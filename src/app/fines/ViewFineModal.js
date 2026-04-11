@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui/custom-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,8 +22,11 @@ import {
   FileWarning,
   ShieldAlert,
   CalendarClock,
+  User,
+  Loader2,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getCustomerByPlateAndDate } from "@/app/services/api/contracts";
 
 const BENEFICIARY_AR = {
   "Dubai Police": "شرطة دبي",
@@ -67,6 +71,26 @@ const FINE_TYPE_AR = {
 export function ViewFineModal({ isOpen, onClose, ticket, confiscatedInfo }) {
   const { language } = useLanguage();
   const isRTL = language === "ar";
+
+  const [customerInfo, setCustomerInfo] = useState(null);
+  const [customerLoading, setCustomerLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen || !ticket?.plateNo || !ticket?.ticketDate) {
+      setCustomerInfo(null);
+      return;
+    }
+    // ticketDate comes as "DD/MM/YYYY", convert to "YYYY-MM-DD"
+    const parts = ticket.ticketDate.split("/");
+    const isoDate = parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : ticket.ticketDate;
+
+    setCustomerLoading(true);
+    setCustomerInfo(null);
+    getCustomerByPlateAndDate(ticket.plateNo, ticket.plateCode || null, isoDate)
+      .then((res) => setCustomerInfo(res?.data || null))
+      .catch(() => setCustomerInfo(null))
+      .finally(() => setCustomerLoading(false));
+  }, [isOpen, ticket?.plateNo, ticket?.plateCode, ticket?.ticketDate]);
 
   const getBeneficiary = (name) => {
     if (!name) return "-";
@@ -340,6 +364,47 @@ export function ViewFineModal({ isOpen, onClose, ticket, confiscatedInfo }) {
               <ExternalLink className="w-4 h-4 text-blue-400 group-hover:text-blue-600 dark:group-hover:text-blue-300 shrink-0 transition-colors" />
             </a>
           )}
+
+          {/* Customer at time of fine */}
+          <div className="rounded-xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-950/30 p-4">
+            <div className="flex gap-3 items-center">
+              <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg shrink-0">
+                <User className="w-4 h-4 text-indigo-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-indigo-400 mb-1">
+                  {isRTL ? "العميل المستخدم للسيارة يوم المخالفة" : "Customer Using Car on Fine Date"}
+                </p>
+                {customerLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                    <span className="text-sm text-indigo-400">{isRTL ? "جارٍ البحث..." : "Looking up…"}</span>
+                  </div>
+                ) : customerInfo ? (
+                  <div className="flex flex-wrap gap-x-5 gap-y-1">
+                    <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                      {customerInfo.customer_name}
+                    </span>
+                    {customerInfo.customer_phone && (
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        {customerInfo.customer_phone}
+                      </span>
+                    )}
+                    {customerInfo.contract_number && (
+                      <span className="text-xs text-indigo-500 dark:text-indigo-400">
+                        {isRTL ? "عقد رقم: " : "Contract: "}
+                        <span className="font-semibold">{customerInfo.contract_number}</span>
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                    {isRTL ? "لا يوجد عقد إيجار مسجل في هذا التاريخ" : "No rental contract found for this date"}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
 
         </div>
       </CustomModalBody>
