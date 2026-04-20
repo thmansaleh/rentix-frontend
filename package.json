@@ -54,6 +54,7 @@
     "react-big-calendar": "^1.19.4",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.0.0",
+    "react-phone-input-2": "^2.15.1",
     "react-pro-sidebar": "^1.1.0",
     "react-redux": "^9.2.0",
     "react-toastify": "^11.0.5",

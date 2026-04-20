@@ -18,6 +18,7 @@ import { uploadFiles } from "../../../utils/fileUpload";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { CountryCombobox } from "@/components/ui/country-combobox";
+import { PhoneInputField } from "@/components/ui/phone-input";
 
 export function AddClientModal({ isOpen, onClose, onSuccess }) {
   const { t } = useTranslations();
@@ -51,7 +52,17 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
 
   const validationSchema = Yup.object({
     full_name: Yup.string().required(t('clients.add.validation.fullNameRequired')),
-    phone: Yup.string().required(t('clients.add.validation.phoneRequired')),
+    phone: Yup.string()
+      .required(t('clients.add.validation.phoneRequired'))
+      .test('phone-format', t('clients.add.validation.phoneInvalid') || 'Invalid phone number', (value) => {
+        if (!value) return false;
+        if (value.startsWith('971')) {
+          // UAE: dial code 971 + exactly 9 digits, local part must NOT start with 0
+          return /^971[1-9]\d{8}$/.test(value);
+        }
+        // Other countries: 7–15 digits per ITU-T E.164
+        return /^\d{7,15}$/.test(value);
+      }),
     email: Yup.string().email(t('clients.add.validation.emailInvalid')).nullable()
   });
 
@@ -220,11 +231,9 @@ export function AddClientModal({ isOpen, onClose, onSuccess }) {
                       <Label htmlFor="phone">
                         {t('clients.add.fields.phone')} <span className="text-red-500">*</span>
                       </Label>
-                      <Field
-                        as={Input}
-                        id="phone"
-                        name="phone"
-                        placeholder={t('clients.add.fields.phonePlaceholder')}
+                      <PhoneInputField
+                        value={values.phone}
+                        onChange={(phone) => setFieldValue('phone', phone)}
                       />
                       <ErrorMessage name="phone" component="p" className="text-red-500 text-xs" />
                     </div>

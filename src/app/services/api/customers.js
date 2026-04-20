@@ -7,6 +7,13 @@ export const getCustomers = async (search = '', params = {}) => {
   return response.data;
 };
 
+// Get blocked (blacklisted) customers
+export const getBlockedCustomers = async (search = '', params = {}) => {
+  const queryParams = search ? { search, ...params } : { ...params };
+  const response = await api.get("/customers/blocked", { params: queryParams });
+  return response.data;
+};
+
 // Get customer by ID
 export const getCustomerById = async (id) => {
   const response = await api.get(`/customers/${id}`);

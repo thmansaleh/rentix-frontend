@@ -17,6 +17,7 @@ import { uploadFiles } from "../../../utils/fileUpload";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { CountryCombobox } from "@/components/ui/country-combobox";
+import { PhoneInputField } from "@/components/ui/phone-input";
 
 export function EditClientModal({ isOpen, onClose, onSuccess, customerId }) {
   const { t } = useTranslations();
@@ -66,7 +67,15 @@ export function EditClientModal({ isOpen, onClose, onSuccess, customerId }) {
 
   const validationSchema = Yup.object({
     full_name: Yup.string().required(t('clients.edit.validation.fullNameRequired')),
-    phone: Yup.string().required(t('clients.edit.validation.phoneRequired')),
+    phone: Yup.string()
+      .required(t('clients.edit.validation.phoneRequired'))
+      .test('phone-format', t('clients.edit.validation.phoneInvalid') || 'Invalid phone number', (value) => {
+        if (!value) return false;
+        if (value.startsWith('971')) {
+          return /^971[1-9]\d{8}$/.test(value);
+        }
+        return /^\d{7,15}$/.test(value);
+      }),
     email: Yup.string().email(t('clients.edit.validation.emailInvalid')).nullable()
   });
 
@@ -294,11 +303,9 @@ export function EditClientModal({ isOpen, onClose, onSuccess, customerId }) {
                         <Label htmlFor="phone">
                           {t('clients.edit.fields.phone')} <span className="text-red-500">*</span>
                         </Label>
-                        <Field
-                          as={Input}
-                          id="phone"
-                          name="phone"
-                          placeholder={t('clients.edit.fields.phonePlaceholder')}
+                        <PhoneInputField
+                          value={values.phone}
+                          onChange={(phone) => setFieldValue('phone', phone)}
                         />
                         <ErrorMessage name="phone" component="p" className="text-red-500 text-xs" />
                       </div>

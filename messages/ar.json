@@ -98,6 +98,8 @@
     "expenses": "المصاريف",
     "cars": "إدارة السيارات",
     "customers": "العملاء",
+    "blockedClients": "العملاء المحظورون",
+    "allClients": "جميع العملاء",
     "contracts": "العقود",
     "accidents": "الحوادث",
     "fines": "المخالفات المرورية",
@@ -1630,6 +1632,13 @@
       }
     }
   },
+  "blockedClients": {
+    "title": "العملاء المحظورون",
+    "subtitle": "العملاء الذين تم حظرهم",
+    "noBlockedClients": "لا يوجد عملاء محظورون",
+    "totalBlocked": "إجمالي المحظورين",
+    "failedToLoad": "فشل في تحميل العملاء المحظورين"
+  },
   "clients": {
     "title": "العملاء",
     "subtitle": "إدارة قاعدة بيانات العملاء",
@@ -1713,6 +1722,7 @@
       "validation": {
         "fullNameRequired": "الاسم الكامل مطلوب",
         "phoneRequired": "رقم الهاتف مطلوب",
+        "phoneInvalid": "رقم الهاتف غير صحيح (الإمارات: 9 أرقام بعد 971، بدون صفر في البداية)",
         "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة",
         "branchRequired": "الفرع مطلوب"
       }
@@ -1845,6 +1855,7 @@
       "validation": {
         "fullNameRequired": "الاسم الكامل مطلوب",
         "phoneRequired": "رقم الهاتف مطلوب",
+        "phoneInvalid": "رقم الهاتف غير صحيح (الإمارات: 9 أرقام بعد 971، بدون صفر في البداية)",
         "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة",
         "branchRequired": "الفرع مطلوب"
       }
@@ -2012,6 +2023,8 @@
     "retry": "إعادة المحاولة",
     "sections": {
       "clientsContracts": "العملاء والعقود",
+      "clients": "العملاء",
+      "contracts": "العقود",
       "invoices": "الفواتير",
       "payments": "المدفوعات",
       "income": "الدخل والمصاريف",
@@ -2020,6 +2033,8 @@
       "cash": "صندوق النقد"
     },
     "totalClients": "إجمالي العملاء",
+    "blockedClients": "محظورون",
+    "clientsThisMonth": "هذا الشهر",
     "totalContracts": "إجمالي العقود",
     "activeContracts": "العقود النشطة",
     "contractsThisMonth": "عقود هذا الشهر",

@@ -42,8 +42,8 @@ function SectionCard({ title, icon: Icon, iconBg, iconColor, gradientFrom, gradi
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/40">
           {stats.map((stat, i) => (
             <div key={i} className={`text-center ${i > 0 ? "border-l border-border/40" : ""}`}>
-              <p className={`text-base font-bold ${stat.color || ""}`}>{stat.value}</p>
-              <p className="text-xs text-muted-foreground leading-snug mt-0.5">{stat.label}</p>
+              <p className={`text-base font-bold !text-center ${stat.color || ""}`}>{stat.value}</p>
+              <p className="text-xs text-muted-foreground leading-snug mt-0.5 !text-center">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -283,16 +283,16 @@ function FinesSection({ isRTL, finesData, loading, error, onRefresh }) {
           </div>
           <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/40">
             <div className="text-center">
-              <p className="text-base font-bold ">{tickets.length}</p>
-              <p className="text-sm text-muted-foreground">{isRTL ? "إجمالي المخالفات" : "Total Tickets"}</p>
+              <p className="text-base font-bold !text-center ">{tickets.length}</p>
+              <p className="text-sm text-muted-foreground !text-center">{isRTL ? "إجمالي المخالفات" : "Total Tickets"}</p>
             </div>
             <div className="text-center border-x border-border/40">
-              <p className="text-base font-bold text-emerald-600">{payableCount}</p>
-              <p className="text-sm text-muted-foreground">{isRTL ? "قابلة للدفع" : "Payable"}</p>
+              <p className="text-base font-bold !text-center text-emerald-600">{payableCount}</p>
+              <p className="text-sm text-muted-foreground !text-center">{isRTL ? "قابلة للدفع" : "Payable"}</p>
             </div>
             <div className="text-center flex-col items-center justify-center">
-              <p className="text-base text-center font-bold text-red-600">{notPayableCount}</p>
-              <p className="text-sm text-muted-foreground">{isRTL ? "غير قابلة للدفع" : "Not Payable"}</p>
+              <p className="text-base  font-bold text-red-600 !text-center" >{notPayableCount}</p>
+              <p className="text-sm text-muted-foreground !text-center">{isRTL ? "غير قابلة للدفع" : "Not Payable"}</p>
             </div>
           </div>
         </div>
@@ -315,7 +315,7 @@ function CarsSection({ isRTL, carsData, t }) {
         <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/60">
           <Car className="h-4 w-4 text-slate-600 dark:text-slate-400" />
         </div>
-        <p className="text-sm font-semibold text-foreground">{t("dashboard.sections.cars")}</p>
+        <p className="text-sm  font-semibold text-foreground">{t("dashboard.sections.cars")}</p>
         <span className="ms-auto text-sm font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
           {total}
         </span>
@@ -331,18 +331,18 @@ function CarsSection({ isRTL, carsData, t }) {
             <p className="text-2xl font-bold text-slate-700 dark:text-slate-300 leading-tight tracking-tight">{total}</p>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/40">
+        <div className="grid grid-cols-3  gap-2 pt-2 border-t border-border/40">
           <div className="text-center">
-            <p className="text-base font-bold text-blue-600">{rented}</p>
-            <p className="text-sm text-muted-foreground">{t("dashboard.rentedCars")}</p>
+            <p className="text-base font-bold  !text-center text-blue-600">{rented}</p>
+            <p className="text-sm  !text-center text-muted-foreground">{t("dashboard.rentedCars")}</p>
           </div>
-          <div className="text-center border-x border-border/40">
-            <p className="text-base font-bold text-emerald-600">{available}</p>
-            <p className="text-sm text-muted-foreground">{t("dashboard.availableCars")}</p>
+          <div className="text-center border-x  border-border/40">
+            <p className="text-base font-bold !text-center text-emerald-600">{available}</p>
+            <p className="text-sm !text-center text-muted-foreground">{t("dashboard.availableCars")}</p>
           </div>
           <div className="text-center">
-            <p className="text-base font-bold text-amber-600">{maintenance}</p>
-            <p className="text-sm text-muted-foreground">{t("dashboard.maintenanceCars")}</p>
+            <p className="text-base font-bold !text-center text-amber-600">{maintenance}</p>
+            <p className="text-sm  !text-center text-muted-foreground">{t("dashboard.maintenanceCars")}</p>
           </div>
         </div>
       </div>
@@ -470,7 +470,7 @@ function Home() {
           t={t}
         />
        <SectionCard
-          title={t("dashboard.sections.clientsContracts")}
+          title={t("dashboard.sections.clients")}
           icon={Users}
           iconBg="bg-blue-100 dark:bg-blue-900/40"
           iconColor="text-blue-600 dark:text-blue-400"
@@ -479,6 +479,22 @@ function Home() {
           primaryLabel={t("dashboard.totalClients")}
           primaryValue={stats?.clients?.total || 0}
           primaryColor="text-blue-700 dark:text-blue-300"
+          stats={[
+            { label: t("dashboard.totalClients"), value: stats?.clients?.total || 0 },
+            { label: t("dashboard.blockedClients"), value: stats?.clients?.blocked || 0, color: "text-red-600" },
+            { label: t("dashboard.clientsThisMonth"), value: stats?.clients?.thisMonth || 0, color: "text-purple-600" },
+          ]}
+        />
+        <SectionCard
+          title={t("dashboard.sections.contracts")}
+          icon={FileText}
+          iconBg="bg-indigo-100 dark:bg-indigo-900/40"
+          iconColor="text-indigo-600 dark:text-indigo-400"
+          gradientFrom="from-indigo-500"
+          gradientTo="to-violet-600"
+          primaryLabel={t("dashboard.totalContracts")}
+          primaryValue={stats?.contracts?.total || 0}
+          primaryColor="text-indigo-700 dark:text-indigo-300"
           stats={[
             { label: t("dashboard.totalContracts"), value: stats?.contracts?.total || 0 },
             { label: t("dashboard.activeContracts"), value: stats?.contracts?.active || 0, color: "text-emerald-600" },
@@ -500,21 +516,21 @@ function Home() {
           error={salikError}
           onRefresh={mutateSalik}
         />
-        <FinesSection
-          isRTL={language === "ar"}
-          finesData={finesData}
-          loading={finesLoading}
-          error={finesError}
-          onRefresh={mutateFines}
-        />
+     
      
       </div>
 
    
 
   {/* Stat Sections */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-       
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <FinesSection
+          isRTL={language === "ar"}
+          finesData={finesData}
+          loading={finesLoading}
+          error={finesError}
+          onRefresh={mutateFines}
+        />
           <BankAccountsSection
           title={t("dashboard.sections.bankAccounts")}
           accounts={stats?.bankAccounts}

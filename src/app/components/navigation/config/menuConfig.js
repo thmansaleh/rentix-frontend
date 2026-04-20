@@ -27,7 +27,8 @@ import {
   AlertTriangle,
   Receipt,
   Eye,
-  CreditCard
+  CreditCard,
+  ShieldBan
 } from 'lucide-react';
 
 export const getMenuItems = (t, userRole = null, userDepartment = null, permissions = []) => {
@@ -43,7 +44,11 @@ export const getMenuItems = (t, userRole = null, userDepartment = null, permissi
       id: 'clients',
       label: t('navigation.customers'),
       icon: Users2,
-      type: 'link'
+      type: 'category',
+      submenu: [
+        { id: 'clients', label: t('navigation.allClients'), icon: Users2 },
+        { id: 'blocked-clients', label: t('navigation.blockedClients'), icon: ShieldBan },
+      ]
     },
     {
       id: 'fleet',

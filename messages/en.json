@@ -101,6 +101,8 @@
     "logs": "Activity Logs",
     "cars": "Vehicles",
     "customers": "Customers",
+    "blockedClients": "Blocked Clients",
+    "allClients": "All Clients",
     "contracts": "Contracts",
     "accidents": "Accidents",
     "fines": "Traffic Fines",
@@ -1665,6 +1667,13 @@
       }
     }
   },
+  "blockedClients": {
+    "title": "Blocked Clients",
+    "subtitle": "Clients who are blacklisted",
+    "noBlockedClients": "No blocked clients found",
+    "totalBlocked": "Total Blocked",
+    "failedToLoad": "Failed to load blocked clients"
+  },
   "clients": {
     "title": "Clients",
     "subtitle": "Manage your client database",
@@ -1748,6 +1757,7 @@
       "validation": {
         "fullNameRequired": "Full name is required",
         "phoneRequired": "Phone is required",
+        "phoneInvalid": "Invalid phone number (UAE: 9 digits after +971, no leading zero)",
         "emailInvalid": "Invalid email format",
         "branchRequired": "Branch is required"
       }
@@ -1880,6 +1890,7 @@
       "validation": {
         "fullNameRequired": "Full name is required",
         "phoneRequired": "Phone is required",
+        "phoneInvalid": "Invalid phone number (UAE: 9 digits after +971, no leading zero)",
         "emailInvalid": "Invalid email format",
         "branchRequired": "Branch is required"
       }
@@ -2140,6 +2151,8 @@
     "retry": "Retry",
     "sections": {
       "clientsContracts": "Clients & Contracts",
+      "clients": "Clients",
+      "contracts": "Contracts",
       "invoices": "Invoices",
       "payments": "Payments",
       "income": "Income & Expenses",
@@ -2148,6 +2161,8 @@
       "cash": "Cash Register"
     },
     "totalClients": "Total Clients",
+    "blockedClients": "Blocked",
+    "clientsThisMonth": "This Month",
     "totalContracts": "Total Contracts",
     "activeContracts": "Active Contracts",
     "contractsThisMonth": "Contracts This Month",

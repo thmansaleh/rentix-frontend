@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -195,123 +194,76 @@ const PermissionsTab = ({ employeeId }) => {
     );
   }
 
-  const InfoRow = ({ label, value }) => (
-    <div className="flex justify-between py-3 border-b last:border-0">
-      <span className="font-medium text-muted-foreground">{label}</span>
-      <span className="text-foreground">{value || t('common.notSpecified')}</span>
-    </div>
-  );
-
-
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Shield className="w-5 h-5" />
-            {t('employees.role')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <InfoRow label={t('employees.role')} value={isRTL ? employee.role_ar : employee.role_en} />
-      
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Shield className="w-5 h-5" />
-            {t('employees.permissions')} ({permissions.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">{t('common.loading')}</div>
-            </div>
-          ) : error ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-destructive">{t('common.error')}</div>
-            </div>
-          ) : localPermissions.length === 0 ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">{t('common.noData')}</div>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {Object.entries(groupedPermissions).map(([parentName, groups]) => (
-                <div key={parentName} className="border-2 border-primary/20 rounded-xl p-5 bg-gradient-to-br from-muted/30 to-muted/10">
-                  {/* Parent Header */}
-                  <div className="flex items-center gap-3 mb-5 pb-3 border-b-2 border-primary/30">
-                    <div className="p-2 rounded-lg bg-primary/10">
-                      <Shield className="w-5 h-5 text-primary" />
-                    </div>
-                    <h2 className="text-xl font-bold text-foreground">
-                      {getParentNameTranslation(parentName)}
-                    </h2>
-                    <Badge variant="secondary" className="mr-auto">
-                      {Object.values(groups).flat().length} {t('employees.permissions').toLowerCase()}
-                    </Badge>
-                  </div>
-                  
-                  {/* Groups within Parent */}
-                  <div className="space-y-4">
-                    {Object.entries(groups).map(([groupName, groupPermissions]) => (
-                      <div key={groupName} className="border border-border rounded-lg p-4 bg-background/50 hover:bg-background/80 transition-colors">
-                        {/* Group Header */}
-                        <div className="flex items-center justify-between mb-3 pb-2 border-b border-border/50">
-                          <h3 className="text-base font-semibold text-foreground">
-                            {getGroupNameTranslation(groupName)}
-                          </h3>
-                          <Badge variant="outline" className="text-xs">
-                            {groupPermissions.length}
-                          </Badge>
-                        </div>
-                        
-                        {/* Permissions Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {groupPermissions.map((permission) => {
-                            const localPermission = localPermissions.find(p => p.id === permission.id);
-                            return (
-                              <label
-                                key={permission.id}
-                                className="flex items-center gap-3 cursor-pointer hover:bg-accent/50 p-2.5 rounded-md transition-all group"
-                              >
-                                <Checkbox
-                                  checked={localPermission?.isPermissionForThisUser === 1}
-                                  onCheckedChange={() => handleTogglePermission(permission.id)}
-                                  id={`permission-${permission.id}`}
-                                  className="group-hover:border-primary"
-                                />
-                                <span className="text-sm text-foreground group-hover:text-primary transition-colors">
-                                  {isRTL ? permission.permission_ar : permission.permission_en}
-                                </span>
-                              </label>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Update Button */}
-      <div className="flex justify-end gap-2">
-        <Button
-          onClick={handleUpdate}
-          disabled={isSaving}
-          className="cursor-pointer"
-        >
-          {isSaving && <Loader2 className={isRTL ? "ml-2 h-4 w-4 animate-spin" : "mr-2 h-4 w-4 animate-spin"} />}
+    <div className="space-y-3">
+      {/* Role + Save row */}
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Shield className="w-4 h-4" />
+          <span>{t('employees.role')}:</span>
+          <span className="font-medium text-foreground">
+            {isRTL ? employee.role_ar : employee.role_en}
+          </span>
+        </div>
+        <Button size="sm" onClick={handleUpdate} disabled={isSaving} className="cursor-pointer h-8">
+          {isSaving && <Loader2 className={isRTL ? "ml-1.5 h-3 w-3 animate-spin" : "mr-1.5 h-3 w-3 animate-spin"} />}
           {isSaving ? t('common.saving') : t('common.update')}
         </Button>
       </div>
+
+      {/* Permissions */}
+      {localPermissions.length === 0 ? (
+        <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
+          {t('common.noData')}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {Object.entries(groupedPermissions).map(([parentName, groups]) => (
+            <div key={parentName} className="border border-border rounded-lg overflow-hidden">
+              {/* Parent Header */}
+              <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 border-b border-border">
+                <Shield className="w-3.5 h-3.5 text-primary" />
+                <span className="text-sm font-semibold">{getParentNameTranslation(parentName)}</span>
+                <Badge variant="secondary" className="text-xs px-1.5 py-0 h-4 ml-auto">
+                  {Object.values(groups).flat().length}
+                </Badge>
+              </div>
+
+              {/* Groups */}
+              <div className="divide-y divide-border/50">
+                {Object.entries(groups).map(([groupName, groupPermissions]) => (
+                  <div key={groupName} className="px-3 py-2">
+                    <p className="text-xs font-medium text-muted-foreground mb-1.5">
+                      {getGroupNameTranslation(groupName)}
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-1">
+                      {groupPermissions.map((permission) => {
+                        const localPermission = localPermissions.find(p => p.id === permission.id);
+                        return (
+                          <label
+                            key={permission.id}
+                            className="flex items-center gap-1.5 cursor-pointer py-0.5 group"
+                          >
+                            <Checkbox
+                              checked={localPermission?.isPermissionForThisUser === 1}
+                              onCheckedChange={() => handleTogglePermission(permission.id)}
+                              id={`permission-${permission.id}`}
+                              className="h-3.5 w-3.5"
+                            />
+                            <span className="text-xs text-foreground group-hover:text-primary transition-colors truncate">
+                              {isRTL ? permission.permission_ar : permission.permission_en}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

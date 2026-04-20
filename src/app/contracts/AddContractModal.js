@@ -120,8 +120,8 @@ export function AddContractModal({ isOpen, onClose, onSuccess, defaultCarId, def
   };
 
   const validationSchema = Yup.object({
-    customer_id: Yup.number().required(t('contracts.addModal.customerRequired')),
-    car_id: Yup.number().required(t('contracts.addModal.carRequired')),
+    customer_id: Yup.number().typeError(t('contracts.addModal.customerRequired')).min(1, t('contracts.addModal.customerRequired')).required(t('contracts.addModal.customerRequired')),
+    car_id: Yup.number().typeError(t('contracts.addModal.carRequired')).min(1, t('contracts.addModal.carRequired')).required(t('contracts.addModal.carRequired')),
     start_date: Yup.date().required(t('contracts.addModal.startDateRequired')),
     end_date: Yup.date()
       .required(t('contracts.addModal.endDateRequired'))

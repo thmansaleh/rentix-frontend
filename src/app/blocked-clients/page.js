@@ -1,22 +1,20 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Plus, Users, Loader2, Search } from 'lucide-react';
-import { AddClientModal } from './AddClientModal';
-import { EditClientModal } from './EditClientModal';
-import { DeleteClientModal } from './DeleteClientModal';
-import { ViewClientModal } from './ViewClientModal';
-import { ClientsTable } from './components/ClientsTable';
-import { getCustomers } from '../services/api/customers';
+import { Loader2, Search, ShieldBan } from 'lucide-react';
+import { EditClientModal } from '../clients/EditClientModal';
+import { DeleteClientModal } from '../clients/DeleteClientModal';
+import { ViewClientModal } from '../clients/ViewClientModal';
+import { ClientsTable } from '../clients/components/ClientsTable';
+import { getBlockedCustomers } from '../services/api/customers';
 import { toast } from 'react-toastify';
 import { useTranslations } from '@/hooks/useTranslations';
 
-export default function ClientsPage() {
+export default function BlockedClientsPage() {
   const { t } = useTranslations();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -34,11 +32,11 @@ export default function ClientsPage() {
   const fetchCustomers = async (search = '') => {
     try {
       setIsLoading(true);
-      const response = await getCustomers(search);
+      const response = await getBlockedCustomers(search);
       setCustomers(response.data || []);
     } catch (error) {
-      console.error("Error fetching customers:", error);
-      toast.error(t('clients.failedToLoadClients'));
+      console.error("Error fetching blocked customers:", error);
+      toast.error(t('blockedClients.failedToLoad'));
     } finally {
       setIsLoading(false);
     }
@@ -49,12 +47,13 @@ export default function ClientsPage() {
     setSearchQuery(searchTerm);
   };
 
-  const handleClientAdded = (newClient) => {
-    setCustomers(prev => [newClient, ...prev]);
-  };
-
   const handleClientUpdated = (updatedClient) => {
-    setCustomers(prev => prev.map(c => c.id === updatedClient.id ? updatedClient : c));
+    // If the client was unblocked (is_blacklisted = false), remove from list
+    if (!updatedClient.is_blacklisted) {
+      setCustomers(prev => prev.filter(c => c.id !== updatedClient.id));
+    } else {
+      setCustomers(prev => prev.map(c => c.id === updatedClient.id ? updatedClient : c));
+    }
   };
 
   const handleClientDeleted = (id) => {
@@ -66,22 +65,18 @@ export default function ClientsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Users className="w-6 h-6 text-primary" />
+          <div className="p-2 bg-red-100 dark:bg-red-900/20 rounded-lg">
+            <ShieldBan className="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {t('clients.title')}
+              {t('blockedClients.title')}
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t('clients.subtitle')}
+              {t('blockedClients.subtitle')}
             </p>
           </div>
         </div>
-        <Button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          {t('clients.addNewClient')}
-        </Button>
       </div>
 
       {/* Search Bar */}
@@ -117,7 +112,7 @@ export default function ClientsPage() {
             onView={(id) => { setSelectedCustomerId(id); setIsViewModalOpen(true); }}
             onEdit={(id) => { setSelectedCustomerId(id); setIsEditModalOpen(true); }}
             onDelete={(customer) => { setSelectedCustomer(customer); setIsDeleteModalOpen(true); }}
-            onAddFirst={() => setIsAddModalOpen(true)}
+            emptyMessage={searchQuery ? t('clients.noMatchingClients') : t('blockedClients.noBlockedClients')}
           />
         )}
 
@@ -125,7 +120,7 @@ export default function ClientsPage() {
         {customers.length > 0 && (
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-              <span>{t('clients.totalClients')}: {customers.length}</span>
+              <span>{t('blockedClients.totalBlocked')}: {customers.length}</span>
               {searchQuery && (
                 <span className="text-primary">
                   {t('clients.showingResultsFor')}: &quot;{searchQuery}&quot;
@@ -136,11 +131,6 @@ export default function ClientsPage() {
         )}
       </Card>
 
-      <AddClientModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSuccess={handleClientAdded}
-      />
       <EditClientModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}

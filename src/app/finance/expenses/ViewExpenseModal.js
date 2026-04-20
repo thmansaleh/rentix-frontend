@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { CustomModal, CustomModalBody, CustomModalFooter } from "@/components/ui/custom-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Calendar, DollarSign, Building2, User, CreditCard, FileText, Tag, Landmark, Paperclip, Trash2, ExternalLink, File } from "lucide-react";
-import { getExpenseById, getExpenseAttachments, deleteExpenseAttachment } from "../../services/api/expenses";
+import { Loader2, Calendar, DollarSign, Building2, User, CreditCard, FileText, Tag, Landmark, Paperclip, Trash2, ExternalLink, File, Upload } from "lucide-react";
+import { getExpenseById, getExpenseAttachments, deleteExpenseAttachment, addExpenseAttachment } from "../../services/api/expenses";
+import { uploadFiles } from "../../../../utils/fileUpload";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "react-toastify";
@@ -20,6 +21,7 @@ export function ViewExpenseModal({ isOpen, onClose, expenseId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (isOpen && expenseId) {
@@ -48,6 +50,32 @@ export function ViewExpenseModal({ isOpen, onClose, expenseId }) {
       setAttachments(res?.data || []);
     } catch (error) {
       console.error("Error loading attachments:", error);
+    }
+  };
+
+  const handleAddAttachment = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setIsUploading(true);
+    try {
+      const uploaded = await uploadFiles(files, "expenses");
+      await Promise.all(
+        uploaded.map((f) =>
+          addExpenseAttachment(expenseId, {
+            file_name: f.document_name,
+            file_path: f.document_url,
+            file_type: f.document_name.split(".").pop(),
+            file_size: null,
+          })
+        )
+      );
+      await loadAttachments();
+      toast.success(isArabic ? "تم إضافة المرفق بنجاح" : "Attachment added successfully");
+    } catch (error) {
+      toast.error(isArabic ? "فشل رفع المرفق" : "Failed to upload attachment");
+    } finally {
+      setIsUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -199,15 +227,45 @@ export function ViewExpenseModal({ isOpen, onClose, expenseId }) {
             </div>
 
             {/* Attachments */}
-            {attachments.length > 0 && (
-              <div className="mt-4">
-                <div className="flex items-center gap-2 mb-2">
+            <div className="mt-4">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2">
                   <Paperclip className="h-4 w-4 text-primary" />
                   <p className="text-sm font-medium">
                     {isArabic ? "المرفقات" : "Attachments"}
-                    <span className="ml-1 text-muted-foreground">({attachments.length})</span>
+                    {attachments.length > 0 && (
+                      <span className="ml-1 text-muted-foreground">({attachments.length})</span>
+                    )}
                   </p>
                 </div>
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={handleAddAttachment}
+                    disabled={isUploading}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7 gap-1 text-xs"
+                    disabled={isUploading}
+                    asChild
+                  >
+                    <span>
+                      {isUploading ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <Upload className="h-3 w-3" />
+                      )}
+                      {isArabic ? "إضافة مرفق" : "Add Attachment"}
+                    </span>
+                  </Button>
+                </label>
+              </div>
+              {attachments.length > 0 && (
                 <div className="space-y-2">
                   {attachments.map((att) => (
                     <div
@@ -253,8 +311,8 @@ export function ViewExpenseModal({ isOpen, onClose, expenseId }) {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </CustomModalBody>
 
           <CustomModalFooter>

@@ -7,6 +7,122 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ========================================
+   PHONE INPUT (react-phone-input-2) STYLES
+   ======================================== */
+
+.phone-input-wrapper {
+  width: 100%;
+}
+
+.phone-input-container {
+  width: 100% !important;
+  font-family: inherit !important;
+}
+
+.phone-input-field {
+  width: 100% !important;
+  height: 2.25rem !important;
+  padding-left: 3.2rem !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border) !important;
+  background-color: transparent !important;
+  color: var(--foreground) !important;
+  font-size: 0.875rem !important;
+  font-family: inherit !important;
+  transition: border-color 150ms, box-shadow 150ms !important;
+  outline: none !important;
+}
+
+.phone-input-field:focus {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 30%, transparent) !important;
+}
+
+.phone-input-button {
+  border-radius: var(--radius-md) 0 0 var(--radius-md) !important;
+  border: 1px solid var(--border) !important;
+  border-right: none !important;
+  background-color: var(--secondary) !important;
+  transition: background-color 150ms !important;
+}
+
+.phone-input-button:hover {
+  background-color: var(--accent) !important;
+}
+
+.phone-input-button.open {
+  background-color: var(--accent) !important;
+}
+
+.phone-input-dropdown {
+  background-color: var(--popover) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-md) !important;
+  z-index: var(--z-popover) !important;
+  max-height: 240px !important;
+  overflow-y: auto !important;
+}
+
+.phone-input-dropdown .country {
+  color: var(--foreground) !important;
+  padding: 0.4rem 0.75rem !important;
+}
+
+.phone-input-dropdown .country:hover,
+.phone-input-dropdown .country.highlight {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+}
+
+.phone-input-dropdown .country .dial-code {
+  color: var(--muted-foreground) !important;
+}
+
+.phone-input-search {
+  background-color: var(--popover) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 0.5rem !important;
+}
+
+.phone-input-search input {
+  width: 100% !important;
+  padding: 0.375rem 0.5rem !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  font-size: 0.8rem !important;
+  outline: none !important;
+}
+
+/* Dark mode adjustments */
+.dark .phone-input-field {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border-color: var(--input) !important;
+}
+
+.dark .phone-input-button {
+  background-color: var(--secondary) !important;
+  border-color: var(--input) !important;
+}
+
+.dark .phone-input-dropdown {
+  background-color: var(--popover) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .phone-input-dropdown .country {
+  color: var(--foreground) !important;
+}
+
+.dark .phone-input-dropdown .country:hover,
+.dark .phone-input-dropdown .country.highlight {
+  background-color: var(--accent) !important;
+}
+
+/* ========================================
    CSS CUSTOM PROPERTIES - DESIGN TOKENS
    ======================================== */
 

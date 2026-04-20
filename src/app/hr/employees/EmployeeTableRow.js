@@ -1,5 +1,4 @@
-import { User, Eye, Shield, List, Edit, Trash2 } from 'lucide-react';
-import PermissionsDialog from './PermissionsDialog';
+import { User, Eye, List, Edit, Trash2 } from 'lucide-react';
 import EditEmployeeDialog from './edit/EditEmployeeDialog';
 import ActivityLogModal from './ActivityLogModal';
 import ViewEmployeeDialog from './ViewEmployeeDialog';
@@ -85,19 +84,6 @@ export default function EmployeeTableRow({ employee, StatusBadge, isArabic, onEm
               title={t('employees.editEmployee')}
             >
               <Edit className="w-5 h-5 text-muted-foreground hover:text-foreground" />
-            </button>
-          }
-        /> */}
-        {/* <PermissionsDialog
-          id={employee.id}
-          trigger={
-            <button
-              type="button"
-              className="flex items-center gap-2 px-2 py-1 hover:bg-muted rounded text-right cursor-pointer border-none bg-transparent"
-              title={t('employees.permissions')}
-            >
-              <Shield className="w-4 h-4 text-muted-foreground" />
-              {t('employees.permissions')}
             </button>
           }
         /> */}

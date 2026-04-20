@@ -21,6 +21,11 @@ export const refreshToken = async () => {
   return response.data;
 };
 
+export const changePassword = async (currentPassword, newPassword) => {
+  const response = await api.put("/auth/change-password", { currentPassword, newPassword });
+  return response.data;
+};
+
 // Thunk action for login with Redux integration
 export const loginWithRedux = (username, password, branch_id, rememberMe = false) => async (dispatch) => {
   try {
